@@ -1,5 +1,7 @@
 # ferroBid — Digital Metal Auction Platform (Clickable Prototype)
 
+**🔗 Live demo:** https://manzoorilahi77.github.io/MetalBid/
+
 High-fidelity, front-end-only prototype of the MetalBid platform (v3.0 requirements) covering
 **6 roles** and the **complete lot lifecycle** — entity/lot verification → auction → fulfilment.
 Built by AspiraSys for Metal Bid Technologies.
