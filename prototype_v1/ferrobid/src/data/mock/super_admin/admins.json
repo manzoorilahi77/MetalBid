@@ -1,0 +1,18 @@
+[
+  {
+    "id": "adm-01", "name": "Ravi Kumar", "email": "ravi.kumar@ferrobid.in", "role": "exec", "active": true, "createdAt": "2026-01-10",
+    "permissions": { "entityVerification": true, "lotVerification": true, "auctionCreation": true, "settlement": true, "logistics": true, "handover": true }
+  },
+  {
+    "id": "adm-02", "name": "Meera Pillai", "email": "meera.pillai@ferrobid.in", "role": "exec", "active": true, "createdAt": "2026-02-01",
+    "permissions": { "entityVerification": true, "lotVerification": true, "auctionCreation": true, "settlement": true, "logistics": true, "handover": true }
+  },
+  {
+    "id": "adm-03", "name": "Divya Nair", "email": "divya.nair@ferrobid.in", "role": "subadmin", "active": true, "createdAt": "2026-02-15",
+    "permissions": { "manageAuctions": true, "manageLots": true, "manageUsers": false, "manageCatalogue": true, "viewAudit": true, "systemConfig": false }
+  },
+  {
+    "id": "adm-04", "name": "Karthik Iyer", "email": "karthik.iyer@ferrobid.in", "role": "subadmin", "active": false, "createdAt": "2026-03-20",
+    "permissions": { "manageAuctions": true, "manageLots": false, "manageUsers": true, "manageCatalogue": false, "viewAudit": false, "systemConfig": false }
+  }
+]

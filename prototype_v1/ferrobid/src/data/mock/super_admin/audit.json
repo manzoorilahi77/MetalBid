@@ -1,0 +1,14 @@
+[
+  { "id": "AUD-9021", "actor": "Ravi Kumar", "role": "Executive Admin", "action": "Locked EMD for bidder", "target": "AU-101 / Arjun Mehta", "stage": "Auction", "at": "2026-07-06 18:42" },
+  { "id": "AUD-9018", "actor": "System", "role": "System", "action": "Auto-extension triggered (late bid)", "target": "AU-101", "stage": "Auction", "at": "2026-07-06 18:40" },
+  { "id": "AUD-9010", "actor": "Ravi Kumar", "role": "Executive Admin", "action": "Auction created & scheduled", "target": "FB-2026-003 → AU-103", "stage": "Auction Setup", "at": "2026-07-05 16:11" },
+  { "id": "AUD-9004", "actor": "Meera Pillai", "role": "Executive Admin", "action": "Lot verified — checklist passed", "target": "FB-2026-003", "stage": "Verification", "at": "2026-07-04 12:30" },
+  { "id": "AUD-8998", "actor": "Ravi Kumar", "role": "Executive Admin", "action": "Lot rejected — image mismatch", "target": "FB-2026-008", "stage": "Verification", "at": "2026-07-03 15:47" },
+  { "id": "AUD-8990", "actor": "Kavitha Raman", "role": "Seller", "action": "Lot submitted for verification", "target": "FB-2026-005", "stage": "Listing", "at": "2026-07-04 09:02" },
+  { "id": "AUD-8975", "actor": "Divya Nair", "role": "Sub-Admin", "action": "Catalogue entry updated", "target": "FB-2026-004", "stage": "Catalogue", "at": "2026-07-02 11:18" },
+  { "id": "AUD-8961", "actor": "Ravi Kumar", "role": "Executive Admin", "action": "Pickup scheduled + handler assigned", "target": "FB-2026-114 / BlueDart", "stage": "Logistics", "at": "2026-07-01 10:25" },
+  { "id": "AUD-8950", "actor": "Ravi Kumar", "role": "Executive Admin", "action": "Payment confirmed + invoice generated", "target": "ST-498 / FB-2026-114", "stage": "Settlement", "at": "2026-06-30 17:55" },
+  { "id": "AUD-8912", "actor": "Mohammed Farooq", "role": "Super Admin", "action": "Sub-Admin permissions updated", "target": "Divya Nair", "stage": "Administration", "at": "2026-06-28 09:15" },
+  { "id": "AUD-8890", "actor": "Ravi Kumar", "role": "Executive Admin", "action": "Handover confirmed — lot closed", "target": "FB-2026-088", "stage": "Handover", "at": "2026-06-03 16:40" },
+  { "id": "AUD-8850", "actor": "Meera Pillai", "role": "Executive Admin", "action": "Entity approved — Seller unlocked", "target": "EV-2019 / Kavitha Steel Traders", "stage": "Entity Verification", "at": "2026-01-24 14:00" }
+]

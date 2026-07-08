@@ -1,0 +1,12 @@
+[
+  { "id": "u-buyer1", "name": "Arjun Mehta", "phone": "+91 98450 12345", "role": "buyer", "kycStatus": "verified", "sellerVerified": false, "email": "arjun.mehta@gmail.com", "joinedAt": "2026-03-14", "active": true },
+  { "id": "u-buyer2", "name": "Suresh Patil", "phone": "+91 99220 44551", "role": "buyer", "kycStatus": "verified", "sellerVerified": false, "email": "suresh.patil@sureshtraders.in", "joinedAt": "2026-04-02", "active": true },
+  { "id": "u-buyer3", "name": "Fathima Begum", "phone": "+91 90030 77812", "role": "buyer", "kycStatus": "pending", "sellerVerified": false, "email": "fathima.b@outlook.com", "joinedAt": "2026-05-21", "active": true },
+  { "id": "u-seller1", "name": "Kavitha Raman", "phone": "+91 98410 55667", "role": "seller", "kycStatus": "verified", "sellerVerified": true, "businessName": "Kavitha Steel Traders Pvt Ltd", "email": "kavitha@kstraders.co.in", "joinedAt": "2026-01-19", "active": true },
+  { "id": "u-seller2", "name": "Rajan Sharma", "phone": "+91 98110 88990", "role": "seller", "kycStatus": "verified", "sellerVerified": true, "businessName": "Sharma Metal Works", "email": "rajan@sharmametal.com", "joinedAt": "2026-02-08", "active": true },
+  { "id": "u-buyer4", "name": "Deepak Verma", "phone": "+91 97170 33445", "role": "buyer", "kycStatus": "not_submitted", "sellerVerified": false, "email": "deepak.v@yahoo.com", "joinedAt": "2026-06-11", "active": false },
+  { "id": "b-01", "name": "SteelCorp Industries", "phone": "+91 98000 00001", "role": "buyer", "kycStatus": "verified", "sellerVerified": false, "joinedAt": "2026-01-05", "active": true },
+  { "id": "b-02", "name": "Apex Alloys Ltd", "phone": "+91 98000 00002", "role": "buyer", "kycStatus": "verified", "sellerVerified": false, "joinedAt": "2026-01-07", "active": true },
+  { "id": "b-03", "name": "Vulcan Metals", "phone": "+91 98000 00003", "role": "buyer", "kycStatus": "verified", "sellerVerified": false, "joinedAt": "2026-02-15", "active": true },
+  { "id": "b-04", "name": "Nirmal Traders", "phone": "+91 98000 00004", "role": "buyer", "kycStatus": "verified", "sellerVerified": false, "joinedAt": "2026-03-01", "active": true }
+]

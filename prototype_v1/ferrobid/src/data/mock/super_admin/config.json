@@ -1,0 +1,26 @@
+{
+  "platform": {
+    "auctionAutoExtensionWindowSec": 60,
+    "auctionAutoExtensionBySec": 120,
+    "defaultEmdPercent": 5,
+    "maxAutoExtensions": 5,
+    "walletTopupLimit": 1000000
+  },
+  "entityVerificationPolicy": {
+    "requireGST": true,
+    "requirePAN": true,
+    "requireBankProof": true,
+    "requireMSME": false,
+    "autoReturnAfterDays": 7,
+    "reviewSLA": "48 hours"
+  },
+  "notifications": {
+    "onEntityVerified": true,
+    "onLotVerified": true,
+    "onAuctionCreated": true,
+    "onWon": true,
+    "onSettled": true,
+    "onPickupScheduled": true,
+    "onHandover": true
+  }
+}

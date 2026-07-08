@@ -1,0 +1,33 @@
+[
+  {
+    "id": "EV-2041", "userId": "u-buyer2", "userName": "Suresh Patil", "businessName": "Suresh Traders & Co",
+    "gstin": "27ABCDE1234F1Z5", "pan": "ABCDE1234F",
+    "docs": [
+      { "name": "GST Registration Certificate.pdf", "type": "GST" },
+      { "name": "PAN Card.pdf", "type": "PAN" },
+      { "name": "Udyam Registration.pdf", "type": "MSME" },
+      { "name": "Cancelled Cheque.jpg", "type": "Bank" }
+    ],
+    "status": "pending", "submittedAt": "2026-07-05 14:22"
+  },
+  {
+    "id": "EV-2038", "userId": "u-buyer3", "userName": "Fathima Begum", "businessName": "FB Metal Recyclers",
+    "gstin": "33FGHIJ5678K1Z2", "pan": "FGHIJ5678K",
+    "docs": [
+      { "name": "GST Registration Certificate.pdf", "type": "GST" },
+      { "name": "PAN Card.pdf", "type": "PAN" }
+    ],
+    "status": "returned", "note": "Bank proof missing — please attach a cancelled cheque or bank statement.", "submittedAt": "2026-07-02 10:05"
+  },
+  {
+    "id": "EV-2019", "userId": "u-seller1", "userName": "Kavitha Raman", "businessName": "Kavitha Steel Traders Pvt Ltd",
+    "gstin": "33KLMNO9012P1Z8", "pan": "KLMNO9012P",
+    "docs": [
+      { "name": "GST Registration Certificate.pdf", "type": "GST" },
+      { "name": "PAN Card.pdf", "type": "PAN" },
+      { "name": "Incorporation Certificate.pdf", "type": "ROC" },
+      { "name": "Cancelled Cheque.jpg", "type": "Bank" }
+    ],
+    "status": "approved", "note": "All documents verified. Seller capability unlocked.", "submittedAt": "2026-01-22 09:40"
+  }
+]
