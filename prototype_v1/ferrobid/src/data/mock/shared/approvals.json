@@ -1,0 +1,39 @@
+[
+  {
+    "id": "AP-9001",
+    "type": "emd_forfeit",
+    "title": "EMD forfeiture — payment window breached",
+    "detail": "Winner of Lot FB-2026-096 has crossed the 48h payment window without full payment. Requesting EMD forfeiture as per policy.",
+    "refId": "ST-501",
+    "amount": 1662000,
+    "requestedBy": "Divya Nair",
+    "requestedRole": "Sub-Admin",
+    "at": "05/07/2026, 11:20 am",
+    "status": "pending"
+  },
+  {
+    "id": "AP-9002",
+    "type": "auction_pause",
+    "title": "Pause request — suspicious bid pattern",
+    "detail": "Rapid same-increment bids from two accounts on AU-102 in the last 4 minutes. Requesting a pause pending review.",
+    "refId": "AU-102",
+    "requestedBy": "Divya Nair",
+    "requestedRole": "Sub-Admin",
+    "at": "06/07/2026, 03:42 pm",
+    "status": "pending"
+  },
+  {
+    "id": "AP-9003",
+    "type": "entity_reject",
+    "title": "Entity rejection — mismatched GSTIN",
+    "detail": "GSTIN on the certificate does not match the PAN-linked entity name (older request EV-2031).",
+    "refId": "EV-2031",
+    "requestedBy": "Karthik Iyer",
+    "requestedRole": "Sub-Admin",
+    "at": "01/07/2026, 10:05 am",
+    "status": "approved",
+    "decidedBy": "Ravi Kumar",
+    "decisionNote": "Verified the mismatch. Rejection confirmed.",
+    "decidedAt": "01/07/2026, 05:30 pm"
+  }
+]

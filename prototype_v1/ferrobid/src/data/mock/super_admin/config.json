@@ -14,6 +14,18 @@
     "autoReturnAfterDays": 7,
     "reviewSLA": "48 hours"
   },
+  "financial": {
+    "commissionPercent": 2.5,
+    "buyerPremiumPercent": 1.0,
+    "paymentWindowHours": 48,
+    "latePenaltyPercentPerDay": 0.5,
+    "refundApprovalAbove": 500000,
+    "emdPercentByMetal": { "Ferrous": 5, "Copper": 8, "Aluminium": 6, "Non-ferrous": 8 }
+  },
+  "risk": {
+    "autoSuspendEnabled": true,
+    "autoSuspendAfterDefaults": 2
+  },
   "notifications": {
     "onEntityVerified": true,
     "onLotVerified": true,

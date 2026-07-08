@@ -2,7 +2,14 @@
 ## Prototype — Requirements, Feature List & Work Breakdown Structure
 
 **Prepared by:** AspiraSys · **Prepared for:** Metal Bid Technologies
-**Document scope:** Clickable prototype (6 roles, full lot lifecycle) · **Version:** 3.0
+**Document scope:** Clickable prototype (6 roles, full lot lifecycle) · **Version:** 3.1
+
+> **v3.1 update — Admin governance & control layer:**
+> - **Scoped permission matrix** (module × action level × scope × value ceiling) now drives the Sub-Admin console; includes reusable role templates.
+> - **Maker-checker approvals:** risky Sub-Admin actions become approval requests to Executive/Super Admin (approvals inbox/outbox with mandatory reason).
+> - **Sub-Admin console expanded:** inherits the full Executive Admin pipeline & fulfilment modules (permission-gated), plus **My Work Queue** with SLA timers and a scoped **Bid Monitor** (flag → approval).
+> - **Super Admin gains an Auction Control Tower** (pause / force-extend / cancel live auction, void bid) and **Blacklist & Defaulter management**.
+> - Financial/commercial config and master data added as light static screens. Advanced governance (notification templates, T&C versioning, delegation, impersonation, platform freeze, re-auction, admin activity reports) is explicitly deferred to production scope.
 
 > **v3.0 update:**
 > - The pre-auction verification set, auction creation, and post-auction fulfilment set are now managed by a single operational role: **Executive Admin**.
@@ -33,6 +40,8 @@ All six roles, the Buyer→Seller entity-verification upgrade, guest browsing, a
 ### 1.4 Out of Scope for the Prototype
 Real backend/APIs, real JWT/RBAC enforcement, real payment/SMS/logistics integrations, real-time infrastructure, persistent audit logs, load/security hardening, and data migration.
 
+**Deferred governance controls (production scope, not prototyped):** notification/SMS templates, T&C versioning, admin delegation & vacation reassignment, impersonation ("view as user"), platform-wide bidding freeze, re-auction of defaulted lots, and admin activity reports. These are documented so stakeholders see the roadmap, but no screens are built for them.
+
 ---
 
 ## 2. Account & Role Model
@@ -42,7 +51,8 @@ Real backend/APIs, real JWT/RBAC enforcement, real payment/SMS/logistics integra
 - **Only a verified entity can list lots.** Unverified buyers see the "Become a Seller" path instead of listing tools.
 - **Guest User** is unauthenticated: browse-only, prompted to register to participate.
 - **Executive Admin** owns the operational pipeline end to end: entity/seller verification, lot verification, auction creation & scheduling, and post-auction fulfilment (settlement, logistics, pickup/handover).
-- **Super Admin** governs the platform and creates/manages Sub-Admins and Executive Admins. **Sub-Admin** operates a permission-scoped subset.
+- **Super Admin** governs the platform: creates/manages Sub-Admins and Executive Admins through a **scoped permission matrix**, sets commercial/risk policy, manages the blacklist, and can override live auctions (control tower).
+- **Sub-Admin** operates the **same operational modules as Executive Admin, gated by granted permissions** (module × action level × scope × value ceiling). Risky actions don't execute directly — they route through **maker-checker approvals** to Executive/Super Admin.
 
 ```
  Guest ──register──▶ Buyer ──"Become a Seller"──▶ Entity Verification (Executive Admin) ──approve──▶ Buyer + Seller
@@ -73,8 +83,8 @@ Executive Admin drives the lot across all operational stages; the state machine 
 
 | # | Role | One-liner | Prototype focus |
 |---|------|-----------|-----------------|
-| 1 | **Super Admin** | Master controller of the platform | Global oversight & KPIs, creates/manages Sub-Admins & Executive Admins, entity-verification policy, config, audit |
-| 2 | **Sub-Admin** | Day-to-day ops within limits | Permission-scoped console; auction/lot/user ops; visual action gating |
+| 1 | **Super Admin** | Master controller of the platform | Global oversight & KPIs, scoped permission matrix, approvals (checker), auction control tower (pause/extend/cancel/void), blacklist & defaulter management, financial & master-data config, audit |
+| 2 | **Sub-Admin** | Day-to-day ops within granted limits | Inherits Exec pipeline & fulfilment modules (permission-gated); My Work Queue with SLA timers; approvals outbox (maker); scoped bid monitor with flagging; visual action gating |
 | 3 | **Executive Admin** | Owns the operational pipeline | Entity/seller verification, lot verification, **auction creation & scheduling**, settlement, logistics, pickup/handover |
 | 4 | **Buyer** | Core participant (default account) | Register/KYC → wallet/EMD → browse → live bid → win → fulfilment tracker; can request Seller upgrade |
 | 5 | **Seller** | Verified entity (unlocked capability) | List lots → submit for verification → monitor auction → results & report; also retains Buyer abilities |
@@ -86,14 +96,23 @@ Executive Admin drives the lot across all operational stages; the state machine 
 
 ### 5.1 Super Admin
 - Global dashboard with lifecycle KPIs: entities awaiting verification, lots under verification/approval, live auctions, awaiting settlement, awaiting pickup (mock).
-- Create/manage Sub-Admins and Executive Admins; assign a demo permission matrix.
+- **Scoped permission matrix:** create/manage Sub-Admins & Executive Admins; grant each Sub-Admin per-module rights as **action level (view / act / approve) × scope (metal category, region/yard) × value ceiling**; reusable role templates (e.g. "Verification Officer", "Settlement Officer") (mock).
+- **Approvals queue (checker):** review escalated Sub-Admin actions; approve/reject with mandatory reason → audit entry. (Executive Admin shares this queue for operational escalations.)
+- **Auction Control Tower:** pause / resume / force-extend a live auction, cancel a scheduled auction, void a suspicious bid — every override requires a reason and is written to the audit trail (mock).
+- **Blacklist & defaulter management:** suspend or blacklist users with reason; watchlist flag; "auto-suspend after N payment defaults" rule toggle (sim).
 - Manage all users and the Buyer→Seller entity-verification policy/config.
-- Manage lots, auctions, and system-wide configuration; cross-stage audit view (read-only, mock).
+- **Financial & commercial config (static screens, mock save):** EMD % per category, platform commission / buyer premium, payment deadline windows.
+- **Master data (static screens, mock save):** metal categories, yards/locations, required document types.
+- Read-only oversight of the full Executive pipeline; cross-stage audit view (read-only, mock).
 
 ### 5.2 Sub-Admin
-- Scoped console reflecting granted permissions; menus/actions hidden where a permission is off.
-- Manage auctions, lots, and catalogue per assigned access; user search/filter.
+- **Inherited operational modules:** the full Executive Admin pipeline & fulfilment set (pipeline board, entity verification, lot verification, auction setup, settlement, logistics, handover) rendered **through the permission matrix** — modules hidden where no access; actions outside scope/ceiling shown disabled with a *"Requires approval"* affordance.
+- **My Work Queue:** tasks auto-routed by scope or assigned by Executive Admin, each with an SLA timer (e.g. "Lot #241 verification due in 4h") (mock).
+- **Approvals outbox (maker):** risky actions (entity rejection, EMD forfeiture, auction pause request, high-value settlement) are submitted as approval requests instead of executing; status tracked (pending/approved/rejected).
+- **Bid Monitor (scoped, read-only):** watch live auctions within granted scope; **flag a suspicious bid → generates an approval request** to Executive/Super Admin.
+- User search/filter; account support actions per granted access.
 - Actions shown as captured in the audit log (mock).
+- Demo seed configures the sample Sub-Admin with **at least one module hidden and one action gated**, so the contrast with Executive Admin is visible in walkthroughs.
 
 ### 5.3 Executive Admin *(consolidated operational role)*
 - **Entity / Seller verification queue:** review a buyer's business/KYC/entity documents (mock viewer); approve → unlock Seller capability, or reject/return with reason.
@@ -144,11 +163,11 @@ Executive Admin drives the lot across all operational stages; the state machine 
 | F7 | Account | "Become a Seller" request + entity-document submission | Buyer |
 | F8 | Account | Verified-entity gating (list tools locked until approved) | Buyer/Seller |
 | F9 | Admin | Super Admin dashboard incl. full-lifecycle KPIs | Super Admin |
-| F10 | Admin | Create/manage Sub-Admins & Executive Admins + permission matrix | Super Admin |
+| **F10** | Admin | **Scoped permission matrix (module × action × scope × value ceiling) + role templates** | Super Admin |
 | F11 | Admin | User management (list, search, filter) | Super Admin, Sub-Admin |
 | F12 | Admin | System config incl. entity-verification policy | Super Admin |
 | F13 | Admin | Cross-stage audit trail view (read-only) | Super Admin, Sub-Admin |
-| F14 | Admin | Permission-scoped menu/action gating (visual) | Sub-Admin |
+| **F14** | Admin | **Permission-scoped menu/action gating incl. disabled "Requires approval" states** | Sub-Admin |
 | **F15** | **Exec** | **Unified pipeline board (verify → auction → fulfil)** | **Executive Admin** |
 | **F16** | **Exec** | **Entity/Seller verification queue + document review (mock)** | **Executive Admin** |
 | **F17** | **Exec** | **Approve/reject entity → unlock Seller capability** | **Executive Admin** |
@@ -176,8 +195,15 @@ Executive Admin drives the lot across all operational stages; the state machine 
 | F39 | Notify | Notification centre + toast alerts on each lifecycle hand-off | All (auth) |
 | F40 | Notify | Noticeboard / announcements | All |
 | F41 | Sim | Scripted bidding simulation engine (bots/timer) | Supporting |
+| **F42** | **Governance** | **Approvals inbox/outbox (maker-checker) with mandatory reasons** | **Sub-Admin (maker), Executive Admin & Super Admin (checkers)** |
+| **F43** | **Governance** | **Auction Control Tower: pause/resume/extend/cancel live auction + void bid (reason → audit)** | **Super Admin** |
+| **F44** | **Governance** | **Blacklist & defaulter management + auto-suspend rule (sim)** | **Super Admin** |
+| **F45** | **Ops** | **Sub-Admin My Work Queue with SLA timers** | **Sub-Admin** |
+| **F46** | **Ops** | **Bid Monitor (read-only, scoped) + flag suspicious bid → approval request** | **Sub-Admin, Super Admin** |
+| **F47** | **Config** | **Financial & commercial config screens (EMD %, commission, payment windows — static, mock save)** | **Super Admin** |
+| **F48** | **Config** | **Master data screens (categories, yards, document types — static, mock save)** | **Super Admin** |
 
-*(New/changed v3.0 features are bolded; Executive Admin now absorbs the former verification/approval/settlement/logistics/handover features.)*
+*(v3.0 introduced the consolidated Executive Admin pipeline. **v3.1 additions/changes are bolded**: F42–F48 plus revised F10/F14 — the admin governance & control layer.)*
 
 ---
 
@@ -208,13 +234,20 @@ Executive Admin drives the lot across all operational stages; the state machine 
 - **4.3** Buyer KYC submission + status flow — *dep: 4.2*
 - **4.4** Role routing + demo role switcher (all roles, verified/unverified) — *dep: 2.3, 4.2, 3.3*
 
-### 5. Platform Administration
+### 5. Platform Administration & Governance
 - **5.1** Super Admin dashboard with full-lifecycle KPIs — *dep: 3.5, 2.2*
-- **5.2** Create/manage Sub-Admins & Executive Admins + permission matrix — *dep: 5.1*
+- **5.2** Create/manage Sub-Admins & Executive Admins + **scoped permission matrix editor (module × action level × scope × value ceiling) + role templates** — *dep: 5.1*
 - **5.3** User management (list/search/filter) — *dep: 3.5, 2.2*
 - **5.4** System config incl. entity-verification policy — *dep: 5.1*
 - **5.5** Cross-stage audit trail view — *dep: 3.4*
-- **5.6** Sub-Admin scoped console + permission-based gating — *dep: 5.2, 4.4*
+- **5.6** Sub-Admin scoped console: **inherited Exec pipeline & fulfilment modules** + permission-based gating (hidden modules, disabled "Requires approval" actions) — *dep: 5.2, 4.4, 7.1*
+- **5.7** **Approvals inbox/outbox (maker-checker): request submission, approve/reject with reason, status tracking, audit entries** — *dep: 5.2, 3.4, 11.1*
+- **5.8** **Sub-Admin My Work Queue + SLA timers (scope-routed / Exec-assigned tasks)** — *dep: 5.6, 3.4*
+- **5.9** **Auction Control Tower: pause/resume/extend/cancel + void bid, mandatory reason → audit** — *dep: 5.1, 10.1, 3.4*
+- **5.10** **Blacklist & defaulter management + auto-suspend rule (sim)** — *dep: 5.3*
+- **5.11** **Bid Monitor (read-only, scoped) + flag → approval request** — *dep: 10.2, 5.7*
+- **5.12** **Financial & commercial config screens (EMD %, commission, payment windows — static, mock save)** — *dep: 5.4*
+- **5.13** **Master data screens (categories, yards, document types — static, mock save)** — *dep: 5.4*
 
 ### 6. Buyer→Seller Entity Verification *(new)*
 - **6.1** "Become a Seller" request + entity-document submission (Buyer) — *dep: 4.4, 3.3*
@@ -296,4 +329,4 @@ Real-Time Simulation
 Local event-emitter engine (setInterval / mitt) — scripted countdowns, late-bid auto-extension, and competing "bot" bids that mimic live bidding without a real WebSocket/Redis
 ---
 
-*Strictly Confidential · AspiraSys · MetalBid Prototype Requirements v3.0*
+*Strictly Confidential · AspiraSys · MetalBid Prototype Requirements v3.1*

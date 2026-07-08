@@ -28,7 +28,22 @@ export interface User {
   email?: string;
   joinedAt: string;
   active: boolean;
+  standing?: UserStanding;   // risk & trust status (WBS v3.1 F44)
+  defaults?: number;         // payment defaults count — feeds auto-suspend rule
+  standingReason?: string;
 }
+
+/** Scoped permission model (WBS v3.1 §5.1): module × action level × scope × value ceiling */
+export type PermLevel = 'hidden' | 'view' | 'act' | 'approve';
+
+export interface ModulePermission {
+  level: PermLevel;
+  metals: string;   // 'All' | 'Ferrous' | 'Copper' | ...
+  region: string;   // 'All' | 'Chennai' | ...
+  ceiling: number;  // ₹ value ceiling for actions; 0 = no limit
+}
+
+export type ScopedPermissions = Record<string, ModulePermission>;
 
 export interface AdminUser {
   id: string;
@@ -36,9 +51,45 @@ export interface AdminUser {
   email: string;
   role: 'exec' | 'subadmin';
   permissions: Record<string, boolean>;
+  scoped?: ScopedPermissions;   // sub-admins only — drives console gating
   active: boolean;
   createdAt: string;
 }
+
+/** Maker-checker approval request (WBS v3.1 F42) */
+export type ApprovalType =
+  | 'entity_approve' | 'entity_reject' | 'lot_reject'
+  | 'emd_forfeit' | 'auction_publish' | 'auction_pause' | 'bid_flag';
+
+export interface ApprovalRequest {
+  id: string;
+  type: ApprovalType;
+  title: string;
+  detail: string;
+  refId: string;                 // lot / auction / settlement / bid id the action targets
+  amount?: number;
+  payload?: Record<string, unknown>; // extra params executed on approval (e.g. auction schedule)
+  requestedBy: string;
+  requestedRole: string;
+  at: string;
+  status: 'pending' | 'approved' | 'rejected';
+  decidedBy?: string;
+  decisionNote?: string;
+  decidedAt?: string;
+}
+
+/** Sub-Admin work queue task with SLA (WBS v3.1 F45) */
+export interface WorkTask {
+  id: string;
+  title: string;
+  module: string;      // ops module key — links task to its screen
+  refId: string;
+  assignedBy: string;
+  dueAt: number;
+  status: 'open' | 'done';
+}
+
+export type UserStanding = 'good' | 'watchlist' | 'suspended' | 'blacklisted';
 
 export interface Lot {
   id: string;
@@ -74,7 +125,9 @@ export interface Auction {
   lotId: string;
   startsAt: number;
   endsAt: number;
-  status: 'scheduled' | 'live' | 'closed';
+  status: 'scheduled' | 'live' | 'paused' | 'cancelled' | 'closed';
+  pausedRemaining?: number;  // ms left on the clock when paused (control tower)
+  pauseReason?: string;
   startPrice: number;
   currentBid: number;
   leaderId?: string;

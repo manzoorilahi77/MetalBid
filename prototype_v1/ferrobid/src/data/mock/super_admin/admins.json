@@ -9,10 +9,32 @@
   },
   {
     "id": "adm-03", "name": "Divya Nair", "email": "divya.nair@ferrobid.in", "role": "subadmin", "active": true, "createdAt": "2026-02-15",
-    "permissions": { "manageAuctions": true, "manageLots": true, "manageUsers": false, "manageCatalogue": true, "viewAudit": true, "systemConfig": false }
+    "permissions": { "manageAuctions": true, "manageLots": true, "manageUsers": false, "manageCatalogue": true, "viewAudit": true, "systemConfig": false },
+    "scoped": {
+      "pipeline":   { "level": "view", "metals": "All",     "region": "All",     "ceiling": 0 },
+      "entities":   { "level": "act",  "metals": "All",     "region": "All",     "ceiling": 0 },
+      "lots":       { "level": "act",  "metals": "Ferrous", "region": "Chennai", "ceiling": 1000000 },
+      "auctions":   { "level": "act",  "metals": "Ferrous", "region": "All",     "ceiling": 1000000 },
+      "settlement": { "level": "view", "metals": "All",     "region": "All",     "ceiling": 0 },
+      "logistics":  { "level": "act",  "metals": "All",     "region": "Chennai", "ceiling": 0 },
+      "handover":   { "level": "hidden", "metals": "All",   "region": "All",     "ceiling": 0 },
+      "monitor":    { "level": "act",  "metals": "All",     "region": "All",     "ceiling": 0 },
+      "users":      { "level": "view", "metals": "All",     "region": "All",     "ceiling": 0 }
+    }
   },
   {
     "id": "adm-04", "name": "Karthik Iyer", "email": "karthik.iyer@ferrobid.in", "role": "subadmin", "active": false, "createdAt": "2026-03-20",
-    "permissions": { "manageAuctions": true, "manageLots": false, "manageUsers": true, "manageCatalogue": false, "viewAudit": false, "systemConfig": false }
+    "permissions": { "manageAuctions": true, "manageLots": false, "manageUsers": true, "manageCatalogue": false, "viewAudit": false, "systemConfig": false },
+    "scoped": {
+      "pipeline":   { "level": "view", "metals": "All", "region": "All",    "ceiling": 0 },
+      "entities":   { "level": "hidden", "metals": "All", "region": "All",  "ceiling": 0 },
+      "lots":       { "level": "view", "metals": "All", "region": "All",    "ceiling": 0 },
+      "auctions":   { "level": "hidden", "metals": "All", "region": "All",  "ceiling": 0 },
+      "settlement": { "level": "act",  "metals": "All", "region": "Mumbai", "ceiling": 5000000 },
+      "logistics":  { "level": "act",  "metals": "All", "region": "Mumbai", "ceiling": 0 },
+      "handover":   { "level": "act",  "metals": "All", "region": "Mumbai", "ceiling": 0 },
+      "monitor":    { "level": "view", "metals": "All", "region": "All",    "ceiling": 0 },
+      "users":      { "level": "hidden", "metals": "All", "region": "All",  "ceiling": 0 }
+    }
   }
 ]

@@ -5,9 +5,11 @@ import {
   Package, Truck, BadgeCheck, ClipboardCheck, CalendarClock, Banknote, Handshake,
   Users, Settings, ScrollText, Megaphone, Store, KanbanSquare, LogOut, UserCircle2,
   CheckCircle2, AlertCircle, Info, TrendingUp, Radio, FilePlus2, Trophy, ShieldCheck,
+  ShieldQuestion, TowerControl, ShieldAlert, ReceiptIndianRupee, Database,
 } from 'lucide-react';
 import { useApp, PERSONAS } from '../store';
-import type { Role } from '../types';
+import { DEMO_SUB_ADMIN_ID } from '../permissions';
+import type { Role, ScopedPermissions } from '../types';
 import { cx, agoLabel, inrCompact } from '../utils';
 import { Badge, ThemeToggle } from './ui';
 
@@ -28,7 +30,9 @@ const ROLE_TONE: Record<Role, string> = {
 
 interface NavItem { to: string; label: string; icon: React.ReactNode; badge?: number }
 
-function navFor(role: Role, counts: { execQueue: number; liveCount: number }): { section: string; items: NavItem[] }[] {
+interface NavCounts { execQueue: number; liveCount: number; approvalsPending: number; subPerms?: ScopedPermissions }
+
+function navFor(role: Role, counts: NavCounts): { section: string; items: NavItem[] }[] {
   const live = counts.liveCount;
   switch (role) {
     case 'guest':
@@ -97,19 +101,46 @@ function navFor(role: Role, counts: { execQueue: number; liveCount: number }): {
             { to: '/exec/settlement', label: 'Settlement', icon: <Banknote size={17} /> },
             { to: '/exec/logistics', label: 'Logistics', icon: <Truck size={17} /> },
             { to: '/exec/handover', label: 'Handover', icon: <Handshake size={17} /> },
+          ],
+        },
+        {
+          section: 'Governance',
+          items: [
+            { to: '/exec/approvals', label: 'Approvals', icon: <ShieldQuestion size={17} />, badge: counts.approvalsPending },
             { to: '/noticeboard', label: 'Noticeboard', icon: <Megaphone size={17} /> },
           ],
         },
       ];
-    case 'subadmin':
-      return [{
-        section: 'Operations',
-        items: [
-          { to: '/sub', label: 'Ops Console', icon: <LayoutDashboard size={17} /> },
-          { to: '/sub/audit', label: 'Audit Log', icon: <ScrollText size={17} /> },
-          { to: '/noticeboard', label: 'Noticeboard', icon: <Megaphone size={17} /> },
-        ],
-      }];
+    case 'subadmin': {
+      // inherited Exec modules appear only when the scoped grant isn't `hidden` (WBS v3.1 §5.2)
+      const p: ScopedPermissions = counts.subPerms ?? {};
+      const show = (k: string) => p[k] && p[k].level !== 'hidden';
+      const pipeline: NavItem[] = [
+        show('pipeline') && { to: '/sub/pipeline', label: 'Pipeline Board', icon: <KanbanSquare size={17} /> },
+        show('entities') && { to: '/sub/entities', label: 'Entity Verification', icon: <BadgeCheck size={17} />, badge: counts.execQueue },
+        show('lots') && { to: '/sub/lots', label: 'Lot Verification', icon: <ClipboardCheck size={17} /> },
+        show('auctions') && { to: '/sub/auctions', label: 'Auction Setup', icon: <CalendarClock size={17} /> },
+      ].filter(Boolean) as NavItem[];
+      const fulfilment: NavItem[] = [
+        show('settlement') && { to: '/sub/settlement', label: 'Settlement', icon: <Banknote size={17} /> },
+        show('logistics') && { to: '/sub/logistics', label: 'Logistics', icon: <Truck size={17} /> },
+        show('handover') && { to: '/sub/handover', label: 'Handover', icon: <Handshake size={17} /> },
+      ].filter(Boolean) as NavItem[];
+      return [
+        {
+          section: 'Operations',
+          items: [
+            { to: '/sub', label: 'Ops Console', icon: <LayoutDashboard size={17} /> },
+            { to: '/sub/approvals', label: 'Approvals', icon: <ShieldQuestion size={17} />, badge: counts.approvalsPending },
+            ...(show('monitor') ? [{ to: '/sub/monitor', label: 'Bid Monitor', icon: <Radio size={17} />, badge: live }] : []),
+            { to: '/sub/audit', label: 'Audit Log', icon: <ScrollText size={17} /> },
+          ],
+        },
+        ...(pipeline.length ? [{ section: 'Pipeline', items: pipeline }] : []),
+        ...(fulfilment.length ? [{ section: 'Fulfilment', items: fulfilment }] : []),
+        { section: 'General', items: [{ to: '/noticeboard', label: 'Noticeboard', icon: <Megaphone size={17} /> }] },
+      ];
+    }
     case 'superadmin':
       return [
         {
@@ -117,13 +148,23 @@ function navFor(role: Role, counts: { execQueue: number; liveCount: number }): {
           items: [
             { to: '/admin', label: 'Dashboard', icon: <LayoutDashboard size={17} /> },
             { to: '/admin/team', label: 'Admins & Permissions', icon: <ShieldCheck size={17} /> },
+            { to: '/admin/approvals', label: 'Approvals', icon: <ShieldQuestion size={17} />, badge: counts.approvalsPending },
             { to: '/admin/users', label: 'User Management', icon: <Users size={17} /> },
+          ],
+        },
+        {
+          section: 'Oversight',
+          items: [
+            { to: '/admin/control', label: 'Control Tower', icon: <TowerControl size={17} />, badge: live },
+            { to: '/admin/blacklist', label: 'Blacklist & Defaulters', icon: <ShieldAlert size={17} /> },
           ],
         },
         {
           section: 'Platform',
           items: [
             { to: '/admin/config', label: 'System Config', icon: <Settings size={17} /> },
+            { to: '/admin/financial', label: 'Financial Config', icon: <ReceiptIndianRupee size={17} /> },
+            { to: '/admin/masterdata', label: 'Master Data', icon: <Database size={17} /> },
             { to: '/admin/audit', label: 'Audit Trail', icon: <ScrollText size={17} /> },
             { to: '/noticeboard', label: 'Noticeboard', icon: <Megaphone size={17} /> },
           ],
@@ -269,7 +310,7 @@ function ToastHost() {
 }
 
 export default function AppShell() {
-  const { role, wallet, tick, entityRequests, auctions, logout, authenticated } = useApp();
+  const { role, wallet, tick, entityRequests, auctions, logout, authenticated, approvals, admins } = useApp();
   const [drawer, setDrawer] = useState(false);
   const nav = useNavigate();
   const loc = useLocation();
@@ -294,9 +335,11 @@ export default function AppShell() {
     if (want && role !== want) useApp.getState().switchRole(want);
   }, [loc.pathname, role]);
 
-  const counts = {
+  const counts: NavCounts = {
     execQueue: entityRequests.filter((r) => r.status === 'pending').length,
     liveCount: auctions.filter((a) => a.status === 'live').length,
+    approvalsPending: approvals.filter((a) => a.status === 'pending').length,
+    subPerms: admins.find((a) => a.id === DEMO_SUB_ADMIN_ID)?.scoped,
   };
   const sections = navFor(role, counts);
 

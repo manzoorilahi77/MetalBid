@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ClipboardCheck, CheckCircle2, XCircle, Flag, PlayCircle } from 'lucide-react';
 import { useApp } from '../../store';
 import { SectionTitle, Card, Btn, Modal, Field, inputCls, CheckItem, FileDrop, StatusBadge, Empty, LotImage, Badge } from '../../components/ui';
+import { GatedBtn, ScopeBadge } from '../../components/gate';
 import { inrCompact } from '../../utils';
 
 const CHECKS = ['Quality matches description', 'Quantity verified on site', 'Condition acceptable', 'Images authentic'];
@@ -33,7 +34,7 @@ export default function LotVerification() {
 
   return (
     <div>
-      <SectionTitle title="Lot Verification" sub="Inspect submitted lots before they can be auctioned" />
+      <SectionTitle title="Lot Verification" sub="Inspect submitted lots before they can be auctioned" right={<ScopeBadge module="lots" />} />
       {queue.length === 0 && <Empty title="No lots awaiting verification" sub="Seller submissions land here." />}
       <div className="space-y-3">
         {queue.map((l) => {
@@ -85,9 +86,16 @@ export default function LotVerification() {
                 </Field>
               </div>
               <div className="mt-4 grid grid-cols-3 gap-2">
-                <Btn variant="success" size="sm" disabled={!allChecked || !report} onClick={() => decide('verified')}><CheckCircle2 size={13} /> Verify</Btn>
-                <Btn variant="outline" size="sm" onClick={() => decide('flagged')}><Flag size={13} /> Flag</Btn>
-                <Btn variant="danger" size="sm" onClick={() => decide('rejected')}><XCircle size={13} /> Reject</Btn>
+                <GatedBtn module="lots" value={lot.basePrice} variant="success" size="sm" disabled={!allChecked || !report} onAllowed={() => decide('verified')}>
+                  <CheckCircle2 size={13} /> Verify
+                </GatedBtn>
+                <GatedBtn module="lots" value={lot.basePrice} variant="outline" size="sm" onAllowed={() => decide('flagged')}>
+                  <Flag size={13} /> Flag
+                </GatedBtn>
+                <GatedBtn module="lots" risky value={lot.basePrice} variant="danger" size="sm" onAllowed={() => decide('rejected')}
+                  approval={{ type: 'lot_reject', title: `Lot rejection — ${lot.id}`, detail: note || `${lot.title} failed inspection.`, refId: lot.id, payload: { checklist: checks } }}>
+                  <XCircle size={13} /> Reject
+                </GatedBtn>
               </div>
               {(!allChecked || !report) && <p className="mt-2 text-[11px] text-faint">To verify: pass all 4 checks and upload the report. Flag keeps it in the queue; reject returns it to the seller.</p>}
               <Badge tone="bg-emerald-50 dark:bg-emerald-400/10 text-emerald-700 dark:text-emerald-300 ring-emerald-200 dark:ring-emerald-400/25" className="mt-3">Verified lots move straight to Auction Setup</Badge>

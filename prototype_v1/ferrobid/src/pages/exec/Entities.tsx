@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { FileText, CheckCircle2, XCircle, RotateCcw, Building2 } from 'lucide-react';
 import { useApp } from '../../store';
 import { SectionTitle, Card, Badge, Btn, Modal, Field, inputCls, Tabs, Empty } from '../../components/ui';
+import { GatedBtn, ScopeBadge, useGate } from '../../components/gate';
 
 const STATUS_TONE: Record<string, string> = {
   pending: 'bg-amber-50 dark:bg-amber-400/10 text-amber-700 dark:text-amber-300 ring-amber-200 dark:ring-amber-400/25',
@@ -26,9 +27,11 @@ export default function Entities() {
     setNote('');
   };
 
+  const gate = useGate('entities');
+
   return (
     <div>
-      <SectionTitle title="Entity / Seller Verification" sub="Approve a buyer's entity to unlock their Seller capability" />
+      <SectionTitle title="Entity / Seller Verification" sub="Approve a buyer's entity to unlock their Seller capability" right={<ScopeBadge module="entities" />} />
       <Tabs active={tab} onChange={setTab} tabs={[
         { key: 'pending', label: `Queue (${entityRequests.filter((r) => r.status === 'pending').length})` },
         { key: 'done', label: 'Processed' },
@@ -84,11 +87,23 @@ export default function Entities() {
                     <textarea className={inputCls} rows={2} value={note} onChange={(e) => setNote(e.target.value)} placeholder="e.g. All documents verified." />
                   </Field>
                   <div className="mt-3 grid grid-cols-3 gap-2">
-                    <Btn variant="success" size="sm" onClick={() => decide('approved')}><CheckCircle2 size={13} /> Approve</Btn>
-                    <Btn variant="outline" size="sm" onClick={() => decide('returned')}><RotateCcw size={13} /> Return</Btn>
-                    <Btn variant="danger" size="sm" onClick={() => decide('rejected')}><XCircle size={13} /> Reject</Btn>
+                    <GatedBtn module="entities" risky variant="success" size="sm" onAllowed={() => decide('approved')}
+                      approval={{ type: 'entity_approve', title: `Entity approval — ${req.businessName}`, detail: note || 'Documents reviewed by Sub-Admin; recommending approval.', refId: req.id }}>
+                      <CheckCircle2 size={13} /> Approve
+                    </GatedBtn>
+                    <GatedBtn module="entities" variant="outline" size="sm" onAllowed={() => decide('returned')}>
+                      <RotateCcw size={13} /> Return
+                    </GatedBtn>
+                    <GatedBtn module="entities" risky variant="danger" size="sm" onAllowed={() => decide('rejected')}
+                      approval={{ type: 'entity_reject', title: `Entity rejection — ${req.businessName}`, detail: note || 'Documents failed verification checks.', refId: req.id }}>
+                      <XCircle size={13} /> Reject
+                    </GatedBtn>
                   </div>
-                  <p className="mt-2 text-[11px] text-faint">Approving unlocks the Seller capability on the applicant's account and notifies them.</p>
+                  <p className="mt-2 text-[11px] text-faint">
+                    {gate.scopedRole && !gate.canApprove
+                      ? 'Your grant: review & recommend. Approve/Reject raise a maker-checker request; Return for corrections executes directly.'
+                      : "Approving unlocks the Seller capability on the applicant's account and notifies them."}
+                  </p>
                 </div>
               )}
             </div>

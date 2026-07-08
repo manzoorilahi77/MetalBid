@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { CalendarClock, Rocket, Timer, Radio } from 'lucide-react';
 import { useApp } from '../../store';
 import { SectionTitle, Card, Btn, Modal, Field, inputCls, Empty, LotImage, Badge, StatusBadge } from '../../components/ui';
+import { GatedBtn, ScopeBadge } from '../../components/gate';
 import { inr, inrCompact, timeLeft, dateTime } from '../../utils';
 
 export default function AuctionSetup() {
@@ -9,7 +10,7 @@ export default function AuctionSetup() {
   const [openId, setOpenId] = useState<string | null>(null);
   const [f, setF] = useState({ startsInMin: '60', durationMin: '120', increment: '5000', reserve: '', emd: '' });
   const approved = lots.filter((l) => l.status === 'approved');
-  const upcoming = auctions.filter((a) => a.status !== 'closed').map((a) => ({ a, lot: lots.find((l) => l.id === a.lotId)! }));
+  const upcoming = auctions.filter((a) => a.status === 'scheduled' || a.status === 'live' || a.status === 'paused').map((a) => ({ a, lot: lots.find((l) => l.id === a.lotId)! }));
   const lot = lots.find((l) => l.id === openId);
 
   const open = (id: string) => {
@@ -28,7 +29,7 @@ export default function AuctionSetup() {
 
   return (
     <div>
-      <SectionTitle title="Auction Creation & Scheduling" sub="Turn approved lots into scheduled or instantly-live auctions" />
+      <SectionTitle title="Auction Creation & Scheduling" sub="Turn approved lots into scheduled or instantly-live auctions" right={<ScopeBadge module="auctions" />} />
 
       <h2 className="mb-2 text-sm font-bold text-ink">Approved lots ready for auction ({approved.length})</h2>
       {approved.length === 0 && <Empty title="No approved lots waiting" sub="Verify lots first — they'll queue here for auction setup." />}
@@ -109,9 +110,19 @@ export default function AuctionSetup() {
             <div className="rounded-xl bg-steel-500/10 px-4 py-3 text-xs text-steel-800 dark:text-steel-200 ring-1 ring-steel-200 dark:ring-steel-400/25">
               Late bids within the last <b>60s</b> auto-extend the auction by <b>2 min</b> (max 5 extensions) — per platform config.
             </div>
-            <Btn variant="accent" size="lg" className="w-full" disabled={!Number(f.durationMin) || !Number(f.reserve)} onClick={publish}>
+            <GatedBtn
+              module="auctions" value={Number(f.reserve) || lot.reservePrice} variant="accent" size="lg" className="w-full"
+              disabled={!Number(f.durationMin) || !Number(f.reserve)} onAllowed={publish}
+              approval={{
+                type: 'auction_publish',
+                title: `Auction publish — ${lot.id} (over ceiling)`,
+                detail: `${lot.title} at reserve ${inr(Number(f.reserve) || lot.reservePrice)} exceeds the Sub-Admin's ₹ ceiling. Approving publishes with the proposed schedule.`,
+                refId: lot.id,
+                payload: { startsInMin: Number(f.startsInMin), durationMin: Number(f.durationMin), increment: Number(f.increment), reserve: Number(f.reserve), emd: Number(f.emd) },
+              }}
+            >
               <CalendarClock size={16} /> {Number(f.startsInMin) === 0 ? 'Publish live now' : `Schedule (starts in ${f.startsInMin} min)`}
-            </Btn>
+            </GatedBtn>
             <p className="text-center text-[11px] text-faint">Tip: set “Starts in” to 0 and a short duration to demo a full live auction quickly.</p>
           </div>
         )}

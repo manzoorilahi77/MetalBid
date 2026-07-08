@@ -28,7 +28,14 @@ import Team from './pages/admin/Team';
 import UsersPage from './pages/admin/UsersPage';
 import Config from './pages/admin/Config';
 import Audit from './pages/admin/Audit';
+import ControlTower from './pages/admin/ControlTower';
+import Blacklist from './pages/admin/Blacklist';
+import Financial from './pages/admin/Financial';
+import MasterData from './pages/admin/MasterData';
 import SubConsole from './pages/sub/Console';
+import BidMonitor from './pages/sub/BidMonitor';
+import Approvals from './pages/shared/Approvals';
+import { ModuleGate } from './components/gate';
 
 export default function App() {
   return (
@@ -66,17 +73,32 @@ export default function App() {
           <Route path="/exec/settlement" element={<Settlement />} />
           <Route path="/exec/logistics" element={<Logistics />} />
           <Route path="/exec/handover" element={<Handover />} />
+          <Route path="/exec/approvals" element={<Approvals />} />
 
           {/* super admin */}
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/team" element={<Team />} />
           <Route path="/admin/users" element={<UsersPage />} />
+          <Route path="/admin/approvals" element={<Approvals />} />
+          <Route path="/admin/control" element={<ControlTower />} />
+          <Route path="/admin/blacklist" element={<Blacklist />} />
           <Route path="/admin/config" element={<Config />} />
+          <Route path="/admin/financial" element={<Financial />} />
+          <Route path="/admin/masterdata" element={<MasterData />} />
           <Route path="/admin/audit" element={<Audit />} />
 
-          {/* sub-admin */}
+          {/* sub-admin — own console + inherited Exec modules, permission-gated */}
           <Route path="/sub" element={<SubConsole />} />
+          <Route path="/sub/approvals" element={<Approvals />} />
+          <Route path="/sub/monitor" element={<BidMonitor />} />
           <Route path="/sub/audit" element={<Audit subAdminView />} />
+          <Route path="/sub/pipeline" element={<ModuleGate module="pipeline" label="Pipeline Board"><Pipeline /></ModuleGate>} />
+          <Route path="/sub/entities" element={<ModuleGate module="entities" label="Entity Verification"><Entities /></ModuleGate>} />
+          <Route path="/sub/lots" element={<ModuleGate module="lots" label="Lot Verification"><LotVerification /></ModuleGate>} />
+          <Route path="/sub/auctions" element={<ModuleGate module="auctions" label="Auction Setup"><AuctionSetup /></ModuleGate>} />
+          <Route path="/sub/settlement" element={<ModuleGate module="settlement" label="Settlement"><Settlement /></ModuleGate>} />
+          <Route path="/sub/logistics" element={<ModuleGate module="logistics" label="Logistics"><Logistics /></ModuleGate>} />
+          <Route path="/sub/handover" element={<ModuleGate module="handover" label="Handover"><Handover /></ModuleGate>} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />
