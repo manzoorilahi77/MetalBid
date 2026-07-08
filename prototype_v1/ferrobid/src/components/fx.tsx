@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { CONFETTI_COLORS } from '../constants/theme';
 import { cx } from '../utils';
 
@@ -112,7 +113,8 @@ export function Confetti({ count = 60 }: { count?: number }) {
       round: Math.random() > 0.5,
     }))
   );
-  return (
+  // portal to <body> so ancestor transforms can't confine the fixed overlay
+  return createPortal(
     <div className="pointer-events-none fixed inset-0 z-[70] overflow-hidden">
       {pieces.current.map((p, i) => (
         <span
@@ -129,6 +131,7 @@ export function Confetti({ count = 60 }: { count?: number }) {
           }}
         />
       ))}
-    </div>
+    </div>,
+    document.body
   );
 }

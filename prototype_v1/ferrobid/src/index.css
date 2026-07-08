@@ -143,7 +143,9 @@ h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.01em; }
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
-.animate-page-in { animation: page-in 0.32s cubic-bezier(0.21, 1.02, 0.73, 1) both; }
+/* no fill-mode: a retained end-state transform would make the page wrapper the
+   containing block for position:fixed descendants (modals, overlays) */
+.animate-page-in { animation: page-in 0.32s cubic-bezier(0.21, 1.02, 0.73, 1); }
 
 @keyframes reveal-up {
   from { opacity: 0; transform: translateY(22px); }

@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { X, UploadCloud, FileCheck2, Inbox, Check, Sun, Moon } from 'lucide-react';
 import type { LotStatus } from '../types';
 import { STATUS_LABEL, STATUS_TONE, LIFECYCLE_ORDER, stageIndex } from '../lifecycle';
@@ -103,7 +104,9 @@ export function Stat({ label, value, hint, icon, accent }: { label: string; valu
 /* ---------- Modal ---------- */
 export function Modal({ open, onClose, title, children, wide }: { open: boolean; onClose: () => void; title: string; children: ReactNode; wide?: boolean }) {
   if (!open) return null;
-  return (
+  // portal to <body>: ancestor transforms (e.g. page-in animation) would otherwise
+  // turn `fixed` into container-relative positioning and clip the dialog
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-steel-950/50 backdrop-blur-[2px]" onClick={onClose} />
       <div className={cx('relative w-full rounded-2xl bg-surface shadow-2xl max-h-[90vh] overflow-y-auto thin-scroll animate-toast-in', wide ? 'max-w-3xl' : 'max-w-lg')}>
@@ -113,7 +116,8 @@ export function Modal({ open, onClose, title, children, wide }: { open: boolean;
         </div>
         <div className="p-5">{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
