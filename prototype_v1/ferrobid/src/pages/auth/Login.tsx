@@ -36,7 +36,7 @@ export default function Login() {
           <div className="text-2xl font-extrabold text-white">ferro<span className="text-ember-500">Bid</span></div>
         </button>
 
-        <div className="rounded-3xl bg-white p-7 shadow-2xl">
+        <div className="animate-toast-in rounded-3xl bg-white p-7 shadow-2xl">
           <div className="mb-5 flex rounded-xl bg-slate-100 p-1">
             {(['register', 'login'] as const).map((m) => (
               <button key={m} onClick={() => setMode(m)}

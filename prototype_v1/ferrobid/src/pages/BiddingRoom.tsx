@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Gavel, Timer, Zap, Users, TrendingUp, Bot, Crown } from 'lucide-react';
 import { useApp, DEMO_USER_ID } from '../store';
 import { Card, Badge, Btn, Modal, Field, inputCls, LotImage, Toggle } from '../components/ui';
+import { AnimatedInr, FlipClock, Confetti } from '../components/fx';
 import { inr, inrCompact, timeLeft, clockTime, cx } from '../utils';
 
 export default function BiddingRoom() {
@@ -30,6 +31,7 @@ export default function BiddingRoom() {
 
   return (
     <div>
+      {closed && iAmLeading && <Confetti />}
       <button onClick={() => nav(`/lot/${lot.id}`)} className="mb-4 flex items-center gap-1.5 text-sm font-semibold text-slate-500 hover:text-steel-800 cursor-pointer">
         <ArrowLeft size={15} /> Lot details
       </button>
@@ -50,17 +52,26 @@ export default function BiddingRoom() {
             </div>
 
             <div className="grid gap-4 p-5 sm:grid-cols-3">
-              <div className="rounded-2xl bg-steel-950 p-4 text-center text-white sm:col-span-1">
+              <div className="relative overflow-hidden rounded-2xl bg-steel-950 p-4 text-center text-white sm:col-span-1">
+                {urgent && <div className="pointer-events-none absolute inset-0 bg-red-500/10 animate-pulse" />}
                 <div className="flex items-center justify-center gap-1 text-[10px] font-bold uppercase tracking-wider text-steel-300"><Timer size={11} /> Time left</div>
-                <div className={cx('font-mono text-3xl font-bold', urgent ? 'text-red-400 animate-pulse' : 'text-ember-400')}>
-                  {closed ? '00:00' : timeLeft(a.endsAt, now)}
+                <FlipClock
+                  text={closed ? '00:00' : timeLeft(a.endsAt, now)}
+                  className={cx('text-3xl font-bold', urgent ? 'text-red-400' : 'text-ember-400')}
+                />
+                {/* time progress */}
+                <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-white/10">
+                  <div
+                    className={cx('h-full rounded-full transition-all duration-1000', urgent ? 'bg-red-500' : 'bg-gradient-to-r from-ember-600 to-ember-400')}
+                    style={{ width: `${closed ? 0 : Math.max(0, Math.min(100, ((a.endsAt - now) / (a.endsAt - a.startsAt)) * 100))}%` }}
+                  />
                 </div>
-                {a.extensions > 0 && <div className="mt-1 text-[10px] font-semibold text-amber-300">⚡ auto-extended ×{a.extensions} (late bids)</div>}
-                {urgent && a.extensions === 0 && <div className="mt-1 text-[10px] text-steel-300">late bids extend by 2 min</div>}
+                {a.extensions > 0 && <div className="mt-1.5 text-[10px] font-semibold text-amber-300">⚡ auto-extended ×{a.extensions} (late bids)</div>}
+                {urgent && a.extensions === 0 && <div className="mt-1.5 text-[10px] text-steel-300">late bids extend by 2 min</div>}
               </div>
               <div className="text-center sm:col-span-2">
                 <div className="text-[10px] font-bold uppercase text-slate-400">Current highest</div>
-                <div className="text-4xl font-extrabold text-steel-950">{inr(a.currentBid)}</div>
+                <div className="font-display text-4xl font-bold text-steel-950"><AnimatedInr value={a.currentBid} /></div>
                 <div className={cx('mt-1 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold', iAmLeading ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500')}>
                   <Crown size={12} /> {iAmLeading ? "You're leading!" : a.leaderName ?? 'No bids yet'}
                 </div>
@@ -116,7 +127,7 @@ export default function BiddingRoom() {
             {ladder.map((b, i) => {
               const mine = b.bidderId === DEMO_USER_ID;
               return (
-                <div key={b.id} className={cx('mb-1 flex items-center gap-2.5 rounded-xl px-3 py-2', i === 0 && 'animate-bid-flash', mine ? 'bg-emerald-50 ring-1 ring-emerald-200' : 'bg-slate-50')}>
+                <div key={b.id} className={cx('mb-1 flex items-center gap-2.5 rounded-xl px-3 py-2', i === 0 && 'animate-bid-flash animate-ladder-in', mine ? 'bg-emerald-50 ring-1 ring-emerald-200' : 'bg-slate-50')}>
                   <div className={cx('flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[10px] font-bold', i === 0 ? 'bg-ember-500 text-white' : 'bg-slate-200 text-slate-500')}>
                     {i === 0 ? <Crown size={13} /> : ladder.length - i}
                   </div>

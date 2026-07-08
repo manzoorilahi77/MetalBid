@@ -374,7 +374,7 @@ export default function AppShell() {
           <RoleSwitcher />
         </header>
         <main className="flex-1 overflow-y-auto thin-scroll">
-          <div className="mx-auto max-w-7xl p-4 sm:p-6">
+          <div key={loc.pathname} className="animate-page-in mx-auto max-w-7xl p-4 sm:p-6">
             <Outlet />
           </div>
         </main>

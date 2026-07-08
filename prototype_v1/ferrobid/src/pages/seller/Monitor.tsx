@@ -1,6 +1,7 @@
 import { Radio, Users, Timer, Eye, Crown } from 'lucide-react';
 import { useApp } from '../../store';
 import { SectionTitle, Card, Badge, Empty, LotImage } from '../../components/ui';
+import { FlipClock } from '../../components/fx';
 import { inr, inrCompact, timeLeft, clockTime, cx } from '../../utils';
 
 const SELLER_ID = 'u-seller1';
@@ -48,7 +49,7 @@ export default function Monitor() {
                 </div>
                 <div className="p-3">
                   <div className="text-[10px] font-bold uppercase text-slate-400">Closes in</div>
-                  <div className="flex items-center justify-center gap-1 font-mono text-lg font-bold text-ember-600"><Timer size={14} /> {timeLeft(a.endsAt, now)}</div>
+                  <div className="flex items-center justify-center gap-1 text-lg font-bold text-ember-600"><Timer size={14} /> <FlipClock text={timeLeft(a.endsAt, now)} /></div>
                   {a.extensions > 0 && <div className="text-[10px] font-semibold text-amber-600">extended ×{a.extensions}</div>}
                 </div>
               </div>

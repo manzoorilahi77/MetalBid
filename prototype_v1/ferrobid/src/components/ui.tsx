@@ -13,9 +13,9 @@ export function Btn({
   size?: 'sm' | 'md' | 'lg'; type?: 'button' | 'submit';
 }) {
   const variants = {
-    primary: 'bg-steel-800 text-white hover:bg-steel-700 shadow-sm',
-    accent: 'bg-ember-600 text-white hover:bg-ember-500 shadow-sm',
-    outline: 'border border-slate-300 bg-white text-slate-700 hover:bg-slate-50',
+    primary: 'bg-steel-800 text-white hover:bg-steel-700 shadow-sm hover:shadow-md',
+    accent: 'bg-ember-600 text-white hover:bg-ember-500 shadow-sm hover:shadow-glow-ember',
+    outline: 'border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-400',
     ghost: 'text-slate-600 hover:bg-slate-100',
     danger: 'bg-red-600 text-white hover:bg-red-500 shadow-sm',
     success: 'bg-emerald-600 text-white hover:bg-emerald-500 shadow-sm',
@@ -25,7 +25,7 @@ export function Btn({
     <button
       type={type ?? 'button'} onClick={onClick} disabled={disabled}
       className={cx(
-        'inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-colors cursor-pointer',
+        'press inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-all duration-200 cursor-pointer',
         'disabled:opacity-40 disabled:cursor-not-allowed', variants[variant], sizes[size], className
       )}
     >
@@ -37,7 +37,7 @@ export function Btn({
 /* ---------- Card ---------- */
 export function Card({ children, className, onClick }: { children: ReactNode; className?: string; onClick?: () => void }) {
   return (
-    <div onClick={onClick} className={cx('rounded-xl bg-white shadow-sm ring-1 ring-slate-200', onClick && 'cursor-pointer hover:ring-steel-300 transition-shadow hover:shadow-md', className)}>
+    <div onClick={onClick} className={cx('rounded-xl bg-white ring-1 ring-slate-200 shadow-soft', onClick && 'lift cursor-pointer hover:ring-steel-300', className)}>
       {children}
     </div>
   );
@@ -192,33 +192,59 @@ export function LifecycleTracker({ status, compact }: { status: LotStatus; compa
   const stages = compact
     ? (['submitted', 'under_verification', 'approved', 'live', 'won', 'in_settlement', 'in_logistics', 'closed'] as LotStatus[])
     : LIFECYCLE_ORDER;
+
+  const meta = stages.map((s, i) => {
+    const si = stageIndex(s);
+    const rejected = status === 'rejected' && s === 'under_verification';
+    return {
+      s, i,
+      done: !rejected && (idx > si || status === 'closed'),
+      current: !rejected && si === idx && status !== 'closed',
+      rejected,
+    };
+  });
+  const n = stages.length;
+  const activeIdx = meta.reduce((acc, m, i) => (m.done || m.current || m.rejected ? i : acc), -1);
+  const centerPct = n > 1 ? 50 / n : 50; // horizontal % offset of the first/last circle centre from the container edge
+  const fillPct = (Math.max(activeIdx, 0) / n) * 100;
+  const isRejected = status === 'rejected';
+
   return (
-    <div className="flex items-center gap-0 overflow-x-auto thin-scroll py-1">
-      {stages.map((s, i) => {
-        const si = stageIndex(s);
-        const done = idx > si || status === 'closed';
-        const current = si === idx && status !== 'closed';
-        const rejected = status === 'rejected' && s === 'under_verification';
-        return (
-          <div key={s} className="flex items-center shrink-0">
-            {i > 0 && <div className={cx('h-0.5 w-5 sm:w-7', done || current ? 'bg-steel-600' : 'bg-slate-200')} />}
-            <div className="flex flex-col items-center gap-1 px-0.5">
-              <div className={cx(
-                'flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold ring-2',
-                rejected ? 'bg-red-500 text-white ring-red-200'
-                  : done ? 'bg-steel-700 text-white ring-steel-200'
-                  : current ? 'bg-ember-500 text-white ring-ember-200 animate-pulse-ring'
-                  : 'bg-white text-slate-400 ring-slate-200'
-              )}>
-                {done ? <Check size={12} strokeWidth={3} /> : i + 1}
+    <div className="overflow-x-auto thin-scroll py-1">
+      <div className="relative min-w-max sm:min-w-0">
+        <div className="absolute top-4 h-0.5 rounded-full bg-slate-200" style={{ left: `${centerPct}%`, right: `${centerPct}%` }} />
+        <div
+          className={cx(
+            'absolute top-4 h-0.5 rounded-full transition-[width] duration-500 ease-out',
+            isRejected ? 'bg-red-400' : 'bg-steel-600'
+          )}
+          style={{ left: `${centerPct}%`, width: `${fillPct}%` }}
+        />
+        <div className="relative flex items-start justify-between">
+          {meta.map(({ s, i, done, current, rejected }) => (
+            <div key={s} className="flex flex-1 flex-col items-center gap-1.5">
+              <div
+                title={rejected ? 'Rejected' : STATUS_LABEL[s]}
+                className={cx(
+                  'relative z-10 flex h-8 w-8 items-center justify-center rounded-full text-[11px] font-bold ring-[3px] transition-all duration-300',
+                  rejected ? 'bg-red-500 text-white ring-white'
+                    : done ? 'bg-steel-700 text-white ring-white'
+                    : current ? 'bg-ember-500 text-white ring-white shadow-[0_0_0_5px_rgba(254,97,16,0.16)] animate-pulse-ring'
+                    : 'bg-white text-slate-400 ring-slate-200'
+                )}
+              >
+                {rejected ? <X size={14} strokeWidth={3} /> : done ? <Check size={14} strokeWidth={3} /> : i + 1}
               </div>
-              <span className={cx('text-[9px] font-semibold uppercase tracking-wide whitespace-nowrap', current ? 'text-ember-600' : done ? 'text-steel-700' : 'text-slate-400')}>
+              <span className={cx(
+                'max-w-[4.75rem] text-center text-[10px] font-semibold uppercase leading-tight tracking-wide text-balance',
+                rejected ? 'text-red-600' : current ? 'text-ember-600' : done ? 'text-steel-700' : 'text-slate-400'
+              )}>
                 {rejected ? 'Rejected' : STATUS_LABEL[s]}
               </span>
             </div>
-          </div>
-        );
-      })}
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

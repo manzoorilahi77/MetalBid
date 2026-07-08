@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Search, Timer, MapPin, Lock } from 'lucide-react';
 import { useApp } from '../store';
 import { SectionTitle, Card, Badge, LotImage, Tabs, Empty, StatusBadge } from '../components/ui';
+import { Reveal, FlipClock } from '../components/fx';
 import { inrCompact, timeLeft, clockTime } from '../utils';
 
 export default function Browse() {
@@ -58,9 +59,12 @@ export default function Browse() {
       {rows.length === 0 && <Empty title="No lots match your filters" sub="Try a different tab, metal type or search term." />}
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        {rows.map(({ a, lot }) => (
-          <Card key={a.id} onClick={() => nav(`/lot/${lot.id}`)} className="overflow-hidden">
-            <LotImage hues={lot.imageHues} label={lot.metal} className="h-36 w-full" />
+        {rows.map(({ a, lot }, idx) => (
+          <Reveal key={a.id} delay={Math.min(idx, 8) * 60}>
+          <Card onClick={() => nav(`/lot/${lot.id}`)} className="group overflow-hidden">
+            <div className="overflow-hidden">
+              <LotImage hues={lot.imageHues} label={lot.metal} className="h-36 w-full transition-transform duration-500 group-hover:scale-[1.05]" />
+            </div>
             <div className="p-4">
               <div className="flex items-start justify-between gap-2">
                 <div>
@@ -78,12 +82,13 @@ export default function Browse() {
                   <div className="text-[10px] font-bold uppercase text-slate-400">{a.status === 'scheduled' ? 'Start price' : a.status === 'closed' ? 'Final bid' : 'Current bid'}</div>
                   <div className="text-lg font-extrabold text-steel-900">{inrCompact(a.currentBid)}</div>
                 </div>
-                {a.status === 'live' && <Badge tone="bg-ember-50 text-ember-700 ring-ember-200"><Timer size={11} /> {timeLeft(a.endsAt, now)}</Badge>}
+                {a.status === 'live' && <Badge tone="bg-ember-50 text-ember-700 ring-ember-200"><Timer size={11} /> <FlipClock text={timeLeft(a.endsAt, now)} /></Badge>}
                 {a.status === 'scheduled' && <Badge tone="bg-indigo-50 text-indigo-700 ring-indigo-200">Starts {clockTime(a.startsAt)}</Badge>}
                 {a.status === 'closed' && a.leaderName && <Badge tone="bg-emerald-50 text-emerald-700 ring-emerald-200">Won · {a.leaderName.split(' ')[0]}</Badge>}
               </div>
             </div>
           </Card>
+          </Reveal>
         ))}
       </div>
     </div>

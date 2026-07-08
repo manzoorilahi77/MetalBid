@@ -2,6 +2,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, MapPin, Timer, Lock, ShieldCheck, Gavel, FileText } from 'lucide-react';
 import { useApp } from '../store';
 import { Card, Badge, StatusBadge, LotImage, LifecycleTracker, Btn } from '../components/ui';
+import { AnimatedInr, FlipClock } from '../components/fx';
 import { inr, inrCompact, timeLeft, dateTime } from '../utils';
 
 export default function LotDetail() {
@@ -87,12 +88,15 @@ export default function LotDetail() {
                   </div>
                   <div className="mt-4 text-center">
                     <div className="text-[10px] font-bold uppercase text-slate-400">Current highest bid</div>
-                    <div className="text-3xl font-extrabold text-steel-950">{inr(auction.currentBid)}</div>
+                    <div className="font-display text-3xl font-bold text-steel-950"><AnimatedInr value={auction.currentBid} /></div>
                     <div className="mt-1 text-xs text-slate-400">by {auction.leaderName ?? '—'} · {auction.bidderCount} bidders</div>
                   </div>
                   <div className="mt-4 rounded-xl bg-steel-950 px-4 py-3 text-center text-white">
                     <div className="text-[10px] font-bold uppercase tracking-wider text-steel-300 flex items-center justify-center gap-1"><Timer size={11} /> Closes in</div>
-                    <div className="font-mono text-2xl font-bold text-ember-400">{timeLeft(auction.endsAt, now)}</div>
+                    <FlipClock text={timeLeft(auction.endsAt, now)} className="text-2xl font-bold text-ember-400" />
+                    <div className="mt-2 h-1 overflow-hidden rounded-full bg-white/10">
+                      <div className="h-full rounded-full bg-gradient-to-r from-ember-600 to-ember-400 transition-all duration-1000" style={{ width: `${Math.max(0, Math.min(100, ((auction.endsAt - now) / (auction.endsAt - auction.startsAt)) * 100))}%` }} />
+                    </div>
                   </div>
 
                   {role === 'guest' && (
