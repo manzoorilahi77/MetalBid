@@ -21,9 +21,9 @@ export default function Results() {
     <div>
       <SectionTitle title="Results & Reports" sub="Auction outcomes for your lots" />
       <div className="grid gap-3 sm:grid-cols-3">
-        <Stat label="Auctions completed" value={rows.length} icon={<Trophy size={18} />} accent="bg-steel-50 text-steel-700" />
-        <Stat label="Total realised" value={inrCompact(total)} icon={<TrendingUp size={18} />} accent="bg-emerald-50 text-emerald-600" />
-        <Stat label="Avg. uplift over start" value={`${avgUplift}%`} hint="Competitive bidding premium" icon={<TrendingUp size={18} />} accent="bg-ember-50 text-ember-600" />
+        <Stat label="Auctions completed" value={rows.length} icon={<Trophy size={18} />} accent="bg-steel-500/10 text-steel-700 dark:text-steel-300" />
+        <Stat label="Total realised" value={inrCompact(total)} icon={<TrendingUp size={18} />} accent="bg-emerald-50 dark:bg-emerald-400/10 text-emerald-600 dark:text-emerald-400" />
+        <Stat label="Avg. uplift over start" value={`${avgUplift}%`} hint="Competitive bidding premium" icon={<TrendingUp size={18} />} accent="bg-ember-50 dark:bg-ember-400/10 text-ember-600 dark:text-ember-400" />
       </div>
 
       {rows.length === 0 && <div className="mt-5"><Empty title="No completed auctions yet" /></div>}
@@ -36,19 +36,19 @@ export default function Results() {
               <div className="flex flex-wrap items-center gap-4">
                 <LotImage hues={lot.imageHues} className="h-14 w-20 rounded-lg shrink-0" />
                 <div className="min-w-0 flex-1">
-                  <div className="text-[11px] font-bold text-slate-400">{lot.id} · {a.id}</div>
-                  <div className="truncate text-sm font-bold text-steel-950">{lot.title}</div>
+                  <div className="text-[11px] font-bold text-faint">{lot.id} · {a.id}</div>
+                  <div className="truncate text-sm font-bold text-ink">{lot.title}</div>
                   <div className="mt-1 flex flex-wrap gap-2">
                     {a.leaderId
-                      ? <Badge tone="bg-emerald-50 text-emerald-700 ring-emerald-200"><Trophy size={11} /> Sold to {a.leaderName}</Badge>
-                      : <Badge tone="bg-red-50 text-red-600 ring-red-200">Reserve not met</Badge>}
-                    <Badge tone="bg-slate-100 text-slate-500 ring-slate-300">{bidCount || a.bidderCount} bids · {a.bidderCount} bidders</Badge>
+                      ? <Badge tone="bg-emerald-50 dark:bg-emerald-400/10 text-emerald-700 dark:text-emerald-300 ring-emerald-200 dark:ring-emerald-400/25"><Trophy size={11} /> Sold to {a.leaderName}</Badge>
+                      : <Badge tone="bg-red-50 dark:bg-red-400/10 text-red-600 dark:text-red-400 ring-red-200 dark:ring-red-400/25">Reserve not met</Badge>}
+                    <Badge tone="bg-surface-3 text-muted ring-line-strong">{bidCount || a.bidderCount} bids · {a.bidderCount} bidders</Badge>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-[10px] font-bold uppercase text-slate-400">Final price</div>
-                  <div className="text-lg font-extrabold text-steel-950">{inr(a.currentBid)}</div>
-                  <div className="text-[11px] font-semibold text-emerald-600">+{Math.round(((a.currentBid - a.startPrice) / a.startPrice) * 100)}% vs start</div>
+                  <div className="text-[10px] font-bold uppercase text-faint">Final price</div>
+                  <div className="text-lg font-extrabold text-ink">{inr(a.currentBid)}</div>
+                  <div className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">+{Math.round(((a.currentBid - a.startPrice) / a.startPrice) * 100)}% vs start</div>
                 </div>
                 <Btn size="sm" variant="outline" onClick={() => pushToast({ title: 'Report downloaded', body: `auction-report-${a.id}.pdf (mock)`, tone: 'success' })}>
                   <Download size={13} /> Report

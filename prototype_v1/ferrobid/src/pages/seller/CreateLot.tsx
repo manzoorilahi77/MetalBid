@@ -78,7 +78,7 @@ export default function CreateLot() {
           </div>
 
           <div className="mt-6">
-            <div className="mb-2 text-xs font-semibold text-slate-600">Lot images (minimum 2 — simulated upload)</div>
+            <div className="mb-2 text-xs font-semibold text-muted">Lot images (minimum 2 — simulated upload)</div>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               {[0, 1, 2, 3].map((i) => (
                 <FileDrop key={i} label={`Photo ${i + 1}`} done={images > i} onUpload={() => setImages((n) => Math.max(n, i + 1))} />
@@ -92,13 +92,13 @@ export default function CreateLot() {
               <Send size={15} /> Submit for verification
             </Btn>
           </div>
-          {!valid && <p className="mt-2 text-[11px] text-slate-400">Complete the details, pricing and at least 2 photos to submit.</p>}
+          {!valid && <p className="mt-2 text-[11px] text-faint">Complete the details, pricing and at least 2 photos to submit.</p>}
         </Card>
 
         <div className="space-y-4">
           <Card className="p-5">
-            <h3 className="text-sm font-bold text-steel-950">What happens next?</h3>
-            <ol className="mt-3 space-y-3 text-xs text-slate-500">
+            <h3 className="text-sm font-bold text-ink">What happens next?</h3>
+            <ol className="mt-3 space-y-3 text-xs text-muted">
               {[
                 ['Verification', 'Executive Admin inspects quality, quantity, condition & image authenticity.'],
                 ['Auction setup', 'Approved lots are scheduled with timings, increments, reserve & EMD.'],
@@ -106,8 +106,8 @@ export default function CreateLot() {
                 ['Fulfilment', 'Settlement, pickup and handover are managed for you.'],
               ].map(([t, s], i) => (
                 <li key={t} className="flex gap-2.5">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-steel-100 text-[10px] font-bold text-steel-700">{i + 1}</span>
-                  <span><b className="text-steel-900">{t}.</b> {s}</span>
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-steel-500/15 text-[10px] font-bold text-steel-700 dark:text-steel-300">{i + 1}</span>
+                  <span><b className="text-ink">{t}.</b> {s}</span>
                 </li>
               ))}
             </ol>

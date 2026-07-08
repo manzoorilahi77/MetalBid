@@ -9,20 +9,21 @@ import {
 import { useApp, PERSONAS } from '../store';
 import type { Role } from '../types';
 import { cx, agoLabel, inrCompact } from '../utils';
-import { Badge } from './ui';
+import { Badge, ThemeToggle } from './ui';
 
 const ROLE_LABEL: Record<Role, string> = {
   guest: 'Guest User', buyer: 'Buyer', seller: 'Buyer + Seller',
   exec: 'Executive Admin', subadmin: 'Sub-Admin', superadmin: 'Super Admin',
 };
 
+/** Role → badge tint (tone-* classes are theme-aware, defined once in index.css). */
 const ROLE_TONE: Record<Role, string> = {
-  guest: 'bg-slate-100 text-slate-600 ring-slate-300',
-  buyer: 'bg-sky-50 text-sky-700 ring-sky-200',
-  seller: 'bg-emerald-50 text-emerald-700 ring-emerald-200',
-  exec: 'bg-ember-50 text-ember-700 ring-ember-200',
-  subadmin: 'bg-violet-50 text-violet-700 ring-violet-200',
-  superadmin: 'bg-steel-100 text-steel-800 ring-steel-300',
+  guest: 'tone-slate',
+  buyer: 'tone-sky',
+  seller: 'tone-emerald',
+  exec: 'tone-ember',
+  subadmin: 'tone-violet',
+  superadmin: 'tone-steel',
 };
 
 interface NavItem { to: string; label: string; icon: React.ReactNode; badge?: number }
@@ -142,10 +143,10 @@ function Logo({ light }: { light?: boolean }) {
         <Flame size={18} strokeWidth={2.5} />
       </div>
       <div className="leading-none">
-        <div className={cx('text-[17px] font-extrabold tracking-tight', light ? 'text-white' : 'text-steel-950')}>
+        <div className={cx('text-[17px] font-extrabold tracking-tight', light ? 'text-white' : 'text-ink')}>
           ferro<span className="text-ember-500">Bid</span>
         </div>
-        <div className={cx('text-[9px] font-semibold uppercase tracking-[0.14em]', light ? 'text-steel-300' : 'text-slate-400')}>Metal Auctions</div>
+        <div className={cx('text-[9px] font-semibold uppercase tracking-[0.14em]', light ? 'text-steel-300' : 'text-faint')}>Metal Auctions</div>
       </div>
     </div>
   );
@@ -165,28 +166,28 @@ function RoleSwitcher() {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-2.5 py-1.5 hover:bg-slate-50 cursor-pointer"
+        className="flex items-center gap-2 rounded-xl border border-line bg-surface px-2.5 py-1.5 hover:bg-surface-2 cursor-pointer"
       >
-        <UserCircle2 size={20} className="text-steel-700" />
+        <UserCircle2 size={20} className="text-steel-700 dark:text-steel-300" />
         <span className="hidden sm:block text-left leading-tight">
-          <span className="block text-xs font-bold text-steel-950">{userName}</span>
-          <span className="block text-[10px] font-medium text-slate-400">{ROLE_LABEL[role]}</span>
+          <span className="block text-xs font-bold text-ink">{userName}</span>
+          <span className="block text-[10px] font-medium text-faint">{ROLE_LABEL[role]}</span>
         </span>
-        <ChevronDown size={14} className="text-slate-400" />
+        <ChevronDown size={14} className="text-faint" />
       </button>
       {open && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-72 rounded-2xl bg-white p-2 shadow-xl ring-1 ring-slate-200 animate-toast-in">
-          <div className="px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">Demo role switcher</div>
+        <div className="absolute right-0 top-full z-50 mt-2 w-72 rounded-2xl bg-surface p-2 shadow-xl ring-1 ring-line animate-toast-in">
+          <div className="px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider text-faint">Demo role switcher</div>
           {PERSONAS.map((p) => (
             <button
               key={p.role}
               onClick={() => { switchRole(p.role); setOpen(false); nav(roleHome(p.role)); }}
-              className={cx('flex w-full items-start gap-2.5 rounded-xl px-2.5 py-2 text-left hover:bg-slate-50 cursor-pointer', role === p.role && 'bg-steel-50')}
+              className={cx('flex w-full items-start gap-2.5 rounded-xl px-2.5 py-2 text-left hover:bg-surface-2 cursor-pointer', role === p.role && 'bg-steel-500/10')}
             >
-              <span className={cx('mt-0.5 h-2 w-2 shrink-0 rounded-full', role === p.role ? 'bg-ember-500' : 'bg-slate-200')} />
+              <span className={cx('mt-0.5 h-2 w-2 shrink-0 rounded-full', role === p.role ? 'bg-ember-500' : 'bg-line')} />
               <span>
-                <span className="flex items-center gap-2 text-sm font-semibold text-steel-950">{p.name} <Badge tone={ROLE_TONE[p.role]}>{p.label}</Badge></span>
-                <span className="block text-[11px] text-slate-400">{p.sub}</span>
+                <span className="flex items-center gap-2 text-sm font-semibold text-ink">{p.name} <Badge tone={ROLE_TONE[p.role]}>{p.label}</Badge></span>
+                <span className="block text-[11px] text-faint">{p.sub}</span>
               </span>
             </button>
           ))}
@@ -210,28 +211,28 @@ function NotificationBell() {
   if (role === 'guest') return null;
   return (
     <div className="relative" ref={ref}>
-      <button onClick={() => setOpen(!open)} className="relative rounded-xl border border-slate-200 bg-white p-2 hover:bg-slate-50 cursor-pointer">
-        <Bell size={17} className="text-steel-700" />
+      <button onClick={() => setOpen(!open)} className="relative rounded-xl border border-line bg-surface p-2 hover:bg-surface-2 cursor-pointer">
+        <Bell size={17} className="text-steel-700 dark:text-steel-300" />
         {unread > 0 && (
           <span className="absolute -right-1 -top-1 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-ember-500 px-1 text-[10px] font-bold text-white">{unread}</span>
         )}
       </button>
       {open && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-80 rounded-2xl bg-white shadow-xl ring-1 ring-slate-200 animate-toast-in">
-          <div className="flex items-center justify-between border-b border-slate-100 px-4 py-2.5">
-            <span className="text-sm font-bold text-steel-950">Notifications</span>
-            <button onClick={() => markAllRead(role)} className="text-[11px] font-semibold text-steel-600 hover:underline cursor-pointer">Mark all read</button>
+        <div className="absolute right-0 top-full z-50 mt-2 w-80 rounded-2xl bg-surface shadow-xl ring-1 ring-line animate-toast-in">
+          <div className="flex items-center justify-between border-b border-line px-4 py-2.5">
+            <span className="text-sm font-bold text-ink">Notifications</span>
+            <button onClick={() => markAllRead(role)} className="text-[11px] font-semibold text-steel-600 dark:text-steel-400 hover:underline cursor-pointer">Mark all read</button>
           </div>
           <div className="max-h-96 overflow-y-auto thin-scroll p-1.5">
-            {mine.length === 0 && <div className="px-3 py-8 text-center text-xs text-slate-400">No notifications yet</div>}
+            {mine.length === 0 && <div className="px-3 py-8 text-center text-xs text-faint">No notifications yet</div>}
             {mine.map((n) => (
-              <div key={n.id} className={cx('rounded-xl px-3 py-2.5', !n.read && 'bg-ember-50/50')}>
+              <div key={n.id} className={cx('rounded-xl px-3 py-2.5', !n.read && 'bg-ember-50/50 dark:bg-ember-400/10')}>
                 <div className="flex items-start justify-between gap-2">
-                  <span className="text-[13px] font-semibold text-steel-950 leading-snug">{n.title}</span>
+                  <span className="text-[13px] font-semibold text-ink leading-snug">{n.title}</span>
                   {!n.read && <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-ember-500" />}
                 </div>
-                <div className="mt-0.5 text-xs text-slate-500 leading-snug">{n.body}</div>
-                <div className="mt-1 text-[10px] font-medium text-slate-400">{agoLabel(n.at, now)}</div>
+                <div className="mt-0.5 text-xs text-muted leading-snug">{n.body}</div>
+                <div className="mt-1 text-[10px] font-medium text-faint">{agoLabel(n.at, now)}</div>
               </div>
             ))}
           </div>
@@ -356,20 +357,21 @@ export default function AppShell() {
       )}
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-40 flex items-center gap-3 border-b border-slate-200 bg-white/90 px-4 py-2.5 backdrop-blur">
-          <button className="lg:hidden rounded-lg border border-slate-200 p-2 cursor-pointer" onClick={() => setDrawer(true)}><Menu size={17} /></button>
+        <header className="sticky top-0 z-40 flex items-center gap-3 border-b border-line bg-glass px-4 py-2.5 backdrop-blur">
+          <button className="lg:hidden rounded-lg border border-line p-2 cursor-pointer" onClick={() => setDrawer(true)}><Menu size={17} /></button>
           <div className="lg:hidden"><Logo /></div>
-          <div className="hidden lg:block text-sm font-semibold text-slate-400">
-            {ROLE_LABEL[role]} <span className="mx-1 text-slate-300">/</span> <span className="text-steel-900">ferroBid Console</span>
+          <div className="hidden lg:block text-sm font-semibold text-faint">
+            {ROLE_LABEL[role]} <span className="mx-1 text-faint">/</span> <span className="text-ink">ferroBid Console</span>
           </div>
           <div className="flex-1" />
           {(role === 'buyer' || role === 'seller') && (
-            <button onClick={() => nav('/buyer/wallet')} className="hidden sm:flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-1.5 hover:bg-slate-50 cursor-pointer">
-              <WalletIcon size={15} className="text-emerald-600" />
-              <span className="text-xs font-bold text-steel-950">{inrCompact(wallet.balance)}</span>
-              <span className="text-[10px] font-medium text-slate-400">· EMD {inrCompact(wallet.emdLocked)}</span>
+            <button onClick={() => nav('/buyer/wallet')} className="hidden sm:flex items-center gap-2 rounded-xl border border-line bg-surface px-3 py-1.5 hover:bg-surface-2 cursor-pointer">
+              <WalletIcon size={15} className="text-emerald-600 dark:text-emerald-400" />
+              <span className="text-xs font-bold text-ink">{inrCompact(wallet.balance)}</span>
+              <span className="text-[10px] font-medium text-faint">· EMD {inrCompact(wallet.emdLocked)}</span>
             </button>
           )}
+          <ThemeToggle />
           <NotificationBell />
           <RoleSwitcher />
         </header>

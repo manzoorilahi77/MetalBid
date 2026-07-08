@@ -14,11 +14,11 @@ export default function Audit({ subAdminView }: { subAdminView?: boolean }) {
     <div>
       <SectionTitle
         title="Cross-stage Audit Trail" sub={subAdminView ? 'Read-only view scoped by your permissions' : 'Every action across the lot lifecycle (read-only, mock)'}
-        right={<Badge tone="bg-slate-100 text-slate-500 ring-slate-300"><ScrollText size={11} /> {rows.length} entries</Badge>}
+        right={<Badge tone="bg-surface-3 text-muted ring-line-strong"><ScrollText size={11} /> {rows.length} entries</Badge>}
       />
       <div className="mb-4 flex flex-wrap gap-1.5">
         {stages.map((s) => (
-          <button key={s} onClick={() => setStage(s)} className={cx('rounded-full px-3 py-1.5 text-xs font-bold cursor-pointer ring-1 ring-inset', stage === s ? 'bg-steel-800 text-white ring-steel-800' : 'bg-white text-slate-500 ring-slate-200 hover:bg-slate-50')}>
+          <button key={s} onClick={() => setStage(s)} className={cx('rounded-full px-3 py-1.5 text-xs font-bold cursor-pointer ring-1 ring-inset', stage === s ? 'bg-steel-800 text-white ring-steel-800' : 'bg-surface text-muted ring-line hover:bg-surface-2')}>
             {s}
           </button>
         ))}
@@ -27,7 +27,7 @@ export default function Audit({ subAdminView }: { subAdminView?: boolean }) {
         <div className="overflow-x-auto thin-scroll">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-100 text-left text-[11px] font-bold uppercase tracking-wide text-slate-400">
+              <tr className="border-b border-line text-left text-[11px] font-bold uppercase tracking-wide text-faint">
                 <th className="px-5 py-3">When</th>
                 <th className="px-5 py-3">Actor</th>
                 <th className="px-5 py-3">Action</th>
@@ -37,15 +37,15 @@ export default function Audit({ subAdminView }: { subAdminView?: boolean }) {
             </thead>
             <tbody>
               {rows.map((a) => (
-                <tr key={a.id} className="border-b border-slate-50 hover:bg-slate-50/60">
-                  <td className="px-5 py-3 whitespace-nowrap text-xs text-slate-400">{a.at}</td>
+                <tr key={a.id} className="border-b border-line hover:bg-surface-2/60">
+                  <td className="px-5 py-3 whitespace-nowrap text-xs text-faint">{a.at}</td>
                   <td className="px-5 py-3">
-                    <div className="text-xs font-bold text-steel-950">{a.actor}</div>
-                    <div className="text-[10px] text-slate-400">{a.role}</div>
+                    <div className="text-xs font-bold text-ink">{a.actor}</div>
+                    <div className="text-[10px] text-faint">{a.role}</div>
                   </td>
-                  <td className="px-5 py-3 text-xs text-slate-600">{a.action}</td>
-                  <td className="px-5 py-3 text-xs font-semibold text-steel-800 whitespace-nowrap">{a.target}</td>
-                  <td className="px-5 py-3"><Badge tone="bg-slate-100 text-slate-500 ring-slate-200">{a.stage}</Badge></td>
+                  <td className="px-5 py-3 text-xs text-muted">{a.action}</td>
+                  <td className="px-5 py-3 text-xs font-semibold text-steel-800 dark:text-steel-200 whitespace-nowrap">{a.target}</td>
+                  <td className="px-5 py-3"><Badge tone="bg-surface-3 text-muted ring-line">{a.stage}</Badge></td>
                 </tr>
               ))}
             </tbody>

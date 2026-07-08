@@ -34,21 +34,22 @@ export const STATUS_LABEL: Record<LotStatus, string> = {
   closed: 'Closed',
 };
 
+/** Status → badge tint. The tone-* classes are theme-aware and defined once in index.css. */
 export const STATUS_TONE: Record<LotStatus, string> = {
-  draft: 'bg-slate-100 text-slate-600 ring-slate-300',
-  submitted: 'bg-sky-50 text-sky-700 ring-sky-200',
-  under_verification: 'bg-amber-50 text-amber-700 ring-amber-200',
-  rejected: 'bg-red-50 text-red-700 ring-red-200',
-  approved: 'bg-emerald-50 text-emerald-700 ring-emerald-200',
-  scheduled: 'bg-indigo-50 text-indigo-700 ring-indigo-200',
-  live: 'bg-ember-50 text-ember-700 ring-ember-200',
-  bidding_closed: 'bg-slate-100 text-slate-600 ring-slate-300',
-  won: 'bg-emerald-50 text-emerald-700 ring-emerald-200',
-  in_settlement: 'bg-violet-50 text-violet-700 ring-violet-200',
-  ready_for_pickup: 'bg-cyan-50 text-cyan-700 ring-cyan-200',
-  in_logistics: 'bg-blue-50 text-blue-700 ring-blue-200',
-  handover_complete: 'bg-teal-50 text-teal-700 ring-teal-200',
-  closed: 'bg-slate-200 text-slate-600 ring-slate-300',
+  draft: 'tone-slate',
+  submitted: 'tone-sky',
+  under_verification: 'tone-amber',
+  rejected: 'tone-red',
+  approved: 'tone-emerald',
+  scheduled: 'tone-indigo',
+  live: 'tone-ember',
+  bidding_closed: 'tone-slate',
+  won: 'tone-emerald',
+  in_settlement: 'tone-violet',
+  ready_for_pickup: 'tone-cyan',
+  in_logistics: 'tone-blue',
+  handover_complete: 'tone-teal',
+  closed: 'tone-slate',
 };
 
 /** Allowed transitions + owning role — the prototype's state machine. */

@@ -22,15 +22,15 @@ export default function Handover() {
               <div className="flex items-center gap-3">
                 <LotImage hues={lot.imageHues} label={lot.metal} className="h-13 w-20 rounded-lg shrink-0" />
                 <div className="min-w-0 flex-1">
-                  <div className="text-[11px] font-bold text-slate-400">{x.id} · {lot.id}</div>
-                  <div className="truncate text-sm font-bold text-steel-950">{lot.title}</div>
-                  <div className="text-xs text-slate-400">📅 {x.pickupDate} · {x.slot} · 🚚 {x.handler}</div>
+                  <div className="text-[11px] font-bold text-faint">{x.id} · {lot.id}</div>
+                  <div className="truncate text-sm font-bold text-ink">{lot.title}</div>
+                  <div className="text-xs text-faint">📅 {x.pickupDate} · {x.slot} · 🚚 {x.handler}</div>
                 </div>
-                <Badge tone={x.status === 'in_transit' ? 'bg-blue-50 text-blue-700 ring-blue-200' : 'bg-indigo-50 text-indigo-700 ring-indigo-200'} className="capitalize">{x.status.replace('_', ' ')}</Badge>
+                <Badge tone={x.status === 'in_transit' ? 'bg-blue-50 dark:bg-blue-400/10 text-blue-700 dark:text-blue-300 ring-blue-200 dark:ring-blue-400/25' : 'bg-indigo-50 dark:bg-indigo-400/10 text-indigo-700 dark:text-indigo-300 ring-indigo-200 dark:ring-indigo-400/25'} className="capitalize">{x.status.replace('_', ' ')}</Badge>
               </div>
 
               <div className="mt-4">
-                <div className="mb-2 text-[10px] font-bold uppercase tracking-wide text-slate-400">Pickup checklist</div>
+                <div className="mb-2 text-[10px] font-bold uppercase tracking-wide text-faint">Pickup checklist</div>
                 <div className="grid gap-2 sm:grid-cols-2">
                   {Object.entries(x.checklist).map(([k, v]) => (
                     <CheckItem key={k} label={k} checked={v} onToggle={() => toggleHandoverCheck(x.id, k)} />
@@ -44,7 +44,7 @@ export default function Handover() {
                   <Handshake size={17} /> Confirm handover & close lot
                 </Btn>
               </div>
-              {!ready && <p className="mt-2 text-[11px] text-slate-400">Complete all checklist items and upload proof to close.</p>}
+              {!ready && <p className="mt-2 text-[11px] text-faint">Complete all checklist items and upload proof to close.</p>}
             </Card>
           );
         })}
@@ -52,16 +52,16 @@ export default function Handover() {
 
       {doneRows.length > 0 && (
         <>
-          <h2 className="mb-2 mt-8 text-sm font-bold text-steel-950">Closed handovers</h2>
+          <h2 className="mb-2 mt-8 text-sm font-bold text-ink">Closed handovers</h2>
           <div className="space-y-2">
             {doneRows.map((x) => {
               const lot = lots.find((l) => l.id === x.lotId);
               return (
                 <Card key={x.id} className="flex items-center gap-3 p-3.5">
                   <PackageCheck size={17} className="text-emerald-500 shrink-0" />
-                  <div className="flex-1 text-sm font-bold text-steel-950">{lot?.title}</div>
-                  <span className="text-xs text-slate-400">{x.pickupDate}</span>
-                  <Badge tone="bg-emerald-50 text-emerald-700 ring-emerald-200">Proof on file · Lot closed</Badge>
+                  <div className="flex-1 text-sm font-bold text-ink">{lot?.title}</div>
+                  <span className="text-xs text-faint">{x.pickupDate}</span>
+                  <Badge tone="bg-emerald-50 dark:bg-emerald-400/10 text-emerald-700 dark:text-emerald-300 ring-emerald-200 dark:ring-emerald-400/25">Proof on file · Lot closed</Badge>
                 </Card>
               );
             })}

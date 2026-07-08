@@ -42,9 +42,9 @@ export default function LotVerification() {
             <Card key={l.id} className="flex flex-wrap items-center gap-4 p-4">
               <LotImage hues={l.imageHues} label={l.metal} className="h-14 w-20 rounded-lg shrink-0" />
               <div className="min-w-0 flex-1">
-                <div className="text-[11px] font-bold text-slate-400">{l.id} · {seller?.businessName ?? seller?.name}</div>
-                <div className="truncate text-sm font-bold text-steel-950">{l.title}</div>
-                <div className="text-xs text-slate-400">{l.quantity} · {l.grade} · {l.location} · base {inrCompact(l.basePrice)}</div>
+                <div className="text-[11px] font-bold text-faint">{l.id} · {seller?.businessName ?? seller?.name}</div>
+                <div className="truncate text-sm font-bold text-ink">{l.title}</div>
+                <div className="text-xs text-faint">{l.quantity} · {l.grade} · {l.location} · base {inrCompact(l.basePrice)}</div>
               </div>
               <StatusBadge status={l.status} />
               {l.status === 'submitted'
@@ -60,11 +60,11 @@ export default function LotVerification() {
           <div className="grid gap-5 sm:grid-cols-2">
             <div>
               <LotImage hues={lot.imageHues} label={lot.metal} className="h-36 w-full rounded-xl" />
-              <div className="mt-3 text-sm font-bold text-steel-950">{lot.title}</div>
-              <p className="mt-1 text-xs leading-relaxed text-slate-500">{lot.description}</p>
+              <div className="mt-3 text-sm font-bold text-ink">{lot.title}</div>
+              <p className="mt-1 text-xs leading-relaxed text-muted">{lot.description}</p>
               <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
                 {[['Quantity', lot.quantity], ['Grade', lot.grade], ['Base', inrCompact(lot.basePrice)], ['Reserve', inrCompact(lot.reservePrice)]].map(([k, v]) => (
-                  <div key={k} className="rounded-lg bg-slate-50 px-3 py-2"><span className="text-slate-400">{k}:</span> <b className="text-steel-950">{v}</b></div>
+                  <div key={k} className="rounded-lg bg-surface-2 px-3 py-2"><span className="text-faint">{k}:</span> <b className="text-ink">{v}</b></div>
                 ))}
               </div>
               <div className="mt-4 grid grid-cols-2 gap-3">
@@ -73,7 +73,7 @@ export default function LotVerification() {
               </div>
             </div>
             <div>
-              <h4 className="mb-2 text-xs font-bold uppercase tracking-wide text-slate-400">Inspection checklist</h4>
+              <h4 className="mb-2 text-xs font-bold uppercase tracking-wide text-faint">Inspection checklist</h4>
               <div className="space-y-2">
                 {CHECKS.map((c) => (
                   <CheckItem key={c} label={c} checked={!!checks[c]} onToggle={() => setChecks((s) => ({ ...s, [c]: !s[c] }))} />
@@ -89,8 +89,8 @@ export default function LotVerification() {
                 <Btn variant="outline" size="sm" onClick={() => decide('flagged')}><Flag size={13} /> Flag</Btn>
                 <Btn variant="danger" size="sm" onClick={() => decide('rejected')}><XCircle size={13} /> Reject</Btn>
               </div>
-              {(!allChecked || !report) && <p className="mt-2 text-[11px] text-slate-400">To verify: pass all 4 checks and upload the report. Flag keeps it in the queue; reject returns it to the seller.</p>}
-              <Badge tone="bg-emerald-50 text-emerald-700 ring-emerald-200" className="mt-3">Verified lots move straight to Auction Setup</Badge>
+              {(!allChecked || !report) && <p className="mt-2 text-[11px] text-faint">To verify: pass all 4 checks and upload the report. Flag keeps it in the queue; reject returns it to the seller.</p>}
+              <Badge tone="bg-emerald-50 dark:bg-emerald-400/10 text-emerald-700 dark:text-emerald-300 ring-emerald-200 dark:ring-emerald-400/25" className="mt-3">Verified lots move straight to Auction Setup</Badge>
             </div>
           </div>
         )}

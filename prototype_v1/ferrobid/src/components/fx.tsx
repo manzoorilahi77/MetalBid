@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { CONFETTI_COLORS } from '../constants/theme';
 import { cx } from '../utils';
 
 /** Scroll-triggered reveal (IntersectionObserver). */
@@ -98,8 +99,6 @@ export function FlipClock({ text, className }: { text: string; className?: strin
   prev.current = parts;
   return <span className={cx('font-mono', className)}>{rendered}</span>;
 }
-
-const CONFETTI_COLORS = ['#fe6110', '#ffaf70', '#3583ab', '#92bfd8', '#10b981', '#facc15'];
 
 /** Celebration burst — fixed overlay, fire-and-forget. */
 export function Confetti({ count = 60 }: { count?: number }) {

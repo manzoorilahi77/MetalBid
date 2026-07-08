@@ -30,47 +30,47 @@ export default function AuctionSetup() {
     <div>
       <SectionTitle title="Auction Creation & Scheduling" sub="Turn approved lots into scheduled or instantly-live auctions" />
 
-      <h2 className="mb-2 text-sm font-bold text-steel-950">Approved lots ready for auction ({approved.length})</h2>
+      <h2 className="mb-2 text-sm font-bold text-ink">Approved lots ready for auction ({approved.length})</h2>
       {approved.length === 0 && <Empty title="No approved lots waiting" sub="Verify lots first — they'll queue here for auction setup." />}
       <div className="space-y-3">
         {approved.map((l) => (
           <Card key={l.id} className="flex flex-wrap items-center gap-4 p-4">
             <LotImage hues={l.imageHues} label={l.metal} className="h-14 w-20 rounded-lg shrink-0" />
             <div className="min-w-0 flex-1">
-              <div className="text-[11px] font-bold text-slate-400">{l.id}</div>
-              <div className="truncate text-sm font-bold text-steel-950">{l.title}</div>
-              <div className="text-xs text-slate-400">{l.quantity} · base {inrCompact(l.basePrice)} · reserve {inrCompact(l.reservePrice)}</div>
+              <div className="text-[11px] font-bold text-faint">{l.id}</div>
+              <div className="truncate text-sm font-bold text-ink">{l.title}</div>
+              <div className="text-xs text-faint">{l.quantity} · base {inrCompact(l.basePrice)} · reserve {inrCompact(l.reservePrice)}</div>
             </div>
-            <Badge tone="bg-emerald-50 text-emerald-700 ring-emerald-200">Verified ✓</Badge>
+            <Badge tone="bg-emerald-50 dark:bg-emerald-400/10 text-emerald-700 dark:text-emerald-300 ring-emerald-200 dark:ring-emerald-400/25">Verified ✓</Badge>
             <Btn size="sm" variant="accent" onClick={() => open(l.id)}><Rocket size={13} /> Create auction</Btn>
           </Card>
         ))}
       </div>
 
-      <h2 className="mb-2 mt-8 text-sm font-bold text-steel-950">Scheduled & live auctions</h2>
+      <h2 className="mb-2 mt-8 text-sm font-bold text-ink">Scheduled & live auctions</h2>
       <div className="grid gap-3 sm:grid-cols-2">
         {upcoming.map(({ a, lot: l }) => (
           <Card key={a.id} className="p-4">
             <div className="flex items-center gap-3">
               <LotImage hues={l.imageHues} className="h-11 w-16 rounded-lg shrink-0" />
               <div className="min-w-0 flex-1">
-                <div className="text-[11px] font-bold text-slate-400">{a.id} · {l.id}</div>
-                <div className="truncate text-sm font-bold text-steel-950">{l.title}</div>
+                <div className="text-[11px] font-bold text-faint">{a.id} · {l.id}</div>
+                <div className="truncate text-sm font-bold text-ink">{l.title}</div>
               </div>
               <StatusBadge status={l.status} />
             </div>
             <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
-              <div className="rounded-lg bg-slate-50 px-2 py-1.5">
-                <div className="text-[9px] font-bold uppercase text-slate-400">{a.status === 'live' ? 'Current' : 'Start price'}</div>
-                <div className="font-extrabold text-steel-950">{inrCompact(a.currentBid)}</div>
+              <div className="rounded-lg bg-surface-2 px-2 py-1.5">
+                <div className="text-[9px] font-bold uppercase text-faint">{a.status === 'live' ? 'Current' : 'Start price'}</div>
+                <div className="font-extrabold text-ink">{inrCompact(a.currentBid)}</div>
               </div>
-              <div className="rounded-lg bg-slate-50 px-2 py-1.5">
-                <div className="text-[9px] font-bold uppercase text-slate-400">EMD / Incr</div>
-                <div className="font-extrabold text-steel-950">{inrCompact(a.emd)} / {inrCompact(a.increment)}</div>
+              <div className="rounded-lg bg-surface-2 px-2 py-1.5">
+                <div className="text-[9px] font-bold uppercase text-faint">EMD / Incr</div>
+                <div className="font-extrabold text-ink">{inrCompact(a.emd)} / {inrCompact(a.increment)}</div>
               </div>
-              <div className="rounded-lg bg-slate-50 px-2 py-1.5">
-                <div className="text-[9px] font-bold uppercase text-slate-400">{a.status === 'live' ? 'Ends in' : 'Starts'}</div>
-                <div className="flex items-center justify-center gap-1 font-extrabold text-ember-600">
+              <div className="rounded-lg bg-surface-2 px-2 py-1.5">
+                <div className="text-[9px] font-bold uppercase text-faint">{a.status === 'live' ? 'Ends in' : 'Starts'}</div>
+                <div className="flex items-center justify-center gap-1 font-extrabold text-ember-600 dark:text-ember-400">
                   {a.status === 'live' ? <><Timer size={11} /> {timeLeft(a.endsAt, now)}</> : <><Radio size={11} /> {dateTime(a.startsAt)}</>}
                 </div>
               </div>
@@ -82,11 +82,11 @@ export default function AuctionSetup() {
       <Modal open={!!lot} onClose={() => setOpenId(null)} title={`Create auction — ${lot?.id ?? ''}`}>
         {lot && (
           <div className="space-y-4">
-            <div className="flex items-center gap-3 rounded-xl bg-slate-50 p-3">
+            <div className="flex items-center gap-3 rounded-xl bg-surface-2 p-3">
               <LotImage hues={lot.imageHues} className="h-11 w-16 rounded-lg shrink-0" />
               <div>
-                <div className="text-sm font-bold text-steel-950">{lot.title}</div>
-                <div className="text-xs text-slate-400">{lot.quantity} · base {inr(lot.basePrice)}</div>
+                <div className="text-sm font-bold text-ink">{lot.title}</div>
+                <div className="text-xs text-faint">{lot.quantity} · base {inr(lot.basePrice)}</div>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -106,13 +106,13 @@ export default function AuctionSetup() {
                 <input className={inputCls} value={f.emd} onChange={(e) => setF({ ...f, emd: e.target.value.replace(/[^\d]/g, '') })} />
               </Field>
             </div>
-            <div className="rounded-xl bg-steel-50 px-4 py-3 text-xs text-steel-800 ring-1 ring-steel-200">
+            <div className="rounded-xl bg-steel-500/10 px-4 py-3 text-xs text-steel-800 dark:text-steel-200 ring-1 ring-steel-200 dark:ring-steel-400/25">
               Late bids within the last <b>60s</b> auto-extend the auction by <b>2 min</b> (max 5 extensions) — per platform config.
             </div>
             <Btn variant="accent" size="lg" className="w-full" disabled={!Number(f.durationMin) || !Number(f.reserve)} onClick={publish}>
               <CalendarClock size={16} /> {Number(f.startsInMin) === 0 ? 'Publish live now' : `Schedule (starts in ${f.startsInMin} min)`}
             </Btn>
-            <p className="text-center text-[11px] text-slate-400">Tip: set “Starts in” to 0 and a short duration to demo a full live auction quickly.</p>
+            <p className="text-center text-[11px] text-faint">Tip: set “Starts in” to 0 and a short duration to demo a full live auction quickly.</p>
           </div>
         )}
       </Modal>

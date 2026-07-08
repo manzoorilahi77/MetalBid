@@ -25,28 +25,28 @@ export default function Fulfilment() {
             <div className="flex flex-wrap items-center gap-4">
               <LotImage hues={lot.imageHues} label={lot.metal} className="h-16 w-24 rounded-lg shrink-0" />
               <div className="min-w-0 flex-1">
-                <div className="text-[11px] font-bold text-slate-400">{lot.id} · won at {inr(a.currentBid)}</div>
-                <div className="text-sm font-bold text-steel-950">{lot.title}</div>
-                <Badge tone="bg-violet-50 text-violet-700 ring-violet-200" className="mt-1">{STATUS_LABEL[lot.status]}</Badge>
+                <div className="text-[11px] font-bold text-faint">{lot.id} · won at {inr(a.currentBid)}</div>
+                <div className="text-sm font-bold text-ink">{lot.title}</div>
+                <Badge tone="bg-violet-50 dark:bg-violet-400/10 text-violet-700 dark:text-violet-300 ring-violet-200 dark:ring-violet-400/25" className="mt-1">{STATUS_LABEL[lot.status]}</Badge>
               </div>
             </div>
 
-            <div className="mt-4 border-t border-slate-100 pt-4">
+            <div className="mt-4 border-t border-line pt-4">
               <LifecycleTracker status={lot.status} compact />
             </div>
 
             <div className="mt-4 grid gap-3 sm:grid-cols-3">
-              <div className="rounded-xl bg-slate-50 p-3.5 ring-1 ring-slate-200">
-                <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase text-slate-400"><Banknote size={12} /> Settlement</div>
-                <div className="mt-1.5 space-y-1 text-xs text-slate-600">
+              <div className="rounded-xl bg-surface-2 p-3.5 ring-1 ring-line">
+                <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase text-faint"><Banknote size={12} /> Settlement</div>
+                <div className="mt-1.5 space-y-1 text-xs text-muted">
                   <div>{st?.paymentConfirmed ? '✅ Payment confirmed' : '⏳ Payment verification pending'}</div>
                   <div>{st?.invoiceGenerated ? '✅ Invoice issued' : '⏳ Invoice pending'}</div>
-                  <div className="text-slate-400">Balance payable: {inr(a.currentBid - a.emd)} (EMD adjusted)</div>
+                  <div className="text-faint">Balance payable: {inr(a.currentBid - a.emd)} (EMD adjusted)</div>
                 </div>
               </div>
-              <div className="rounded-xl bg-slate-50 p-3.5 ring-1 ring-slate-200">
-                <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase text-slate-400"><CalendarClock size={12} /> Pickup</div>
-                <div className="mt-1.5 space-y-1 text-xs text-slate-600">
+              <div className="rounded-xl bg-surface-2 p-3.5 ring-1 ring-line">
+                <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase text-faint"><CalendarClock size={12} /> Pickup</div>
+                <div className="mt-1.5 space-y-1 text-xs text-muted">
                   {lg?.pickupDate ? (
                     <>
                       <div>📅 {lg.pickupDate} · {lg.slot}</div>
@@ -57,9 +57,9 @@ export default function Fulfilment() {
                   )}
                 </div>
               </div>
-              <div className="rounded-xl bg-slate-50 p-3.5 ring-1 ring-slate-200">
-                <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase text-slate-400"><PackageCheck size={12} /> Handover</div>
-                <div className="mt-1.5 space-y-1 text-xs text-slate-600">
+              <div className="rounded-xl bg-surface-2 p-3.5 ring-1 ring-line">
+                <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase text-faint"><PackageCheck size={12} /> Handover</div>
+                <div className="mt-1.5 space-y-1 text-xs text-muted">
                   {lg?.status === 'completed'
                     ? <div>✅ Completed with proof — lot closed</div>
                     : lg?.status === 'in_transit'

@@ -22,32 +22,32 @@ export default function SellerWorkspace() {
         sub={`${userName} · Kavitha Steel Traders Pvt Ltd`}
         right={
           <div className="flex items-center gap-2">
-            <Badge tone="bg-emerald-50 text-emerald-700 ring-emerald-200"><BadgeCheck size={11} /> Verified entity</Badge>
+            <Badge tone="bg-emerald-50 dark:bg-emerald-400/10 text-emerald-700 dark:text-emerald-300 ring-emerald-200 dark:ring-emerald-400/25"><BadgeCheck size={11} /> Verified entity</Badge>
             <Btn variant="accent" size="sm" onClick={() => nav('/seller/create')}><FilePlus2 size={14} /> List a lot</Btn>
           </div>
         }
       />
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Stat label="My lots" value={mine.length} hint="Across the full lifecycle" icon={<Package size={18} />} accent="bg-steel-50 text-steel-700" />
-        <Stat label="Live now" value={liveMine.length} hint="Auctions running" icon={<Radio size={18} />} accent="bg-ember-50 text-ember-600" />
-        <Stat label="In verification" value={inVerification.length} hint="Awaiting Executive Admin" icon={<ClipboardCheck size={18} />} accent="bg-amber-50 text-amber-600" />
-        <Stat label="Realised value" value={inrCompact(revenue)} hint={`${sold.length} lots sold`} icon={<Trophy size={18} />} accent="bg-emerald-50 text-emerald-600" />
+        <Stat label="My lots" value={mine.length} hint="Across the full lifecycle" icon={<Package size={18} />} accent="bg-steel-500/10 text-steel-700 dark:text-steel-300" />
+        <Stat label="Live now" value={liveMine.length} hint="Auctions running" icon={<Radio size={18} />} accent="bg-ember-50 dark:bg-ember-400/10 text-ember-600 dark:text-ember-400" />
+        <Stat label="In verification" value={inVerification.length} hint="Awaiting Executive Admin" icon={<ClipboardCheck size={18} />} accent="bg-amber-50 dark:bg-amber-400/10 text-amber-600 dark:text-amber-400" />
+        <Stat label="Realised value" value={inrCompact(revenue)} hint={`${sold.length} lots sold`} icon={<Trophy size={18} />} accent="bg-emerald-50 dark:bg-emerald-400/10 text-emerald-600 dark:text-emerald-400" />
       </div>
 
       <div className="mt-6 grid gap-5 lg:grid-cols-2">
         <div>
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-sm font-bold text-steel-950">Recent lots</h2>
-            <button onClick={() => nav('/seller/lots')} className="text-xs font-bold text-steel-600 hover:underline cursor-pointer">All lots →</button>
+            <h2 className="text-sm font-bold text-ink">Recent lots</h2>
+            <button onClick={() => nav('/seller/lots')} className="text-xs font-bold text-steel-600 dark:text-steel-400 hover:underline cursor-pointer">All lots →</button>
           </div>
           <div className="space-y-2.5">
             {mine.slice(0, 5).map((l) => (
               <Card key={l.id} onClick={() => nav('/seller/lots')} className="flex items-center gap-3 p-3">
                 <LotImage hues={l.imageHues} className="h-12 w-16 rounded-lg shrink-0" />
                 <div className="min-w-0 flex-1">
-                  <div className="text-[11px] font-bold text-slate-400">{l.id}</div>
-                  <div className="truncate text-sm font-bold text-steel-950">{l.title}</div>
+                  <div className="text-[11px] font-bold text-faint">{l.id}</div>
+                  <div className="truncate text-sm font-bold text-ink">{l.title}</div>
                 </div>
                 <StatusBadge status={l.status} />
               </Card>
@@ -68,11 +68,11 @@ export default function SellerWorkspace() {
             </Card>
           )}
           <Card className="p-5">
-            <h3 className="text-sm font-bold text-steel-950">Listing pipeline</h3>
-            <p className="mt-1 text-xs text-slate-400">Where your lots sit in the lifecycle</p>
+            <h3 className="text-sm font-bold text-ink">Listing pipeline</h3>
+            <p className="mt-1 text-xs text-faint">Where your lots sit in the lifecycle</p>
             <div className="mt-3 space-y-2">
               {[
-                ['Draft', mine.filter((l) => l.status === 'draft').length, 'bg-slate-300'],
+                ['Draft', mine.filter((l) => l.status === 'draft').length, 'bg-line-strong'],
                 ['Verification', inVerification.length, 'bg-amber-400'],
                 ['Approved / Scheduled', mine.filter((l) => ['approved', 'scheduled'].includes(l.status)).length, 'bg-indigo-400'],
                 ['Live', liveMine.length, 'bg-ember-500'],
@@ -81,8 +81,8 @@ export default function SellerWorkspace() {
               ].map(([label, count, color]) => (
                 <div key={label as string} className="flex items-center gap-3">
                   <span className={`h-2.5 w-2.5 rounded-full ${color}`} />
-                  <span className="flex-1 text-xs font-medium text-slate-600">{label}</span>
-                  <span className="text-xs font-extrabold text-steel-950">{count as number}</span>
+                  <span className="flex-1 text-xs font-medium text-muted">{label}</span>
+                  <span className="text-xs font-extrabold text-ink">{count as number}</span>
                 </div>
               ))}
             </div>

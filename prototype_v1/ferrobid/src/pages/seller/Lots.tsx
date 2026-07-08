@@ -25,25 +25,25 @@ export default function SellerLots() {
               <button onClick={() => setOpenId(open ? null : l.id)} className="flex w-full items-center gap-4 p-4 text-left cursor-pointer">
                 <LotImage hues={l.imageHues} className="h-14 w-20 rounded-lg shrink-0" label={l.metal} />
                 <div className="min-w-0 flex-1">
-                  <div className="text-[11px] font-bold text-slate-400">{l.id} · listed {l.createdAt}</div>
-                  <div className="truncate text-sm font-bold text-steel-950">{l.title}</div>
-                  <div className="text-xs text-slate-400">{l.quantity} · base {inrCompact(l.basePrice)} · reserve {inrCompact(l.reservePrice)}</div>
+                  <div className="text-[11px] font-bold text-faint">{l.id} · listed {l.createdAt}</div>
+                  <div className="truncate text-sm font-bold text-ink">{l.title}</div>
+                  <div className="text-xs text-faint">{l.quantity} · base {inrCompact(l.basePrice)} · reserve {inrCompact(l.reservePrice)}</div>
                 </div>
                 <StatusBadge status={l.status} />
-                {open ? <ChevronUp size={16} className="text-slate-400 shrink-0" /> : <ChevronDown size={16} className="text-slate-400 shrink-0" />}
+                {open ? <ChevronUp size={16} className="text-faint shrink-0" /> : <ChevronDown size={16} className="text-faint shrink-0" />}
               </button>
 
-              <div className={cx('border-t border-slate-100 bg-slate-50/50 px-4 transition-all', open ? 'py-4' : 'hidden')}>
+              <div className={cx('border-t border-line bg-surface-2/50 px-4 transition-all', open ? 'py-4' : 'hidden')}>
                 <LifecycleTracker status={l.status} />
                 {l.status === 'rejected' && (
-                  <div className="mt-3 flex items-start gap-2.5 rounded-xl bg-red-50 px-4 py-3 ring-1 ring-red-200">
+                  <div className="mt-3 flex items-start gap-2.5 rounded-xl bg-red-50 dark:bg-red-400/10 px-4 py-3 ring-1 ring-red-200 dark:ring-red-400/25">
                     <AlertTriangle size={15} className="mt-0.5 shrink-0 text-red-500" />
-                    <div className="text-xs text-red-700"><b>Rejected:</b> {l.rejectReason}</div>
+                    <div className="text-xs text-red-700 dark:text-red-300"><b>Rejected:</b> {l.rejectReason}</div>
                   </div>
                 )}
                 {l.verification?.note && l.status !== 'rejected' && (
-                  <div className="mt-3 rounded-xl bg-white px-4 py-3 text-xs text-slate-500 ring-1 ring-slate-200">
-                    <b className="text-steel-900">Verification note:</b> {l.verification.note} — {l.verification.decidedBy}
+                  <div className="mt-3 rounded-xl bg-surface px-4 py-3 text-xs text-muted ring-1 ring-line">
+                    <b className="text-ink">Verification note:</b> {l.verification.note} — {l.verification.decidedBy}
                   </div>
                 )}
                 <div className="mt-3 flex flex-wrap gap-2">

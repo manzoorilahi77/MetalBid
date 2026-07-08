@@ -7,10 +7,10 @@ const HANDLERS = ['BlueDart Heavy Cargo', 'SafeXpress Logistics', 'VRL Industria
 const SLOTS = ['08:00 – 10:00', '10:00 – 12:00', '14:00 – 16:00', '16:00 – 18:00'];
 
 const LG_TONE: Record<string, string> = {
-  awaiting: 'bg-amber-50 text-amber-700 ring-amber-200',
-  scheduled: 'bg-indigo-50 text-indigo-700 ring-indigo-200',
-  in_transit: 'bg-blue-50 text-blue-700 ring-blue-200',
-  completed: 'bg-emerald-50 text-emerald-700 ring-emerald-200',
+  awaiting: 'bg-amber-50 dark:bg-amber-400/10 text-amber-700 dark:text-amber-300 ring-amber-200 dark:ring-amber-400/25',
+  scheduled: 'bg-indigo-50 dark:bg-indigo-400/10 text-indigo-700 dark:text-indigo-300 ring-indigo-200 dark:ring-indigo-400/25',
+  in_transit: 'bg-blue-50 dark:bg-blue-400/10 text-blue-700 dark:text-blue-300 ring-blue-200 dark:ring-blue-400/25',
+  completed: 'bg-emerald-50 dark:bg-emerald-400/10 text-emerald-700 dark:text-emerald-300 ring-emerald-200 dark:ring-emerald-400/25',
 };
 
 export default function Logistics() {
@@ -35,16 +35,16 @@ export default function Logistics() {
             <Card key={x.id} className="flex flex-wrap items-center gap-4 p-4">
               <LotImage hues={lot.imageHues} label={lot.metal} className="h-14 w-20 rounded-lg shrink-0" />
               <div className="min-w-0 flex-1">
-                <div className="text-[11px] font-bold text-slate-400">{x.id} · {lot.id}</div>
-                <div className="truncate text-sm font-bold text-steel-950">{lot.title}</div>
-                <div className="text-xs text-slate-400">
+                <div className="text-[11px] font-bold text-faint">{x.id} · {lot.id}</div>
+                <div className="truncate text-sm font-bold text-ink">{lot.title}</div>
+                <div className="text-xs text-faint">
                   {x.pickupDate ? <>📅 {x.pickupDate} · {x.slot} · 🚚 {x.handler}</> : 'Pickup not scheduled yet'}
                 </div>
               </div>
               <Badge tone={LG_TONE[x.status]} className="capitalize">{x.status.replace('_', ' ')}</Badge>
               {x.status === 'awaiting' && <Btn size="sm" variant="accent" onClick={() => setOpenId(x.id)}><CalendarClock size={13} /> Schedule pickup</Btn>}
               {x.status === 'scheduled' && <Btn size="sm" variant="primary" onClick={() => markInTransit(x.id)}><Truck size={13} /> Mark in transit</Btn>}
-              {x.status === 'in_transit' && <Badge tone="bg-blue-50 text-blue-700 ring-blue-200"><Truck size={11} /> Vehicle en route — complete at Handover</Badge>}
+              {x.status === 'in_transit' && <Badge tone="bg-blue-50 dark:bg-blue-400/10 text-blue-700 dark:text-blue-300 ring-blue-200 dark:ring-blue-400/25"><Truck size={11} /> Vehicle en route — complete at Handover</Badge>}
             </Card>
           );
         })}
@@ -52,15 +52,15 @@ export default function Logistics() {
 
       {doneRows.length > 0 && (
         <>
-          <h2 className="mb-2 mt-8 text-sm font-bold text-steel-950">Completed pickups</h2>
+          <h2 className="mb-2 mt-8 text-sm font-bold text-ink">Completed pickups</h2>
           <div className="space-y-2">
             {doneRows.map((x) => {
               const lot = lots.find((l) => l.id === x.lotId);
               return (
                 <Card key={x.id} className="flex items-center gap-3 p-3.5">
                   <UserCheck size={17} className="text-emerald-500 shrink-0" />
-                  <div className="flex-1 text-sm font-bold text-steel-950">{lot?.title}</div>
-                  <span className="text-xs text-slate-400">{x.pickupDate} · {x.handler}</span>
+                  <div className="flex-1 text-sm font-bold text-ink">{lot?.title}</div>
+                  <span className="text-xs text-faint">{x.pickupDate} · {x.handler}</span>
                   <Badge tone={LG_TONE.completed}>Completed</Badge>
                 </Card>
               );
@@ -78,7 +78,7 @@ export default function Logistics() {
             <Field label="Time slot">
               <div className="grid grid-cols-2 gap-2">
                 {SLOTS.map((s) => (
-                  <button key={s} onClick={() => setSlot(s)} className={`rounded-lg border px-3 py-2 text-xs font-bold cursor-pointer ${slot === s ? 'border-steel-600 bg-steel-50 text-steel-800' : 'border-slate-200 text-slate-500 hover:bg-slate-50'}`}>{s}</button>
+                  <button key={s} onClick={() => setSlot(s)} className={`rounded-lg border px-3 py-2 text-xs font-bold cursor-pointer ${slot === s ? 'border-steel-600 bg-steel-500/10 text-steel-800 dark:text-steel-200' : 'border-line text-muted hover:bg-surface-2'}`}>{s}</button>
                 ))}
               </div>
             </Field>

@@ -37,8 +37,8 @@ export default function BecomeSeller() {
         <div className="lg:col-span-2">
           {buyerUpgrade === 'none' && (
             <Card className="p-6">
-              <h2 className="font-bold text-steel-950">Entity verification documents</h2>
-              <p className="mt-1 text-sm text-slate-500">All documents are reviewed by an Executive Admin (SLA: 48 hours). Uploads are simulated.</p>
+              <h2 className="font-bold text-ink">Entity verification documents</h2>
+              <p className="mt-1 text-sm text-muted">All documents are reviewed by an Executive Admin (SLA: 48 hours). Uploads are simulated.</p>
               <div className="mt-5 grid gap-4 sm:grid-cols-2">
                 <Field label="Registered business name">
                   <input className={inputCls} value={businessName} onChange={(e) => setBusinessName(e.target.value)} placeholder="e.g. Mehta Metal Trading Co" />
@@ -61,27 +61,27 @@ export default function BecomeSeller() {
               >
                 Submit for entity verification <ArrowRight size={16} />
               </Btn>
-              {!canSubmit && <p className="mt-2 text-center text-[11px] text-slate-400">Fill business details and upload GST, PAN & bank proof to continue.</p>}
+              {!canSubmit && <p className="mt-2 text-center text-[11px] text-faint">Fill business details and upload GST, PAN & bank proof to continue.</p>}
             </Card>
           )}
 
           {buyerUpgrade === 'submitted' && (
             <Card className="p-8 text-center">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-amber-100 text-amber-600"><Clock size={28} /></div>
-              <h2 className="mt-4 text-lg font-extrabold text-steel-950">Documents under review</h2>
-              <p className="mx-auto mt-1 max-w-md text-sm text-slate-500">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-400/15 text-amber-600 dark:text-amber-400"><Clock size={28} /></div>
+              <h2 className="mt-4 text-lg font-extrabold text-ink">Documents under review</h2>
+              <p className="mx-auto mt-1 max-w-md text-sm text-muted">
                 Your request <b>{myReq?.id}</b> for <b>{myReq?.businessName}</b> is with the Executive Admin.
                 In this prototype, switch to the <b>Executive Admin</b> role and approve it from the Entity Verification queue to see the hand-off.
               </p>
-              <Badge tone="bg-amber-50 text-amber-700 ring-amber-200" className="mt-4">Status: Pending review</Badge>
+              <Badge tone="bg-amber-50 dark:bg-amber-400/10 text-amber-700 dark:text-amber-300 ring-amber-200 dark:ring-amber-400/25" className="mt-4">Status: Pending review</Badge>
             </Card>
           )}
 
           {buyerUpgrade === 'approved' && (
             <Card className="p-8 text-center">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-600"><ShieldCheck size={28} /></div>
-              <h2 className="mt-4 text-lg font-extrabold text-steel-950">You're a verified Seller! 🎉</h2>
-              <p className="mx-auto mt-1 max-w-md text-sm text-slate-500">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-400/15 text-emerald-600 dark:text-emerald-400"><ShieldCheck size={28} /></div>
+              <h2 className="mt-4 text-lg font-extrabold text-ink">You're a verified Seller! 🎉</h2>
+              <p className="mx-auto mt-1 max-w-md text-sm text-muted">
                 Listing tools are now unlocked on your account. You keep every Buyer ability — bid and sell from the same login.
               </p>
               <Btn variant="accent" size="lg" className="mt-5" onClick={() => { switchRole('seller'); nav('/seller'); }}>
@@ -93,16 +93,16 @@ export default function BecomeSeller() {
 
         <div className="space-y-4">
           <Card className="p-5">
-            <h3 className="text-sm font-bold text-steel-950">How it works</h3>
+            <h3 className="text-sm font-bold text-ink">How it works</h3>
             <div className="mt-4 space-y-4">
               {steps.map((s, i) => (
                 <div key={s.label} className="flex items-start gap-3">
-                  <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${s.done ? 'bg-emerald-500 text-white' : s.active ? 'bg-amber-400 text-white animate-pulse' : 'bg-slate-100 text-slate-400'}`}>
+                  <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${s.done ? 'bg-emerald-500 text-white' : s.active ? 'bg-amber-400 text-white animate-pulse' : 'bg-surface-3 text-faint'}`}>
                     {s.done ? <CheckCircle2 size={15} /> : i + 1}
                   </div>
                   <div>
-                    <div className="text-sm font-semibold text-steel-950">{s.label}</div>
-                    <div className="text-[11px] text-slate-400">
+                    <div className="text-sm font-semibold text-ink">{s.label}</div>
+                    <div className="text-[11px] text-faint">
                       {i === 0 && 'Business name, GSTIN, PAN and document uploads'}
                       {i === 1 && 'Document review with approve / reject / return'}
                       {i === 2 && 'List lots, monitor auctions, download reports'}
@@ -112,8 +112,8 @@ export default function BecomeSeller() {
               ))}
             </div>
           </Card>
-          <Card className="p-5 text-xs leading-relaxed text-slate-500">
-            <b className="text-steel-900">Why verify?</b> Only verified entities can list lots on ferroBid.
+          <Card className="p-5 text-xs leading-relaxed text-muted">
+            <b className="text-ink">Why verify?</b> Only verified entities can list lots on ferroBid.
             This keeps the marketplace trustworthy for every bidder — each lot is also physically inspected before auction.
           </Card>
         </div>

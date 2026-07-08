@@ -20,6 +20,20 @@ import { nextId, nowStamp } from './utils';
 const BOOT = Date.now();
 const min = 60_000;
 
+/* ---------- theme ---------- */
+export type ThemeMode = 'light' | 'dark';
+const THEME_KEY = 'ferrobid-theme';
+
+function initialTheme(): ThemeMode {
+  const saved = localStorage.getItem(THEME_KEY);
+  if (saved === 'light' || saved === 'dark') return saved;
+  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+export function applyTheme(t: ThemeMode) {
+  document.documentElement.dataset.theme = t;
+}
+
 const BOTS = [
   { id: 'b-01', name: 'SteelCorp Industries' },
   { id: 'b-02', name: 'Apex Alloys Ltd' },
@@ -99,6 +113,7 @@ interface AppState {
   userName: string;
   authenticated: boolean;
   now: number;
+  theme: ThemeMode;
 
   // data
   users: User[];
@@ -121,6 +136,8 @@ interface AppState {
   buyerUpgrade: 'none' | 'submitted' | 'approved';
 
   // session actions
+  setTheme: (t: ThemeMode) => void;
+  toggleTheme: () => void;
   switchRole: (r: Role) => void;
   loginAs: (r: Role) => void;
   logout: () => void;
@@ -180,6 +197,7 @@ export const useApp = create<AppState>((set, get) => ({
   userName: 'Guest',
   authenticated: false,
   now: Date.now(),
+  theme: initialTheme(),
 
   users: usersSeed as User[],
   admins: adminsSeed as unknown as AdminUser[],
@@ -199,6 +217,13 @@ export const useApp = create<AppState>((set, get) => ({
   toasts: [],
   kycStatus: 'verified',
   buyerUpgrade: 'none',
+
+  setTheme: (t) => {
+    localStorage.setItem(THEME_KEY, t);
+    applyTheme(t);
+    set({ theme: t });
+  },
+  toggleTheme: () => get().setTheme(get().theme === 'dark' ? 'light' : 'dark'),
 
   switchRole: (r) => {
     const p = PERSONAS.find((x) => x.role === r)!;
