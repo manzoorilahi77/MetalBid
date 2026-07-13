@@ -36,7 +36,7 @@ export default function Monitor() {
                 </div>
                 <Badge tone="bg-ember-50 dark:bg-ember-400/10 text-ember-700 dark:text-ember-300 ring-ember-200 dark:ring-ember-400/25"><Radio size={11} /> LIVE</Badge>
               </div>
-              <div className="grid grid-cols-3 divide-x divide-line text-center">
+              <div className="grid grid-cols-1 divide-y divide-line text-center sm:grid-cols-3 sm:divide-x sm:divide-y-0">
                 <div className="p-3">
                   <div className="text-[10px] font-bold uppercase text-faint">Current bid</div>
                   <div className="text-lg font-extrabold text-ink">{inrCompact(a.currentBid)}</div>

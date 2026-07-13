@@ -41,7 +41,7 @@ export default function MyBids() {
           <Card key={a.id} className="p-4">
             <div className="flex flex-wrap items-center gap-4">
               <LotImage hues={lot.imageHues} className="h-14 w-20 rounded-lg shrink-0" />
-              <div className="min-w-0 flex-1">
+              <div className="min-w-0 flex-1 basis-full sm:basis-auto">
                 <div className="text-[11px] font-bold text-faint">{lot.id} · {mine.length} bid{mine.length > 1 ? 's' : ''} placed</div>
                 <div className="truncate text-sm font-bold text-ink">{lot.title}</div>
                 <div className="mt-1">{OUTCOME_META[outcome].badge}</div>

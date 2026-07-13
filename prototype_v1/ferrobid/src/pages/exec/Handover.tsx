@@ -57,9 +57,9 @@ export default function Handover() {
             {doneRows.map((x) => {
               const lot = lots.find((l) => l.id === x.lotId);
               return (
-                <Card key={x.id} className="flex items-center gap-3 p-3.5">
+                <Card key={x.id} className="flex flex-wrap items-center gap-3 p-3.5">
                   <PackageCheck size={17} className="text-emerald-500 shrink-0" />
-                  <div className="flex-1 text-sm font-bold text-ink">{lot?.title}</div>
+                  <div className="min-w-0 flex-1 basis-full text-sm font-bold text-ink sm:basis-auto">{lot?.title}</div>
                   <span className="text-xs text-faint">{x.pickupDate}</span>
                   <Badge tone="bg-emerald-50 dark:bg-emerald-400/10 text-emerald-700 dark:text-emerald-300 ring-emerald-200 dark:ring-emerald-400/25">Proof on file · Lot closed</Badge>
                 </Card>

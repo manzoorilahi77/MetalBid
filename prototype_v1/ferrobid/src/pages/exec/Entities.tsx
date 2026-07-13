@@ -42,7 +42,7 @@ export default function Entities() {
         {rows.map((r) => (
           <Card key={r.id} className="flex flex-wrap items-center gap-4 p-4">
             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-steel-500/10 text-steel-700 dark:text-steel-300"><Building2 size={20} /></div>
-            <div className="min-w-0 flex-1">
+            <div className="min-w-0 flex-1 basis-full sm:basis-auto">
               <div className="text-[11px] font-bold text-faint">{r.id} · submitted {r.submittedAt}</div>
               <div className="text-sm font-bold text-ink">{r.businessName}</div>
               <div className="text-xs text-faint">{r.userName} · GSTIN {r.gstin}</div>
@@ -86,7 +86,7 @@ export default function Entities() {
                   <Field label="Decision note (sent to the applicant)">
                     <textarea className={inputCls} rows={2} value={note} onChange={(e) => setNote(e.target.value)} placeholder="e.g. All documents verified." />
                   </Field>
-                  <div className="mt-3 grid grid-cols-3 gap-2">
+                  <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
                     <GatedBtn module="entities" risky variant="success" size="sm" onAllowed={() => decide('approved')}
                       approval={{ type: 'entity_approve', title: `Entity approval — ${req.businessName}`, detail: note || 'Documents reviewed by Sub-Admin; recommending approval.', refId: req.id }}>
                       <CheckCircle2 size={13} /> Approve

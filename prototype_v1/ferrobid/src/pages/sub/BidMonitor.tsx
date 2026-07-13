@@ -30,7 +30,7 @@ export default function BidMonitor() {
       {watch.length === 0 && <Empty title="No live auctions to watch" sub="Live and paused auctions appear here in real time." />}
 
       <div className="grid gap-4 lg:grid-cols-[320px_1fr]">
-        <div className="space-y-2">
+        <div className="min-w-0 space-y-2">
           {watch.map((a) => {
             const lot = lots.find((l) => l.id === a.lotId)!;
             return (
@@ -53,10 +53,10 @@ export default function BidMonitor() {
         {active && (() => {
           const lot = lots.find((l) => l.id === active.lotId)!;
           return (
-            <Card className="p-5">
+            <Card className="min-w-0 p-5">
               <div className="flex flex-wrap items-center gap-4">
                 <LotImage hues={lot.imageHues} label={lot.metal} className="h-14 w-20 rounded-lg shrink-0" />
-                <div className="min-w-0 flex-1">
+                <div className="min-w-0 flex-1 basis-full sm:basis-auto">
                   <div className="text-[11px] font-bold text-faint">{active.id} · {lot.id} · {lot.location}</div>
                   <div className="text-sm font-bold text-ink">{lot.title}</div>
                   <div className="mt-1 flex flex-wrap gap-3 text-xs text-faint">
@@ -97,9 +97,9 @@ export default function BidMonitor() {
                 {feed.map((b, i) => {
                   const flagged = hasPending('bid_flag', b.id);
                   return (
-                    <div key={b.id} className={cx('flex items-center gap-3 rounded-xl border px-3.5 py-2.5', i === 0 ? 'border-ember-200 dark:border-ember-400/25 bg-ember-50/50 dark:bg-ember-400/10' : 'border-line bg-surface')}>
+                    <div key={b.id} className={cx('flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl border px-3.5 py-2.5', i === 0 ? 'border-ember-200 dark:border-ember-400/25 bg-ember-50/50 dark:bg-ember-400/10' : 'border-line bg-surface')}>
                       <span className="w-14 shrink-0 text-[11px] font-semibold text-faint">{clockTime(b.at)}</span>
-                      <span className="min-w-0 flex-1 truncate text-sm font-semibold text-ink">
+                      <span className="min-w-0 flex-1 basis-full truncate text-sm font-semibold text-ink sm:basis-auto">
                         {b.bidderName} {b.auto && <Badge tone="bg-surface-3 text-muted ring-line-strong" className="ml-1">auto</Badge>}
                       </span>
                       <span className="text-sm font-extrabold text-ink">{inr(b.amount)}</span>

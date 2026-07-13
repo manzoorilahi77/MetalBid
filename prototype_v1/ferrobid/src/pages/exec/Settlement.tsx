@@ -38,7 +38,7 @@ export default function Settlement() {
             <Card key={s.id} className="p-5">
               <div className="flex flex-wrap items-center gap-4">
                 <LotImage hues={lot.imageHues} label={lot.metal} className="h-14 w-20 rounded-lg shrink-0" />
-                <div className="min-w-0 flex-1">
+                <div className="min-w-0 flex-1 basis-full sm:basis-auto">
                   <div className="text-[11px] font-bold text-faint">{s.id} · {lot.id} · {s.auctionId}</div>
                   <div className="text-sm font-bold text-ink">{lot.title}</div>
                   <div className="text-xs text-faint">Winner: <b className="text-ink">{s.winnerName}</b></div>
@@ -61,7 +61,7 @@ export default function Settlement() {
                 <Step done={s.invoiceGenerated} label="Invoice & receipt"
                   button={<GatedBtn module="settlement" value={s.amount} onAllowed={() => generateInvoice(s.id)}>Generate</GatedBtn>} />
               </div>
-              <div className="mt-4 flex items-center justify-between border-t border-line pt-4">
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4">
                 <div className="text-xs text-faint flex items-center gap-1.5"><Undo2 size={13} /> Losing bidders' EMDs auto-refund on auction close; defaulters forfeit.</div>
                 <GatedBtn module="settlement" value={s.amount} variant="accent" size="md" disabled={!complete || alreadyInLogistics} onAllowed={() => handoffToLogistics(s.id)}>
                   Hand off to logistics <ArrowRight size={15} />
@@ -81,7 +81,7 @@ export default function Settlement() {
               return (
                 <Card key={s.id} className="flex flex-wrap items-center gap-3 p-3.5">
                   <Banknote size={17} className="text-emerald-500 shrink-0" />
-                  <div className="min-w-0 flex-1">
+                  <div className="min-w-0 flex-1 basis-full sm:basis-auto">
                     <span className="text-sm font-bold text-ink">{lot?.title}</span>
                     <span className="ml-2 text-xs text-faint">{s.id} · {s.winnerName}</span>
                   </div>

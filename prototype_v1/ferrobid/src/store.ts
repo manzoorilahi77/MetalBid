@@ -32,7 +32,7 @@ const THEME_KEY = 'ferrobid-theme';
 function initialTheme(): ThemeMode {
   const saved = localStorage.getItem(THEME_KEY);
   if (saved === 'light' || saved === 'dark') return saved;
-  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  return 'light';
 }
 
 export function applyTheme(t: ThemeMode) {

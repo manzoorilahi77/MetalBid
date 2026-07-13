@@ -70,9 +70,9 @@ export default function Financial() {
         </div>
       </div>
 
-      <div className="mt-5 flex items-center justify-between rounded-2xl border border-line bg-surface-2 px-5 py-4">
+      <div className="mt-5 flex flex-col gap-3 rounded-2xl border border-line bg-surface-2 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-xs text-faint">Prototype note: values update the in-memory config that drives EMD/settlement copy across the app — no backend involved.</p>
-        <Btn variant="accent" onClick={() => pushToast({ title: 'Financial config saved (mock)', body: 'Policy applies to new auctions from now on.', tone: 'success' })}>
+        <Btn variant="accent" className="w-full sm:w-auto" onClick={() => pushToast({ title: 'Financial config saved (mock)', body: 'Policy applies to new auctions from now on.', tone: 'success' })}>
           <Save size={14} /> Save changes
         </Btn>
       </div>

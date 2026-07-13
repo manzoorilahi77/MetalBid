@@ -117,7 +117,7 @@ export default function Approvals() {
             <Field label="Decision note (mandatory — recorded in the audit trail)">
               <textarea className={inputCls} rows={2} value={note} onChange={(e) => setNote(e.target.value)} placeholder="e.g. Cross-checked the payment ledger; forfeiture is correct." />
             </Field>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
               <Btn variant="success" disabled={!note.trim()} onClick={() => decide('approved')}><CheckCircle2 size={14} /> Approve & execute</Btn>
               <Btn variant="danger" disabled={!note.trim()} onClick={() => decide('rejected')}><XCircle size={14} /> Reject</Btn>
             </div>
