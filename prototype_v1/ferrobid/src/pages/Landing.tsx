@@ -53,7 +53,7 @@ export default function Landing() {
             </div>
             <div className="leading-none">
               <div className="font-display text-lg font-bold tracking-tight">{SITE.namePrefix}<span className="text-ember-500">{SITE.nameAccent}</span></div>
-              <div className="text-[9px] font-semibold uppercase tracking-[0.16em] text-faint">{SITE.tagline}</div>
+              <div className="hidden text-[9px] font-semibold uppercase tracking-[0.16em] text-faint sm:block">{SITE.tagline}</div>
             </div>
           </div>
           <nav className="hidden items-center gap-6 text-sm font-medium text-muted md:flex">
@@ -66,7 +66,7 @@ export default function Landing() {
             <button onClick={() => { switchRole('guest'); nav('/browse'); }} className="hidden rounded-xl px-4 py-2 text-sm font-semibold text-muted transition-colors hover:text-ink sm:block cursor-pointer">
               Browse as Guest
             </button>
-            <button onClick={() => nav('/auth/login')} className="press shine relative overflow-hidden rounded-xl bg-ember-600 px-4 py-2 text-sm font-bold text-white shadow-lg shadow-ember-900/30 transition-colors hover:bg-ember-500 cursor-pointer group">
+            <button onClick={() => nav('/auth/login')} className="press shine relative overflow-hidden whitespace-nowrap rounded-xl bg-ember-600 px-3 py-2 text-sm font-bold text-white shadow-lg shadow-ember-900/30 transition-colors hover:bg-ember-500 cursor-pointer group sm:px-4">
               Register / Login
             </button>
           </div>

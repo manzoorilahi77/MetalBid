@@ -23,7 +23,7 @@ export default function LotDetail() {
 
       <div className="grid gap-5 lg:grid-cols-3">
         {/* left: lot info */}
-        <div className="lg:col-span-2 space-y-5">
+        <div className="min-w-0 lg:col-span-2 space-y-5">
           <Card className="overflow-hidden">
             <LotImage hues={lot.imageHues} label={lot.metal} className="h-56 w-full" />
             <div className="grid grid-cols-4 gap-1 p-1">
@@ -33,9 +33,9 @@ export default function LotDetail() {
             </div>
             <div className="p-5">
               <div className="flex flex-wrap items-start justify-between gap-2">
-                <div>
+                <div className="min-w-0">
                   <div className="text-xs font-bold text-faint">{lot.id}</div>
-                  <h1 className="text-xl font-extrabold text-ink">{lot.title}</h1>
+                  <h1 className="text-xl font-extrabold text-ink break-words">{lot.title}</h1>
                   <div className="mt-1 flex flex-wrap items-center gap-3 text-sm text-muted">
                     <span>{lot.quantity}</span><span>· Grade {lot.grade}</span>
                     <span className="flex items-center gap-1"><MapPin size={13} />{lot.location}</span>

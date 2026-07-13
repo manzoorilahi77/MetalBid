@@ -210,7 +210,7 @@ export default function BiddingRoom() {
                 >
                   <Minus size={17} />
                 </button>
-                <div className="min-w-44 text-center">
+                <div className="min-w-28 sm:min-w-44 text-center">
                   <div className="font-display text-3xl font-bold text-ink">{inr(nextBid)}</div>
                   <div className="text-[11px] text-faint">current + {maxSteps} × {stepLabel(bidStep)}</div>
                 </div>
@@ -420,7 +420,7 @@ export default function BiddingRoom() {
       {view === 'pro' && (
       <div className="grid gap-5 lg:grid-cols-3">
         {/* main bidding panel */}
-        <div className="lg:col-span-2 space-y-4">
+        <div className="min-w-0 lg:col-span-2 space-y-4">
           <Card className="overflow-hidden">
             <div className="flex items-center gap-4 border-b border-line p-4">
               <LotImage hues={lot.imageHues} className="h-14 w-20 rounded-lg shrink-0" />

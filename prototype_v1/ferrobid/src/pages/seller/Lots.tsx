@@ -22,9 +22,9 @@ export default function SellerLots() {
           const open = openId === l.id;
           return (
             <Card key={l.id} className="overflow-hidden">
-              <button onClick={() => setOpenId(open ? null : l.id)} className="flex w-full items-center gap-4 p-4 text-left cursor-pointer">
+              <button onClick={() => setOpenId(open ? null : l.id)} className="flex w-full flex-wrap items-center gap-4 p-4 text-left cursor-pointer">
                 <LotImage hues={l.imageHues} className="h-14 w-20 rounded-lg shrink-0" label={l.metal} />
-                <div className="min-w-0 flex-1">
+                <div className="min-w-0 flex-1 basis-full sm:basis-auto">
                   <div className="text-[11px] font-bold text-faint">{l.id} · listed {l.createdAt}</div>
                   <div className="truncate text-sm font-bold text-ink">{l.title}</div>
                   <div className="text-xs text-faint">{l.quantity} · base {inrCompact(l.basePrice)} · reserve {inrCompact(l.reservePrice)}</div>

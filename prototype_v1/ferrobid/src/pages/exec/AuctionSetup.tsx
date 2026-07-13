@@ -51,7 +51,7 @@ export default function AuctionSetup() {
       <h2 className="mb-2 mt-8 text-sm font-bold text-ink">Scheduled & live auctions</h2>
       <div className="grid gap-3 sm:grid-cols-2">
         {upcoming.map(({ a, lot: l }) => (
-          <Card key={a.id} className="p-4">
+          <Card key={a.id} className="min-w-0 p-4">
             <div className="flex items-center gap-3">
               <LotImage hues={l.imageHues} className="h-11 w-16 rounded-lg shrink-0" />
               <div className="min-w-0 flex-1">
@@ -61,17 +61,17 @@ export default function AuctionSetup() {
               <StatusBadge status={l.status} />
             </div>
             <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
-              <div className="rounded-lg bg-surface-2 px-2 py-1.5">
+              <div className="min-w-0 rounded-lg bg-surface-2 px-2 py-1.5">
                 <div className="text-[9px] font-bold uppercase text-faint">{a.status === 'live' ? 'Current' : 'Start price'}</div>
                 <div className="font-extrabold text-ink">{inrCompact(a.currentBid)}</div>
               </div>
-              <div className="rounded-lg bg-surface-2 px-2 py-1.5">
+              <div className="min-w-0 rounded-lg bg-surface-2 px-2 py-1.5">
                 <div className="text-[9px] font-bold uppercase text-faint">EMD / Incr</div>
                 <div className="font-extrabold text-ink">{inrCompact(a.emd)} / {inrCompact(a.increment)}</div>
               </div>
-              <div className="rounded-lg bg-surface-2 px-2 py-1.5">
+              <div className="min-w-0 rounded-lg bg-surface-2 px-2 py-1.5">
                 <div className="text-[9px] font-bold uppercase text-faint">{a.status === 'live' ? 'Ends in' : 'Starts'}</div>
-                <div className="flex items-center justify-center gap-1 font-extrabold text-ember-600 dark:text-ember-400">
+                <div className="flex flex-wrap items-center justify-center gap-1 font-extrabold text-ember-600 dark:text-ember-400">
                   {a.status === 'live' ? <><Timer size={11} /> {timeLeft(a.endsAt, now)}</> : <><Radio size={11} /> {dateTime(a.startsAt)}</>}
                 </div>
               </div>
@@ -90,7 +90,7 @@ export default function AuctionSetup() {
                 <div className="text-xs text-faint">{lot.quantity} · base {inr(lot.basePrice)}</div>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <Field label="Starts in (minutes)" hint="0 = publish live immediately">
                 <input className={inputCls} value={f.startsInMin} onChange={(e) => setF({ ...f, startsInMin: e.target.value.replace(/[^\d]/g, '') })} />
               </Field>

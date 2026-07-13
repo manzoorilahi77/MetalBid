@@ -42,7 +42,7 @@ export default function LotVerification() {
           return (
             <Card key={l.id} className="flex flex-wrap items-center gap-4 p-4">
               <LotImage hues={l.imageHues} label={l.metal} className="h-14 w-20 rounded-lg shrink-0" />
-              <div className="min-w-0 flex-1">
+              <div className="min-w-0 flex-1 basis-full sm:basis-auto">
                 <div className="text-[11px] font-bold text-faint">{l.id} · {seller?.businessName ?? seller?.name}</div>
                 <div className="truncate text-sm font-bold text-ink">{l.title}</div>
                 <div className="text-xs text-faint">{l.quantity} · {l.grade} · {l.location} · base {inrCompact(l.basePrice)}</div>
@@ -85,7 +85,7 @@ export default function LotVerification() {
                   <textarea className={inputCls} rows={2} value={note} onChange={(e) => setNote(e.target.value)} placeholder="Findings, weighbridge refs, remarks…" />
                 </Field>
               </div>
-              <div className="mt-4 grid grid-cols-3 gap-2">
+              <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
                 <GatedBtn module="lots" value={lot.basePrice} variant="success" size="sm" disabled={!allChecked || !report} onAllowed={() => decide('verified')}>
                   <CheckCircle2 size={13} /> Verify
                 </GatedBtn>

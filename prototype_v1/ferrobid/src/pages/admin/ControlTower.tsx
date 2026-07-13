@@ -54,7 +54,7 @@ export default function ControlTower() {
             <Card key={a.id} className="p-4">
               <div className="flex flex-wrap items-center gap-4">
                 <LotImage hues={lot.imageHues} label={lot.metal} className="h-12 w-18 rounded-lg shrink-0" />
-                <div className="min-w-0 flex-1">
+                <div className="min-w-0 flex-1 basis-full sm:basis-auto">
                   <div className="text-[11px] font-bold text-faint">{a.id} · {lot.id} · {lot.location}</div>
                   <div className="text-sm font-bold text-ink">{lot.title}</div>
                   <div className="mt-0.5 flex flex-wrap gap-3 text-xs text-faint">
@@ -122,7 +122,7 @@ export default function ControlTower() {
           {pending?.kind === 'void' && <div className="rounded-xl bg-surface-2 px-4 py-3 text-sm font-semibold text-ink">{pending.label}</div>}
           {pending?.kind === 'extend' && (
             <Field label="Extend by">
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                 {[5, 10, 15, 30].map((m) => (
                   <button key={m} onClick={() => setMins(m)}
                     className={cx('rounded-xl border px-3 py-2 text-xs font-bold cursor-pointer', mins === m ? 'border-steel-600 bg-steel-500/10 text-steel-800 dark:text-steel-200' : 'border-line text-muted hover:bg-surface-2')}>

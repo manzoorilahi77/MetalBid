@@ -36,7 +36,7 @@ export default function BuyerDashboard() {
       </div>
 
       <div className="mt-6 grid gap-5 lg:grid-cols-3">
-        <div className="lg:col-span-2">
+        <div className="min-w-0 lg:col-span-2">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="flex items-center gap-2 text-sm font-bold text-ink">
               <span className="h-2 w-2 rounded-full bg-ember-500 animate-pulse" /> Live auctions

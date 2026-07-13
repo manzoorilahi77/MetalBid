@@ -34,7 +34,7 @@ export default function Logistics() {
           return (
             <Card key={x.id} className="flex flex-wrap items-center gap-4 p-4">
               <LotImage hues={lot.imageHues} label={lot.metal} className="h-14 w-20 rounded-lg shrink-0" />
-              <div className="min-w-0 flex-1">
+              <div className="min-w-0 flex-1 basis-full sm:basis-auto">
                 <div className="text-[11px] font-bold text-faint">{x.id} · {lot.id}</div>
                 <div className="truncate text-sm font-bold text-ink">{lot.title}</div>
                 <div className="text-xs text-faint">
@@ -57,9 +57,9 @@ export default function Logistics() {
             {doneRows.map((x) => {
               const lot = lots.find((l) => l.id === x.lotId);
               return (
-                <Card key={x.id} className="flex items-center gap-3 p-3.5">
+                <Card key={x.id} className="flex flex-wrap items-center gap-3 p-3.5">
                   <UserCheck size={17} className="text-emerald-500 shrink-0" />
-                  <div className="flex-1 text-sm font-bold text-ink">{lot?.title}</div>
+                  <div className="min-w-0 flex-1 basis-full text-sm font-bold text-ink sm:basis-auto">{lot?.title}</div>
                   <span className="text-xs text-faint">{x.pickupDate} · {x.handler}</span>
                   <Badge tone={LG_TONE.completed}>Completed</Badge>
                 </Card>

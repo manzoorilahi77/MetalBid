@@ -36,7 +36,7 @@ export default function SellerWorkspace() {
       </div>
 
       <div className="mt-6 grid gap-5 lg:grid-cols-2">
-        <div>
+        <div className="min-w-0">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="text-sm font-bold text-ink">Recent lots</h2>
             <button onClick={() => nav('/seller/lots')} className="text-xs font-bold text-steel-600 dark:text-steel-400 hover:underline cursor-pointer">All lots →</button>
