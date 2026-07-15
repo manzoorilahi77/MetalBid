@@ -14,6 +14,7 @@ export const OPS_MODULES: { key: string; label: string; group: 'Pipeline' | 'Ful
   { key: 'handover',   label: 'Handover',            group: 'Fulfilment' },
   { key: 'monitor',    label: 'Bid Monitor',         group: 'Operations' },
   { key: 'users',      label: 'User Directory',      group: 'Operations' },
+  { key: 'masterdata', label: 'Master Data',         group: 'Operations' },
 ];
 
 export const LEVEL_LABEL: Record<PermLevel, string> = {
@@ -50,7 +51,7 @@ export const PERM_TEMPLATES: { key: string; label: string; desc: string; perms: 
     perms: {
       pipeline: P('view'), entities: P('act'), lots: P('act', 'All', 'All', 5_000_000),
       auctions: P('view'), settlement: P('hidden'), logistics: P('hidden'), handover: P('hidden'),
-      monitor: P('view'), users: P('view'),
+      monitor: P('view'), users: P('view'), masterdata: P('hidden'),
     },
   },
   {
@@ -60,7 +61,7 @@ export const PERM_TEMPLATES: { key: string; label: string; desc: string; perms: 
     perms: {
       pipeline: P('view'), entities: P('hidden'), lots: P('view'),
       auctions: P('view'), settlement: P('act', 'All', 'All', 5_000_000), logistics: P('act'), handover: P('act'),
-      monitor: P('view'), users: P('view'),
+      monitor: P('view'), users: P('view'), masterdata: P('hidden'),
     },
   },
   {

@@ -3,10 +3,14 @@ import AppShell from './components/shell';
 import Landing from './pages/Landing';
 import Login from './pages/auth/Login';
 import Browse from './pages/Browse';
+import AuctionDetail from './pages/AuctionDetail';
+import CatalogueDetail from './pages/CatalogueDetail';
 import LotDetail from './pages/LotDetail';
 import BiddingRoom from './pages/BiddingRoom';
 import Noticeboard from './pages/Noticeboard';
+import Subscription from './pages/Subscription';
 import BuyerDashboard from './pages/buyer/Dashboard';
+import KycWizard from './pages/buyer/KycWizard';
 import WalletPage from './pages/buyer/Wallet';
 import MyBids from './pages/buyer/MyBids';
 import Fulfilment from './pages/buyer/Fulfilment';
@@ -35,7 +39,7 @@ import MasterData from './pages/admin/MasterData';
 import SubConsole from './pages/sub/Console';
 import BidMonitor from './pages/sub/BidMonitor';
 import Approvals from './pages/shared/Approvals';
-import { ModuleGate } from './components/gate';
+import { ModuleGate, ExecFunctionGate } from './components/gate';
 
 export default function App() {
   return (
@@ -47,12 +51,16 @@ export default function App() {
         <Route element={<AppShell />}>
           {/* shared / guest */}
           <Route path="/browse" element={<Browse />} />
+          <Route path="/events/:eventId" element={<AuctionDetail />} />
+          <Route path="/events/:eventId/catalogue/:catalogueId" element={<CatalogueDetail />} />
           <Route path="/lot/:id" element={<LotDetail />} />
           <Route path="/bid/:auctionId" element={<BiddingRoom />} />
           <Route path="/noticeboard" element={<Noticeboard />} />
+          <Route path="/subscription" element={<Subscription />} />
 
           {/* buyer */}
           <Route path="/buyer" element={<BuyerDashboard />} />
+          <Route path="/buyer/kyc" element={<KycWizard />} />
           <Route path="/buyer/wallet" element={<WalletPage />} />
           <Route path="/buyer/bids" element={<MyBids />} />
           <Route path="/buyer/fulfilment" element={<Fulfilment />} />
@@ -65,15 +73,15 @@ export default function App() {
           <Route path="/seller/monitor" element={<Monitor />} />
           <Route path="/seller/results" element={<Results />} />
 
-          {/* executive admin */}
+          {/* executive admin — Pipeline Board is shared; other modules split Field Executive Officer vs Executive Manager */}
           <Route path="/exec" element={<Pipeline />} />
-          <Route path="/exec/entities" element={<Entities />} />
-          <Route path="/exec/lots" element={<LotVerification />} />
-          <Route path="/exec/auctions" element={<AuctionSetup />} />
-          <Route path="/exec/settlement" element={<Settlement />} />
-          <Route path="/exec/logistics" element={<Logistics />} />
-          <Route path="/exec/handover" element={<Handover />} />
-          <Route path="/exec/approvals" element={<Approvals />} />
+          <Route path="/exec/entities" element={<ExecFunctionGate allow={['manager']} label="Entity Verification"><Entities /></ExecFunctionGate>} />
+          <Route path="/exec/lots" element={<ExecFunctionGate allow={['field']} label="Lot Verification"><LotVerification /></ExecFunctionGate>} />
+          <Route path="/exec/auctions" element={<ExecFunctionGate allow={['manager']} label="Auction Setup"><AuctionSetup /></ExecFunctionGate>} />
+          <Route path="/exec/settlement" element={<ExecFunctionGate allow={['manager']} label="Settlement"><Settlement /></ExecFunctionGate>} />
+          <Route path="/exec/logistics" element={<ExecFunctionGate allow={['manager']} label="Logistics"><Logistics /></ExecFunctionGate>} />
+          <Route path="/exec/handover" element={<ExecFunctionGate allow={['manager']} label="Handover"><Handover /></ExecFunctionGate>} />
+          <Route path="/exec/approvals" element={<ExecFunctionGate allow={['manager']} label="Approvals"><Approvals /></ExecFunctionGate>} />
 
           {/* super admin */}
           <Route path="/admin" element={<AdminDashboard />} />
@@ -99,6 +107,7 @@ export default function App() {
           <Route path="/sub/settlement" element={<ModuleGate module="settlement" label="Settlement"><Settlement /></ModuleGate>} />
           <Route path="/sub/logistics" element={<ModuleGate module="logistics" label="Logistics"><Logistics /></ModuleGate>} />
           <Route path="/sub/handover" element={<ModuleGate module="handover" label="Handover"><Handover /></ModuleGate>} />
+          <Route path="/sub/masterdata" element={<ModuleGate module="masterdata" label="Master Data"><MasterData /></ModuleGate>} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

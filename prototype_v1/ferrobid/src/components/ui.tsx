@@ -146,6 +146,25 @@ export function Toggle({ on, onChange, disabled }: { on: boolean; onChange: () =
   );
 }
 
+/* ---------- OTP digit boxes ---------- */
+export function OtpInput({ value, onChange, idPrefix = 'otp' }: { value: string[]; onChange: (next: string[]) => void; idPrefix?: string }) {
+  return (
+    <div className="flex justify-center gap-3">
+      {value.map((d, i) => (
+        <input
+          key={i} id={`${idPrefix}-${i}`} value={d} maxLength={1} inputMode="numeric"
+          onChange={(e) => {
+            const v = e.target.value.replace(/\D/g, '');
+            const next = [...value]; next[i] = v; onChange(next);
+            if (v && i < value.length - 1) document.getElementById(`${idPrefix}-${i + 1}`)?.focus();
+          }}
+          className="h-14 w-12 rounded-xl border border-line-strong text-center text-xl font-extrabold text-ink focus:border-ember-500 focus:outline-none focus:ring-2 focus:ring-ember-500/25"
+        />
+      ))}
+    </div>
+  );
+}
+
 /* ---------- Mock file upload ---------- */
 export function FileDrop({ label, done, onUpload }: { label: string; done?: boolean; onUpload?: () => void }) {
   const [uploading, setUploading] = useState(false);

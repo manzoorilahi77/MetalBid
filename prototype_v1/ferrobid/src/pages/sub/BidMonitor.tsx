@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { Radio, Flag, PauseCircle, Users, TrendingUp, Timer } from 'lucide-react';
-import { useApp } from '../../store';
+import { Radio, Flag, PauseCircle, Users, TrendingUp, Timer, ShieldAlert } from 'lucide-react';
+import { useApp, sameIpGroups } from '../../store';
 import { useGate, ScopeBadge, LockedPanel } from '../../components/gate';
 import { SectionTitle, Card, Badge, Btn, Empty, LotImage } from '../../components/ui';
 import { inr, inrCompact, timeLeft, clockTime, cx } from '../../utils';
 
 /** Read-only live-auction watch with flag → approval routing (WBS v3.1 F46). */
 export default function BidMonitor() {
-  const { auctions, lots, bids, now, role, approvals, requestApproval, pauseAuction } = useApp();
+  const { auctions, lots, bids, now, role, config, approvals, requestApproval, pauseAuction, setUserStanding } = useApp();
   const gate = useGate('monitor');
   const [sel, setSel] = useState<string | null>(null);
 
@@ -17,6 +17,8 @@ export default function BidMonitor() {
   const active = watch.find((a) => a.id === (sel ?? watch[0]?.id));
   const feed = active ? bids.filter((b) => b.auctionId === active.id).slice(-9).reverse() : [];
   const superAdmin = role === 'superadmin';
+  const ipClusters = active ? sameIpGroups(bids, active.id, config.risk.sameIpThreshold) : [];
+  const flaggedBidderIds = new Set(ipClusters.flatMap((g) => g.bidderIds));
 
   const hasPending = (type: 'bid_flag' | 'auction_pause', refId: string) =>
     approvals.some((x) => x.status === 'pending' && x.type === type && x.refId === refId);
@@ -91,6 +93,24 @@ export default function BidMonitor() {
                 </div>
               )}
 
+              {ipClusters.map((g) => (
+                <div key={g.ip} className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-lg bg-red-50 dark:bg-red-400/10 px-3.5 py-2.5 text-xs text-red-800 dark:text-red-200 ring-1 ring-red-200 dark:ring-red-400/25">
+                  <span className="flex items-center gap-2">
+                    <ShieldAlert size={14} className="shrink-0" />
+                    <span><b>{g.bidderIds.length} bidders</b> sharing IP <span className="font-mono">{g.ip}</span> on this auction — possible collusion ({g.bidderNames.join(', ')}).</span>
+                  </span>
+                  {superAdmin && (
+                    <Btn
+                      size="sm" variant="outline"
+                      className="!border-red-300 dark:!border-red-400/40 !text-red-700 dark:!text-red-300 hover:!bg-red-100 dark:hover:!bg-red-400/10"
+                      onClick={() => g.bidderIds.forEach((id) => setUserStanding(id, 'watchlist', `Same-IP bidding pattern (${g.ip}) flagged on ${active.id}`))}
+                    >
+                      <Flag size={12} /> Flag cluster to watchlist
+                    </Btn>
+                  )}
+                </div>
+              ))}
+
               <h4 className="mb-2 mt-5 text-xs font-bold uppercase tracking-wide text-faint">Live bid ladder (latest first)</h4>
               <div className="space-y-1.5">
                 {feed.length === 0 && <div className="py-6 text-center text-xs text-faint">No bids yet on this auction.</div>}
@@ -104,6 +124,13 @@ export default function BidMonitor() {
                       </span>
                       <span className="text-sm font-extrabold text-ink">{inr(b.amount)}</span>
                       {i === 0 && <Badge tone="tone-ember">Highest</Badge>}
+                      {flaggedBidderIds.has(b.bidderId) && (
+                        <span title={`Shares an IP with ${config.risk.sameIpThreshold - 1}+ other bidder(s)`}>
+                          <Badge tone="bg-red-50 dark:bg-red-400/10 text-red-700 dark:text-red-300 ring-red-200 dark:ring-red-400/25">
+                            <ShieldAlert size={10} /> Same IP
+                          </Badge>
+                        </span>
+                      )}
                       {flagged ? (
                         <Badge tone="bg-amber-50 dark:bg-amber-400/10 text-amber-700 dark:text-amber-300 ring-amber-200 dark:ring-amber-400/25"><Flag size={10} /> Flagged</Badge>
                       ) : (

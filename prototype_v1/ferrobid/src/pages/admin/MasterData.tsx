@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Layers, Boxes, Warehouse, FileBadge2, Plus } from 'lucide-react';
 import { useApp } from '../../store';
-import { SectionTitle, Card, Badge, Btn } from '../../components/ui';
+import { SectionTitle, Card, Badge } from '../../components/ui';
+import { GatedBtn, ScopeBadge } from '../../components/gate';
 
 const KINDS = [
   { key: 'metals' as const, label: 'Metal categories', icon: <Layers size={15} />, hint: 'Drive lot classification, EMD % and Sub-Admin scope' },
@@ -20,6 +21,7 @@ export default function MasterData() {
       <SectionTitle
         title="Master Data"
         sub="Platform reference data — categories, yards and document types every other module reads from"
+        right={<ScopeBadge module="masterdata" />}
       />
       <div className="grid gap-4 lg:grid-cols-2">
         {KINDS.map((k) => {
@@ -50,7 +52,7 @@ export default function MasterData() {
                   placeholder={`Add ${k.label.toLowerCase().replace(/s$/, '')}…`}
                   className="flex-1 rounded-lg border border-line-strong bg-surface px-3 py-2 text-sm text-body placeholder:text-faint focus:outline-none focus:ring-2 focus:ring-steel-500/25"
                 />
-                <Btn size="sm" variant="outline" disabled={!draft.trim()} onClick={add}><Plus size={13} /> Add</Btn>
+                <GatedBtn module="masterdata" size="sm" variant="outline" disabled={!draft.trim()} onAllowed={add}><Plus size={13} /> Add</GatedBtn>
               </div>
             </Card>
           );

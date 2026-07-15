@@ -1,0 +1,22 @@
+[
+  {
+    "id": "EVT-2026-01", "name": "July Live Circuit — Chennai & Pune", "status": "live",
+    "startsInMin": -60, "endsInMin": 300, "catalogueIds": ["CAT-2026-01-A", "CAT-2026-01-B"],
+    "location": "Chennai & Pune", "coverHues": [210, 230], "createdAt": "2026-06-20"
+  },
+  {
+    "id": "EVT-2026-00A", "name": "May Closed Circuit — Hosur", "status": "closed",
+    "startsInMin": -43260, "endsInMin": -43080, "catalogueIds": ["CAT-2026-00A"],
+    "location": "Hosur, TN", "coverHues": [230, 250], "createdAt": "2026-05-15"
+  },
+  {
+    "id": "EVT-2026-00B", "name": "June Closed Circuit — Vapi", "status": "closed",
+    "startsInMin": -17280, "endsInMin": -17160, "catalogueIds": ["CAT-2026-00B"],
+    "location": "Vapi, GJ", "coverHues": [220, 200], "createdAt": "2026-06-01"
+  },
+  {
+    "id": "EVT-2026-00C", "name": "June Closed Circuit — Chennai", "status": "closed",
+    "startsInMin": -12960, "endsInMin": -12840, "catalogueIds": ["CAT-2026-00C"],
+    "location": "Chennai, TN", "coverHues": [210, 240], "createdAt": "2026-06-08"
+  }
+]

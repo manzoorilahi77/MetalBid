@@ -1,21 +1,34 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Flame, Smartphone, ShieldCheck, ArrowRight } from 'lucide-react';
+import { Flame, Smartphone, Mail, ShieldCheck, ArrowRight } from 'lucide-react';
 import { useApp } from '../../store';
-import { Btn, inputCls, Badge, ThemeToggle } from '../../components/ui';
+import { Btn, inputCls, Badge, ThemeToggle, OtpInput } from '../../components/ui';
+import { useCountdown } from '../../components/fx';
 import { cx } from '../../utils';
+
+const isValidEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 
 export default function Login() {
   const nav = useNavigate();
   const { loginAs, pushToast } = useApp();
-  const [step, setStep] = useState<'phone' | 'otp' | 'done'>('phone');
+  const [step, setStep] = useState<'identify' | 'otp' | 'done'>('identify');
   const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
   const [otp, setOtp] = useState(['', '', '', '']);
   const [mode, setMode] = useState<'login' | 'register'>('register');
+  const [resendLeft, resetResend] = useCountdown(30);
+
+  const phoneValid = phone.replace(/\D/g, '').length >= 10;
+  const emailValid = isValidEmail(email);
 
   const sendOtp = () => {
     setStep('otp');
-    pushToast({ title: 'OTP sent (simulated)', body: 'Any 4-digit code works in this prototype — try 1234.', tone: 'info' });
+    resetResend();
+    pushToast({
+      title: 'OTP sent to both channels (simulated)',
+      body: `Sent via SMS to +91 ${phone} and email to ${email} — any 4-digit code works in this prototype, try 1234.`,
+      tone: 'info',
+    });
   };
   const verify = () => {
     setStep('done');
@@ -47,48 +60,56 @@ export default function Login() {
             ))}
           </div>
 
-          {step === 'phone' && (
+          {step === 'identify' && (
             <>
               <h1 className="text-lg font-extrabold text-ink">{mode === 'register' ? 'Create your Buyer account' : 'Welcome back'}</h1>
               <p className="mt-1 text-sm text-muted">
-                {mode === 'register' ? 'Every account starts as a Buyer — you can unlock Seller later via entity verification.' : 'Sign in with your registered mobile number.'}
+                {mode === 'register' ? 'Every account starts as a Buyer — you can unlock Seller later via entity verification.' : 'Sign in with your registered mobile & email.'}
               </p>
-              <div className="mt-5">
-                <label className="mb-1 block text-xs font-semibold text-muted">Mobile number</label>
-                <div className="flex items-center gap-2">
-                  <span className="rounded-lg border border-line-strong bg-surface-2 px-3 py-2 text-sm font-semibold text-muted">+91</span>
-                  <input className={inputCls} placeholder="98450 12345" value={phone}
-                    onChange={(e) => setPhone(e.target.value.replace(/[^\d ]/g, ''))} />
+              <div className="mt-5 space-y-3">
+                <div>
+                  <label className="mb-1 block text-xs font-semibold text-muted">Mobile number</label>
+                  <div className="flex items-center gap-2">
+                    <span className="rounded-lg border border-line-strong bg-surface-2 px-3 py-2 text-sm font-semibold text-muted">+91</span>
+                    <input className={inputCls} placeholder="98450 12345" value={phone}
+                      onChange={(e) => setPhone(e.target.value.replace(/[^\d ]/g, ''))} />
+                  </div>
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-semibold text-muted">Email address</label>
+                  <input className={inputCls} type="email" placeholder="you@company.com" value={email}
+                    onChange={(e) => setEmail(e.target.value)} />
                 </div>
               </div>
-              <Btn variant="accent" className="mt-4 w-full" size="lg" disabled={phone.replace(/\D/g, '').length < 10} onClick={sendOtp}>
+              <p className="mt-2.5 text-[11px] text-faint">We verify via <b>both</b> channels — a code goes to your phone and your inbox for redundancy.</p>
+              <Btn variant="accent" className="mt-3 w-full" size="lg" disabled={!phoneValid || !emailValid} onClick={sendOtp}>
                 <Smartphone size={16} /> Send OTP
               </Btn>
-              <p className="mt-3 text-center text-[11px] text-faint">Simulated auth — no real SMS is sent.</p>
+              <p className="mt-3 text-center text-[11px] text-faint">Simulated auth — no real SMS or email is sent.</p>
             </>
           )}
 
           {step === 'otp' && (
             <>
               <h1 className="text-lg font-extrabold text-ink">Enter verification code</h1>
-              <p className="mt-1 text-sm text-muted">Sent to +91 {phone || '98450 12345'} · <b>any code works</b> in the prototype.</p>
-              <div className="mt-5 flex justify-center gap-3">
-                {otp.map((d, i) => (
-                  <input
-                    key={i} id={`otp-${i}`} value={d} maxLength={1} inputMode="numeric"
-                    onChange={(e) => {
-                      const v = e.target.value.replace(/\D/g, '');
-                      const next = [...otp]; next[i] = v; setOtp(next);
-                      if (v && i < 3) document.getElementById(`otp-${i + 1}`)?.focus();
-                    }}
-                    className="h-14 w-12 rounded-xl border border-line-strong text-center text-xl font-extrabold text-ink focus:border-ember-500 focus:outline-none focus:ring-2 focus:ring-ember-500/25"
-                  />
-                ))}
+              <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted">
+                <span className="flex items-center gap-1"><Smartphone size={12} /> +91 {phone}</span>
+                <span className="flex items-center gap-1"><Mail size={12} /> {email}</span>
               </div>
+              <p className="mt-1.5 text-sm text-muted"><b>Any 4-digit code works</b> in this prototype — try 1234.</p>
+              <div className="mt-5"><OtpInput value={otp} onChange={setOtp} idPrefix="login-otp" /></div>
               <Btn variant="accent" className="mt-5 w-full" size="lg" disabled={otp.some((d) => !d)} onClick={verify}>
                 Verify & continue <ArrowRight size={16} />
               </Btn>
-              <button onClick={sendOtp} className="mt-3 w-full text-center text-xs font-semibold text-steel-600 dark:text-steel-400 hover:underline cursor-pointer">Resend OTP</button>
+              <button
+                onClick={sendOtp} disabled={resendLeft > 0}
+                className="mt-3 w-full text-center text-xs font-semibold text-steel-600 hover:underline disabled:cursor-not-allowed disabled:opacity-50 disabled:no-underline dark:text-steel-400 cursor-pointer"
+              >
+                {resendLeft > 0 ? `Resend to both channels in ${resendLeft}s` : 'Resend OTP to both channels'}
+              </button>
+              <button onClick={() => setStep('identify')} className="mt-2 w-full text-center text-xs font-semibold text-muted hover:text-ink cursor-pointer">
+                Change number / email
+              </button>
             </>
           )}
 

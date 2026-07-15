@@ -1,11 +1,11 @@
-import { Banknote, Percent, Clock3, ReceiptIndianRupee, Save } from 'lucide-react';
+import { Banknote, Percent, Clock3, ReceiptIndianRupee, Save, CreditCard } from 'lucide-react';
 import { useApp } from '../../store';
 import { SectionTitle, Card, Btn, Badge, Field, inputCls } from '../../components/ui';
 import { inr } from '../../utils';
 
 /** Financial & commercial policy — static config screens with mock save (WBS v3.1 F47). */
 export default function Financial() {
-  const { config, updateConfig, pushToast } = useApp();
+  const { config, updateConfig, pushToast, plans, updatePlan } = useApp();
   const fin = config.financial;
 
   const numField = (key: keyof typeof fin, label: string, hint: string, step = 0.5) => (
@@ -69,6 +69,34 @@ export default function Financial() {
           </Card>
         </div>
       </div>
+
+      <Card className="mt-4 p-5">
+        <h3 className="flex items-center gap-2 text-sm font-bold text-ink"><CreditCard size={15} className="text-steel-500" /> Subscription plan pricing</h3>
+        <p className="mt-0.5 text-xs text-faint">Prices shown on the Buyer/Seller subscription checkout page — free tiers are fixed at ₹0.</p>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {plans.map((p) => (
+            <div key={p.id} className="rounded-xl border border-line bg-surface px-4 py-3">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-sm font-semibold text-ink">{p.name}</span>
+                <Badge tone={p.audience === 'buyer' ? 'tone-sky' : 'tone-emerald'} className="capitalize">{p.audience}</Badge>
+              </div>
+              {p.price === 0 ? (
+                <div className="mt-2 text-xs text-faint">Free tier — not editable</div>
+              ) : (
+                <div className="mt-2 flex items-center gap-2">
+                  <span className="text-sm font-bold text-faint">₹</span>
+                  <input
+                    type="number" step={100} value={p.price}
+                    onChange={(e) => updatePlan(p.id, { price: Number(e.target.value) })}
+                    className="w-full rounded-lg border border-line-strong bg-surface px-2 py-1.5 text-sm font-bold text-ink focus:outline-none focus:ring-2 focus:ring-steel-500/25"
+                  />
+                  <span className="whitespace-nowrap text-[11px] text-faint">/{p.billingCycle === 'yearly' ? 'yr' : 'mo'}</span>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </Card>
 
       <div className="mt-5 flex flex-col gap-3 rounded-2xl border border-line bg-surface-2 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-xs text-faint">Prototype note: values update the in-memory config that drives EMD/settlement copy across the app — no backend involved.</p>

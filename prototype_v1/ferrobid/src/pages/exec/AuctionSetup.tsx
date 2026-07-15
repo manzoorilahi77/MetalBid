@@ -1,17 +1,44 @@
 import { useState } from 'react';
-import { CalendarClock, Rocket, Timer, Radio } from 'lucide-react';
-import { useApp } from '../../store';
+import { CalendarClock, Rocket, Timer, Radio, Layers } from 'lucide-react';
+import { useApp, catalogueById, eventById } from '../../store';
 import { SectionTitle, Card, Btn, Modal, Field, inputCls, Empty, LotImage, Badge, StatusBadge } from '../../components/ui';
 import { GatedBtn, ScopeBadge } from '../../components/gate';
 import { inr, inrCompact, timeLeft, dateTime } from '../../utils';
 
+const NEW_EVENT = '__new_event__';
+const NEW_CATALOGUE = '__new_catalogue__';
+
 export default function AuctionSetup() {
-  const { lots, auctions, createAuction, now } = useApp();
+  const { lots, auctions, auctionEvents, catalogues, createAuction, createEvent, createCatalogue, assignLotToCatalogue, now } = useApp();
   const [openId, setOpenId] = useState<string | null>(null);
   const [f, setF] = useState({ startsInMin: '60', durationMin: '120', increment: '5000', reserve: '', emd: '' });
   const approved = lots.filter((l) => l.status === 'approved');
   const upcoming = auctions.filter((a) => a.status === 'scheduled' || a.status === 'live' || a.status === 'paused').map((a) => ({ a, lot: lots.find((l) => l.id === a.lotId)! }));
   const lot = lots.find((l) => l.id === openId);
+
+  const [assignId, setAssignId] = useState<string | null>(null);
+  const [af, setAf] = useState({ eventId: '', catalogueId: '', newEventName: '', newEventStarts: '0', newEventEnds: '360', newCatalogueTitle: '' });
+  const openEvents = auctionEvents.filter((e) => e.status !== 'closed' && e.status !== 'cancelled');
+  const assignLot = lots.find((l) => l.id === assignId);
+  const catalogueOptions = catalogues.filter((c) => c.eventId === af.eventId && c.status !== 'closed');
+
+  const startAssign = (id: string) => {
+    setAf({ eventId: openEvents[0]?.id ?? NEW_EVENT, catalogueId: '', newEventName: '', newEventStarts: '0', newEventEnds: '360', newCatalogueTitle: '' });
+    setAssignId(id);
+  };
+  const confirmAssign = () => {
+    if (!assignId) return;
+    let eventId = af.eventId;
+    if (eventId === NEW_EVENT || !eventId) {
+      eventId = createEvent(af.newEventName || 'Untitled Event', Number(af.newEventStarts) || 0, Number(af.newEventEnds) || 360);
+    }
+    let catalogueId = af.catalogueId;
+    if (catalogueId === NEW_CATALOGUE || !catalogueId) {
+      catalogueId = createCatalogue(eventId, af.newCatalogueTitle || 'Untitled Catalogue');
+    }
+    assignLotToCatalogue(assignId, catalogueId);
+    setAssignId(null);
+  };
 
   const open = (id: string) => {
     const l = lots.find((x) => x.id === id)!;
@@ -43,6 +70,11 @@ export default function AuctionSetup() {
               <div className="text-xs text-faint">{l.quantity} · base {inrCompact(l.basePrice)} · reserve {inrCompact(l.reservePrice)}</div>
             </div>
             <Badge tone="bg-emerald-50 dark:bg-emerald-400/10 text-emerald-700 dark:text-emerald-300 ring-emerald-200 dark:ring-emerald-400/25">Verified ✓</Badge>
+            {l.catalogueId ? (
+              <Badge tone="tone-steel"><Layers size={11} /> {catalogueById(catalogues, l.catalogueId)?.title} · {eventById(auctionEvents, catalogueById(catalogues, l.catalogueId)?.eventId ?? '')?.name}</Badge>
+            ) : (
+              <Btn size="sm" variant="outline" onClick={() => startAssign(l.id)}><Layers size={13} /> Assign to catalogue</Btn>
+            )}
             <Btn size="sm" variant="accent" onClick={() => open(l.id)}><Rocket size={13} /> Create auction</Btn>
           </Card>
         ))}
@@ -124,6 +156,71 @@ export default function AuctionSetup() {
               <CalendarClock size={16} /> {Number(f.startsInMin) === 0 ? 'Publish live now' : `Schedule (starts in ${f.startsInMin} min)`}
             </GatedBtn>
             <p className="text-center text-[11px] text-faint">Tip: set “Starts in” to 0 and a short duration to demo a full live auction quickly.</p>
+          </div>
+        )}
+      </Modal>
+
+      <Modal open={!!assignLot} onClose={() => setAssignId(null)} title={`Assign to catalogue — ${assignLot?.id ?? ''}`}>
+        {assignLot && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 rounded-xl bg-surface-2 p-3">
+              <LotImage hues={assignLot.imageHues} className="h-11 w-16 rounded-lg shrink-0" />
+              <div>
+                <div className="text-sm font-bold text-ink">{assignLot.title}</div>
+                <div className="text-xs text-faint">{assignLot.quantity} · {assignLot.metal}</div>
+              </div>
+            </div>
+
+            <Field label="Auction Event">
+              <select
+                className={inputCls}
+                value={af.eventId}
+                onChange={(e) => setAf({ ...af, eventId: e.target.value, catalogueId: '' })}
+              >
+                {openEvents.map((e) => <option key={e.id} value={e.id}>{e.name}</option>)}
+                <option value={NEW_EVENT}>+ New event…</option>
+              </select>
+            </Field>
+
+            {af.eventId === NEW_EVENT ? (
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <Field label="Event name">
+                  <input className={inputCls} value={af.newEventName} onChange={(e) => setAf({ ...af, newEventName: e.target.value })} />
+                </Field>
+                <Field label="Starts in (min)">
+                  <input className={inputCls} value={af.newEventStarts} onChange={(e) => setAf({ ...af, newEventStarts: e.target.value.replace(/[^\d-]/g, '') })} />
+                </Field>
+                <Field label="Ends in (min)">
+                  <input className={inputCls} value={af.newEventEnds} onChange={(e) => setAf({ ...af, newEventEnds: e.target.value.replace(/[^\d-]/g, '') })} />
+                </Field>
+              </div>
+            ) : (
+              <Field label="Catalogue">
+                <select
+                  className={inputCls}
+                  value={af.catalogueId}
+                  onChange={(e) => setAf({ ...af, catalogueId: e.target.value })}
+                >
+                  <option value="" disabled>Choose a catalogue…</option>
+                  {catalogueOptions.map((c) => <option key={c.id} value={c.id}>{c.title}</option>)}
+                  <option value={NEW_CATALOGUE}>+ New catalogue…</option>
+                </select>
+              </Field>
+            )}
+
+            {(af.eventId === NEW_EVENT || af.catalogueId === NEW_CATALOGUE) && (
+              <Field label="New catalogue title">
+                <input className={inputCls} value={af.newCatalogueTitle} onChange={(e) => setAf({ ...af, newCatalogueTitle: e.target.value })} />
+              </Field>
+            )}
+
+            <GatedBtn
+              module="auctions" variant="accent" size="lg" className="w-full"
+              disabled={af.eventId !== NEW_EVENT && !af.catalogueId}
+              onAllowed={confirmAssign}
+            >
+              <Layers size={16} /> Assign lot to catalogue
+            </GatedBtn>
           </div>
         )}
       </Modal>

@@ -1,5 +1,17 @@
+import { ShieldAlert, FileCheck2 } from 'lucide-react';
 import { useApp } from '../../store';
 import { SectionTitle, Card, Toggle, Field, inputCls, Badge } from '../../components/ui';
+
+const RISK_NUM_LABEL: Record<string, string> = {
+  autoSuspendAfterDefaults: 'Auto-suspend after N payment defaults',
+  sameIpThreshold: 'Flag same-IP cluster at N+ distinct bidders',
+};
+
+const KYC_POLICY_LABEL: Record<string, string> = {
+  requireGSTForBusiness: 'GST certificate required (business bidders)',
+  requireITR: 'ITR (latest year) required for every buyer',
+  requirePCB: 'Pollution Control Board certificate required for every buyer',
+};
 
 const NUM_LABEL: Record<string, string> = {
   auctionAutoExtensionWindowSec: 'Auto-extension trigger window (seconds before close)',
@@ -7,6 +19,7 @@ const NUM_LABEL: Record<string, string> = {
   defaultEmdPercent: 'Default EMD (% of reserve)',
   maxAutoExtensions: 'Max auto-extensions per auction',
   walletTopupLimit: 'Wallet top-up limit (₹)',
+  sessionTimeoutMin: 'Session timeout before re-auth required (minutes)',
 };
 const POLICY_LABEL: Record<string, string> = {
   requireGST: 'GST certificate required',
@@ -70,6 +83,38 @@ export default function Config() {
             ))}
           </div>
           <Badge tone="bg-surface-3 text-muted ring-line-strong" className="mt-4">Changes apply in-session only (prototype)</Badge>
+        </Card>
+
+        <Card className="p-5">
+          <h3 className="mb-1 flex items-center gap-2 text-sm font-bold text-ink"><FileCheck2 size={15} className="text-steel-500" /> Buyer KYC document policy</h3>
+          <p className="mb-4 text-[11px] text-faint">PAN, Aadhar, photo, address proof & cancelled cheque are always required. These are conditional.</p>
+          <div className="space-y-3">
+            {Object.entries(config.kycPolicy).map(([k, v]) => (
+              <div key={k} className="flex items-center justify-between gap-3">
+                <span className="text-xs font-medium text-muted">{KYC_POLICY_LABEL[k] ?? k}</span>
+                <Toggle on={v as boolean} onChange={() => updateConfig('kycPolicy', k, !v)} />
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        <Card className="p-5">
+          <h3 className="mb-1 flex items-center gap-2 text-sm font-bold text-ink"><ShieldAlert size={15} className="text-red-500" /> Risk & fraud controls</h3>
+          <p className="mb-4 text-[11px] text-faint">Auto-suspension and same-IP collusion detection thresholds — read live by Bid Monitor.</p>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-xs font-medium text-muted">Auto-suspend enabled</span>
+              <Toggle on={config.risk.autoSuspendEnabled} onChange={() => updateConfig('risk', 'autoSuspendEnabled', !config.risk.autoSuspendEnabled)} />
+            </div>
+            {(['autoSuspendAfterDefaults', 'sameIpThreshold'] as const).map((k) => (
+              <Field key={k} label={RISK_NUM_LABEL[k]}>
+                <input
+                  type="number" min={2} className={inputCls} value={config.risk[k]}
+                  onChange={(e) => updateConfig('risk', k, Number(e.target.value.replace(/[^\d]/g, '') || 2))}
+                />
+              </Field>
+            ))}
+          </div>
         </Card>
       </div>
     </div>

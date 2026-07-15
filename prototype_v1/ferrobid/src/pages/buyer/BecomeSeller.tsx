@@ -25,7 +25,7 @@ export default function BecomeSeller() {
 
   const steps = [
     { label: 'Submit entity documents', done: buyerUpgrade !== 'none' },
-    { label: 'Executive Admin review', done: buyerUpgrade === 'approved', active: buyerUpgrade === 'submitted' },
+    { label: 'Executive Manager review', done: buyerUpgrade === 'approved', active: buyerUpgrade === 'submitted' },
     { label: 'Seller capability unlocked', done: buyerUpgrade === 'approved' },
   ];
 
@@ -38,7 +38,7 @@ export default function BecomeSeller() {
           {buyerUpgrade === 'none' && (
             <Card className="p-6">
               <h2 className="font-bold text-ink">Entity verification documents</h2>
-              <p className="mt-1 text-sm text-muted">All documents are reviewed by an Executive Admin (SLA: 48 hours). Uploads are simulated.</p>
+              <p className="mt-1 text-sm text-muted">All documents are reviewed by an Executive Manager (SLA: 48 hours). Uploads are simulated.</p>
               <div className="mt-5 grid gap-4 sm:grid-cols-2">
                 <Field label="Registered business name">
                   <input className={inputCls} value={businessName} onChange={(e) => setBusinessName(e.target.value)} placeholder="e.g. Mehta Metal Trading Co" />
@@ -70,8 +70,8 @@ export default function BecomeSeller() {
               <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-400/15 text-amber-600 dark:text-amber-400"><Clock size={28} /></div>
               <h2 className="mt-4 text-lg font-extrabold text-ink">Documents under review</h2>
               <p className="mx-auto mt-1 max-w-md text-sm text-muted">
-                Your request <b>{myReq?.id}</b> for <b>{myReq?.businessName}</b> is with the Executive Admin.
-                In this prototype, switch to the <b>Executive Admin</b> role and approve it from the Entity Verification queue to see the hand-off.
+                Your request <b>{myReq?.id}</b> for <b>{myReq?.businessName}</b> is with the Executive Manager.
+                In this prototype, switch to the <b>Executive Manager</b> persona and approve it from the Entity Verification queue to see the hand-off.
               </p>
               <Badge tone="bg-amber-50 dark:bg-amber-400/10 text-amber-700 dark:text-amber-300 ring-amber-200 dark:ring-amber-400/25" className="mt-4">Status: Pending review</Badge>
             </Card>

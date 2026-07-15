@@ -1,15 +1,19 @@
 import { useNavigate } from 'react-router-dom';
 import {
-  Flame, Gavel, ShieldCheck, Truck, ArrowRight, Timer, BadgeCheck, TrendingUp,
-  Users, ClipboardCheck, Banknote, ChevronRight,
+  Flame, Gavel, ShieldCheck, Truck, ArrowRight, BadgeCheck, TrendingUp,
+  Users, ClipboardCheck, Banknote, ChevronRight, Phone, Mail, Pin, Megaphone,
 } from 'lucide-react';
-import { useApp, PERSONAS } from '../store';
+import { useApp, PERSONAS, eventMeta } from '../store';
 import { roleHome } from '../components/shell';
 import { LotImage, ThemeToggle } from '../components/ui';
-import { Reveal, CountUp, FlipClock } from '../components/fx';
-import { inrCompact, timeLeft } from '../utils';
-import { SITE } from '../content/site';
-import { HERO, HERO_STATS, LIVE_SECTION, HOW_SECTION, TRUST_ITEMS, ROLES_SECTION, CTA_SECTION } from '../content/landing';
+import { EventCard } from '../components/EventCard';
+import { Reveal, CountUp } from '../components/fx';
+import { inrCompact } from '../utils';
+import { SITE, UTILITY_BAR, FOOTER_COLUMNS, FOOTER_COMPLIANCE } from '../content/site';
+import {
+  HERO, HERO_STATS, LIVE_SECTION, CATEGORY_SECTION, CATEGORY_ORDER, NOTICE_SECTION,
+  HOW_SECTION, TRUST_ITEMS, ROLES_SECTION, CTA_SECTION,
+} from '../content/landing';
 
 const HOW_ICONS: Record<string, React.ReactNode> = {
   ClipboardCheck: <ClipboardCheck size={20} />,
@@ -29,10 +33,22 @@ function Orb({ className }: { className: string }) {
 
 export default function Landing() {
   const nav = useNavigate();
-  const { lots, auctions, switchRole, now } = useApp();
-  const liveAuctions = auctions.filter((a) => a.status === 'live');
+  const { lots, auctionEvents, catalogues, notices, switchRole, now } = useApp();
+  const liveEvents = auctionEvents.filter((e) => e.status === 'live');
 
   const tickerItems = [...lots, ...lots].map((l, i) => ({ l, i }));
+  const categories = CATEGORY_ORDER.filter((m) => lots.some((l) => l.metal === m)).map((m) => ({
+    metal: m,
+    hues: lots.find((l) => l.metal === m)?.imageHues ?? [210, 230],
+    liveCount: lots.filter((l) => l.metal === m && l.status === 'live').length,
+  }));
+  const topNotices = notices.slice(0, 3);
+
+  const goToBrowse = (metal?: string) => {
+    switchRole('guest');
+    nav(metal ? `/browse?metal=${encodeURIComponent(metal)}` : '/browse');
+  };
+  const scrollTo = (hash: string) => document.getElementById(hash.replace('#', ''))?.scrollIntoView({ behavior: 'smooth' });
 
   return (
     <div className="min-h-full overflow-x-hidden bg-canvas text-ink">
@@ -42,6 +58,20 @@ export default function Landing() {
         <Orb className="right-[-8%] top-[22%] h-90 w-90 bg-steel-500/10 dark:bg-steel-500/20 animate-glow-breathe" />
         <Orb className="bottom-[-15%] left-[30%] h-80 w-80 bg-ember-500/10" />
         <div className="absolute inset-0 opacity-[0.35] dot-grid" />
+      </div>
+
+      {/* utility bar */}
+      <div className="relative border-b border-line bg-surface-2/70">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-1.5 text-[11px] font-medium text-muted">
+          <div className="hidden items-center gap-4 sm:flex">
+            <span className="flex items-center gap-1"><Phone size={11} /> {SITE.supportPhone}</span>
+            <span className="flex items-center gap-1"><Mail size={11} /> {SITE.supportEmail}</span>
+          </div>
+          <div className="flex w-full items-center justify-between gap-4 sm:w-auto sm:justify-end">
+            <button onClick={() => nav('/noticeboard')} className="hover:text-ink transition-colors cursor-pointer">{UTILITY_BAR.helpLabel}</button>
+            <button onClick={() => nav('/auth/login')} className="hover:text-ink transition-colors cursor-pointer">{UTILITY_BAR.sellerLabel}</button>
+          </div>
+        </div>
       </div>
 
       {/* top bar */}
@@ -147,38 +177,44 @@ export default function Landing() {
             </div>
           </Reveal>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {liveAuctions.map((a, idx) => {
-              const lot = lots.find((l) => l.id === a.lotId)!;
-              return (
-                <Reveal key={a.id} delay={idx * 110}>
-                  <button
-                    onClick={() => { switchRole('guest'); nav(`/lot/${lot.id}`); }}
-                    className="lift group relative w-full overflow-hidden rounded-3xl bg-surface text-left ring-1 ring-line shadow-soft backdrop-blur transition-colors hover:ring-ember-500/40 cursor-pointer"
-                  >
-                    <div className="relative overflow-hidden">
-                      <LotImage hues={lot.imageHues} label={lot.metal} className="h-40 w-full transition-transform duration-500 group-hover:scale-[1.04]" />
-                      <div className="absolute right-3 top-3 flex items-center gap-1.5 rounded-full bg-steel-950/70 px-2.5 py-1 text-[10px] font-bold text-ember-300 ring-1 ring-white/10 backdrop-blur">
-                        <span className="h-1.5 w-1.5 rounded-full bg-ember-500 animate-pulse" /> LIVE
-                      </div>
+            {liveEvents.map((e, idx) => (
+              <Reveal key={e.id} delay={idx * 110}>
+                <EventCard event={e} meta={eventMeta(catalogues, e)} now={now} onClick={() => { switchRole('guest'); nav(`/events/${e.id}`); }} />
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* category tiles */}
+      <section id="categories" className="relative px-5 py-16">
+        <div className="mx-auto max-w-6xl">
+          <Reveal>
+            <div className="text-center">
+              <div className="text-xs font-bold uppercase tracking-[0.18em] text-ember-600 dark:text-ember-400">{CATEGORY_SECTION.kicker}</div>
+              <h2 className="mt-2 font-display text-3xl font-bold">{CATEGORY_SECTION.title}</h2>
+              <p className="mx-auto mt-2 max-w-xl text-sm text-muted">{CATEGORY_SECTION.sub}</p>
+            </div>
+          </Reveal>
+          <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+            {categories.map((c, i) => (
+              <Reveal key={c.metal} delay={i * 70}>
+                <button
+                  onClick={() => goToBrowse(c.metal)}
+                  className="lift group relative w-full overflow-hidden rounded-2xl bg-surface text-left ring-1 ring-line shadow-soft backdrop-blur transition-colors hover:ring-ember-500/40 cursor-pointer"
+                >
+                  <LotImage hues={c.hues} className="h-16 w-full" />
+                  <div className="p-3.5">
+                    <div className="font-display text-sm font-bold text-ink">{c.metal}</div>
+                    <div className="mt-0.5 text-xs text-faint">
+                      {c.liveCount > 0
+                        ? <span className="font-semibold text-ember-600 dark:text-ember-400">{c.liveCount} live now</span>
+                        : 'No live lots'}
                     </div>
-                    <div className="p-5">
-                      <div className="text-[11px] font-bold text-faint">{lot.id} · {lot.quantity} · {lot.location}</div>
-                      <div className="mt-1 font-display text-base font-bold leading-snug text-ink">{lot.title}</div>
-                      <div className="mt-4 flex items-end justify-between">
-                        <div>
-                          <div className="text-[10px] font-bold uppercase tracking-wider text-faint">Current bid</div>
-                          <div className="font-display text-2xl font-bold text-ink">{inrCompact(a.currentBid)}</div>
-                        </div>
-                        <div className="rounded-xl bg-surface-2 px-3 py-2 text-right ring-1 ring-line">
-                          <div className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-faint"><Timer size={10} /> closes in</div>
-                          <FlipClock text={timeLeft(a.endsAt, now)} className="text-sm font-bold text-ember-600 dark:text-ember-400" />
-                        </div>
-                      </div>
-                    </div>
-                  </button>
-                </Reveal>
-              );
-            })}
+                  </div>
+                </button>
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>
@@ -223,6 +259,41 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* announcements */}
+      <section className="relative px-5 py-16">
+        <div className="mx-auto max-w-4xl">
+          <Reveal>
+            <div className="mb-7 flex items-end justify-between">
+              <div>
+                <div className="text-xs font-bold uppercase tracking-[0.18em] text-ember-600 dark:text-ember-400">{NOTICE_SECTION.kicker}</div>
+                <h2 className="mt-2 font-display text-3xl font-bold">{NOTICE_SECTION.title}</h2>
+              </div>
+              <button onClick={() => nav('/noticeboard')} className="group flex items-center gap-1 text-sm font-bold text-muted transition-colors hover:text-ink cursor-pointer">
+                {NOTICE_SECTION.viewAll} <ChevronRight size={15} className="transition-transform group-hover:translate-x-0.5" />
+              </button>
+            </div>
+          </Reveal>
+          <div className="space-y-3">
+            {topNotices.map((n, i) => (
+              <Reveal key={n.id} delay={i * 80}>
+                <button
+                  onClick={() => nav('/noticeboard')}
+                  className={`lift flex w-full items-start gap-3.5 rounded-2xl bg-surface p-4 text-left ring-1 ring-line shadow-soft backdrop-blur transition-colors hover:ring-ember-500/40 cursor-pointer ${n.pinned ? 'border-l-4 border-l-ember-500' : ''}`}
+                >
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-steel-500/10 text-steel-700 dark:text-steel-300">
+                    {n.pinned ? <Pin size={15} /> : <Megaphone size={15} />}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-sm font-bold text-ink">{n.title}</div>
+                    <div className="mt-1 text-[11px] font-medium text-faint">{n.postedBy} · {n.at}</div>
+                  </div>
+                </button>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* demo personas */}
       <section id="roles" className="relative px-5 py-16">
         <div className="mx-auto max-w-6xl">
@@ -235,9 +306,9 @@ export default function Landing() {
           </Reveal>
           <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {PERSONAS.map((p, i) => (
-              <Reveal key={p.role} delay={i * 70}>
+              <Reveal key={`${p.role}-${p.execFunction ?? ''}`} delay={i * 70}>
                 <button
-                  onClick={() => { switchRole(p.role); nav(roleHome(p.role)); }}
+                  onClick={() => { switchRole(p.role, p.execFunction); nav(roleHome(p.role)); }}
                   className="lift group flex w-full items-start gap-3.5 rounded-3xl bg-surface p-5 text-left ring-1 ring-line shadow-soft backdrop-blur transition-colors hover:ring-ember-500/50 cursor-pointer"
                 >
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-steel-500/15 ring-1 ring-line transition-transform duration-300 group-hover:scale-110">
@@ -273,12 +344,50 @@ export default function Landing() {
         </Reveal>
       </section>
 
-      <footer className="relative border-t border-line px-5 py-8 text-center">
-        <div className="mx-auto flex max-w-6xl flex-col items-center gap-2">
-          <div className="flex items-center gap-2 font-display text-sm font-bold text-ink">
-            <Flame size={14} className="text-ember-500" /> {SITE.namePrefix}<span className="text-ember-500">{SITE.nameAccent}</span>
+      <footer className="relative border-t border-line px-5 py-12">
+        <div className="mx-auto max-w-6xl">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            <div>
+              <div className="flex items-center gap-2 font-display text-sm font-bold text-ink">
+                <Flame size={14} className="text-ember-500" /> {SITE.namePrefix}<span className="text-ember-500">{SITE.nameAccent}</span>
+              </div>
+              <p className="mt-3 max-w-xs text-xs leading-relaxed text-faint">{SITE.footerNote}</p>
+            </div>
+            {FOOTER_COLUMNS.map((col) => (
+              <div key={col.heading}>
+                <div className="text-xs font-bold uppercase tracking-wide text-faint">{col.heading}</div>
+                <ul className="mt-3 space-y-2 text-sm">
+                  {col.links.map((l) => (
+                    <li key={l.label}>
+                      <button
+                        onClick={() => ('to' in l ? nav(l.to) : scrollTo(l.hash))}
+                        className="text-muted transition-colors hover:text-ink cursor-pointer"
+                      >
+                        {l.label}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+            <div>
+              <div className="text-xs font-bold uppercase tracking-wide text-faint">Trust &amp; compliance</div>
+              <ul className="mt-3 space-y-2 text-sm text-muted">
+                {FOOTER_COMPLIANCE.map((c) => (
+                  <li key={c} className="flex items-center gap-1.5">
+                    <ShieldCheck size={12} className="text-emerald-500 shrink-0" /> {c}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
-          <p className="text-xs text-faint">{SITE.footerNote}</p>
+          <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-line pt-6 text-center sm:flex-row sm:text-left">
+            <div className="text-xs text-faint">© {new Date().getFullYear()} ferroBid · A prototype by AspiraSys</div>
+            <div className="flex items-center gap-4 text-xs text-faint">
+              <span className="flex items-center gap-1"><Phone size={11} /> {SITE.supportPhone}</span>
+              <span className="flex items-center gap-1"><Mail size={11} /> {SITE.supportEmail}</span>
+            </div>
+          </div>
         </div>
       </footer>
     </div>

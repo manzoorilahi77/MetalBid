@@ -1,11 +1,11 @@
 [
   {
-    "id": "adm-01", "name": "Ravi Kumar", "email": "ravi.kumar@ferrobid.in", "role": "exec", "active": true, "createdAt": "2026-01-10",
-    "permissions": { "entityVerification": true, "lotVerification": true, "auctionCreation": true, "settlement": true, "logistics": true, "handover": true }
+    "id": "adm-01", "name": "Ravi Kumar", "email": "ravi.kumar@ferrobid.in", "role": "exec", "execFunction": "manager", "active": true, "createdAt": "2026-01-10",
+    "permissions": { "entityVerification": true, "auctionCreation": true, "settlement": true, "logistics": true, "handover": true }
   },
   {
-    "id": "adm-02", "name": "Meera Pillai", "email": "meera.pillai@ferrobid.in", "role": "exec", "active": true, "createdAt": "2026-02-01",
-    "permissions": { "entityVerification": true, "lotVerification": true, "auctionCreation": true, "settlement": true, "logistics": true, "handover": true }
+    "id": "adm-02", "name": "Meera Pillai", "email": "meera.pillai@ferrobid.in", "role": "exec", "execFunction": "field", "active": true, "createdAt": "2026-02-01",
+    "permissions": { "lotVerification": true }
   },
   {
     "id": "adm-03", "name": "Divya Nair", "email": "divya.nair@ferrobid.in", "role": "subadmin", "active": true, "createdAt": "2026-02-15",
@@ -19,7 +19,8 @@
       "logistics":  { "level": "act",  "metals": "All",     "region": "Chennai", "ceiling": 0 },
       "handover":   { "level": "hidden", "metals": "All",   "region": "All",     "ceiling": 0 },
       "monitor":    { "level": "act",  "metals": "All",     "region": "All",     "ceiling": 0 },
-      "users":      { "level": "view", "metals": "All",     "region": "All",     "ceiling": 0 }
+      "users":      { "level": "view", "metals": "All",     "region": "All",     "ceiling": 0 },
+      "masterdata": { "level": "act",  "metals": "All",     "region": "All",     "ceiling": 0 }
     }
   },
   {
@@ -34,7 +35,8 @@
       "logistics":  { "level": "act",  "metals": "All", "region": "Mumbai", "ceiling": 0 },
       "handover":   { "level": "act",  "metals": "All", "region": "Mumbai", "ceiling": 0 },
       "monitor":    { "level": "view", "metals": "All", "region": "All",    "ceiling": 0 },
-      "users":      { "level": "hidden", "metals": "All", "region": "All",  "ceiling": 0 }
+      "users":      { "level": "hidden", "metals": "All", "region": "All",  "ceiling": 0 },
+      "masterdata": { "level": "hidden", "metals": "All", "region": "All",  "ceiling": 0 }
     }
   }
 ]

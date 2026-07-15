@@ -24,6 +24,18 @@ export function Reveal({ children, delay = 0, className }: { children: ReactNode
   );
 }
 
+/** Second-by-second countdown for OTP resend cooldowns; call reset() to restart. */
+export function useCountdown(initial: number): readonly [number, () => void] {
+  const [left, setLeft] = useState(initial);
+  useEffect(() => {
+    if (left <= 0) return;
+    const t = setTimeout(() => setLeft((s) => s - 1), 1000);
+    return () => clearTimeout(t);
+  }, [left]);
+  const reset = () => setLeft(initial);
+  return [left, reset] as const;
+}
+
 /** Animates numeric changes with an ease-out count. */
 export function useAnimatedValue(target: number, duration = 500): number {
   const [value, setValue] = useState(target);

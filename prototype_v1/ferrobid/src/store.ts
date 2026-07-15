@@ -3,11 +3,15 @@ import type {
   Role, Lot, Auction, Bid, LedgerEntry, EntityRequest, Settlement,
   LogisticsRecord, AppNotification, Notice, AuditEntry, User, AdminUser, Toast, LotStatus,
   ApprovalRequest, ApprovalType, WorkTask, UserStanding, ModulePermission,
+  AuctionEvent, Catalogue, KycDocType, KycDocStatus, KycProfile,
+  PlanAudience, SubscriptionPlan, ActiveSubscription, ExecFunction,
 } from './types';
 import usersSeed from './data/mock/buyer/users.json';
 import walletSeed from './data/mock/buyer/wallet.json';
 import lotsSeed from './data/mock/seller/lots.json';
 import auctionsSeed from './data/mock/shared/auctions.json';
+import auctionEventsSeed from './data/mock/shared/auction_events.json';
+import cataloguesSeed from './data/mock/shared/catalogues.json';
 import entitySeed from './data/mock/executive_admin/entity_requests.json';
 import settlementsSeed from './data/mock/executive_admin/settlements.json';
 import logisticsSeed from './data/mock/executive_admin/logistics.json';
@@ -18,6 +22,7 @@ import masterDataSeed from './data/mock/super_admin/master_data.json';
 import noticesSeed from './data/mock/shared/notices.json';
 import notificationsSeed from './data/mock/shared/notifications.json';
 import approvalsSeed from './data/mock/shared/approvals.json';
+import plansSeed from './data/mock/shared/plans.json';
 import workQueueSeed from './data/mock/sub_admin/work_queue.json';
 import { PERM_TEMPLATES, DEFAULT_SUB_SCOPED } from './permissions';
 import { nextId, nowStamp } from './utils';
@@ -39,17 +44,26 @@ export function applyTheme(t: ThemeMode) {
   document.documentElement.dataset.theme = t;
 }
 
+// bot bidder IPs — b-02 and b-03 deliberately share one IP as a same-IP-fraud demo fixture
 const BOTS = [
-  { id: 'b-01', name: 'SteelCorp Industries' },
-  { id: 'b-02', name: 'Apex Alloys Ltd' },
-  { id: 'b-03', name: 'Vulcan Metals' },
-  { id: 'b-04', name: 'Nirmal Traders' },
+  { id: 'b-01', name: 'SteelCorp Industries', ip: '103.21.58.10' },
+  { id: 'b-02', name: 'Apex Alloys Ltd', ip: '103.21.58.14' },
+  { id: 'b-03', name: 'Vulcan Metals', ip: '103.21.58.14' },
+  { id: 'b-04', name: 'Nirmal Traders', ip: '117.196.4.88' },
 ];
 
 export const DEMO_USER_ID = 'u-buyer1';
+const DEMO_USER_IP = '49.207.12.201';
+
+/** Resolve the IP a bid should be recorded with — feeds same-IP fraud detection. */
+function ipFor(bidderId: string): string {
+  if (bidderId === DEMO_USER_ID) return DEMO_USER_IP;
+  return BOTS.find((b) => b.id === bidderId)?.ip ?? '0.0.0.0';
+}
 
 export interface Persona {
   role: Role;
+  execFunction?: ExecFunction;
   label: string;
   name: string;
   sub: string;
@@ -58,7 +72,8 @@ export const PERSONAS: Persona[] = [
   { role: 'guest', label: 'Guest User', name: 'Guest', sub: 'Browse only — not signed in' },
   { role: 'buyer', label: 'Buyer', name: 'Arjun Mehta', sub: 'Default account · KYC verified' },
   { role: 'seller', label: 'Buyer + Seller', name: 'Kavitha Raman', sub: 'Verified entity · Kavitha Steel Traders' },
-  { role: 'exec', label: 'Executive Admin', name: 'Ravi Kumar', sub: 'Verify → Auction → Fulfil pipeline' },
+  { role: 'exec', execFunction: 'field', label: 'Field Executive Officer', name: 'Meera Pillai', sub: 'Visit queue · lot inspection & approve/reject' },
+  { role: 'exec', execFunction: 'manager', label: 'Executive Manager', name: 'Ravi Kumar', sub: 'KYC queue · settlement → logistics → handover' },
   { role: 'subadmin', label: 'Sub-Admin', name: 'Divya Nair', sub: 'Permission-scoped console' },
   { role: 'superadmin', label: 'Super Admin', name: 'Mohammed Farooq', sub: 'Platform governance' },
 ];
@@ -75,6 +90,54 @@ function seedAuctions(): Auction[] {
   }));
 }
 
+function seedEvents(): AuctionEvent[] {
+  return (auctionEventsSeed as any[]).map((e) => ({
+    id: e.id, name: e.name, description: e.description, status: e.status,
+    startsAt: BOOT + e.startsInMin * min, endsAt: BOOT + e.endsInMin * min,
+    catalogueIds: e.catalogueIds, location: e.location, coverHues: e.coverHues, createdAt: e.createdAt,
+  }));
+}
+
+function seedCatalogues(): Catalogue[] {
+  return (cataloguesSeed as any[]).map((c) => ({
+    id: c.id, eventId: c.eventId, title: c.title, description: c.description,
+    lotIds: c.lotIds, closingAt: BOOT + c.closingInMin * min, status: c.status, createdAt: c.createdAt,
+  }));
+}
+
+/* ---------- Auction Event / Catalogue selector helpers ---------- */
+export const eventById = (events: AuctionEvent[], id: string) => events.find((e) => e.id === id);
+export const catalogueById = (catalogues: Catalogue[], id: string) => catalogues.find((c) => c.id === id);
+export const catalogueForLot = (catalogues: Catalogue[], lotId: string) => catalogues.find((c) => c.lotIds.includes(lotId));
+export const eventForCatalogue = (events: AuctionEvent[], catalogueId: string) => events.find((e) => e.catalogueIds.includes(catalogueId));
+export const lotsForCatalogue = (lots: Lot[], catalogue: Catalogue) => lots.filter((l) => catalogue.lotIds.includes(l.id));
+
+export function catalogueMeta(lots: Lot[], catalogue: Catalogue) {
+  const catLots = lotsForCatalogue(lots, catalogue);
+  return { lotCount: catLots.length, metals: Array.from(new Set(catLots.map((l) => l.metal))) };
+}
+
+export function eventMeta(catalogues: Catalogue[], event: AuctionEvent) {
+  const cats = catalogues.filter((c) => event.catalogueIds.includes(c.id));
+  return { catalogueCount: cats.length, lotCount: cats.reduce((n, c) => n + c.lotIds.length, 0) };
+}
+
+/** Same-IP fraud signal: distinct bidders on one auction sharing an IP, at/over the configured threshold. */
+export interface SameIpGroup { ip: string; bidderIds: string[]; bidderNames: string[] }
+export function sameIpGroups(bids: Bid[], auctionId: string, threshold: number): SameIpGroup[] {
+  const byIp = new Map<string, { ids: Set<string>; names: Map<string, string> }>();
+  for (const b of bids) {
+    if (b.auctionId !== auctionId) continue;
+    const entry = byIp.get(b.ip) ?? { ids: new Set<string>(), names: new Map<string, string>() };
+    entry.ids.add(b.bidderId);
+    entry.names.set(b.bidderId, b.bidderName);
+    byIp.set(b.ip, entry);
+  }
+  return Array.from(byIp.entries())
+    .filter(([, v]) => v.ids.size >= threshold)
+    .map(([ip, v]) => ({ ip, bidderIds: Array.from(v.ids), bidderNames: Array.from(v.names.values()) }));
+}
+
 function seedBids(auctions: Auction[]): Bid[] {
   const bids: Bid[] = [];
   for (const a of auctions.filter((x) => x.status === 'live')) {
@@ -86,20 +149,29 @@ function seedBids(auctions: Auction[]): Bid[] {
       // "My Bids" shows an outbid state out of the box
       const demoTurn = a.id === 'AU-101' && (i === 2 || i === 5);
       const bot = demoTurn ? { id: DEMO_USER_ID, name: 'Arjun Mehta' } : BOTS[i % BOTS.length];
-      bids.push({ id: nextId('BID'), auctionId: a.id, bidderId: bot.id, bidderName: bot.name, amount, at: t });
+      bids.push({ id: nextId('BID'), auctionId: a.id, bidderId: bot.id, bidderName: bot.name, amount, at: t, ip: ipFor(bot.id) });
       amount += a.increment * (1 + Math.floor(Math.random() * 2));
       t += 3 * min + Math.random() * 4 * min;
       i++;
     }
-    bids.push({ id: nextId('BID'), auctionId: a.id, bidderId: a.leaderId!, bidderName: a.leaderName!, amount: a.currentBid, at: Math.min(t, Date.now() - 2 * min) });
+    bids.push({ id: nextId('BID'), auctionId: a.id, bidderId: a.leaderId!, bidderName: a.leaderName!, amount: a.currentBid, at: Math.min(t, Date.now() - 2 * min), ip: ipFor(a.leaderId!) });
+  }
+  // deterministic same-IP fixture: b-02 and b-03 share an IP (see BOTS) — guarantee both
+  // have an early bid on AU-101 so the collusion flag in Bid Monitor is demoable out of the box
+  const flagAuction = auctions.find((a) => a.id === 'AU-101' && a.status === 'live');
+  if (flagAuction) {
+    bids.push(
+      { id: nextId('BID'), auctionId: flagAuction.id, bidderId: 'b-02', bidderName: 'Apex Alloys Ltd', amount: flagAuction.startPrice, at: flagAuction.startsAt + min, ip: ipFor('b-02') },
+      { id: nextId('BID'), auctionId: flagAuction.id, bidderId: 'b-03', bidderName: 'Vulcan Metals', amount: flagAuction.startPrice + flagAuction.increment, at: flagAuction.startsAt + 1.5 * min, ip: ipFor('b-03') },
+    );
   }
   // winning bid history for the demo buyer's closed auction (Tin Ingots)
   const won = auctions.find((a) => a.id === 'AU-096');
   if (won) {
     bids.push(
-      { id: nextId('BID'), auctionId: won.id, bidderId: DEMO_USER_ID, bidderName: 'Arjun Mehta', amount: won.currentBid - won.increment * 3, at: won.endsAt - 22 * min },
-      { id: nextId('BID'), auctionId: won.id, bidderId: 'b-02', bidderName: 'Apex Alloys Ltd', amount: won.currentBid - won.increment, at: won.endsAt - 9 * min },
-      { id: nextId('BID'), auctionId: won.id, bidderId: DEMO_USER_ID, bidderName: 'Arjun Mehta', amount: won.currentBid, at: won.endsAt - 3 * min },
+      { id: nextId('BID'), auctionId: won.id, bidderId: DEMO_USER_ID, bidderName: 'Arjun Mehta', amount: won.currentBid - won.increment * 3, at: won.endsAt - 22 * min, ip: ipFor(DEMO_USER_ID) },
+      { id: nextId('BID'), auctionId: won.id, bidderId: 'b-02', bidderName: 'Apex Alloys Ltd', amount: won.currentBid - won.increment, at: won.endsAt - 9 * min, ip: ipFor('b-02') },
+      { id: nextId('BID'), auctionId: won.id, bidderId: DEMO_USER_ID, bidderName: 'Arjun Mehta', amount: won.currentBid, at: won.endsAt - 3 * min, ip: ipFor(DEMO_USER_ID) },
     );
   }
   return bids.sort((x, y) => x.at - y.at);
@@ -115,8 +187,11 @@ function seedNotifications(): AppNotification[] {
 interface AppState {
   // session
   role: Role;
+  execFunction: ExecFunction; // meaningful only when role === 'exec' — Field Executive Officer vs Executive Manager
   userName: string;
   authenticated: boolean;
+  sessionExpiresAt: number | null;
+  sessionExpired: boolean;
   now: number;
   theme: ThemeMode;
 
@@ -125,6 +200,8 @@ interface AppState {
   admins: AdminUser[];
   lots: Lot[];
   auctions: Auction[];
+  auctionEvents: AuctionEvent[];
+  catalogues: Catalogue[];
   bids: Bid[];
   wallet: { balance: number; emdLocked: number; ledger: LedgerEntry[] };
   emdLockedAuctions: string[];
@@ -141,15 +218,31 @@ interface AppState {
   workQueue: WorkTask[];
   toasts: Toast[];
   kycStatus: 'not_submitted' | 'pending' | 'verified';
+  kycProfile: KycProfile;
+  kycDocs: Record<KycDocType, KycDocStatus>;
   buyerUpgrade: 'none' | 'submitted' | 'approved';
+  plans: SubscriptionPlan[];
+  subscriptions: Partial<Record<PlanAudience, ActiveSubscription>>;
 
   // session actions
   setTheme: (t: ThemeMode) => void;
   toggleTheme: () => void;
-  switchRole: (r: Role) => void;
+  switchRole: (r: Role, execFunction?: ExecFunction) => void;
   loginAs: (r: Role) => void;
   logout: () => void;
-  submitKyc: () => void;
+  reauth: () => void;
+  expireSessionNow: () => void;
+
+  // buyer/seller onboarding KYC wizard
+  updateKycProfile: (patch: Partial<KycProfile>) => void;
+  uploadKycDoc: (type: KycDocType) => void;
+  submitKycWizard: () => void;
+  resetKycDemo: () => void;
+
+  // subscription / billing
+  subscribeToPlan: (audience: PlanAudience, planId: string) => void;
+  cancelSubscription: (audience: PlanAudience) => void;
+  updatePlan: (planId: string, patch: Partial<SubscriptionPlan>) => void;
 
   // toast / notify
   pushToast: (t: Omit<Toast, 'id'>) => void;
@@ -169,6 +262,11 @@ interface AppState {
   startVerification: (lotId: string) => void;
   decideLot: (lotId: string, decision: 'verified' | 'flagged' | 'rejected', checklist: Record<string, boolean>, note: string) => void;
   createAuction: (lotId: string, params: { startsInMin: number; durationMin: number; increment: number; reserve: number; emd: number }) => void;
+
+  // auction event / catalogue authoring
+  createEvent: (name: string, startsInMin: number, endsInMin: number, location?: string) => string;
+  createCatalogue: (eventId: string, title: string) => string;
+  assignLotToCatalogue: (lotId: string, catalogueId: string) => void;
 
   // entity verification
   submitEntityRequest: (businessName: string, gstin: string, pan: string, docs: { name: string; type: string }[]) => void;
@@ -193,7 +291,7 @@ interface AppState {
   // admin
   toggleAdminActive: (id: string) => void;
   toggleAdminPermission: (id: string, key: string) => void;
-  addAdmin: (name: string, email: string, role: 'exec' | 'subadmin') => void;
+  addAdmin: (name: string, email: string, role: 'exec' | 'subadmin', execFunction?: ExecFunction) => void;
   toggleUserActive: (id: string) => void;
   updateConfig: (section: string, key: string, value: unknown) => void;
 
@@ -224,11 +322,16 @@ interface AppState {
 }
 
 const initialAuctions = seedAuctions();
+const initialEvents = seedEvents();
+const initialCatalogues = seedCatalogues();
 
 export const useApp = create<AppState>((set, get) => ({
   role: 'guest',
+  execFunction: 'field',
   userName: 'Guest',
   authenticated: false,
+  sessionExpiresAt: null,
+  sessionExpired: false,
   now: Date.now(),
   theme: initialTheme(),
 
@@ -236,6 +339,8 @@ export const useApp = create<AppState>((set, get) => ({
   admins: adminsSeed as unknown as AdminUser[],
   lots: lotsSeed as unknown as Lot[],
   auctions: initialAuctions,
+  auctionEvents: initialEvents,
+  catalogues: initialCatalogues,
   bids: seedBids(initialAuctions),
   wallet: walletSeed as { balance: number; emdLocked: number; ledger: LedgerEntry[] },
   emdLockedAuctions: ['AU-101'],
@@ -255,7 +360,15 @@ export const useApp = create<AppState>((set, get) => ({
   })),
   toasts: [],
   kycStatus: 'verified',
+  kycProfile: {
+    fullName: 'Arjun Mehta', email: 'arjun.mehta@gmail.com', phone: '+91 98450 12345',
+    panNumber: 'ABCPM1234F', isBusiness: false, businessName: '', gstin: '',
+    address: '', city: '', state: '', pincode: '',
+  },
+  kycDocs: { pan: 'verified', aadhar: 'verified', photo: 'verified', gst: 'pending', address_proof: 'verified', cancelled_cheque: 'verified', itr: 'pending', pcb: 'pending' },
   buyerUpgrade: 'none',
+  plans: plansSeed as SubscriptionPlan[],
+  subscriptions: { buyer: { planId: 'PLN-BUY-BASIC', renewsAt: BOOT + 30 * 24 * 60 * min, autoRenew: true } },
 
   setTheme: (t) => {
     localStorage.setItem(THEME_KEY, t);
@@ -264,12 +377,75 @@ export const useApp = create<AppState>((set, get) => ({
   },
   toggleTheme: () => get().setTheme(get().theme === 'dark' ? 'light' : 'dark'),
 
-  switchRole: (r) => {
-    const p = PERSONAS.find((x) => x.role === r)!;
-    set({ role: r, userName: p.name, authenticated: r !== 'guest' });
+  switchRole: (r, execFunction) => {
+    const p = execFunction
+      ? (PERSONAS.find((x) => x.role === r && x.execFunction === execFunction) ?? PERSONAS.find((x) => x.role === r)!)
+      : PERSONAS.find((x) => x.role === r)!;
+    const sessionTimeoutMin = get().config.platform.sessionTimeoutMin;
+    set({
+      role: r, userName: p.name, authenticated: r !== 'guest',
+      execFunction: p.execFunction ?? get().execFunction,
+      sessionExpiresAt: r !== 'guest' ? Date.now() + sessionTimeoutMin * min : null,
+      sessionExpired: false,
+    });
   },
   loginAs: (r) => get().switchRole(r),
-  logout: () => set({ role: 'guest', userName: 'Guest', authenticated: false }),
+  logout: () => set({ role: 'guest', userName: 'Guest', authenticated: false, sessionExpiresAt: null, sessionExpired: false }),
+  reauth: () => {
+    const sessionTimeoutMin = get().config.platform.sessionTimeoutMin;
+    set({ sessionExpired: false, sessionExpiresAt: Date.now() + sessionTimeoutMin * min });
+    get().pushToast({ title: 'Session resumed', body: 'Re-verified successfully — welcome back.', tone: 'success' });
+  },
+  expireSessionNow: () => {
+    if (get().role === 'guest') return;
+    set({ sessionExpired: true });
+  },
+
+  updateKycProfile: (patch) => set((s) => ({ kycProfile: { ...s.kycProfile, ...patch } })),
+  uploadKycDoc: (type) => set((s) => ({ kycDocs: { ...s.kycDocs, [type]: 'uploaded' } })),
+  submitKycWizard: () => {
+    set({ kycStatus: 'pending' });
+    get().pushToast({ title: 'KYC submitted', body: 'Documents sent for review (simulated).', tone: 'success' });
+    get().notify('buyer', 'KYC submitted for review', 'Your account details and documents are being verified.', 'system');
+    setTimeout(() => {
+      set((s) => ({
+        kycStatus: 'verified',
+        kycDocs: Object.fromEntries(
+          Object.entries(s.kycDocs).map(([k, v]) => [k, v === 'uploaded' ? 'verified' : v])
+        ) as Record<KycDocType, KycDocStatus>,
+      }));
+      get().notify('buyer', 'KYC verified', 'Your KYC has been approved. You can now bid in live auctions.', 'system');
+      get().pushToast({ title: 'KYC verified ✓', body: 'You can now participate in auctions.', tone: 'success' });
+    }, 4000);
+  },
+  resetKycDemo: () => set({
+    kycStatus: 'not_submitted',
+    kycDocs: { pan: 'pending', aadhar: 'pending', photo: 'pending', gst: 'pending', address_proof: 'pending', cancelled_cheque: 'pending', itr: 'pending', pcb: 'pending' },
+  }),
+
+  subscribeToPlan: (audience, planId) => {
+    const s = get();
+    const plan = s.plans.find((p) => p.id === planId);
+    if (!plan) return;
+    const renewsAt = Date.now() + (plan.billingCycle === 'yearly' ? 365 : 30) * 24 * 60 * min;
+    set((st) => ({ subscriptions: { ...st.subscriptions, [audience]: { planId, renewsAt, autoRenew: true } } }));
+    s.logAudit(s.userName, audience === 'buyer' ? 'Buyer' : 'Seller', `Subscribed to ${plan.name} (${audience})`, plan.id, 'Subscription');
+    s.notify(audience, `Subscribed to ${plan.name}`, `Your ${audience} plan is now active. Renews ${new Date(renewsAt).toLocaleDateString('en-IN')}.`, 'system');
+    s.pushToast({ title: 'Subscription active', body: `${plan.name} — ${audience} plan`, tone: 'success' });
+  },
+  cancelSubscription: (audience) => {
+    set((s) => {
+      const next = { ...s.subscriptions };
+      delete next[audience];
+      return { subscriptions: next };
+    });
+    get().pushToast({ title: 'Subscription cancelled', tone: 'info' });
+  },
+  updatePlan: (planId, patch) => {
+    set((s) => ({ plans: s.plans.map((p) => (p.id === planId ? { ...p, ...patch } : p)) }));
+    get().logAudit('Mohammed Farooq', 'Super Admin', `Plan pricing updated — ${planId}`, planId, 'Configuration');
+    get().pushToast({ title: 'Plan updated', tone: 'success' });
+  },
   submitKyc: () => {
     set({ kycStatus: 'pending' });
     get().pushToast({ title: 'KYC submitted', body: 'Documents sent for review (simulated).', tone: 'success' });
@@ -355,7 +531,7 @@ export const useApp = create<AppState>((set, get) => ({
       get().notify('exec', 'Lot submitted for verification', `${lot.title} (${id}) awaiting inspection.`);
       get().logAudit('Kavitha Raman', 'Seller', 'Lot submitted for verification', id, 'Listing');
     }
-    get().pushToast({ title: asDraft ? 'Draft saved' : 'Lot submitted', body: asDraft ? 'You can submit it for verification anytime.' : 'Sent to Executive Admin for verification.', tone: 'success' });
+    get().pushToast({ title: asDraft ? 'Draft saved' : 'Lot submitted', body: asDraft ? 'You can submit it for verification anytime.' : 'Sent to a Field Executive Officer for inspection.', tone: 'success' });
     return id;
   },
 
@@ -364,13 +540,13 @@ export const useApp = create<AppState>((set, get) => ({
     const lot = get().lots.find((l) => l.id === lotId);
     get().notify('exec', 'Lot submitted for verification', `${lot?.title} (${lotId}) awaiting inspection.`);
     get().logAudit('Kavitha Raman', 'Seller', 'Lot submitted for verification', lotId, 'Listing');
-    get().pushToast({ title: 'Lot submitted', body: 'Sent to Executive Admin for verification.', tone: 'success' });
+    get().pushToast({ title: 'Lot submitted', body: 'Sent to a Field Executive Officer for inspection.', tone: 'success' });
   },
 
   startVerification: (lotId) => {
     get().setLotStatus(lotId, 'under_verification');
-    get().logAudit('Ravi Kumar', 'Executive Admin', 'Verification started', lotId, 'Verification');
-    get().notify('seller', `Lot ${lotId} under verification`, 'Executive Admin has started the inspection.');
+    get().logAudit('Meera Pillai', 'Field Executive Officer', 'Verification started', lotId, 'Verification');
+    get().notify('seller', `Lot ${lotId} under verification`, 'A Field Executive Officer has started the inspection.');
   },
 
   decideLot: (lotId, decision, checklist, note) => {
@@ -383,13 +559,13 @@ export const useApp = create<AppState>((set, get) => ({
           ? {
               ...l, status,
               rejectReason: decision === 'rejected' ? note : undefined,
-              verification: { checklist, note, reportUploaded: true, photosUploaded: true, decision, decidedBy: 'Ravi Kumar' },
+              verification: { checklist, note, reportUploaded: true, photosUploaded: true, decision, decidedBy: 'Meera Pillai' },
             }
           : l
       ),
     }));
     const labels = { verified: 'verified & approved for auction', flagged: 'flagged for re-inspection', rejected: 'rejected' } as const;
-    s.logAudit('Ravi Kumar', 'Executive Admin', `Lot ${labels[decision]}`, lotId, 'Verification');
+    s.logAudit('Meera Pillai', 'Field Executive Officer', `Lot ${labels[decision]}`, lotId, 'Verification');
     s.notify('seller', `Lot ${lotId} ${labels[decision]}`, note || `${lot?.title} — ${labels[decision]}.`);
     s.pushToast({ title: `Lot ${labels[decision]}`, tone: decision === 'rejected' ? 'error' : 'success' });
   },
@@ -411,10 +587,53 @@ export const useApp = create<AppState>((set, get) => ({
       auctions: [...s.auctions, auction],
       lots: s.lots.map((l) => (l.id === lotId ? { ...l, status: auction.status === 'live' ? 'live' : 'scheduled', auctionId: id } : l)),
     }));
-    get().logAudit('Ravi Kumar', 'Executive Admin', 'Auction created & scheduled', `${lotId} → ${id}`, 'Auction Setup');
+    get().logAudit('Ravi Kumar', 'Executive Manager', 'Auction created & scheduled', `${lotId} → ${id}`, 'Auction Setup');
     get().notify('seller', `Auction ${auction.status === 'live' ? 'is live' : 'scheduled'} for ${lotId}`, `${lot.title} — ${auction.status === 'live' ? 'bidding open now' : 'goes live soon'}.`);
     get().notify('buyer', 'New auction published', `${lot.title} (${lot.quantity}) is ${auction.status === 'live' ? 'live now' : 'opening soon'}.`);
     get().pushToast({ title: auction.status === 'live' ? 'Auction published live' : 'Auction scheduled', body: `${lot.title}`, tone: 'success' });
+  },
+
+  createEvent: (name, startsInMin, endsInMin, location) => {
+    const id = nextId('EVT');
+    const startsAt = Date.now() + startsInMin * min;
+    const event: AuctionEvent = {
+      id, name, status: startsInMin <= 0 ? 'live' : 'scheduled',
+      startsAt, endsAt: startsAt + (endsInMin - startsInMin) * min,
+      catalogueIds: [], location, coverHues: [210, 230], createdAt: nowStamp(),
+    };
+    set((s) => ({ auctionEvents: [...s.auctionEvents, event] }));
+    get().logAudit('Ravi Kumar', 'Executive Manager', 'Auction Event created', name, 'Auction Setup');
+    get().notify('exec', 'Auction Event created', `${name} is ready for catalogues to be added.`);
+    return id;
+  },
+
+  createCatalogue: (eventId, title) => {
+    const id = nextId('CAT');
+    const event = get().auctionEvents.find((e) => e.id === eventId);
+    const catalogue: Catalogue = {
+      id, eventId, title, lotIds: [], closingAt: event?.endsAt ?? Date.now() + 60 * min,
+      status: 'draft', createdAt: nowStamp(),
+    };
+    set((s) => ({
+      catalogues: [...s.catalogues, catalogue],
+      auctionEvents: s.auctionEvents.map((e) => (e.id === eventId ? { ...e, catalogueIds: [...e.catalogueIds, id] } : e)),
+    }));
+    get().logAudit('Ravi Kumar', 'Executive Manager', 'Catalogue created', `${title} → ${event?.name ?? eventId}`, 'Auction Setup');
+    return id;
+  },
+
+  assignLotToCatalogue: (lotId, catalogueId) => {
+    const s = get();
+    const lot = s.lots.find((l) => l.id === lotId);
+    const catalogue = s.catalogues.find((c) => c.id === catalogueId);
+    if (!lot || !catalogue) return;
+    set((st) => ({
+      lots: st.lots.map((l) => (l.id === lotId ? { ...l, catalogueId } : l)),
+      catalogues: st.catalogues.map((c) => (c.id === catalogueId ? { ...c, lotIds: Array.from(new Set([...c.lotIds, lotId])) } : c)),
+    }));
+    get().logAudit('Ravi Kumar', 'Executive Manager', `Lot ${lotId} assigned to catalogue`, catalogue.title, 'Auction Setup');
+    get().notify('exec', 'Lot assigned to catalogue', `${lot.title} added to ${catalogue.title}.`);
+    get().pushToast({ title: 'Assigned to catalogue', body: catalogue.title, tone: 'success' });
   },
 
   submitEntityRequest: (businessName, gstin, pan, docs) => {
@@ -426,7 +645,7 @@ export const useApp = create<AppState>((set, get) => ({
       ],
     }));
     get().notify('exec', 'New entity verification request', `${businessName} submitted documents for seller verification.`);
-    get().pushToast({ title: 'Request submitted', body: 'Executive Admin will review your entity documents.', tone: 'success' });
+    get().pushToast({ title: 'Request submitted', body: 'An Executive Manager will review your entity documents.', tone: 'success' });
   },
 
   decideEntity: (reqId, decision, note) => {
@@ -437,7 +656,7 @@ export const useApp = create<AppState>((set, get) => ({
       users: s.users.map((u) => (u.id === req?.userId && decision === 'approved' ? { ...u, sellerVerified: true, businessName: req.businessName } : u)),
     }));
     const msg = { approved: 'approved — Seller capability unlocked 🎉', rejected: 'rejected', returned: 'returned for corrections' }[decision];
-    get().logAudit('Ravi Kumar', 'Executive Admin', `Entity ${decision} — ${req?.businessName}`, reqId, 'Entity Verification');
+    get().logAudit('Ravi Kumar', 'Executive Manager', `Entity ${decision} — ${req?.businessName}`, reqId, 'Entity Verification');
     get().notify('buyer', `Entity verification ${msg}`, note || `Your request for ${req?.businessName} was ${decision}.`);
     get().pushToast({ title: `Entity ${msg}`, tone: decision === 'rejected' ? 'error' : 'success' });
   },
@@ -468,7 +687,7 @@ export const useApp = create<AppState>((set, get) => ({
             }
           : x
       ),
-      bids: [...st.bids, { id: nextId('BID'), auctionId, bidderId: who.id, bidderName: who.name, amount, at: now, auto }],
+      bids: [...st.bids, { id: nextId('BID'), auctionId, bidderId: who.id, bidderName: who.name, amount, at: now, auto, ip: ipFor(who.id) }],
     }));
 
     if (extend) get().notify('all', 'Auction auto-extended', `Late bid on ${a.lotId} — closing time extended by ${cfg.auctionAutoExtensionBySec / 60} min.`, 'bid');
@@ -488,6 +707,11 @@ export const useApp = create<AppState>((set, get) => ({
     const now = Date.now();
     const s = get();
     set({ now });
+
+    if (s.role !== 'guest' && s.sessionExpiresAt && !s.sessionExpired && now >= s.sessionExpiresAt) {
+      set({ sessionExpired: true });
+      s.notify(s.role, 'Session expired', 'Please re-verify via OTP to continue where you left off.', 'system');
+    }
 
     for (const a of s.auctions) {
       // scheduled → live
@@ -566,7 +790,7 @@ export const useApp = create<AppState>((set, get) => ({
     set((s) => ({ settlements: s.settlements.map((x) => (x.id === stId ? { ...x, paymentConfirmed: true } : x)) }));
     if (st) {
       get().setLotStatus(st.lotId, 'in_settlement');
-      get().logAudit('Ravi Kumar', 'Executive Admin', 'Winner payment confirmed (mock)', stId, 'Settlement');
+      get().logAudit('Ravi Kumar', 'Executive Manager', 'Winner payment confirmed (mock)', stId, 'Settlement');
       get().notify('buyer', `Payment confirmed — Lot ${st.lotId}`, 'Your payment has been verified. Pickup will be scheduled next.');
       get().pushToast({ title: 'Payment confirmed', tone: 'success' });
     }
@@ -575,13 +799,13 @@ export const useApp = create<AppState>((set, get) => ({
     const st = get().settlements.find((x) => x.id === stId);
     set((s) => ({ settlements: s.settlements.map((x) => (x.id === stId ? { ...x, emdHandled: true } : x)) }));
     if (st) {
-      get().logAudit('Ravi Kumar', 'Executive Admin', 'EMD released to losers / forfeit processed', stId, 'Settlement');
+      get().logAudit('Ravi Kumar', 'Executive Manager', 'EMD released to losers / forfeit processed', stId, 'Settlement');
       get().pushToast({ title: 'EMD processed', body: 'Losing bidders refunded; defaulter forfeits applied (mock).', tone: 'success' });
     }
   },
   generateInvoice: (stId) => {
     set((s) => ({ settlements: s.settlements.map((x) => (x.id === stId ? { ...x, invoiceGenerated: true } : x)) }));
-    get().logAudit('Ravi Kumar', 'Executive Admin', 'Invoice & receipt generated (mock)', stId, 'Settlement');
+    get().logAudit('Ravi Kumar', 'Executive Manager', 'Invoice & receipt generated (mock)', stId, 'Settlement');
     get().pushToast({ title: 'Invoice generated', body: 'Receipt shared with the winner (mock PDF).', tone: 'success' });
   },
   handoffToLogistics: (stId) => {
@@ -594,7 +818,7 @@ export const useApp = create<AppState>((set, get) => ({
       ],
     }));
     get().setLotStatus(st.lotId, 'ready_for_pickup');
-    get().logAudit('Ravi Kumar', 'Executive Admin', 'Settlement complete — handed off to logistics', st.lotId, 'Settlement');
+    get().logAudit('Ravi Kumar', 'Executive Manager', 'Settlement complete — handed off to logistics', st.lotId, 'Settlement');
     get().notify('buyer', `Lot ${st.lotId} ready for pickup`, 'Settlement completed. Pickup scheduling is underway.');
     get().pushToast({ title: 'Handed off to logistics', tone: 'success' });
   },
@@ -602,7 +826,7 @@ export const useApp = create<AppState>((set, get) => ({
     const lg = get().logistics.find((x) => x.id === lgId);
     set((s) => ({ logistics: s.logistics.map((x) => (x.id === lgId ? { ...x, pickupDate: date, slot, handler, status: 'scheduled' } : x)) }));
     if (lg) {
-      get().logAudit('Ravi Kumar', 'Executive Admin', `Pickup scheduled + handler assigned (${handler})`, lg.lotId, 'Logistics');
+      get().logAudit('Ravi Kumar', 'Executive Manager', `Pickup scheduled + handler assigned (${handler})`, lg.lotId, 'Logistics');
       get().notify('buyer', `Pickup scheduled — Lot ${lg.lotId}`, `${date}, ${slot} · Handler: ${handler}`);
       get().pushToast({ title: 'Pickup scheduled', body: `${date} · ${slot} · ${handler}`, tone: 'success' });
     }
@@ -612,7 +836,7 @@ export const useApp = create<AppState>((set, get) => ({
     set((s) => ({ logistics: s.logistics.map((x) => (x.id === lgId ? { ...x, status: 'in_transit' } : x)) }));
     if (lg) {
       get().setLotStatus(lg.lotId, 'in_logistics');
-      get().logAudit('Ravi Kumar', 'Executive Admin', 'Pickup in transit', lg.lotId, 'Logistics');
+      get().logAudit('Ravi Kumar', 'Executive Manager', 'Pickup in transit', lg.lotId, 'Logistics');
     }
   },
   toggleHandoverCheck: (lgId, key) =>
@@ -630,7 +854,7 @@ export const useApp = create<AppState>((set, get) => ({
     set((s) => ({ logistics: s.logistics.map((x) => (x.id === lgId ? { ...x, status: 'completed' } : x)) }));
     if (lg) {
       get().setLotStatus(lg.lotId, 'closed');
-      get().logAudit('Ravi Kumar', 'Executive Admin', 'Handover confirmed — lot closed', lg.lotId, 'Handover');
+      get().logAudit('Ravi Kumar', 'Executive Manager', 'Handover confirmed — lot closed', lg.lotId, 'Handover');
       get().notify('all', `Lot ${lg.lotId} handed over ✓`, 'Pickup completed with proof. Lifecycle closed.');
       get().pushToast({ title: 'Handover complete — lot closed', tone: 'success' });
     }
@@ -646,19 +870,24 @@ export const useApp = create<AppState>((set, get) => ({
     }));
     get().logAudit('Mohammed Farooq', 'Super Admin', `Permission "${key}" toggled`, id, 'Administration');
   },
-  addAdmin: (name, email, role) => {
+  addAdmin: (name, email, role, execFunction) => {
+    const fn = execFunction ?? 'field';
     const perms: Record<string, boolean> =
       role === 'exec'
-        ? { entityVerification: true, lotVerification: true, auctionCreation: true, settlement: true, logistics: true, handover: true }
+        ? fn === 'field'
+          ? { lotVerification: true }
+          : { entityVerification: true, auctionCreation: true, settlement: true, logistics: true, handover: true }
         : { manageAuctions: true, manageLots: true, manageUsers: false, manageCatalogue: true, viewAudit: false, systemConfig: false };
+    const roleLabel = role === 'exec' ? (fn === 'field' ? 'Field Executive Officer' : 'Executive Manager') : 'Sub-Admin';
     set((s) => ({
       admins: [...s.admins, {
         id: nextId('adm'), name, email, role, permissions: perms, active: true, createdAt: new Date().toISOString().slice(0, 10),
+        ...(role === 'exec' ? { execFunction: fn } : {}),
         ...(role === 'subadmin' ? { scoped: JSON.parse(JSON.stringify(DEFAULT_SUB_SCOPED)) } : {}),
       }],
     }));
-    get().logAudit('Mohammed Farooq', 'Super Admin', `${role === 'exec' ? 'Executive Admin' : 'Sub-Admin'} created`, name, 'Administration');
-    get().pushToast({ title: `${role === 'exec' ? 'Executive Admin' : 'Sub-Admin'} created`, body: name, tone: 'success' });
+    get().logAudit('Mohammed Farooq', 'Super Admin', `${roleLabel} created`, name, 'Administration');
+    get().pushToast({ title: `${roleLabel} created`, body: name, tone: 'success' });
   },
   toggleUserActive: (id) =>
     set((s) => ({ users: s.users.map((u) => (u.id === id ? { ...u, active: !u.active } : u)) })),
@@ -699,7 +928,7 @@ export const useApp = create<AppState>((set, get) => ({
       s.pushToast({ title: 'Already awaiting approval', body: 'This action has a pending request with the approvers.', tone: 'info' });
       return;
     }
-    const requestedRole = s.role === 'superadmin' ? 'Super Admin' : s.role === 'exec' ? 'Executive Admin' : 'Sub-Admin';
+    const requestedRole = s.role === 'superadmin' ? 'Super Admin' : s.role === 'exec' ? 'Executive Manager' : 'Sub-Admin';
     set((st) => ({
       approvals: [
         { id: nextId('AP'), ...req, requestedBy: st.userName, requestedRole, at: nowStamp(), status: 'pending' as const },
@@ -717,7 +946,7 @@ export const useApp = create<AppState>((set, get) => ({
     const ap = s.approvals.find((a) => a.id === id);
     if (!ap || ap.status !== 'pending') return;
     const decider = s.userName;
-    const deciderRole = s.role === 'superadmin' ? 'Super Admin' : 'Executive Admin';
+    const deciderRole = s.role === 'superadmin' ? 'Super Admin' : 'Executive Manager';
     set((st) => ({
       approvals: st.approvals.map((a) =>
         a.id === id ? { ...a, status: decision, decidedBy: decider, decisionNote: note, decidedAt: nowStamp() } : a
@@ -755,7 +984,7 @@ export const useApp = create<AppState>((set, get) => ({
         x.id === id ? { ...x, status: 'paused', pausedRemaining: Math.max(0, x.endsAt - now), pauseReason: reason } : x
       ),
     }));
-    s.logAudit(actor ?? 'Mohammed Farooq', actor ? 'Executive Admin' : 'Super Admin', `Auction paused — ${reason}`, id, 'Control Tower');
+    s.logAudit(actor ?? 'Mohammed Farooq', actor ? 'Executive Manager' : 'Super Admin', `Auction paused — ${reason}`, id, 'Control Tower');
     s.notify('all', `Auction ${id} paused`, `Bidding is temporarily on hold. Reason: ${reason}`, 'system');
     s.pushToast({ title: 'Auction paused', body: `${id} — clock frozen, bidding blocked.`, tone: 'info' });
   },

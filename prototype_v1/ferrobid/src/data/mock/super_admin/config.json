@@ -4,7 +4,8 @@
     "auctionAutoExtensionBySec": 120,
     "defaultEmdPercent": 5,
     "maxAutoExtensions": 5,
-    "walletTopupLimit": 1000000
+    "walletTopupLimit": 1000000,
+    "sessionTimeoutMin": 20
   },
   "entityVerificationPolicy": {
     "requireGST": true,
@@ -13,6 +14,11 @@
     "requireMSME": false,
     "autoReturnAfterDays": 7,
     "reviewSLA": "48 hours"
+  },
+  "kycPolicy": {
+    "requireGSTForBusiness": true,
+    "requireITR": false,
+    "requirePCB": false
   },
   "financial": {
     "commissionPercent": 2.5,
@@ -24,7 +30,8 @@
   },
   "risk": {
     "autoSuspendEnabled": true,
-    "autoSuspendAfterDefaults": 2
+    "autoSuspendAfterDefaults": 2,
+    "sameIpThreshold": 2
   },
   "notifications": {
     "onEntityVerified": true,

@@ -21,6 +21,21 @@ export const LIVE_SECTION = {
   viewAll: 'View all',
 } as const;
 
+export const CATEGORY_SECTION = {
+  kicker: 'Browse by metal',
+  title: 'Every category, one marketplace',
+  sub: 'Jump straight into live lots for the metal you trade.',
+} as const;
+
+/** Fixed display order for the metal category tiles (WBS §1 metal list). */
+export const CATEGORY_ORDER = ['Ferrous', 'Copper', 'Aluminium', 'Brass', 'Stainless', 'Zinc', 'Lead', 'Tin'] as const;
+
+export const NOTICE_SECTION = {
+  kicker: 'Stay informed',
+  title: 'Latest announcements',
+  viewAll: 'View noticeboard',
+} as const;
+
 export const HOW_SECTION = {
   kicker: 'The lifecycle',
   title: 'From listing to handover — managed end to end',

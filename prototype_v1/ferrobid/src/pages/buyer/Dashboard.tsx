@@ -6,7 +6,7 @@ import { inrCompact, timeLeft } from '../../utils';
 
 export default function BuyerDashboard() {
   const nav = useNavigate();
-  const { wallet, auctions, lots, bids, kycStatus, submitKyc, now, buyerUpgrade, userName } = useApp();
+  const { wallet, auctions, lots, bids, kycStatus, now, buyerUpgrade, userName } = useApp();
   const live = auctions.filter((a) => a.status === 'live');
   const myBidAuctions = new Set(bids.filter((b) => b.bidderId === DEMO_USER_ID).map((b) => b.auctionId));
   const leading = live.filter((a) => a.leaderId === DEMO_USER_ID).length;
@@ -21,9 +21,9 @@ export default function BuyerDashboard() {
           <ShieldCheck size={18} className="text-amber-500" />
           <div className="flex-1 text-sm">
             <b>KYC {kycStatus === 'pending' ? 'under review' : 'required'}.</b>{' '}
-            {kycStatus === 'pending' ? 'Our team is reviewing your documents (simulated — approves in a few seconds).' : 'Submit your KYC to start bidding in live auctions.'}
+            {kycStatus === 'pending' ? 'Our team is reviewing your documents (simulated — approves in a few seconds).' : 'Complete the KYC wizard to start bidding in live auctions.'}
           </div>
-          {kycStatus === 'not_submitted' && <Btn size="sm" variant="accent" onClick={submitKyc}>Submit KYC (mock)</Btn>}
+          {kycStatus === 'not_submitted' && <Btn size="sm" variant="accent" onClick={() => nav('/buyer/kyc')}>Complete KYC</Btn>}
           {kycStatus === 'pending' && <Badge tone="bg-amber-50 dark:bg-amber-400/10 text-amber-700 dark:text-amber-300 ring-amber-200 dark:ring-amber-400/25"><Clock size={11} /> In review</Badge>}
         </Card>
       )}
@@ -75,7 +75,7 @@ export default function BuyerDashboard() {
                 {buyerUpgrade === 'approved'
                   ? 'Your entity is verified — listing tools are unlocked! Switch to the Seller workspace via the role switcher.'
                   : buyerUpgrade === 'submitted'
-                  ? 'Your entity documents are under review by the Executive Admin.'
+                  ? 'Your entity documents are under review by the Executive Manager.'
                   : 'Verify your business entity to list your own lots — while keeping all Buyer abilities.'}
               </p>
               <Btn variant="accent" size="sm" className="mt-3" onClick={() => nav('/buyer/become-seller')}>

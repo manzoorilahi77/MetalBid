@@ -56,7 +56,7 @@ export default function SubConsole() {
         <div>
           <h2 className="mb-2 text-sm font-bold text-ink">My Work Queue <span className="ml-1 text-xs font-medium text-faint">SLA-tracked tasks routed to your scope</span></h2>
           <div className="space-y-2.5">
-            {openTasks.length === 0 && <Empty title="Queue is clear 🎉" sub="Tasks assigned by Executive Admins or auto-routed by scope appear here." />}
+            {openTasks.length === 0 && <Empty title="Queue is clear 🎉" sub="Tasks assigned by Executive Managers or auto-routed by scope appear here." />}
             {openTasks.map((t) => (
               <Card key={t.id} className="flex flex-wrap items-center gap-3 p-3.5">
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-steel-500/10 text-steel-700 dark:text-steel-300">

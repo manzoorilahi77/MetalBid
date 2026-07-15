@@ -55,18 +55,18 @@ export const STATUS_TONE: Record<LotStatus, string> = {
 /** Allowed transitions + owning role — the prototype's state machine. */
 export const TRANSITIONS: Record<LotStatus, { to: LotStatus[]; owner: string }> = {
   draft: { to: ['submitted'], owner: 'Seller' },
-  submitted: { to: ['under_verification'], owner: 'Executive Admin' },
-  under_verification: { to: ['approved', 'rejected'], owner: 'Executive Admin' },
+  submitted: { to: ['under_verification'], owner: 'Field Executive Officer' },
+  under_verification: { to: ['approved', 'rejected'], owner: 'Field Executive Officer' },
   rejected: { to: ['draft'], owner: 'Seller' },
-  approved: { to: ['scheduled'], owner: 'Executive Admin' },
+  approved: { to: ['scheduled'], owner: 'Executive Manager' },
   scheduled: { to: ['live'], owner: 'System (start time)' },
   live: { to: ['bidding_closed'], owner: 'System (timer)' },
   bidding_closed: { to: ['won', 'closed'], owner: 'System' },
-  won: { to: ['in_settlement'], owner: 'Executive Admin' },
-  in_settlement: { to: ['ready_for_pickup'], owner: 'Executive Admin' },
-  ready_for_pickup: { to: ['in_logistics'], owner: 'Executive Admin' },
-  in_logistics: { to: ['handover_complete'], owner: 'Executive Admin' },
-  handover_complete: { to: ['closed'], owner: 'Executive Admin' },
+  won: { to: ['in_settlement'], owner: 'Executive Manager' },
+  in_settlement: { to: ['ready_for_pickup'], owner: 'Executive Manager' },
+  ready_for_pickup: { to: ['in_logistics'], owner: 'Executive Manager' },
+  in_logistics: { to: ['handover_complete'], owner: 'Executive Manager' },
+  handover_complete: { to: ['closed'], owner: 'Executive Manager' },
   closed: { to: [], owner: '—' },
 };
 

@@ -31,7 +31,7 @@ export default function SellerWorkspace() {
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Stat label="My lots" value={mine.length} hint="Across the full lifecycle" icon={<Package size={18} />} accent="bg-steel-500/10 text-steel-700 dark:text-steel-300" />
         <Stat label="Live now" value={liveMine.length} hint="Auctions running" icon={<Radio size={18} />} accent="bg-ember-50 dark:bg-ember-400/10 text-ember-600 dark:text-ember-400" />
-        <Stat label="In verification" value={inVerification.length} hint="Awaiting Executive Admin" icon={<ClipboardCheck size={18} />} accent="bg-amber-50 dark:bg-amber-400/10 text-amber-600 dark:text-amber-400" />
+        <Stat label="In verification" value={inVerification.length} hint="Awaiting Field Executive Officer" icon={<ClipboardCheck size={18} />} accent="bg-amber-50 dark:bg-amber-400/10 text-amber-600 dark:text-amber-400" />
         <Stat label="Realised value" value={inrCompact(revenue)} hint={`${sold.length} lots sold`} icon={<Trophy size={18} />} accent="bg-emerald-50 dark:bg-emerald-400/10 text-emerald-600 dark:text-emerald-400" />
       </div>
 

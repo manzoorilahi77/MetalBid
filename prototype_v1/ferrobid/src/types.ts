@@ -1,5 +1,8 @@
 export type Role = 'guest' | 'buyer' | 'seller' | 'exec' | 'subadmin' | 'superadmin';
 
+/** Split of the Executive Admin role (WBS §5): field inspection vs desk/fulfilment management. */
+export type ExecFunction = 'field' | 'manager';
+
 /** Full lot lifecycle: Draft → Closed (WBS §3) */
 export type LotStatus =
   | 'draft'
@@ -50,6 +53,7 @@ export interface AdminUser {
   name: string;
   email: string;
   role: 'exec' | 'subadmin';
+  execFunction?: ExecFunction; // exec admins only — Field Executive Officer vs Executive Manager
   permissions: Record<string, boolean>;
   scoped?: ScopedPermissions;   // sub-admins only — drives console gating
   active: boolean;
@@ -91,6 +95,24 @@ export interface WorkTask {
 
 export type UserStanding = 'good' | 'watchlist' | 'suspended' | 'blacklisted';
 
+/** Buyer/Seller mandatory onboarding KYC (WBS §5 — Account → Profile → Documents → Review). */
+export type KycDocType = 'pan' | 'aadhar' | 'photo' | 'gst' | 'address_proof' | 'cancelled_cheque' | 'itr' | 'pcb';
+export type KycDocStatus = 'pending' | 'uploaded' | 'verified' | 'rejected';
+
+export interface KycProfile {
+  fullName: string;
+  email: string;
+  phone: string;
+  panNumber: string;
+  isBusiness: boolean;
+  businessName: string;
+  gstin: string;
+  address: string;
+  city: string;
+  state: string;
+  pincode: string;
+}
+
 export interface Lot {
   id: string;
   title: string;
@@ -118,6 +140,36 @@ export interface Lot {
     decidedBy?: string;
   };
   auctionId?: string;
+  catalogueId?: string;
+}
+
+export type EventStatus = 'scheduled' | 'live' | 'closed' | 'cancelled';
+export type CatalogueStatus = 'draft' | 'scheduled' | 'live' | 'closed';
+
+/** Scheduled circuit grouping one or more Catalogues (WBS: Auction Event → Catalogue → Lot). */
+export interface AuctionEvent {
+  id: string;
+  name: string;
+  description?: string;
+  status: EventStatus;
+  startsAt: number;
+  endsAt: number;
+  catalogueIds: string[];
+  location?: string;
+  coverHues: number[];
+  createdAt: string;
+}
+
+/** Grouping of Lots within an AuctionEvent, e.g. by metal or session. */
+export interface Catalogue {
+  id: string;
+  eventId: string;
+  title: string;
+  description?: string;
+  lotIds: string[];
+  closingAt: number;
+  status: CatalogueStatus;
+  createdAt: string;
 }
 
 export interface Auction {
@@ -147,6 +199,7 @@ export interface Bid {
   amount: number;
   at: number;
   auto?: boolean;
+  ip: string; // feeds same-IP fraud detection (WBS §6)
 }
 
 export interface LedgerEntry {
@@ -220,6 +273,26 @@ export interface AuditEntry {
   target: string;
   stage: string;
   at: string;
+}
+
+/** Subscription/Billing (WBS §5 — plan comparison + simple checkout, buyer & seller). */
+export type PlanAudience = 'buyer' | 'seller';
+
+export interface SubscriptionPlan {
+  id: string;
+  audience: PlanAudience;
+  name: string;
+  price: number;
+  billingCycle: 'monthly' | 'yearly';
+  tagline: string;
+  features: string[];
+  highlight?: boolean;
+}
+
+export interface ActiveSubscription {
+  planId: string;
+  renewsAt: number;
+  autoRenew: boolean;
 }
 
 export interface Toast {

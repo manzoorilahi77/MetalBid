@@ -1,27 +1,30 @@
 import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Search, Timer, MapPin, Lock } from 'lucide-react';
-import { useApp } from '../store';
-import { SectionTitle, Card, Badge, LotImage, Tabs, Empty, StatusBadge } from '../components/ui';
-import { Reveal, FlipClock } from '../components/fx';
-import { inrCompact, timeLeft, clockTime } from '../utils';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Search, Lock } from 'lucide-react';
+import { useApp, eventMeta, catalogueMeta } from '../store';
+import { SectionTitle, Tabs, Empty } from '../components/ui';
+import { Reveal } from '../components/fx';
+import { EventCard } from '../components/EventCard';
 
 export default function Browse() {
   const nav = useNavigate();
-  const { lots, auctions, role, now } = useApp();
+  const [searchParams] = useSearchParams();
+  const { auctionEvents, catalogues, lots, role, now } = useApp();
   const [q, setQ] = useState('');
-  const [metal, setMetal] = useState('All');
-  const [tab, setTab] = useState('live');
+  const [metal, setMetal] = useState(searchParams.get('metal') ?? 'All');
+  const [tab, setTab] = useState(searchParams.get('tab') ?? 'live');
 
   const metals = ['All', ...Array.from(new Set(lots.map((l) => l.metal)))];
 
+  const eventMetals = (eventId: string) =>
+    catalogues.filter((c) => c.eventId === eventId).flatMap((c) => catalogueMeta(lots, c).metals);
+
   const rows = useMemo(() => {
-    return auctions
-      .map((a) => ({ a, lot: lots.find((l) => l.id === a.lotId)! }))
-      .filter(({ a, lot }) => lot && a.status === (tab === 'live' ? 'live' : tab === 'upcoming' ? 'scheduled' : 'closed'))
-      .filter(({ lot }) => metal === 'All' || lot.metal === metal)
-      .filter(({ lot }) => !q || (lot.title + lot.id + lot.location + lot.grade).toLowerCase().includes(q.toLowerCase()));
-  }, [auctions, lots, tab, metal, q]);
+    return auctionEvents
+      .filter((e) => e.status === (tab === 'live' ? 'live' : tab === 'upcoming' ? 'scheduled' : 'closed'))
+      .filter((e) => metal === 'All' || eventMetals(e.id).includes(metal))
+      .filter((e) => !q || (e.name + (e.location ?? '')).toLowerCase().includes(q.toLowerCase()));
+  }, [auctionEvents, catalogues, lots, tab, metal, q]);
 
   return (
     <div>
@@ -56,38 +59,12 @@ export default function Browse() {
         </select>
       </div>
 
-      {rows.length === 0 && <Empty title="No lots match your filters" sub="Try a different tab, metal type or search term." />}
+      {rows.length === 0 && <Empty title="No auction events match your filters" sub="Try a different tab, metal type or search term." />}
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        {rows.map(({ a, lot }, idx) => (
-          <Reveal key={a.id} delay={Math.min(idx, 8) * 60}>
-          <Card onClick={() => nav(`/lot/${lot.id}`)} className="group overflow-hidden">
-            <div className="overflow-hidden">
-              <LotImage hues={lot.imageHues} label={lot.metal} className="h-36 w-full transition-transform duration-500 group-hover:scale-[1.05]" />
-            </div>
-            <div className="p-4">
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <div className="text-[11px] font-bold text-faint">{lot.id}</div>
-                  <div className="text-sm font-bold text-ink leading-snug">{lot.title}</div>
-                </div>
-                <StatusBadge status={lot.status} />
-              </div>
-              <div className="mt-1.5 flex items-center gap-3 text-xs text-faint">
-                <span>{lot.quantity}</span><span>· {lot.grade}</span>
-                <span className="flex items-center gap-0.5"><MapPin size={11} />{lot.location}</span>
-              </div>
-              <div className="mt-3 flex items-end justify-between border-t border-line pt-3">
-                <div>
-                  <div className="text-[10px] font-bold uppercase text-faint">{a.status === 'scheduled' ? 'Start price' : a.status === 'closed' ? 'Final bid' : 'Current bid'}</div>
-                  <div className="text-lg font-extrabold text-ink">{inrCompact(a.currentBid)}</div>
-                </div>
-                {a.status === 'live' && <Badge tone="bg-ember-50 dark:bg-ember-400/10 text-ember-700 dark:text-ember-300 ring-ember-200 dark:ring-ember-400/25"><Timer size={11} /> <FlipClock text={timeLeft(a.endsAt, now)} /></Badge>}
-                {a.status === 'scheduled' && <Badge tone="bg-indigo-50 dark:bg-indigo-400/10 text-indigo-700 dark:text-indigo-300 ring-indigo-200 dark:ring-indigo-400/25">Starts {clockTime(a.startsAt)}</Badge>}
-                {a.status === 'closed' && a.leaderName && <Badge tone="bg-emerald-50 dark:bg-emerald-400/10 text-emerald-700 dark:text-emerald-300 ring-emerald-200 dark:ring-emerald-400/25">Won · {a.leaderName.split(' ')[0]}</Badge>}
-              </div>
-            </div>
-          </Card>
+        {rows.map((e, idx) => (
+          <Reveal key={e.id} delay={Math.min(idx, 8) * 60}>
+            <EventCard event={e} meta={eventMeta(catalogues, e)} now={now} onClick={() => nav(`/events/${e.id}`)} />
           </Reveal>
         ))}
       </div>

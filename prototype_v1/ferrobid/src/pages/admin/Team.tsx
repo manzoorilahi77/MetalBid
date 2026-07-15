@@ -1,10 +1,12 @@
 import { useState } from 'react';
-import { Plus, ShieldCheck, UserCog, Sparkles } from 'lucide-react';
+import { Plus, UserCog, Sparkles, HardHat, Briefcase } from 'lucide-react';
 import { useApp } from '../../store';
 import { SectionTitle, Card, Badge, Btn, Modal, Field, inputCls, Toggle } from '../../components/ui';
 import { OPS_MODULES, PERM_TEMPLATES, METAL_SCOPES, REGION_SCOPES, CEILINGS, DEFAULT_SUB_SCOPED } from '../../permissions';
-import type { PermLevel } from '../../types';
+import type { ExecFunction, PermLevel } from '../../types';
 import { cx } from '../../utils';
+
+const EXEC_LABEL: Record<ExecFunction, string> = { field: 'Field Executive Officer', manager: 'Executive Manager' };
 
 const PERM_LABEL: Record<string, string> = {
   entityVerification: 'Entity verification', lotVerification: 'Lot verification', auctionCreation: 'Auction creation',
@@ -97,6 +99,7 @@ export default function Team() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [role, setRole] = useState<'exec' | 'subadmin'>('subadmin');
+  const [execFunction, setExecFunction] = useState<ExecFunction>('field');
 
   return (
     <div>
@@ -110,13 +113,13 @@ export default function Team() {
           <Card key={a.id} className="p-5">
             <div className="flex items-start gap-3">
               <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${a.role === 'exec' ? 'bg-ember-50 dark:bg-ember-400/10 text-ember-600 dark:text-ember-400' : 'bg-violet-50 dark:bg-violet-400/10 text-violet-600 dark:text-violet-400'}`}>
-                {a.role === 'exec' ? <ShieldCheck size={20} /> : <UserCog size={20} />}
+                {a.role === 'exec' ? (a.execFunction === 'manager' ? <Briefcase size={20} /> : <HardHat size={20} />) : <UserCog size={20} />}
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-bold text-ink">{a.name}</span>
                   <Badge tone={a.role === 'exec' ? 'bg-ember-50 dark:bg-ember-400/10 text-ember-700 dark:text-ember-300 ring-ember-200 dark:ring-ember-400/25' : 'bg-violet-50 dark:bg-violet-400/10 text-violet-700 dark:text-violet-300 ring-violet-200 dark:ring-violet-400/25'}>
-                    {a.role === 'exec' ? 'Executive Admin' : 'Sub-Admin'}
+                    {a.role === 'exec' ? EXEC_LABEL[a.execFunction ?? 'field'] : 'Sub-Admin'}
                   </Badge>
                 </div>
                 <div className="text-xs text-faint">{a.email} · since {a.createdAt}</div>
@@ -155,7 +158,18 @@ export default function Team() {
               ))}
             </div>
           </Field>
-          <Btn variant="accent" className="w-full" disabled={!name || !email.includes('@')} onClick={() => { addAdmin(name, email, role); setOpen(false); setName(''); setEmail(''); }}>
+          {role === 'exec' && (
+            <Field label="Function" hint="Field officers inspect lots; managers handle KYC, settlement, logistics & handover">
+              <div className="grid grid-cols-2 gap-2">
+                {(['field', 'manager'] as const).map((fn) => (
+                  <button key={fn} onClick={() => setExecFunction(fn)} className={`rounded-xl border px-3 py-2.5 text-xs font-bold cursor-pointer ${execFunction === fn ? 'border-steel-600 bg-steel-500/10 text-steel-800 dark:text-steel-200' : 'border-line text-muted hover:bg-surface-2'}`}>
+                    {EXEC_LABEL[fn]}
+                  </button>
+                ))}
+              </div>
+            </Field>
+          )}
+          <Btn variant="accent" className="w-full" disabled={!name || !email.includes('@')} onClick={() => { addAdmin(name, email, role, role === 'exec' ? execFunction : undefined); setOpen(false); setName(''); setEmail(''); }}>
             Create with default permissions
           </Btn>
         </div>

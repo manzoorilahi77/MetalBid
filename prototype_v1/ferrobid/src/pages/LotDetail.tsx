@@ -1,22 +1,41 @@
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, MapPin, Timer, Lock, ShieldCheck, Gavel, FileText } from 'lucide-react';
-import { useApp } from '../store';
+import { ArrowLeft, MapPin, Timer, Lock, ShieldCheck, Gavel, FileText, ChevronRight } from 'lucide-react';
+import { useApp, catalogueForLot, eventForCatalogue } from '../store';
 import { Card, Badge, StatusBadge, LotImage, LifecycleTracker, Btn } from '../components/ui';
 import { AnimatedInr, FlipClock } from '../components/fx';
+import { EmdOtpGate } from '../components/EmdOtpGate';
 import { inr, inrCompact, timeLeft, dateTime } from '../utils';
 
 export default function LotDetail() {
   const { id } = useParams();
   const nav = useNavigate();
-  const { lots, auctions, role, now, emdLockedAuctions, lockEmd, kycStatus } = useApp();
+  const { lots, auctions, catalogues, auctionEvents, role, now, emdLockedAuctions, lockEmd, kycStatus, kycProfile, pushToast } = useApp();
+  const [emdGateOpen, setEmdGateOpen] = useState(false);
   const lot = lots.find((l) => l.id === id);
   if (!lot) return <div className="text-sm text-muted">Lot not found. <button className="text-steel-700 dark:text-steel-300 font-semibold cursor-pointer" onClick={() => nav('/browse')}>Back to marketplace</button></div>;
   const auction = auctions.find((a) => a.id === lot.auctionId);
   const emdLocked = auction ? emdLockedAuctions.includes(auction.id) : false;
   const canParticipate = role === 'buyer' || role === 'seller';
+  const catalogue = catalogueForLot(catalogues, lot.id);
+  const event = catalogue ? eventForCatalogue(auctionEvents, catalogue.id) : undefined;
+
+  const openEmdGate = () => {
+    pushToast({ title: 'OTP sent to both channels (simulated)', body: `Sent via SMS to ${kycProfile.phone} and email to ${kycProfile.email} — try 1234.`, tone: 'info' });
+    setEmdGateOpen(true);
+  };
 
   return (
     <div>
+      {catalogue && event && (
+        <div className="mb-3 flex flex-wrap items-center gap-1.5 text-xs font-semibold text-faint">
+          <button className="hover:text-ink cursor-pointer" onClick={() => nav('/browse')}>Browse</button>
+          <ChevronRight size={12} />
+          <button className="hover:text-ink cursor-pointer" onClick={() => nav(`/events/${event.id}`)}>{event.name}</button>
+          <ChevronRight size={12} />
+          <button className="hover:text-ink cursor-pointer" onClick={() => nav(`/events/${event.id}/catalogue/${catalogue.id}`)}>{catalogue.title}</button>
+        </div>
+      )}
       <button onClick={() => nav(-1)} className="mb-4 flex items-center gap-1.5 text-sm font-semibold text-muted hover:text-steel-800 cursor-pointer">
         <ArrowLeft size={15} /> Back
       </button>
@@ -108,11 +127,11 @@ export default function LotDetail() {
                   )}
                   {canParticipate && kycStatus !== 'verified' && (
                     <div className="mt-4 rounded-xl border border-amber-200 dark:border-amber-400/25 bg-amber-50 dark:bg-amber-400/10 p-3 text-xs text-amber-800 dark:text-amber-200">
-                      Complete KYC verification before bidding. <button className="font-bold underline cursor-pointer" onClick={() => nav('/buyer')}>Go to dashboard →</button>
+                      Complete KYC verification before bidding. <button className="font-bold underline cursor-pointer" onClick={() => nav('/buyer/kyc')}>Complete KYC →</button>
                     </div>
                   )}
                   {canParticipate && kycStatus === 'verified' && !emdLocked && (
-                    <Btn variant="primary" className="mt-4 w-full" onClick={() => lockEmd(auction.id)}>
+                    <Btn variant="primary" className="mt-4 w-full" onClick={openEmdGate}>
                       <Lock size={15} /> Lock EMD {inrCompact(auction.emd)} to bid
                     </Btn>
                   )}
@@ -131,7 +150,7 @@ export default function LotDetail() {
                   <div className="mt-1 font-mono text-sm text-indigo-600 dark:text-indigo-400">in {timeLeft(auction.startsAt, now)}</div>
                   <div className="mt-3 text-xs text-faint">Start price {inr(auction.startPrice)} · EMD {inrCompact(auction.emd)}</div>
                   {canParticipate && !emdLocked && (
-                    <Btn variant="outline" className="mt-4 w-full" onClick={() => lockEmd(auction.id)}><Lock size={14} /> Pre-lock EMD</Btn>
+                    <Btn variant="outline" className="mt-4 w-full" onClick={openEmdGate}><Lock size={14} /> Pre-lock EMD</Btn>
                   )}
                   {emdLocked && <div className="mt-4 text-xs font-bold text-emerald-600 dark:text-emerald-400">✓ EMD locked — you're ready for the start</div>}
                 </div>
@@ -158,6 +177,14 @@ export default function LotDetail() {
           </Card>
         </div>
       </div>
+
+      {auction && (
+        <EmdOtpGate
+          open={emdGateOpen} onClose={() => setEmdGateOpen(false)}
+          amount={auction.emd} phone={kycProfile.phone} email={kycProfile.email}
+          onVerified={() => lockEmd(auction.id)}
+        />
+      )}
     </div>
   );
 }

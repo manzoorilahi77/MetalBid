@@ -32,7 +32,7 @@ export default function CreateLot() {
 
   return (
     <div>
-      <SectionTitle title="List a Lot" sub="New lots go to Executive Admin verification before they can be auctioned" />
+      <SectionTitle title="List a Lot" sub="New lots go to Field Executive Officer inspection before they can be auctioned" />
       <div className="grid gap-5 lg:grid-cols-3">
         <Card className="p-6 lg:col-span-2">
           <div className="grid gap-4 sm:grid-cols-2">
@@ -100,7 +100,7 @@ export default function CreateLot() {
             <h3 className="text-sm font-bold text-ink">What happens next?</h3>
             <ol className="mt-3 space-y-3 text-xs text-muted">
               {[
-                ['Verification', 'Executive Admin inspects quality, quantity, condition & image authenticity.'],
+                ['Verification', 'A Field Executive Officer inspects quality, quantity, condition & image authenticity.'],
                 ['Auction setup', 'Approved lots are scheduled with timings, increments, reserve & EMD.'],
                 ['Live bidding', 'Watch bids in real time on your read-only monitor.'],
                 ['Fulfilment', 'Settlement, pickup and handover are managed for you.'],

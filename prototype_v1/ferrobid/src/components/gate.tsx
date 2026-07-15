@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { Lock, ShieldQuestion, Hourglass, Eye } from 'lucide-react';
 import { useApp } from '../store';
 import { DEMO_SUB_ADMIN_ID, atLeast, overCeiling, LEVEL_LABEL } from '../permissions';
-import type { ApprovalType, ModulePermission } from '../types';
+import type { ApprovalType, ExecFunction, ModulePermission } from '../types';
 import { Btn, Badge } from './ui';
 import { cx, inrCompact } from '../utils';
 
@@ -130,4 +130,22 @@ export function LockedPanel({ label }: { label: string }) {
       </p>
     </div>
   );
+}
+
+/** Route wrapper: separates Field Executive Officer (lot inspection) from Executive Manager (KYC/settlement/logistics/handover). */
+export function ExecFunctionGate({ allow, label, children }: { allow: ExecFunction[]; label: string; children: ReactNode }) {
+  const { role, execFunction } = useApp();
+  if (role === 'exec' && !allow.includes(execFunction)) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-line-strong bg-surface-2 py-16 text-center">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-line text-faint"><Lock size={20} /></div>
+        <div className="text-sm font-bold text-muted">Not part of your role</div>
+        <p className="max-w-sm text-xs text-faint">
+          <b>{label}</b> belongs to the {allow.includes('field') ? 'Field Executive Officer' : 'Executive Manager'} console.
+          Switch personas from the header to see it.
+        </p>
+      </div>
+    );
+  }
+  return <>{children}</>;
 }

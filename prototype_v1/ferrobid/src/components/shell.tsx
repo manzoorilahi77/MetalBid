@@ -5,18 +5,25 @@ import {
   Package, Truck, BadgeCheck, ClipboardCheck, CalendarClock, Banknote, Handshake,
   Users, Settings, ScrollText, Megaphone, Store, KanbanSquare, LogOut, UserCircle2,
   CheckCircle2, AlertCircle, Info, TrendingUp, Radio, FilePlus2, Trophy, ShieldCheck,
-  ShieldQuestion, TowerControl, ShieldAlert, ReceiptIndianRupee, Database,
+  ShieldQuestion, TowerControl, ShieldAlert, ReceiptIndianRupee, Database, CreditCard,
 } from 'lucide-react';
 import { useApp, PERSONAS } from '../store';
 import { DEMO_SUB_ADMIN_ID } from '../permissions';
-import type { Role, ScopedPermissions } from '../types';
+import type { ExecFunction, Role, ScopedPermissions } from '../types';
 import { cx, agoLabel, inrCompact } from '../utils';
 import { Badge, ThemeToggle } from './ui';
+import { SessionExpiredModal } from './SessionExpiredModal';
 
 const ROLE_LABEL: Record<Role, string> = {
   guest: 'Guest User', buyer: 'Buyer', seller: 'Buyer + Seller',
-  exec: 'Executive Admin', subadmin: 'Sub-Admin', superadmin: 'Super Admin',
+  exec: 'Executive', subadmin: 'Sub-Admin', superadmin: 'Super Admin',
 };
+
+/** Display label for the current persona — exec splits into Field Executive Officer / Executive Manager. */
+function personaLabel(role: Role, execFunction: ExecFunction): string {
+  if (role === 'exec') return execFunction === 'field' ? 'Field Executive Officer' : 'Executive Manager';
+  return ROLE_LABEL[role];
+}
 
 /** Role → badge tint (tone-* classes are theme-aware, defined once in index.css). */
 const ROLE_TONE: Record<Role, string> = {
@@ -30,7 +37,7 @@ const ROLE_TONE: Record<Role, string> = {
 
 interface NavItem { to: string; label: string; icon: React.ReactNode; badge?: number }
 
-interface NavCounts { execQueue: number; liveCount: number; approvalsPending: number; subPerms?: ScopedPermissions }
+interface NavCounts { execQueue: number; liveCount: number; approvalsPending: number; subPerms?: ScopedPermissions; execFn: ExecFunction }
 
 function navFor(role: Role, counts: NavCounts): { section: string; items: NavItem[] }[] {
   const live = counts.liveCount;
@@ -57,7 +64,9 @@ function navFor(role: Role, counts: NavCounts): { section: string; items: NavIte
         {
           section: 'Account',
           items: [
+            { to: '/buyer/kyc', label: 'KYC & Verification', icon: <BadgeCheck size={17} /> },
             { to: '/buyer/wallet', label: 'Wallet & EMD', icon: <WalletIcon size={17} /> },
+            { to: '/subscription', label: 'Subscription', icon: <CreditCard size={17} /> },
             { to: '/buyer/become-seller', label: 'Become a Seller', icon: <Store size={17} /> },
             { to: '/noticeboard', label: 'Noticeboard', icon: <Megaphone size={17} /> },
           ],
@@ -80,18 +89,30 @@ function navFor(role: Role, counts: NavCounts): { section: string; items: NavIte
           items: [
             { to: '/browse', label: 'Auctions', icon: <Gavel size={17} /> },
             { to: '/buyer/wallet', label: 'Wallet & EMD', icon: <WalletIcon size={17} /> },
+            { to: '/subscription', label: 'Subscription', icon: <CreditCard size={17} /> },
             { to: '/noticeboard', label: 'Noticeboard', icon: <Megaphone size={17} /> },
           ],
         },
       ];
     case 'exec':
+      if (counts.execFn === 'field') {
+        return [
+          {
+            section: 'Field Work',
+            items: [
+              { to: '/exec', label: 'Pipeline Board', icon: <KanbanSquare size={17} /> },
+              { to: '/exec/lots', label: 'Lot Verification', icon: <ClipboardCheck size={17} /> },
+            ],
+          },
+          { section: 'General', items: [{ to: '/noticeboard', label: 'Noticeboard', icon: <Megaphone size={17} /> }] },
+        ];
+      }
       return [
         {
           section: 'Pipeline',
           items: [
             { to: '/exec', label: 'Pipeline Board', icon: <KanbanSquare size={17} /> },
             { to: '/exec/entities', label: 'Entity Verification', icon: <BadgeCheck size={17} />, badge: counts.execQueue },
-            { to: '/exec/lots', label: 'Lot Verification', icon: <ClipboardCheck size={17} /> },
             { to: '/exec/auctions', label: 'Auction Setup', icon: <CalendarClock size={17} /> },
           ],
         },
@@ -133,6 +154,7 @@ function navFor(role: Role, counts: NavCounts): { section: string; items: NavIte
             { to: '/sub', label: 'Ops Console', icon: <LayoutDashboard size={17} /> },
             { to: '/sub/approvals', label: 'Approvals', icon: <ShieldQuestion size={17} />, badge: counts.approvalsPending },
             ...(show('monitor') ? [{ to: '/sub/monitor', label: 'Bid Monitor', icon: <Radio size={17} />, badge: live }] : []),
+            ...(show('masterdata') ? [{ to: '/sub/masterdata', label: 'Master Data', icon: <Database size={17} /> }] : []),
             { to: '/sub/audit', label: 'Audit Log', icon: <ScrollText size={17} /> },
           ],
         },
@@ -194,7 +216,7 @@ function Logo({ light }: { light?: boolean }) {
 }
 
 function RoleSwitcher() {
-  const { role, userName, switchRole } = useApp();
+  const { role, execFunction, userName, switchRole } = useApp();
   const [open, setOpen] = useState(false);
   const nav = useNavigate();
   const ref = useRef<HTMLDivElement>(null);
@@ -212,26 +234,29 @@ function RoleSwitcher() {
         <UserCircle2 size={20} className="text-steel-700 dark:text-steel-300" />
         <span className="hidden sm:block text-left leading-tight">
           <span className="block text-xs font-bold text-ink">{userName}</span>
-          <span className="block text-[10px] font-medium text-faint">{ROLE_LABEL[role]}</span>
+          <span className="block text-[10px] font-medium text-faint">{personaLabel(role, execFunction)}</span>
         </span>
         <ChevronDown size={14} className="text-faint" />
       </button>
       {open && (
         <div className="absolute right-0 top-full z-50 mt-2 w-72 max-w-[calc(100vw-2rem)] rounded-2xl bg-surface p-2 shadow-xl ring-1 ring-line animate-toast-in">
           <div className="px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider text-faint">Demo role switcher</div>
-          {PERSONAS.map((p) => (
-            <button
-              key={p.role}
-              onClick={() => { switchRole(p.role); setOpen(false); nav(roleHome(p.role)); }}
-              className={cx('flex w-full items-start gap-2.5 rounded-xl px-2.5 py-2 text-left hover:bg-surface-2 cursor-pointer', role === p.role && 'bg-steel-500/10')}
-            >
-              <span className={cx('mt-0.5 h-2 w-2 shrink-0 rounded-full', role === p.role ? 'bg-ember-500' : 'bg-line')} />
-              <span>
-                <span className="flex items-center gap-2 text-sm font-semibold text-ink">{p.name} <Badge tone={ROLE_TONE[p.role]}>{p.label}</Badge></span>
-                <span className="block text-[11px] text-faint">{p.sub}</span>
-              </span>
-            </button>
-          ))}
+          {PERSONAS.map((p) => {
+            const current = role === p.role && execFunction === (p.execFunction ?? execFunction);
+            return (
+              <button
+                key={`${p.role}-${p.execFunction ?? ''}`}
+                onClick={() => { switchRole(p.role, p.execFunction); setOpen(false); nav(roleHome(p.role)); }}
+                className={cx('flex w-full items-start gap-2.5 rounded-xl px-2.5 py-2 text-left hover:bg-surface-2 cursor-pointer', current && 'bg-steel-500/10')}
+              >
+                <span className={cx('mt-0.5 h-2 w-2 shrink-0 rounded-full', current ? 'bg-ember-500' : 'bg-line')} />
+                <span>
+                  <span className="flex items-center gap-2 text-sm font-semibold text-ink">{p.name} <Badge tone={ROLE_TONE[p.role]}>{p.label}</Badge></span>
+                  <span className="block text-[11px] text-faint">{p.sub}</span>
+                </span>
+              </button>
+            );
+          })}
         </div>
       )}
     </div>
@@ -310,7 +335,7 @@ function ToastHost() {
 }
 
 export default function AppShell() {
-  const { role, wallet, tick, entityRequests, auctions, logout, authenticated, approvals, admins } = useApp();
+  const { role, execFunction, wallet, tick, entityRequests, auctions, logout, authenticated, approvals, admins, expireSessionNow } = useApp();
   const [drawer, setDrawer] = useState(false);
   const nav = useNavigate();
   const loc = useLocation();
@@ -326,11 +351,13 @@ export default function AppShell() {
   // keep the demo persona coherent with deep links into role-specific areas
   useEffect(() => {
     const p = loc.pathname;
-    const want: Role | null = p.startsWith('/exec') ? 'exec'
-      : p.startsWith('/admin') ? 'superadmin'
-      : p.startsWith('/sub') ? 'subadmin'
-      : p.startsWith('/seller') ? 'seller'
-      : p.startsWith('/buyer') || p.startsWith('/bid/') ? (role === 'seller' ? null : 'buyer')
+    // exact-segment match only — `.startsWith('/sub')` would also match `/subscription` etc.
+    const isPath = (prefix: string) => p === prefix || p.startsWith(`${prefix}/`);
+    const want: Role | null = isPath('/exec') ? 'exec'
+      : isPath('/admin') ? 'superadmin'
+      : isPath('/sub') ? 'subadmin'
+      : isPath('/seller') ? 'seller'
+      : isPath('/buyer') || isPath('/bid') ? (role === 'seller' ? null : 'buyer')
       : null;
     if (want && role !== want) useApp.getState().switchRole(want);
   }, [loc.pathname, role]);
@@ -340,6 +367,7 @@ export default function AppShell() {
     liveCount: auctions.filter((a) => a.status === 'live').length,
     approvalsPending: approvals.filter((a) => a.status === 'pending').length,
     subPerms: admins.find((a) => a.id === DEMO_SUB_ADMIN_ID)?.scoped,
+    execFn: execFunction,
   };
   const sections = navFor(role, counts);
 
@@ -350,7 +378,7 @@ export default function AppShell() {
         <button className="lg:hidden text-steel-300 cursor-pointer" onClick={() => setDrawer(false)}><X size={18} /></button>
       </div>
       <div className="mx-4 mb-3 rounded-xl bg-white/5 px-3 py-2 ring-1 ring-white/10">
-        <Badge tone={ROLE_TONE[role]}>{ROLE_LABEL[role]}</Badge>
+        <Badge tone={ROLE_TONE[role]}>{personaLabel(role, execFunction)}</Badge>
         <div className="mt-1 text-[10px] text-steel-300">Prototype · simulated data & roles</div>
       </div>
       <nav className="flex-1 overflow-y-auto thin-scroll px-3 pb-4">
@@ -375,9 +403,14 @@ export default function AppShell() {
       </nav>
       <div className="border-t border-white/10 p-4">
         {authenticated ? (
-          <button onClick={() => { logout(); nav('/'); }} className="flex items-center gap-2 text-xs font-semibold text-steel-300 hover:text-white cursor-pointer">
-            <LogOut size={14} /> Sign out (demo)
-          </button>
+          <>
+            <button onClick={() => { logout(); nav('/'); }} className="flex items-center gap-2 text-xs font-semibold text-steel-300 hover:text-white cursor-pointer">
+              <LogOut size={14} /> Sign out (demo)
+            </button>
+            <button onClick={expireSessionNow} className="mt-2 flex items-center gap-2 text-[11px] font-medium text-steel-400 hover:text-steel-200 cursor-pointer">
+              <ShieldAlert size={12} /> Simulate session expiry (demo)
+            </button>
+          </>
         ) : (
           <button onClick={() => nav('/auth/login')} className="w-full rounded-lg bg-ember-600 py-2 text-xs font-bold text-white hover:bg-ember-500 cursor-pointer">
             Register / Login to participate
@@ -404,7 +437,7 @@ export default function AppShell() {
           <button className="lg:hidden rounded-lg border border-line p-2 cursor-pointer" onClick={() => setDrawer(true)}><Menu size={17} /></button>
           <div className="lg:hidden"><Logo /></div>
           <div className="hidden lg:block text-sm font-semibold text-faint">
-            {ROLE_LABEL[role]} <span className="mx-1 text-faint">/</span> <span className="text-ink">ferroBid Console</span>
+            {personaLabel(role, execFunction)} <span className="mx-1 text-faint">/</span> <span className="text-ink">ferroBid Console</span>
           </div>
           <div className="flex-1" />
           {(role === 'buyer' || role === 'seller') && (
@@ -425,6 +458,7 @@ export default function AppShell() {
         </main>
       </div>
       <ToastHost />
+      <SessionExpiredModal />
     </div>
   );
 }
