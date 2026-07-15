@@ -12,7 +12,7 @@ import { inrCompact, cx } from '../../utils';
 
 /** Route for each ops module inside the Sub-Admin console (inherited Exec screens). */
 export const SUB_MODULE_ROUTE: Record<string, string> = {
-  pipeline: '/sub/pipeline', entities: '/sub/entities', lots: '/sub/lots', auctions: '/sub/auctions',
+  pipeline: '/sub/pipeline', entities: '/sub/entities', lots: '/sub/lots', manager_review: '/sub/manager-review', auctions: '/sub/auctions',
   settlement: '/sub/settlement', logistics: '/sub/logistics', handover: '/sub/handover',
   monitor: '/sub/monitor', users: '/sub',
 };

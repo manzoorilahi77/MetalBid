@@ -43,7 +43,8 @@ export default function SellerLots() {
                 )}
                 {l.verification?.note && l.status !== 'rejected' && (
                   <div className="mt-3 rounded-xl bg-surface px-4 py-3 text-xs text-muted ring-1 ring-line">
-                    <b className="text-ink">Verification note:</b> {l.verification.note} — {l.verification.decidedBy}
+                    <b className="text-ink">Verification note:</b> {l.verification.note} — {l.verification.submittedBy}
+                    {l.verification.managerDecision === 'approved' && <span> · approved by {l.verification.decidedBy}</span>}
                   </div>
                 )}
                 <div className="mt-3 flex flex-wrap gap-2">

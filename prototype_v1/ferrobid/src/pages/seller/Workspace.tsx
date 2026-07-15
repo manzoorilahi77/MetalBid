@@ -1,14 +1,17 @@
 import { useNavigate } from 'react-router-dom';
-import { Package, Radio, Trophy, ClipboardCheck, FilePlus2, ArrowRight, BadgeCheck } from 'lucide-react';
+import { Package, Radio, Trophy, ClipboardCheck, FilePlus2, ArrowRight, BadgeCheck, Bell } from 'lucide-react';
 import { useApp } from '../../store';
 import { SectionTitle, Stat, Card, StatusBadge, Btn, LotImage, Badge } from '../../components/ui';
+import { EmailTimeline } from '../../components/EmailTimeline';
 import { inrCompact } from '../../utils';
 
 const SELLER_ID = 'u-seller1';
 
 export default function SellerWorkspace() {
   const nav = useNavigate();
-  const { lots, auctions, userName } = useApp();
+  const { lots, auctions, userName, emailLogs } = useApp();
+  const myLotIds = new Set(lots.filter((l) => l.sellerId === SELLER_ID).map((l) => l.id));
+  const myNotifications = emailLogs.filter((l) => l.recipientRole === 'seller' && myLotIds.has(l.lotId));
   const mine = lots.filter((l) => l.sellerId === SELLER_ID);
   const liveMine = mine.filter((l) => l.status === 'live');
   const inVerification = mine.filter((l) => ['submitted', 'under_verification'].includes(l.status));
@@ -85,6 +88,13 @@ export default function SellerWorkspace() {
                   <span className="text-xs font-extrabold text-ink">{count as number}</span>
                 </div>
               ))}
+            </div>
+          </Card>
+          <Card className="p-5">
+            <h3 className="flex items-center gap-1.5 text-sm font-bold text-ink"><Bell size={14} /> Recent notifications</h3>
+            <div className="mt-3">
+              <EmailTimeline logs={myNotifications} compact limit={5} />
+              {myNotifications.length === 0 && <p className="text-xs text-faint">Settlement and delivery updates on your lots will show up here.</p>}
             </div>
           </Card>
         </div>

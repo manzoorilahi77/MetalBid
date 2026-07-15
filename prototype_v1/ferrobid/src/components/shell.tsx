@@ -37,7 +37,7 @@ const ROLE_TONE: Record<Role, string> = {
 
 interface NavItem { to: string; label: string; icon: React.ReactNode; badge?: number }
 
-interface NavCounts { execQueue: number; liveCount: number; approvalsPending: number; subPerms?: ScopedPermissions; execFn: ExecFunction }
+interface NavCounts { execQueue: number; liveCount: number; approvalsPending: number; subPerms?: ScopedPermissions; execFn: ExecFunction; managerReviewQueue: number }
 
 function navFor(role: Role, counts: NavCounts): { section: string; items: NavItem[] }[] {
   const live = counts.liveCount;
@@ -113,6 +113,7 @@ function navFor(role: Role, counts: NavCounts): { section: string; items: NavIte
           items: [
             { to: '/exec', label: 'Pipeline Board', icon: <KanbanSquare size={17} /> },
             { to: '/exec/entities', label: 'Entity Verification', icon: <BadgeCheck size={17} />, badge: counts.execQueue },
+            { to: '/exec/manager-review', label: 'Manager Review', icon: <ClipboardCheck size={17} />, badge: counts.managerReviewQueue },
             { to: '/exec/auctions', label: 'Auction Setup', icon: <CalendarClock size={17} /> },
           ],
         },
@@ -120,6 +121,7 @@ function navFor(role: Role, counts: NavCounts): { section: string; items: NavIte
           section: 'Fulfilment',
           items: [
             { to: '/exec/settlement', label: 'Settlement', icon: <Banknote size={17} /> },
+            { to: '/exec/settlement-desk', label: 'Settlement Desk', icon: <ScrollText size={17} /> },
             { to: '/exec/logistics', label: 'Logistics', icon: <Truck size={17} /> },
             { to: '/exec/handover', label: 'Handover', icon: <Handshake size={17} /> },
           ],
@@ -140,6 +142,7 @@ function navFor(role: Role, counts: NavCounts): { section: string; items: NavIte
         show('pipeline') && { to: '/sub/pipeline', label: 'Pipeline Board', icon: <KanbanSquare size={17} /> },
         show('entities') && { to: '/sub/entities', label: 'Entity Verification', icon: <BadgeCheck size={17} />, badge: counts.execQueue },
         show('lots') && { to: '/sub/lots', label: 'Lot Verification', icon: <ClipboardCheck size={17} /> },
+        show('manager_review') && { to: '/sub/manager-review', label: 'Manager Review', icon: <ClipboardCheck size={17} />, badge: counts.managerReviewQueue },
         show('auctions') && { to: '/sub/auctions', label: 'Auction Setup', icon: <CalendarClock size={17} /> },
       ].filter(Boolean) as NavItem[];
       const fulfilment: NavItem[] = [
@@ -335,7 +338,7 @@ function ToastHost() {
 }
 
 export default function AppShell() {
-  const { role, execFunction, wallet, tick, entityRequests, auctions, logout, authenticated, approvals, admins, expireSessionNow } = useApp();
+  const { role, execFunction, wallet, tick, entityRequests, auctions, logout, authenticated, approvals, admins, expireSessionNow, lots } = useApp();
   const [drawer, setDrawer] = useState(false);
   const nav = useNavigate();
   const loc = useLocation();
@@ -368,6 +371,7 @@ export default function AppShell() {
     approvalsPending: approvals.filter((a) => a.status === 'pending').length,
     subPerms: admins.find((a) => a.id === DEMO_SUB_ADMIN_ID)?.scoped,
     execFn: execFunction,
+    managerReviewQueue: lots.filter((l) => l.status === 'pending_manager_approval').length,
   };
   const sections = navFor(role, counts);
 

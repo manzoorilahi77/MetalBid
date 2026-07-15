@@ -1,12 +1,14 @@
 import { useNavigate } from 'react-router-dom';
-import { Wallet, Lock, Gavel, Trophy, ShieldCheck, Clock, ArrowRight, Store, Timer } from 'lucide-react';
+import { Wallet, Lock, Gavel, Trophy, ShieldCheck, Clock, ArrowRight, Store, Timer, Bell } from 'lucide-react';
 import { useApp, DEMO_USER_ID } from '../../store';
 import { SectionTitle, Stat, Card, Badge, Btn, LotImage } from '../../components/ui';
+import { EmailTimeline } from '../../components/EmailTimeline';
 import { inrCompact, timeLeft } from '../../utils';
 
 export default function BuyerDashboard() {
   const nav = useNavigate();
-  const { wallet, auctions, lots, bids, kycStatus, now, buyerUpgrade, userName } = useApp();
+  const { wallet, auctions, lots, bids, kycStatus, now, buyerUpgrade, userName, emailLogs } = useApp();
+  const myNotifications = emailLogs.filter((l) => l.recipientRole === 'buyer' && l.recipientId === DEMO_USER_ID);
   const live = auctions.filter((a) => a.status === 'live');
   const myBidAuctions = new Set(bids.filter((b) => b.bidderId === DEMO_USER_ID).map((b) => b.auctionId));
   const leading = live.filter((a) => a.leaderId === DEMO_USER_ID).length;
@@ -89,6 +91,13 @@ export default function BuyerDashboard() {
               <Btn variant="outline" size="sm" onClick={() => nav('/buyer/wallet')}><Wallet size={14} /> Top up wallet</Btn>
               <Btn variant="outline" size="sm" onClick={() => nav('/buyer/bids')}><Trophy size={14} /> My bids & results</Btn>
               <Btn variant="outline" size="sm" onClick={() => nav('/buyer/fulfilment')}><Clock size={14} /> Track won lots</Btn>
+            </div>
+          </Card>
+          <Card className="p-4">
+            <h3 className="flex items-center gap-1.5 text-sm font-bold text-ink"><Bell size={14} /> Recent notifications</h3>
+            <div className="mt-3">
+              <EmailTimeline logs={myNotifications} compact limit={5} />
+              {myNotifications.length === 0 && <p className="text-xs text-faint">Settlement and delivery updates on your wins will show up here.</p>}
             </div>
           </Card>
         </div>

@@ -8,6 +8,7 @@ export const OPS_MODULES: { key: string; label: string; group: 'Pipeline' | 'Ful
   { key: 'pipeline',   label: 'Pipeline Board',      group: 'Pipeline' },
   { key: 'entities',   label: 'Entity Verification', group: 'Pipeline' },
   { key: 'lots',       label: 'Lot Verification',    group: 'Pipeline' },
+  { key: 'manager_review', label: 'Manager Review',  group: 'Pipeline' },
   { key: 'auctions',   label: 'Auction Setup',       group: 'Pipeline' },
   { key: 'settlement', label: 'Settlement',          group: 'Fulfilment' },
   { key: 'logistics',  label: 'Logistics',           group: 'Fulfilment' },
@@ -49,7 +50,7 @@ export const PERM_TEMPLATES: { key: string; label: string; desc: string; perms: 
     label: 'Verification Officer',
     desc: 'Entity & lot verification within scope; everything else view/hidden',
     perms: {
-      pipeline: P('view'), entities: P('act'), lots: P('act', 'All', 'All', 5_000_000),
+      pipeline: P('view'), entities: P('act'), lots: P('act', 'All', 'All', 5_000_000), manager_review: P('view'),
       auctions: P('view'), settlement: P('hidden'), logistics: P('hidden'), handover: P('hidden'),
       monitor: P('view'), users: P('view'), masterdata: P('hidden'),
     },
@@ -59,7 +60,7 @@ export const PERM_TEMPLATES: { key: string; label: string; desc: string; perms: 
     label: 'Settlement Officer',
     desc: 'Fulfilment focus — settlement/logistics act; pipeline view-only',
     perms: {
-      pipeline: P('view'), entities: P('hidden'), lots: P('view'),
+      pipeline: P('view'), entities: P('hidden'), lots: P('view'), manager_review: P('hidden'),
       auctions: P('view'), settlement: P('act', 'All', 'All', 5_000_000), logistics: P('act'), handover: P('act'),
       monitor: P('view'), users: P('view'), masterdata: P('hidden'),
     },

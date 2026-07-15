@@ -3,8 +3,9 @@ import type {
   Role, Lot, Auction, Bid, LedgerEntry, EntityRequest, Settlement,
   LogisticsRecord, AppNotification, Notice, AuditEntry, User, AdminUser, Toast, LotStatus,
   ApprovalRequest, ApprovalType, WorkTask, UserStanding, ModulePermission,
-  AuctionEvent, Catalogue, KycDocType, KycDocStatus, KycProfile,
+  AuctionEvent, Catalogue, CatalogueDocument, KycDocType, KycDocStatus, KycProfile,
   PlanAudience, SubscriptionPlan, ActiveSubscription, ExecFunction,
+  ApprovalLetter, SettlementRound, DeliveryLetter, EmailLog,
 } from './types';
 import usersSeed from './data/mock/buyer/users.json';
 import walletSeed from './data/mock/buyer/wallet.json';
@@ -29,6 +30,13 @@ import { nextId, nowStamp } from './utils';
 
 const BOOT = Date.now();
 const min = 60_000;
+
+/** Follow-up toggle: v1 always routes verified lots through a manager sign-off (no fast-lane).
+ *  Flipping this to false and short-circuiting in submitVerification() is the whole future change. */
+const REQUIRE_MANAGER_APPROVAL = true;
+
+/** Cap on settlement escalation rounds — matches "3rd or 4th bidder" in the WBS. */
+export const MAX_SETTLEMENT_ROUNDS = 4;
 
 /* ---------- theme ---------- */
 export type ThemeMode = 'light' | 'dark';
@@ -80,7 +88,7 @@ export const PERSONAS: Persona[] = [
 
 function seedAuctions(): Auction[] {
   return (auctionsSeed as any[]).map((a) => ({
-    id: a.id, lotId: a.lotId, status: a.status,
+    id: a.id, lotId: a.lotId, catalogueId: a.catalogueId, status: a.status,
     startsAt: BOOT + a.startsInMin * min,
     endsAt: BOOT + a.endsInMin * min,
     startPrice: a.startPrice, currentBid: a.currentBid,
@@ -102,6 +110,8 @@ function seedCatalogues(): Catalogue[] {
   return (cataloguesSeed as any[]).map((c) => ({
     id: c.id, eventId: c.eventId, title: c.title, description: c.description,
     lotIds: c.lotIds, closingAt: BOOT + c.closingInMin * min, status: c.status, createdAt: c.createdAt,
+    documents: (c.documents ?? []) as CatalogueDocument[],
+    additionalInfo: c.additionalInfo ?? { description: c.description ?? '', terms: undefined },
   }));
 }
 
@@ -111,6 +121,19 @@ export const catalogueById = (catalogues: Catalogue[], id: string) => catalogues
 export const catalogueForLot = (catalogues: Catalogue[], lotId: string) => catalogues.find((c) => c.lotIds.includes(lotId));
 export const eventForCatalogue = (events: AuctionEvent[], catalogueId: string) => events.find((e) => e.catalogueIds.includes(catalogueId));
 export const lotsForCatalogue = (lots: Lot[], catalogue: Catalogue) => lots.filter((l) => catalogue.lotIds.includes(l.id));
+/** Single collateral amount for a catalogue's bid room — sized to cover bidding on any lot in it. */
+export const catalogueEmdAmount = (lots: Lot[], catalogue: Catalogue) =>
+  lotsForCatalogue(lots, catalogue).reduce((max, l) => Math.max(max, l.emdAmount), 0);
+/** Bidders ranked by their highest bid on an auction (dedupe to one row per bidder), highest first. */
+export function rankedBids(bids: Bid[], auctionId: string): Bid[] {
+  const best = new Map<string, Bid>();
+  for (const b of bids) {
+    if (b.auctionId !== auctionId) continue;
+    const cur = best.get(b.bidderId);
+    if (!cur || b.amount > cur.amount) best.set(b.bidderId, b);
+  }
+  return Array.from(best.values()).sort((x, y) => y.amount - x.amount);
+}
 
 export function catalogueMeta(lots: Lot[], catalogue: Catalogue) {
   const catLots = lotsForCatalogue(lots, catalogue);
@@ -205,6 +228,7 @@ interface AppState {
   bids: Bid[];
   wallet: { balance: number; emdLocked: number; ledger: LedgerEntry[] };
   emdLockedAuctions: string[];
+  emdLockedCatalogues: string[];
   autoBid: Record<string, { max: number; step: number; active: boolean }>;
   entityRequests: EntityRequest[];
   settlements: Settlement[];
@@ -216,6 +240,10 @@ interface AppState {
   masterData: typeof masterDataSeed;
   approvals: ApprovalRequest[];
   workQueue: WorkTask[];
+  approvalLetters: ApprovalLetter[];
+  settlementRounds: SettlementRound[];
+  deliveryLetters: DeliveryLetter[];
+  emailLogs: EmailLog[];
   toasts: Toast[];
   kycStatus: 'not_submitted' | 'pending' | 'verified';
   kycProfile: KycProfile;
@@ -260,13 +288,19 @@ interface AppState {
   createLot: (lot: Omit<Lot, 'id' | 'status' | 'createdAt' | 'sellerId'>, asDraft: boolean) => string;
   submitLot: (lotId: string) => void;
   startVerification: (lotId: string) => void;
-  decideLot: (lotId: string, decision: 'verified' | 'flagged' | 'rejected', checklist: Record<string, boolean>, note: string) => void;
-  createAuction: (lotId: string, params: { startsInMin: number; durationMin: number; increment: number; reserve: number; emd: number }) => void;
+  // maker-checker lot approval (F group 1): field exec submits, Executive Manager decides
+  submitVerification: (lotId: string, checklist: Record<string, boolean>, note: string, attachments: { reportUploaded: boolean; photosUploaded: boolean }) => void;
+  approveLot: (lotId: string, notes: string) => void;
+  rejectLot: (lotId: string, reason: string) => void;
+  createAuction: (lotId: string, params: { startsInMin: number; increment: number; reserve: number; emd: number }) => void;
 
   // auction event / catalogue authoring
   createEvent: (name: string, startsInMin: number, endsInMin: number, location?: string) => string;
   createCatalogue: (eventId: string, title: string) => string;
   assignLotToCatalogue: (lotId: string, catalogueId: string) => void;
+  updateCatalogueDocs: (catalogueId: string, documents: CatalogueDocument[]) => void;
+  updateCatalogueInfo: (catalogueId: string, info: { description: string; terms?: string }) => void;
+  lockCatalogueEmd: (catalogueId: string) => boolean;
 
   // entity verification
   submitEntityRequest: (businessName: string, gstin: string, pan: string, docs: { name: string; type: string }[]) => void;
@@ -287,6 +321,22 @@ interface AppState {
   toggleHandoverCheck: (lgId: string, key: string) => void;
   uploadProof: (lgId: string) => void;
   confirmHandover: (lgId: string) => void;
+
+  // notifications seam (Group 4) — the one place a real mail API would plug in
+  sendNotification: (lotId: string, type: EmailLog['type'], recipientRole: 'seller' | 'buyer', recipientId: string, subject: string) => void;
+
+  // post-award settlement — Approval Letter negotiation & escalation (Group 3)
+  generateApprovalLetter: (lotId: string, round?: number, bidderId?: string, amount?: number) => void;
+  sendApprovalLetter: (alId: string) => void;
+  respondToApprovalLetter: (alId: string, party: 'seller' | 'buyer', decision: 'approved' | 'rejected') => void;
+  recordSettlementRound: (lotId: string, round: number, bidderId: string, askAmount: number, bidderAgreed: boolean, confirmationRef: string) => void;
+  reAuctionLot: (lotId: string) => void;
+  cancelAndRefund: (lotId: string) => void;
+
+  // delivery letter + tracking (Group 4)
+  generateDeliveryLetter: (lotId: string, approvalLetterId: string) => void;
+  acknowledgeDelivery: (dlId: string) => void;
+  disputeDelivery: (dlId: string, note: string) => void;
 
   // admin
   toggleAdminActive: (id: string) => void;
@@ -343,7 +393,9 @@ export const useApp = create<AppState>((set, get) => ({
   catalogues: initialCatalogues,
   bids: seedBids(initialAuctions),
   wallet: walletSeed as { balance: number; emdLocked: number; ledger: LedgerEntry[] },
-  emdLockedAuctions: ['AU-101'],
+  emdLockedAuctions: [],
+  // demo buyer already unlocked the Batch A catalogue room (contains AU-101) out of the box
+  emdLockedCatalogues: ['CAT-2026-01-A'],
   autoBid: {},
   entityRequests: entitySeed as EntityRequest[],
   settlements: settlementsSeed as Settlement[],
@@ -358,6 +410,10 @@ export const useApp = create<AppState>((set, get) => ({
     id: t.id, title: t.title, module: t.module, refId: t.refId,
     assignedBy: t.assignedBy, dueAt: BOOT + t.dueInMin * min, status: t.status,
   })),
+  approvalLetters: [],
+  settlementRounds: [],
+  deliveryLetters: [],
+  emailLogs: [],
   toasts: [],
   kycStatus: 'verified',
   kycProfile: {
@@ -549,35 +605,74 @@ export const useApp = create<AppState>((set, get) => ({
     get().notify('seller', `Lot ${lotId} under verification`, 'A Field Executive Officer has started the inspection.');
   },
 
-  decideLot: (lotId, decision, checklist, note) => {
+  submitVerification: (lotId, checklist, note, attachments) => {
     const s = get();
     const lot = s.lots.find((l) => l.id === lotId);
-    const status: LotStatus = decision === 'verified' ? 'approved' : decision === 'rejected' ? 'rejected' : 'under_verification';
+    const allChecked = Object.values(checklist).every(Boolean) && Object.values(checklist).length > 0;
+    // Follow-up toggle point: when REQUIRE_MANAGER_APPROVAL is false, a fully-checked lot with
+    // both attachments on file could short-circuit straight to 'approved' here instead of queuing.
+    const status: LotStatus = (!REQUIRE_MANAGER_APPROVAL && allChecked && attachments.reportUploaded)
+      ? 'approved' : 'pending_manager_approval';
     set((st) => ({
       lots: st.lots.map((l) =>
         l.id === lotId
           ? {
               ...l, status,
-              rejectReason: decision === 'rejected' ? note : undefined,
-              verification: { checklist, note, reportUploaded: true, photosUploaded: true, decision, decidedBy: 'Meera Pillai' },
+              verification: {
+                checklist, note,
+                reportUploaded: attachments.reportUploaded, photosUploaded: attachments.photosUploaded,
+                submittedBy: st.userName, submittedAt: nowStamp(),
+              },
             }
           : l
       ),
     }));
-    const labels = { verified: 'verified & approved for auction', flagged: 'flagged for re-inspection', rejected: 'rejected' } as const;
-    s.logAudit('Meera Pillai', 'Field Executive Officer', `Lot ${labels[decision]}`, lotId, 'Verification');
-    s.notify('seller', `Lot ${lotId} ${labels[decision]}`, note || `${lot?.title} — ${labels[decision]}.`);
-    s.pushToast({ title: `Lot ${labels[decision]}`, tone: decision === 'rejected' ? 'error' : 'success' });
+    s.logAudit(s.userName, 'Field Executive Officer', 'Verification submitted for manager approval', lotId, 'Verification');
+    s.notify('exec', 'Lot awaiting manager approval', `${lot?.title} (${lotId}) inspected — ready for Executive Manager sign-off.`);
+    s.notify('seller', `Lot ${lotId} inspected`, 'Inspection complete — awaiting Executive Manager approval.');
+    s.pushToast({ title: 'Submitted for manager approval', body: lot?.title, tone: 'success' });
+  },
+
+  approveLot: (lotId, notes) => {
+    const s = get();
+    const lot = s.lots.find((l) => l.id === lotId);
+    set((st) => ({
+      lots: st.lots.map((l) =>
+        l.id === lotId
+          ? { ...l, status: 'approved' as LotStatus, verification: l.verification && { ...l.verification, managerDecision: 'approved', managerNote: notes, decidedBy: st.userName, decidedAt: nowStamp() } }
+          : l
+      ),
+    }));
+    s.logAudit(s.userName, 'Executive Manager', 'Lot approved for auction', lotId, 'Manager Review');
+    s.notify('seller', `Lot ${lotId} approved`, notes || `${lot?.title} — approved and ready for auction setup.`);
+    s.pushToast({ title: 'Lot approved', body: lot?.title, tone: 'success' });
+  },
+
+  rejectLot: (lotId, reason) => {
+    const s = get();
+    const lot = s.lots.find((l) => l.id === lotId);
+    set((st) => ({
+      lots: st.lots.map((l) =>
+        l.id === lotId
+          ? { ...l, status: 'rejected' as LotStatus, rejectReason: reason, verification: l.verification && { ...l.verification, managerDecision: 'rejected', managerNote: reason, decidedBy: st.userName, decidedAt: nowStamp() } }
+          : l
+      ),
+    }));
+    s.logAudit(s.userName, 'Executive Manager', 'Lot rejected', lotId, 'Manager Review');
+    s.notify('seller', `Lot ${lotId} rejected`, reason || `${lot?.title} — rejected by Executive Manager.`);
+    s.pushToast({ title: 'Lot rejected', body: lot?.title, tone: 'error' });
   },
 
   createAuction: (lotId, params) => {
     const now = Date.now();
     const id = `AU-${100 + Math.floor(Math.random() * 800)}`;
     const lot = get().lots.find((l) => l.id === lotId)!;
+    const catalogue = get().catalogues.find((c) => c.id === lot.catalogueId);
+    if (!catalogue) return; // guard — UI only allows Create auction once the lot has a catalogue
     const startsAt = now + params.startsInMin * min;
     const auction: Auction = {
-      id, lotId,
-      startsAt, endsAt: startsAt + params.durationMin * min,
+      id, lotId, catalogueId: catalogue.id,
+      startsAt, endsAt: catalogue.closingAt,
       status: params.startsInMin <= 0 ? 'live' : 'scheduled',
       startPrice: lot.basePrice, currentBid: lot.basePrice,
       increment: params.increment, reserve: params.reserve, emd: params.emd,
@@ -613,6 +708,7 @@ export const useApp = create<AppState>((set, get) => ({
     const catalogue: Catalogue = {
       id, eventId, title, lotIds: [], closingAt: event?.endsAt ?? Date.now() + 60 * min,
       status: 'draft', createdAt: nowStamp(),
+      documents: [], additionalInfo: { description: '' },
     };
     set((s) => ({
       catalogues: [...s.catalogues, catalogue],
@@ -620,6 +716,39 @@ export const useApp = create<AppState>((set, get) => ({
     }));
     get().logAudit('Ravi Kumar', 'Executive Manager', 'Catalogue created', `${title} → ${event?.name ?? eventId}`, 'Auction Setup');
     return id;
+  },
+
+  updateCatalogueDocs: (catalogueId, documents) => {
+    set((s) => ({ catalogues: s.catalogues.map((c) => (c.id === catalogueId ? { ...c, documents } : c)) }));
+    get().logAudit('Ravi Kumar', 'Executive Manager', 'Catalogue documents updated', catalogueId, 'Auction Setup');
+  },
+
+  updateCatalogueInfo: (catalogueId, info) => {
+    set((s) => ({ catalogues: s.catalogues.map((c) => (c.id === catalogueId ? { ...c, additionalInfo: info } : c)) }));
+    get().logAudit('Ravi Kumar', 'Executive Manager', 'Catalogue description/terms updated', catalogueId, 'Auction Setup');
+  },
+
+  lockCatalogueEmd: (catalogueId) => {
+    const s = get();
+    const catalogue = s.catalogues.find((c) => c.id === catalogueId);
+    if (!catalogue) return false;
+    if (s.emdLockedCatalogues.includes(catalogueId)) return true;
+    const amount = catalogueEmdAmount(s.lots, catalogue);
+    if (s.wallet.balance < amount) {
+      s.pushToast({ title: 'Insufficient balance', body: 'Top up your wallet to lock EMD for this catalogue.', tone: 'error' });
+      return false;
+    }
+    set((st) => ({
+      emdLockedCatalogues: [...st.emdLockedCatalogues, catalogueId],
+      wallet: {
+        ...st.wallet,
+        balance: st.wallet.balance - amount,
+        emdLocked: st.wallet.emdLocked + amount,
+        ledger: [{ id: nextId('L'), type: 'emd_lock', amount: -amount, note: `EMD locked — Catalogue ${catalogue.title}`, at: nowStamp() }, ...st.wallet.ledger],
+      },
+    }));
+    s.pushToast({ title: 'EMD locked', body: `₹${amount.toLocaleString('en-IN')} locked. You can now bid on any lot in this catalogue.`, tone: 'success' });
+    return true;
   },
 
   assignLotToCatalogue: (lotId, catalogueId) => {
@@ -740,22 +869,30 @@ export const useApp = create<AppState>((set, get) => ({
               }
             : {}),
         }));
+        const lotForAuction = s.lots.find((l) => l.id === a.lotId);
         if (met && a.leaderId === DEMO_USER_ID) {
           s.notify('buyer', `You won Lot ${a.lotId} 🎉`, `Winning bid ₹${a.currentBid.toLocaleString('en-IN')}. Settlement will begin shortly.`);
           s.pushToast({ title: `You won Lot ${a.lotId}! 🎉`, body: `Winning bid ₹${a.currentBid.toLocaleString('en-IN')}`, tone: 'success' });
+          s.sendNotification(a.lotId, 'auction_won', 'buyer', a.leaderId, `You won Lot ${a.lotId} at ₹${a.currentBid.toLocaleString('en-IN')}`);
+          if (lotForAuction) s.sendNotification(a.lotId, 'auction_won', 'seller', lotForAuction.sellerId, `Lot ${a.lotId} sold at ₹${a.currentBid.toLocaleString('en-IN')}`);
         } else if (met) {
-          s.notify('buyer', `Auction closed — Lot ${a.lotId}`, `${a.leaderName} won at ₹${a.currentBid.toLocaleString('en-IN')}. Your EMD will be auto-refunded.`);
-          // auto-refund demo buyer's EMD if they participated and lost
-          if (s.emdLockedAuctions.includes(a.id)) {
+          s.notify('buyer', `Auction closed — Lot ${a.lotId}`, `${a.leaderName} won at ₹${a.currentBid.toLocaleString('en-IN')}. Your EMD will be auto-refunded once the catalogue's bidding wraps up.`);
+          // auto-refund demo buyer's catalogue EMD once no other live/scheduled auction remains in that catalogue
+          const catalogueId = a.catalogueId;
+          const otherActiveInCatalogue = s.auctions.some((x) => x.id !== a.id && x.catalogueId === catalogueId && (x.status === 'live' || x.status === 'scheduled'));
+          if (catalogueId && s.emdLockedCatalogues.includes(catalogueId) && !otherActiveInCatalogue) {
+            const catalogue = s.catalogues.find((c) => c.id === catalogueId);
+            const amount = catalogue ? catalogueEmdAmount(s.lots, catalogue) : a.emd;
             set((st) => ({
+              emdLockedCatalogues: st.emdLockedCatalogues.filter((id) => id !== catalogueId),
               wallet: {
                 ...st.wallet,
-                balance: st.wallet.balance + a.emd,
-                emdLocked: Math.max(0, st.wallet.emdLocked - a.emd),
-                ledger: [{ id: nextId('L'), type: 'emd_release', amount: a.emd, note: `EMD auto-refund — Lot ${a.lotId} (lost)`, at: nowStamp() }, ...st.wallet.ledger],
+                balance: st.wallet.balance + amount,
+                emdLocked: Math.max(0, st.wallet.emdLocked - amount),
+                ledger: [{ id: nextId('L'), type: 'emd_release', amount, note: `EMD auto-refund — catalogue ${catalogueId} bidding closed`, at: nowStamp() }, ...st.wallet.ledger],
               },
             }));
-            s.pushToast({ title: 'EMD refunded', body: `₹${a.emd.toLocaleString('en-IN')} released back to your wallet for Lot ${a.lotId}.`, tone: 'info' });
+            s.pushToast({ title: 'EMD refunded', body: `₹${amount.toLocaleString('en-IN')} released back to your wallet.`, tone: 'info' });
           }
         }
         s.notify('exec', `Auction closed — ${a.lotId}`, met ? `Winner: ${a.leaderName}. Move to settlement.` : 'Reserve not met — lot closed unsold.');
@@ -837,6 +974,7 @@ export const useApp = create<AppState>((set, get) => ({
     if (lg) {
       get().setLotStatus(lg.lotId, 'in_logistics');
       get().logAudit('Ravi Kumar', 'Executive Manager', 'Pickup in transit', lg.lotId, 'Logistics');
+      set((s) => ({ deliveryLetters: s.deliveryLetters.map((dl) => (dl.lotId === lg.lotId && (dl.status === 'sent' || dl.status === 'acknowledged') ? { ...dl, status: 'in_transit' } : dl)) }));
     }
   },
   toggleHandoverCheck: (lgId, key) =>
@@ -857,7 +995,173 @@ export const useApp = create<AppState>((set, get) => ({
       get().logAudit('Ravi Kumar', 'Executive Manager', 'Handover confirmed — lot closed', lg.lotId, 'Handover');
       get().notify('all', `Lot ${lg.lotId} handed over ✓`, 'Pickup completed with proof. Lifecycle closed.');
       get().pushToast({ title: 'Handover complete — lot closed', tone: 'success' });
+      const deliveredAt = nowStamp();
+      const lot = get().lots.find((l) => l.id === lg.lotId);
+      const dl = get().deliveryLetters.find((x) => x.lotId === lg.lotId);
+      set((s) => ({ deliveryLetters: s.deliveryLetters.map((x) => (x.id === dl?.id ? { ...x, status: 'delivered', deliveredAt } : x)) }));
+      if (dl && lot) {
+        get().sendNotification(lg.lotId, 'delivered', 'seller', lot.sellerId, `Lot ${lg.lotId} delivered and handover confirmed`);
+        const winnerId = get().auctions.find((a) => a.id === lot.auctionId)?.leaderId;
+        if (winnerId) get().sendNotification(lg.lotId, 'delivered', 'buyer', winnerId, `Lot ${lg.lotId} delivered — handover confirmed`);
+      }
     }
+  },
+
+  /* ---------- notifications seam (Group 4) ---------- */
+  sendNotification: (lotId, type, recipientRole, recipientId, subject) => {
+    set((s) => ({
+      emailLogs: [{ id: nextId('EM'), lotId, type, recipientRole, recipientId, subject, sentAt: nowStamp() }, ...s.emailLogs],
+    }));
+    get().pushToast({ title: 'Notification sent (mock)', body: subject, tone: 'info' });
+  },
+
+  /* ---------- post-award settlement: Approval Letter negotiation & escalation (Group 3) ---------- */
+  generateApprovalLetter: (lotId, round, bidderId, amount) => {
+    const s = get();
+    const lot = s.lots.find((l) => l.id === lotId);
+    const auction = s.auctions.find((a) => a.id === lot?.auctionId);
+    if (!lot || !auction) return;
+    const resolvedRound = round ?? 1;
+    const resolvedBidderId = bidderId ?? auction.leaderId;
+    const resolvedAmount = amount ?? auction.currentBid;
+    if (!resolvedBidderId) return;
+    const id = nextId('AL');
+    const al: ApprovalLetter = {
+      id, lotId, round: resolvedRound, bidderId: resolvedBidderId, sellerId: lot.sellerId,
+      amount: resolvedAmount, pdfUrl: `/mock-pdf/${id}.pdf`, status: 'draft', generatedBy: s.userName,
+    };
+    set((st) => ({
+      approvalLetters: [al, ...st.approvalLetters.map((x) => (x.lotId === lotId && x.status !== 'superseded' ? { ...x, status: 'superseded' as const } : x))],
+    }));
+    s.logAudit(s.userName, 'Executive Manager', `Approval Letter drafted — round ${resolvedRound} at ₹${resolvedAmount.toLocaleString('en-IN')}`, lotId, 'Settlement Desk');
+    s.pushToast({ title: 'Approval Letter drafted', body: `Round ${resolvedRound} · ${lot.title}`, tone: 'success' });
+  },
+
+  sendApprovalLetter: (alId) => {
+    const s = get();
+    const al = s.approvalLetters.find((x) => x.id === alId);
+    if (!al) return;
+    set((st) => ({ approvalLetters: st.approvalLetters.map((x) => (x.id === alId ? { ...x, status: 'sent', sentAt: nowStamp() } : x)) }));
+    s.sendNotification(al.lotId, 'al_sent', 'seller', al.sellerId, `Approval Letter (round ${al.round}) sent for your decision`);
+    s.sendNotification(al.lotId, 'al_sent', 'buyer', al.bidderId, `Approval Letter (round ${al.round}) sent for your decision`);
+    s.logAudit(s.userName, 'Executive Manager', `Approval Letter sent — round ${al.round}`, al.lotId, 'Settlement Desk');
+  },
+
+  respondToApprovalLetter: (alId, party, decision) => {
+    const s = get();
+    const al = s.approvalLetters.find((x) => x.id === alId);
+    if (!al) return;
+    // buyer can only respond once the seller has approved — that ordering is what lets a single
+    // `status` field stand in for "both parties approved" (see plan notes)
+    if (party === 'seller' && al.status !== 'sent') return;
+    if (party === 'buyer' && al.status !== 'seller_approved') return;
+    const nextStatus = party === 'seller'
+      ? (decision === 'approved' ? 'seller_approved' : 'seller_rejected')
+      : (decision === 'approved' ? 'buyer_approved' : 'buyer_rejected');
+    set((st) => ({ approvalLetters: st.approvalLetters.map((x) => (x.id === alId ? { ...x, status: nextStatus, respondedAt: nowStamp() } : x)) }));
+    const otherRole = party === 'seller' ? 'buyer' : 'seller';
+    const otherId = party === 'seller' ? al.bidderId : al.sellerId;
+    s.sendNotification(al.lotId, decision === 'approved' ? 'al_approved' : 'al_rejected', otherRole, otherId, `${party === 'seller' ? 'Seller' : 'Buyer'} ${decision} the Approval Letter (round ${al.round})`);
+    s.logAudit(s.userName, 'Executive Manager', `AL ${party} ${decision} — round ${al.round}`, al.lotId, 'Settlement Desk');
+    s.pushToast({ title: `${party === 'seller' ? 'Seller' : 'Buyer'} ${decision}`, body: `Round ${al.round} · AL ${alId}`, tone: decision === 'approved' ? 'success' : 'error' });
+  },
+
+  recordSettlementRound: (lotId, round, bidderId, askAmount, bidderAgreed, confirmationRef) => {
+    const s = get();
+    const lot = s.lots.find((l) => l.id === lotId);
+    const auction = s.auctions.find((a) => a.id === lot?.auctionId);
+    const row: SettlementRound = {
+      id: nextId('SR'), lotId, round, bidderId, askAmount, bidderAgreed, confirmationRef: confirmationRef || undefined,
+      outcome: bidderAgreed ? 'confirmed' : 'escalated', decidedBy: s.userName, createdAt: nowStamp(),
+    };
+    set((st) => ({ settlementRounds: [row, ...st.settlementRounds] }));
+    s.logAudit(s.userName, 'Executive Manager', `Settlement round ${round} recorded — bidder ${bidderAgreed ? 'agreed' : 'declined'}`, lotId, 'Settlement Desk');
+
+    if (bidderAgreed) {
+      s.generateApprovalLetter(lotId, round, bidderId, askAmount);
+      return;
+    }
+    if (!auction) return;
+    const nextRound = round + 1;
+    if (nextRound > MAX_SETTLEMENT_ROUNDS) {
+      s.pushToast({ title: 'Settlement rounds exhausted', body: `${lot?.title} — re-auction or cancel & refund.`, tone: 'error' });
+      return;
+    }
+    const attempted = new Set(s.settlementRounds.filter((r) => r.lotId === lotId).map((r) => r.bidderId).concat(bidderId));
+    const ranked = rankedBids(s.bids, auction.id);
+    const nextBidder = ranked.find((b) => !attempted.has(b.bidderId));
+    if (!nextBidder) {
+      s.pushToast({ title: 'No further bidders', body: `${lot?.title} — re-auction or cancel & refund.`, tone: 'error' });
+      return;
+    }
+    s.sendNotification(lotId, 'escalation_offer', 'buyer', nextBidder.bidderId, `You're next in line for Lot ${lotId} at ₹${nextBidder.amount.toLocaleString('en-IN')}`);
+    s.generateApprovalLetter(lotId, nextRound, nextBidder.bidderId, nextBidder.amount);
+  },
+
+  reAuctionLot: (lotId) => {
+    const s = get();
+    const lot = s.lots.find((l) => l.id === lotId);
+    set((st) => ({ lots: st.lots.map((l) => (l.id === lotId ? { ...l, status: 'approved' as LotStatus, auctionId: undefined, catalogueId: undefined } : l)) }));
+    s.logAudit(s.userName, 'Executive Manager', 'Lot returned to pool for re-auction', lotId, 'Settlement Desk');
+    if (lot) s.sendNotification(lotId, 're_auction', 'seller', lot.sellerId, `Lot ${lotId} is being re-auctioned after settlement fell through`);
+    s.pushToast({ title: 'Lot sent back for re-auction', body: lot?.title, tone: 'info' });
+  },
+
+  cancelAndRefund: (lotId) => {
+    const s = get();
+    const lot = s.lots.find((l) => l.id === lotId);
+    if (!lot) return;
+    set((st) => ({ lots: st.lots.map((l) => (l.id === lotId ? { ...l, status: 'cancelled' as LotStatus } : l)) }));
+    const catalogueId = lot.catalogueId;
+    if (catalogueId && s.emdLockedCatalogues.includes(catalogueId)) {
+      const catalogue = s.catalogues.find((c) => c.id === catalogueId);
+      const amount = catalogue ? catalogueEmdAmount(s.lots, catalogue) : 0;
+      if (amount > 0) {
+        set((st) => ({
+          emdLockedCatalogues: st.emdLockedCatalogues.filter((id) => id !== catalogueId),
+          wallet: {
+            ...st.wallet,
+            balance: st.wallet.balance + amount,
+            emdLocked: Math.max(0, st.wallet.emdLocked - amount),
+            ledger: [{ id: nextId('L'), type: 'refund', amount, note: `EMD refund — Lot ${lotId} cancelled`, at: nowStamp() }, ...st.wallet.ledger],
+          },
+        }));
+      }
+    }
+    s.logAudit(s.userName, 'Executive Manager', 'Lot cancelled — EMDs refunded', lotId, 'Settlement Desk');
+    s.sendNotification(lotId, 'emd_refunded', 'seller', lot.sellerId, `Lot ${lotId} cancelled — EMDs refunded to bidders`);
+    s.pushToast({ title: 'Lot cancelled', body: 'EMDs refunded.', tone: 'error' });
+  },
+
+  /* ---------- delivery letter + tracking (Group 4) ---------- */
+  generateDeliveryLetter: (lotId, approvalLetterId) => {
+    const s = get();
+    const al = s.approvalLetters.find((x) => x.id === approvalLetterId);
+    const lot = s.lots.find((l) => l.id === lotId);
+    if (!al || !lot || al.status !== 'buyer_approved') {
+      s.pushToast({ title: 'Cannot generate Delivery Letter', body: 'The Approval Letter needs both seller and buyer approval first.', tone: 'error' });
+      return;
+    }
+    const id = nextId('DL');
+    const dl: DeliveryLetter = { id, lotId, approvalLetterId, pdfUrl: `/mock-pdf/${id}.pdf`, status: 'sent', generatedBy: s.userName, sentAt: nowStamp() };
+    set((st) => ({ deliveryLetters: [dl, ...st.deliveryLetters] }));
+    s.sendNotification(lotId, 'dl_sent', 'seller', al.sellerId, `Delivery Letter issued for Lot ${lotId}`);
+    s.sendNotification(lotId, 'dl_sent', 'buyer', al.bidderId, `Delivery Letter issued for Lot ${lotId}`);
+    s.setLotStatus(lotId, 'ready_for_pickup');
+    s.logAudit(s.userName, 'Executive Manager', 'Delivery Letter generated & sent', lotId, 'Settlement Desk');
+    s.pushToast({ title: 'Delivery Letter sent', body: lot.title, tone: 'success' });
+  },
+
+  acknowledgeDelivery: (dlId) => {
+    set((s) => ({ deliveryLetters: s.deliveryLetters.map((x) => (x.id === dlId ? { ...x, status: 'acknowledged' } : x)) }));
+    get().pushToast({ title: 'Delivery Letter acknowledged', tone: 'success' });
+  },
+
+  disputeDelivery: (dlId, note) => {
+    const dl = get().deliveryLetters.find((x) => x.id === dlId);
+    set((s) => ({ deliveryLetters: s.deliveryLetters.map((x) => (x.id === dlId ? { ...x, status: 'disputed', trackingNotes: note } : x)) }));
+    if (dl) get().logAudit(get().userName, get().role, `Delivery disputed — ${note}`, dl.lotId, 'Logistics');
+    get().pushToast({ title: 'Dispute recorded', body: note, tone: 'error' });
   },
 
   toggleAdminActive: (id) =>
@@ -957,12 +1261,12 @@ export const useApp = create<AppState>((set, get) => ({
       switch (ap.type) {
         case 'entity_approve': s.decideEntity(ap.refId, 'approved', note || ap.detail); break;
         case 'entity_reject': if (s.entityRequests.some((r) => r.id === ap.refId && r.status === 'pending')) s.decideEntity(ap.refId, 'rejected', note || ap.detail); break;
-        case 'lot_reject': s.decideLot(ap.refId, 'rejected', (ap.payload?.checklist as Record<string, boolean>) ?? {}, note || ap.detail); break;
+        case 'lot_reject': s.rejectLot(ap.refId, note || ap.detail); break;
         case 'emd_forfeit': s.handleEmd(ap.refId); break;
         case 'auction_pause': s.pauseAuction(ap.refId, note || ap.detail, decider); break;
         case 'auction_publish': {
           const p = ap.payload as any;
-          if (p) s.createAuction(ap.refId, { startsInMin: p.startsInMin, durationMin: p.durationMin, increment: p.increment, reserve: p.reserve, emd: p.emd });
+          if (p) s.createAuction(ap.refId, { startsInMin: p.startsInMin, increment: p.increment, reserve: p.reserve, emd: p.emd });
           break;
         }
         case 'bid_flag': s.voidBid(ap.refId, note || ap.detail); break;

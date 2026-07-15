@@ -8,6 +8,7 @@ export type LotStatus =
   | 'draft'
   | 'submitted'
   | 'under_verification'
+  | 'pending_manager_approval'
   | 'rejected'
   | 'approved'
   | 'scheduled'
@@ -18,7 +19,8 @@ export type LotStatus =
   | 'ready_for_pickup'
   | 'in_logistics'
   | 'handover_complete'
-  | 'closed';
+  | 'closed'
+  | 'cancelled';
 
 export interface User {
   id: string;
@@ -131,13 +133,18 @@ export interface Lot {
   imageHues: number[];    // gradient placeholder hues for mock images
   createdAt: string;
   rejectReason?: string;
+  /** Field-exec inspection findings + Executive Manager's separate sign-off (maker-checker, WBS §5). */
   verification?: {
     checklist: Record<string, boolean>;
     note: string;
     reportUploaded: boolean;
     photosUploaded: boolean;
-    decision?: 'verified' | 'flagged' | 'rejected';
+    submittedBy?: string;
+    submittedAt?: string;
+    managerDecision?: 'approved' | 'rejected';
+    managerNote?: string;
     decidedBy?: string;
+    decidedAt?: string;
   };
   auctionId?: string;
   catalogueId?: string;
@@ -145,6 +152,16 @@ export interface Lot {
 
 export type EventStatus = 'scheduled' | 'live' | 'closed' | 'cancelled';
 export type CatalogueStatus = 'draft' | 'scheduled' | 'live' | 'closed';
+
+/** A document bundled into a Catalogue's bid room (terms, inspection reports, photos…). */
+export interface CatalogueDocument {
+  id: string;
+  type: string;
+  label: string;
+  url: string;
+  uploadedBy: string;
+  uploadedAt: string;
+}
 
 /** Scheduled circuit grouping one or more Catalogues (WBS: Auction Event → Catalogue → Lot). */
 export interface AuctionEvent {
@@ -170,11 +187,14 @@ export interface Catalogue {
   closingAt: number;
   status: CatalogueStatus;
   createdAt: string;
+  documents: CatalogueDocument[];
+  additionalInfo: { description: string; terms?: string };
 }
 
 export interface Auction {
   id: string;
   lotId: string;
+  catalogueId: string;
   startsAt: number;
   endsAt: number;
   status: 'scheduled' | 'live' | 'paused' | 'cancelled' | 'closed';
@@ -293,6 +313,59 @@ export interface ActiveSubscription {
   planId: string;
   renewsAt: number;
   autoRenew: boolean;
+}
+
+/** Post-award settlement negotiation (WBS §7 — Approval Letter round-trip + escalation). */
+export interface ApprovalLetter {
+  id: string;
+  lotId: string;
+  round: number;
+  bidderId: string;
+  sellerId: string;
+  amount: number;
+  pdfUrl: string;
+  status: 'draft' | 'sent' | 'seller_approved' | 'seller_rejected'
+        | 'buyer_approved' | 'buyer_rejected' | 'superseded';
+  generatedBy: string;
+  sentAt?: string;
+  respondedAt?: string;
+}
+
+export interface DeliveryLetter {
+  id: string;
+  lotId: string;
+  approvalLetterId: string;
+  pdfUrl: string;
+  status: 'draft' | 'sent' | 'acknowledged' | 'in_transit' | 'delivered' | 'disputed';
+  generatedBy: string;
+  sentAt?: string;
+  deliveredAt?: string;
+  trackingNotes?: string;
+}
+
+export interface SettlementRound {
+  id: string;
+  lotId: string;
+  round: number;
+  bidderId: string;
+  askAmount: number;
+  bidderAgreed: boolean;
+  confirmationRef?: string;
+  outcome: 'confirmed' | 'escalated' | 're_auction' | 'cancelled';
+  decidedBy: string;
+  createdAt: string;
+}
+
+export interface EmailLog {
+  id: string;
+  lotId: string;
+  type: 'auction_won' | 'al_sent' | 'al_approved' | 'al_rejected'
+      | 'escalation_offer' | 'dl_sent' | 'delivered' | 're_auction'
+      | 'emd_refunded';
+  recipientRole: 'seller' | 'buyer';
+  recipientId: string;
+  subject: string;
+  sentAt: string;
 }
 
 export interface Toast {

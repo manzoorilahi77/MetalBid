@@ -1,22 +1,128 @@
 [
   {
-    "id": "CAT-2026-01-A", "eventId": "EVT-2026-01", "title": "Ferrous & Copper Scrap — Batch A",
-    "lotIds": ["FB-2026-001", "FB-2026-002"], "closingInMin": 24, "status": "live", "createdAt": "2026-06-20"
+    "id": "CAT-2026-01-A",
+    "eventId": "EVT-2026-01",
+    "title": "Ferrous & Copper Scrap \u2014 Batch A",
+    "lotIds": [
+      "FB-2026-001",
+      "FB-2026-002"
+    ],
+    "closingInMin": 24,
+    "status": "live",
+    "createdAt": "2026-06-20",
+    "documents": [
+      {
+        "id": "DOC-CAT-2026-01-A-1",
+        "type": "terms",
+        "label": "Bid room terms & conditions",
+        "url": "/mock-pdf/terms.pdf",
+        "uploadedBy": "Ravi Kumar",
+        "uploadedAt": "2026-06-20"
+      }
+    ],
+    "additionalInfo": {
+      "description": "Lots bundled under Ferrous & Copper Scrap \u2014 Batch A.",
+      "terms": "Standard ferroBid catalogue terms apply \u2014 EMD locks once per catalogue, winning bidders proceed to settlement within 3 business days."
+    }
   },
   {
-    "id": "CAT-2026-01-B", "eventId": "EVT-2026-01", "title": "Aluminium Ingots — Batch B",
-    "lotIds": ["FB-2026-003"], "closingInMin": 300, "status": "scheduled", "createdAt": "2026-06-20"
+    "id": "CAT-2026-01-B",
+    "eventId": "EVT-2026-01",
+    "title": "Aluminium Ingots \u2014 Batch B",
+    "lotIds": [
+      "FB-2026-003"
+    ],
+    "closingInMin": 300,
+    "status": "scheduled",
+    "createdAt": "2026-06-20",
+    "documents": [
+      {
+        "id": "DOC-CAT-2026-01-B-1",
+        "type": "terms",
+        "label": "Bid room terms & conditions",
+        "url": "/mock-pdf/terms.pdf",
+        "uploadedBy": "Ravi Kumar",
+        "uploadedAt": "2026-06-20"
+      }
+    ],
+    "additionalInfo": {
+      "description": "Lots bundled under Aluminium Ingots \u2014 Batch B.",
+      "terms": "Standard ferroBid catalogue terms apply \u2014 EMD locks once per catalogue, winning bidders proceed to settlement within 3 business days."
+    }
   },
   {
-    "id": "CAT-2026-00A", "eventId": "EVT-2026-00A", "title": "Lead Battery Scrap — Closed Lot",
-    "lotIds": ["FB-2026-088"], "closingInMin": -43080, "status": "closed", "createdAt": "2026-05-15"
+    "id": "CAT-2026-00A",
+    "eventId": "EVT-2026-00A",
+    "title": "Lead Battery Scrap \u2014 Closed Lot",
+    "lotIds": [
+      "FB-2026-088"
+    ],
+    "closingInMin": -43080,
+    "status": "closed",
+    "createdAt": "2026-05-15",
+    "documents": [
+      {
+        "id": "DOC-CAT-2026-00A-1",
+        "type": "terms",
+        "label": "Bid room terms & conditions",
+        "url": "/mock-pdf/terms.pdf",
+        "uploadedBy": "Ravi Kumar",
+        "uploadedAt": "2026-05-15"
+      }
+    ],
+    "additionalInfo": {
+      "description": "Lots bundled under Lead Battery Scrap \u2014 Closed Lot.",
+      "terms": "Standard ferroBid catalogue terms apply \u2014 EMD locks once per catalogue, winning bidders proceed to settlement within 3 business days."
+    }
   },
   {
-    "id": "CAT-2026-00B", "eventId": "EVT-2026-00B", "title": "Zinc Dross — Closed Lot",
-    "lotIds": ["FB-2026-114"], "closingInMin": -17160, "status": "closed", "createdAt": "2026-06-01"
+    "id": "CAT-2026-00B",
+    "eventId": "EVT-2026-00B",
+    "title": "Zinc Dross \u2014 Closed Lot",
+    "lotIds": [
+      "FB-2026-114"
+    ],
+    "closingInMin": -17160,
+    "status": "closed",
+    "createdAt": "2026-06-01",
+    "documents": [
+      {
+        "id": "DOC-CAT-2026-00B-1",
+        "type": "terms",
+        "label": "Bid room terms & conditions",
+        "url": "/mock-pdf/terms.pdf",
+        "uploadedBy": "Ravi Kumar",
+        "uploadedAt": "2026-06-01"
+      }
+    ],
+    "additionalInfo": {
+      "description": "Lots bundled under Zinc Dross \u2014 Closed Lot.",
+      "terms": "Standard ferroBid catalogue terms apply \u2014 EMD locks once per catalogue, winning bidders proceed to settlement within 3 business days."
+    }
   },
   {
-    "id": "CAT-2026-00C", "eventId": "EVT-2026-00C", "title": "Tin Ingots — Closed Lot",
-    "lotIds": ["FB-2026-096"], "closingInMin": -12840, "status": "closed", "createdAt": "2026-06-08"
+    "id": "CAT-2026-00C",
+    "eventId": "EVT-2026-00C",
+    "title": "Tin Ingots \u2014 Closed Lot",
+    "lotIds": [
+      "FB-2026-096"
+    ],
+    "closingInMin": -12840,
+    "status": "closed",
+    "createdAt": "2026-06-08",
+    "documents": [
+      {
+        "id": "DOC-CAT-2026-00C-1",
+        "type": "terms",
+        "label": "Bid room terms & conditions",
+        "url": "/mock-pdf/terms.pdf",
+        "uploadedBy": "Ravi Kumar",
+        "uploadedAt": "2026-06-08"
+      }
+    ],
+    "additionalInfo": {
+      "description": "Lots bundled under Tin Ingots \u2014 Closed Lot.",
+      "terms": "Standard ferroBid catalogue terms apply \u2014 EMD locks once per catalogue, winning bidders proceed to settlement within 3 business days."
+    }
   }
 ]

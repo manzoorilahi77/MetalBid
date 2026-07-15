@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ClipboardCheck, CheckCircle2, XCircle, Flag, PlayCircle } from 'lucide-react';
+import { ClipboardCheck, Send, PlayCircle } from 'lucide-react';
 import { useApp } from '../../store';
 import { SectionTitle, Card, Btn, Modal, Field, inputCls, CheckItem, FileDrop, StatusBadge, Empty, LotImage, Badge } from '../../components/ui';
 import { GatedBtn, ScopeBadge } from '../../components/gate';
@@ -8,7 +8,7 @@ import { inrCompact } from '../../utils';
 const CHECKS = ['Quality matches description', 'Quantity verified on site', 'Condition acceptable', 'Images authentic'];
 
 export default function LotVerification() {
-  const { lots, users, startVerification, decideLot } = useApp();
+  const { lots, users, startVerification, submitVerification } = useApp();
   const [openId, setOpenId] = useState<string | null>(null);
   const [checks, setChecks] = useState<Record<string, boolean>>({});
   const [note, setNote] = useState('');
@@ -26,9 +26,9 @@ export default function LotVerification() {
     setReport(false);
     setPhotos(false);
   };
-  const decide = (d: 'verified' | 'flagged' | 'rejected') => {
+  const submit = () => {
     if (!openId) return;
-    decideLot(openId, d, checks, note);
+    submitVerification(openId, checks, note, { reportUploaded: report, photosUploaded: photos });
     setOpenId(null);
   };
 
@@ -85,20 +85,13 @@ export default function LotVerification() {
                   <textarea className={inputCls} rows={2} value={note} onChange={(e) => setNote(e.target.value)} placeholder="Findings, weighbridge refs, remarks…" />
                 </Field>
               </div>
-              <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
-                <GatedBtn module="lots" value={lot.basePrice} variant="success" size="sm" disabled={!allChecked || !report} onAllowed={() => decide('verified')}>
-                  <CheckCircle2 size={13} /> Verify
-                </GatedBtn>
-                <GatedBtn module="lots" value={lot.basePrice} variant="outline" size="sm" onAllowed={() => decide('flagged')}>
-                  <Flag size={13} /> Flag
-                </GatedBtn>
-                <GatedBtn module="lots" risky value={lot.basePrice} variant="danger" size="sm" onAllowed={() => decide('rejected')}
-                  approval={{ type: 'lot_reject', title: `Lot rejection — ${lot.id}`, detail: note || `${lot.title} failed inspection.`, refId: lot.id, payload: { checklist: checks } }}>
-                  <XCircle size={13} /> Reject
+              <div className="mt-4">
+                <GatedBtn module="lots" value={lot.basePrice} variant="primary" size="sm" className="w-full" disabled={!allChecked || !report} onAllowed={submit}>
+                  <Send size={13} /> Submit for manager approval
                 </GatedBtn>
               </div>
-              {(!allChecked || !report) && <p className="mt-2 text-[11px] text-faint">To verify: pass all 4 checks and upload the report. Flag keeps it in the queue; reject returns it to the seller.</p>}
-              <Badge tone="bg-emerald-50 dark:bg-emerald-400/10 text-emerald-700 dark:text-emerald-300 ring-emerald-200 dark:ring-emerald-400/25" className="mt-3">Verified lots move straight to Auction Setup</Badge>
+              {(!allChecked || !report) && <p className="mt-2 text-[11px] text-faint">Pass all 4 checks and upload the report before submitting.</p>}
+              <Badge tone="bg-violet-50 dark:bg-violet-400/10 text-violet-700 dark:text-violet-300 ring-violet-200 dark:ring-violet-400/25" className="mt-3">Field inspection is one input — the Executive Manager makes the final approve/reject call</Badge>
             </div>
           </div>
         )}

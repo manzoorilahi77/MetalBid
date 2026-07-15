@@ -230,12 +230,12 @@ export function LotImage({ hues, label, className }: { hues: number[]; label?: s
 export function LifecycleTracker({ status, compact }: { status: LotStatus; compact?: boolean }) {
   const idx = stageIndex(status);
   const stages = compact
-    ? (['submitted', 'under_verification', 'approved', 'live', 'won', 'in_settlement', 'in_logistics', 'closed'] as LotStatus[])
+    ? (['submitted', 'under_verification', 'pending_manager_approval', 'approved', 'live', 'won', 'in_settlement', 'in_logistics', 'closed'] as LotStatus[])
     : LIFECYCLE_ORDER;
 
   const meta = stages.map((s, i) => {
     const si = stageIndex(s);
-    const rejected = status === 'rejected' && s === 'under_verification';
+    const rejected = (status === 'rejected' && s === 'under_verification') || (status === 'cancelled' && s === 'in_settlement');
     return {
       s, i,
       done: !rejected && (idx > si || status === 'closed'),
@@ -247,7 +247,7 @@ export function LifecycleTracker({ status, compact }: { status: LotStatus; compa
   const activeIdx = meta.reduce((acc, m, i) => (m.done || m.current || m.rejected ? i : acc), -1);
   const centerPct = n > 1 ? 50 / n : 50; // horizontal % offset of the first/last circle centre from the container edge
   const fillPct = (Math.max(activeIdx, 0) / n) * 100;
-  const isRejected = status === 'rejected';
+  const isRejected = status === 'rejected' || status === 'cancelled';
 
   return (
     <div className="overflow-x-auto thin-scroll py-1">
@@ -264,7 +264,7 @@ export function LifecycleTracker({ status, compact }: { status: LotStatus; compa
           {meta.map(({ s, i, done, current, rejected }) => (
             <div key={s} className="flex flex-1 flex-col items-center gap-1.5">
               <div
-                title={rejected ? 'Rejected' : STATUS_LABEL[s]}
+                title={rejected ? STATUS_LABEL[status] : STATUS_LABEL[s]}
                 className={cx(
                   'relative z-10 flex h-8 w-8 items-center justify-center rounded-full text-[11px] font-bold ring-[3px] transition-all duration-300',
                   rejected ? 'bg-red-500 text-white ring-surface'
@@ -279,7 +279,7 @@ export function LifecycleTracker({ status, compact }: { status: LotStatus; compa
                 'max-w-[4.75rem] text-center text-[10px] font-semibold uppercase leading-tight tracking-wide text-balance',
                 rejected ? 'text-red-600 dark:text-red-400' : current ? 'text-ember-600 dark:text-ember-400' : done ? 'text-steel-700 dark:text-steel-300' : 'text-faint'
               )}>
-                {rejected ? 'Rejected' : STATUS_LABEL[s]}
+                {rejected ? STATUS_LABEL[status] : STATUS_LABEL[s]}
               </span>
             </div>
           ))}

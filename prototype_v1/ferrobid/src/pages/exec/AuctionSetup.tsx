@@ -1,30 +1,36 @@
 import { useState } from 'react';
-import { CalendarClock, Rocket, Timer, Radio, Layers } from 'lucide-react';
+import { CalendarClock, Rocket, Timer, Radio, Layers, Lock, FileText } from 'lucide-react';
 import { useApp, catalogueById, eventById } from '../../store';
-import { SectionTitle, Card, Btn, Modal, Field, inputCls, Empty, LotImage, Badge, StatusBadge } from '../../components/ui';
+import { SectionTitle, Card, Btn, Modal, Field, inputCls, Empty, LotImage, Badge, StatusBadge, FileDrop } from '../../components/ui';
 import { GatedBtn, ScopeBadge } from '../../components/gate';
-import { inr, inrCompact, timeLeft, dateTime } from '../../utils';
+import { inr, inrCompact, timeLeft, dateTime, nowStamp, nextId } from '../../utils';
 
 const NEW_EVENT = '__new_event__';
 const NEW_CATALOGUE = '__new_catalogue__';
 
 export default function AuctionSetup() {
-  const { lots, auctions, auctionEvents, catalogues, createAuction, createEvent, createCatalogue, assignLotToCatalogue, now } = useApp();
+  const { lots, auctions, auctionEvents, catalogues, createAuction, createEvent, createCatalogue, assignLotToCatalogue, updateCatalogueInfo, updateCatalogueDocs, userName, now } = useApp();
   const [openId, setOpenId] = useState<string | null>(null);
-  const [f, setF] = useState({ startsInMin: '60', durationMin: '120', increment: '5000', reserve: '', emd: '' });
+  const [f, setF] = useState({ startsInMin: '0', increment: '5000', reserve: '', emd: '' });
   const approved = lots.filter((l) => l.status === 'approved');
   const upcoming = auctions.filter((a) => a.status === 'scheduled' || a.status === 'live' || a.status === 'paused').map((a) => ({ a, lot: lots.find((l) => l.id === a.lotId)! }));
   const lot = lots.find((l) => l.id === openId);
+  const lotCatalogue = lot?.catalogueId ? catalogueById(catalogues, lot.catalogueId) : undefined;
 
   const [assignId, setAssignId] = useState<string | null>(null);
-  const [af, setAf] = useState({ eventId: '', catalogueId: '', newEventName: '', newEventStarts: '0', newEventEnds: '360', newCatalogueTitle: '' });
+  const [af, setAf] = useState({ eventId: '', catalogueId: '', newEventName: '', newEventStarts: '0', newEventEnds: '360', newCatalogueTitle: '', description: '', terms: '', docAdded: false });
   const openEvents = auctionEvents.filter((e) => e.status !== 'closed' && e.status !== 'cancelled');
   const assignLot = lots.find((l) => l.id === assignId);
   const catalogueOptions = catalogues.filter((c) => c.eventId === af.eventId && c.status !== 'closed');
+  const selectedCatalogue = af.catalogueId && af.catalogueId !== NEW_CATALOGUE ? catalogueById(catalogues, af.catalogueId) : undefined;
 
   const startAssign = (id: string) => {
-    setAf({ eventId: openEvents[0]?.id ?? NEW_EVENT, catalogueId: '', newEventName: '', newEventStarts: '0', newEventEnds: '360', newCatalogueTitle: '' });
+    setAf({ eventId: openEvents[0]?.id ?? NEW_EVENT, catalogueId: '', newEventName: '', newEventStarts: '0', newEventEnds: '360', newCatalogueTitle: '', description: '', terms: '', docAdded: false });
     setAssignId(id);
+  };
+  const pickCatalogue = (catalogueId: string) => {
+    const c = catalogues.find((x) => x.id === catalogueId);
+    setAf({ ...af, catalogueId, description: c?.additionalInfo.description ?? '', terms: c?.additionalInfo.terms ?? '' });
   };
   const confirmAssign = () => {
     if (!assignId) return;
@@ -37,18 +43,23 @@ export default function AuctionSetup() {
       catalogueId = createCatalogue(eventId, af.newCatalogueTitle || 'Untitled Catalogue');
     }
     assignLotToCatalogue(assignId, catalogueId);
+    if (af.description || af.terms) updateCatalogueInfo(catalogueId, { description: af.description, terms: af.terms || undefined });
+    if (af.docAdded) {
+      const existing = catalogues.find((c) => c.id === catalogueId)?.documents ?? [];
+      updateCatalogueDocs(catalogueId, [...existing, { id: nextId('DOC'), type: 'inspection', label: 'Bundled inspection report', url: '/mock-pdf/bundle.pdf', uploadedBy: userName, uploadedAt: nowStamp() }]);
+    }
     setAssignId(null);
   };
 
   const open = (id: string) => {
     const l = lots.find((x) => x.id === id)!;
-    setF({ startsInMin: '60', durationMin: '120', increment: String(l.increment), reserve: String(l.reservePrice), emd: String(l.emdAmount) });
+    setF({ startsInMin: '0', increment: String(l.increment), reserve: String(l.reservePrice), emd: String(l.emdAmount) });
     setOpenId(id);
   };
   const publish = () => {
     if (!openId) return;
     createAuction(openId, {
-      startsInMin: Number(f.startsInMin), durationMin: Number(f.durationMin),
+      startsInMin: Number(f.startsInMin),
       increment: Number(f.increment), reserve: Number(f.reserve), emd: Number(f.emd),
     });
     setOpenId(null);
@@ -75,7 +86,13 @@ export default function AuctionSetup() {
             ) : (
               <Btn size="sm" variant="outline" onClick={() => startAssign(l.id)}><Layers size={13} /> Assign to catalogue</Btn>
             )}
-            <Btn size="sm" variant="accent" onClick={() => open(l.id)}><Rocket size={13} /> Create auction</Btn>
+            {l.catalogueId ? (
+              <Btn size="sm" variant="accent" onClick={() => open(l.id)}><Rocket size={13} /> Create auction</Btn>
+            ) : (
+              <span title="Assign this lot to a catalogue first — the auction inherits its closing time">
+                <Btn size="sm" variant="accent" disabled><Lock size={12} /> Create auction</Btn>
+              </span>
+            )}
           </Card>
         ))}
       </div>
@@ -122,12 +139,15 @@ export default function AuctionSetup() {
                 <div className="text-xs text-faint">{lot.quantity} · base {inr(lot.basePrice)}</div>
               </div>
             </div>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {lotCatalogue && (
+              <div className="flex items-center gap-2 rounded-xl bg-steel-500/10 px-4 py-3 text-xs text-steel-800 dark:text-steel-200 ring-1 ring-steel-200 dark:ring-steel-400/25">
+                <Layers size={14} className="shrink-0" />
+                Closes with catalogue <b>{lotCatalogue.title}</b> at <b>{dateTime(lotCatalogue.closingAt)}</b> — bidding ends for every lot in the room at once.
+              </div>
+            )}
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               <Field label="Starts in (minutes)" hint="0 = publish live immediately">
                 <input className={inputCls} value={f.startsInMin} onChange={(e) => setF({ ...f, startsInMin: e.target.value.replace(/[^\d]/g, '') })} />
-              </Field>
-              <Field label="Duration (minutes)">
-                <input className={inputCls} value={f.durationMin} onChange={(e) => setF({ ...f, durationMin: e.target.value.replace(/[^\d]/g, '') })} />
               </Field>
               <Field label="Bid increment (₹)">
                 <input className={inputCls} value={f.increment} onChange={(e) => setF({ ...f, increment: e.target.value.replace(/[^\d]/g, '') })} />
@@ -135,7 +155,7 @@ export default function AuctionSetup() {
               <Field label="Reserve price (₹)">
                 <input className={inputCls} value={f.reserve} onChange={(e) => setF({ ...f, reserve: e.target.value.replace(/[^\d]/g, '') })} />
               </Field>
-              <Field label="EMD (₹)">
+              <Field label="EMD (₹)" hint="Catalogue-level: buyers lock the max EMD across the room once">
                 <input className={inputCls} value={f.emd} onChange={(e) => setF({ ...f, emd: e.target.value.replace(/[^\d]/g, '') })} />
               </Field>
             </div>
@@ -144,23 +164,22 @@ export default function AuctionSetup() {
             </div>
             <GatedBtn
               module="auctions" value={Number(f.reserve) || lot.reservePrice} variant="accent" size="lg" className="w-full"
-              disabled={!Number(f.durationMin) || !Number(f.reserve)} onAllowed={publish}
+              disabled={!Number(f.reserve)} onAllowed={publish}
               approval={{
                 type: 'auction_publish',
                 title: `Auction publish — ${lot.id} (over ceiling)`,
                 detail: `${lot.title} at reserve ${inr(Number(f.reserve) || lot.reservePrice)} exceeds the Sub-Admin's ₹ ceiling. Approving publishes with the proposed schedule.`,
                 refId: lot.id,
-                payload: { startsInMin: Number(f.startsInMin), durationMin: Number(f.durationMin), increment: Number(f.increment), reserve: Number(f.reserve), emd: Number(f.emd) },
+                payload: { startsInMin: Number(f.startsInMin), increment: Number(f.increment), reserve: Number(f.reserve), emd: Number(f.emd) },
               }}
             >
               <CalendarClock size={16} /> {Number(f.startsInMin) === 0 ? 'Publish live now' : `Schedule (starts in ${f.startsInMin} min)`}
             </GatedBtn>
-            <p className="text-center text-[11px] text-faint">Tip: set “Starts in” to 0 and a short duration to demo a full live auction quickly.</p>
           </div>
         )}
       </Modal>
 
-      <Modal open={!!assignLot} onClose={() => setAssignId(null)} title={`Assign to catalogue — ${assignLot?.id ?? ''}`}>
+      <Modal open={!!assignLot} onClose={() => setAssignId(null)} title={`Assign to catalogue — ${assignLot?.id ?? ''}`} wide>
         {assignLot && (
           <div className="space-y-4">
             <div className="flex items-center gap-3 rounded-xl bg-surface-2 p-3">
@@ -199,7 +218,7 @@ export default function AuctionSetup() {
                 <select
                   className={inputCls}
                   value={af.catalogueId}
-                  onChange={(e) => setAf({ ...af, catalogueId: e.target.value })}
+                  onChange={(e) => pickCatalogue(e.target.value)}
                 >
                   <option value="" disabled>Choose a catalogue…</option>
                   {catalogueOptions.map((c) => <option key={c.id} value={c.id}>{c.title}</option>)}
@@ -213,6 +232,22 @@ export default function AuctionSetup() {
                 <input className={inputCls} value={af.newCatalogueTitle} onChange={(e) => setAf({ ...af, newCatalogueTitle: e.target.value })} />
               </Field>
             )}
+
+            <div className="rounded-xl border border-line p-4">
+              <div className="mb-3 flex items-center gap-1.5 text-xs font-bold text-ink"><FileText size={13} /> Bid-room document & description (buyer-facing)</div>
+              <div className="space-y-3">
+                <Field label="Catalogue description">
+                  <textarea className={inputCls} rows={2} value={af.description} onChange={(e) => setAf({ ...af, description: e.target.value })} placeholder="What buyers see at the top of this bid room…" />
+                </Field>
+                <Field label="Terms (optional)">
+                  <textarea className={inputCls} rows={2} value={af.terms} onChange={(e) => setAf({ ...af, terms: e.target.value })} placeholder="Payment window, pickup terms, EMD forfeiture rules…" />
+                </Field>
+                <FileDrop label="Attach a document (mock)" done={af.docAdded} onUpload={() => setAf({ ...af, docAdded: true })} />
+                {selectedCatalogue && selectedCatalogue.documents.length > 0 && (
+                  <div className="text-[11px] text-faint">{selectedCatalogue.documents.length} document(s) already on file for this catalogue.</div>
+                )}
+              </div>
+            </div>
 
             <GatedBtn
               module="auctions" variant="accent" size="lg" className="w-full"

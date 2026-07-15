@@ -1,18 +1,24 @@
-import { Truck, Banknote, PackageCheck, CalendarClock } from 'lucide-react';
+import { Truck, Banknote, PackageCheck, CalendarClock, FileSignature, AlertTriangle } from 'lucide-react';
 import { useApp, DEMO_USER_ID } from '../../store';
-import { SectionTitle, Card, Badge, Empty, LifecycleTracker, LotImage } from '../../components/ui';
+import { SectionTitle, Card, Badge, Btn, Empty, LifecycleTracker, LotImage } from '../../components/ui';
 import { inr } from '../../utils';
 import { STATUS_LABEL } from '../../lifecycle';
 
+const DL_LABEL: Record<string, string> = {
+  draft: 'Preparing', sent: 'Sent — awaiting acknowledgement', acknowledged: 'Acknowledged',
+  in_transit: 'In transit', delivered: 'Delivered', disputed: 'Disputed',
+};
+
 export default function Fulfilment() {
-  const { auctions, lots, settlements, logistics } = useApp();
+  const { auctions, lots, settlements, logistics, deliveryLetters, acknowledgeDelivery, disputeDelivery } = useApp();
   const wonRows = auctions
     .filter((a) => a.status === 'closed' && a.leaderId === DEMO_USER_ID)
     .map((a) => {
       const lot = lots.find((l) => l.id === a.lotId)!;
       const st = settlements.find((s) => s.auctionId === a.id);
       const lg = logistics.find((x) => x.lotId === a.lotId);
-      return { a, lot, st, lg };
+      const dl = deliveryLetters.find((x) => x.lotId === a.lotId);
+      return { a, lot, st, lg, dl };
     });
 
   return (
@@ -20,7 +26,7 @@ export default function Fulfilment() {
       <SectionTitle title="Fulfilment Tracker" sub="Follow your won lots from settlement to pickup" />
       {wonRows.length === 0 && <Empty title="No won lots yet" sub="Win an auction and its settlement → logistics → handover journey appears here." />}
       <div className="space-y-4">
-        {wonRows.map(({ a, lot, st, lg }) => (
+        {wonRows.map(({ a, lot, st, lg, dl }) => (
           <Card key={a.id} className="p-5">
             <div className="flex flex-wrap items-center gap-4">
               <LotImage hues={lot.imageHues} label={lot.metal} className="h-16 w-24 rounded-lg shrink-0" />
@@ -68,6 +74,22 @@ export default function Fulfilment() {
                 </div>
               </div>
             </div>
+
+            {dl && (
+              <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl bg-sky-50 dark:bg-sky-400/10 px-4 py-3 ring-1 ring-sky-200 dark:ring-sky-400/25">
+                <div className="flex items-center gap-2 text-xs font-semibold text-sky-800 dark:text-sky-200">
+                  <FileSignature size={13} /> Delivery Letter · {DL_LABEL[dl.status] ?? dl.status}
+                </div>
+                <div className="flex gap-1.5">
+                  {dl.status === 'sent' && <Btn size="sm" variant="accent" onClick={() => acknowledgeDelivery(dl.id)}>Acknowledge</Btn>}
+                  {(dl.status === 'in_transit' || dl.status === 'delivered') && (
+                    <Btn size="sm" variant="outline" onClick={() => disputeDelivery(dl.id, 'Reported by buyer via Fulfilment Tracker')}>
+                      <AlertTriangle size={12} /> Report an issue
+                    </Btn>
+                  )}
+                </div>
+              </div>
+            )}
           </Card>
         ))}
       </div>

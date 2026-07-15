@@ -1,28 +1,36 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, MapPin, Timer, Lock, ShieldCheck, Gavel, FileText, ChevronRight } from 'lucide-react';
-import { useApp, catalogueForLot, eventForCatalogue } from '../store';
+import { useApp, catalogueForLot, eventForCatalogue, catalogueEmdAmount } from '../store';
 import { Card, Badge, StatusBadge, LotImage, LifecycleTracker, Btn } from '../components/ui';
 import { AnimatedInr, FlipClock } from '../components/fx';
 import { EmdOtpGate } from '../components/EmdOtpGate';
+import { VerificationEvidence } from '../components/VerificationEvidence';
+import { EmailTimeline } from '../components/EmailTimeline';
 import { inr, inrCompact, timeLeft, dateTime } from '../utils';
 
 export default function LotDetail() {
   const { id } = useParams();
   const nav = useNavigate();
-  const { lots, auctions, catalogues, auctionEvents, role, now, emdLockedAuctions, lockEmd, kycStatus, kycProfile, pushToast } = useApp();
+  const { lots, auctions, catalogues, auctionEvents, role, now, emdLockedAuctions, emdLockedCatalogues, lockEmd, lockCatalogueEmd, kycStatus, kycProfile, pushToast, emailLogs } = useApp();
   const [emdGateOpen, setEmdGateOpen] = useState(false);
   const lot = lots.find((l) => l.id === id);
   if (!lot) return <div className="text-sm text-muted">Lot not found. <button className="text-steel-700 dark:text-steel-300 font-semibold cursor-pointer" onClick={() => nav('/browse')}>Back to marketplace</button></div>;
   const auction = auctions.find((a) => a.id === lot.auctionId);
-  const emdLocked = auction ? emdLockedAuctions.includes(auction.id) : false;
-  const canParticipate = role === 'buyer' || role === 'seller';
   const catalogue = catalogueForLot(catalogues, lot.id);
   const event = catalogue ? eventForCatalogue(auctionEvents, catalogue.id) : undefined;
+  // EMD gates once per catalogue bid room; falls back to per-auction locking only if a lot has no catalogue
+  const emdLocked = catalogue ? emdLockedCatalogues.includes(catalogue.id) : (auction ? emdLockedAuctions.includes(auction.id) : false);
+  const emdAmount = catalogue ? catalogueEmdAmount(lots, catalogue) : (auction?.emd ?? 0);
+  const canParticipate = role === 'buyer' || role === 'seller';
 
   const openEmdGate = () => {
     pushToast({ title: 'OTP sent to both channels (simulated)', body: `Sent via SMS to ${kycProfile.phone} and email to ${kycProfile.email} — try 1234.`, tone: 'info' });
     setEmdGateOpen(true);
+  };
+  const onEmdVerified = () => {
+    if (catalogue) lockCatalogueEmd(catalogue.id);
+    else if (auction) lockEmd(auction.id);
   };
 
   return (
@@ -64,14 +72,15 @@ export default function LotDetail() {
               </div>
               <p className="mt-4 text-sm leading-relaxed text-muted">{lot.description}</p>
 
-              {lot.verification?.decision === 'verified' && (
+              {lot.verification?.managerDecision === 'approved' && (
                 <div className="mt-4 flex items-center gap-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-400/10 px-4 py-3 ring-1 ring-emerald-200 dark:ring-emerald-400/25">
                   <ShieldCheck size={17} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
                   <div className="text-xs text-emerald-800 dark:text-emerald-200">
-                    <b>Physically verified by ferroBid.</b> Inspection checklist passed · report & photos on file · verified by {lot.verification.decidedBy}.
+                    <b>Physically verified by ferroBid.</b> Inspection checklist passed · report & photos on file · approved by {lot.verification.decidedBy}.
                   </div>
                 </div>
               )}
+              <VerificationEvidence verification={lot.verification} canSeeNotes={role === 'exec' || role === 'subadmin' || role === 'superadmin'} />
 
               <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
                 {[
@@ -132,7 +141,7 @@ export default function LotDetail() {
                   )}
                   {canParticipate && kycStatus === 'verified' && !emdLocked && (
                     <Btn variant="primary" className="mt-4 w-full" onClick={openEmdGate}>
-                      <Lock size={15} /> Lock EMD {inrCompact(auction.emd)} to bid
+                      <Lock size={15} /> Lock EMD {inrCompact(emdAmount)} to bid
                     </Btn>
                   )}
                   {canParticipate && emdLocked && (
@@ -148,7 +157,7 @@ export default function LotDetail() {
                   <div className="mt-3 text-sm text-muted">Auction opens</div>
                   <div className="text-xl font-extrabold text-ink">{dateTime(auction.startsAt)}</div>
                   <div className="mt-1 font-mono text-sm text-indigo-600 dark:text-indigo-400">in {timeLeft(auction.startsAt, now)}</div>
-                  <div className="mt-3 text-xs text-faint">Start price {inr(auction.startPrice)} · EMD {inrCompact(auction.emd)}</div>
+                  <div className="mt-3 text-xs text-faint">Start price {inr(auction.startPrice)} · EMD {inrCompact(emdAmount)}</div>
                   {canParticipate && !emdLocked && (
                     <Btn variant="outline" className="mt-4 w-full" onClick={openEmdGate}><Lock size={14} /> Pre-lock EMD</Btn>
                   )}
@@ -172,17 +181,22 @@ export default function LotDetail() {
           )}
 
           <Card className="p-4 text-xs text-muted leading-relaxed">
-            <b className="text-ink">How it works:</b> lock the EMD ({inrCompact(lot.emdAmount)}) to activate bidding.
-            If you don't win, EMD is auto-refunded when the auction closes. Winner proceeds to settlement & pickup — all simulated in this prototype.
+            <b className="text-ink">How it works:</b> lock the EMD ({inrCompact(emdAmount || lot.emdAmount)}) once to bid on any lot in {catalogue ? 'this catalogue' : 'this lot'}.
+            If you don't win, EMD is auto-refunded once the catalogue's bidding wraps up. Winner proceeds to settlement & pickup — all simulated in this prototype.
           </Card>
         </div>
       </div>
 
+      <Card className="mt-5 p-5">
+        <h3 className="mb-3 text-sm font-bold text-ink">Activity &amp; notifications</h3>
+        <EmailTimeline logs={emailLogs.filter((l) => l.lotId === lot.id)} viewerRole={role} />
+      </Card>
+
       {auction && (
         <EmdOtpGate
           open={emdGateOpen} onClose={() => setEmdGateOpen(false)}
-          amount={auction.emd} phone={kycProfile.phone} email={kycProfile.email}
-          onVerified={() => lockEmd(auction.id)}
+          amount={emdAmount} phone={kycProfile.phone} email={kycProfile.email}
+          onVerified={onEmdVerified}
         />
       )}
     </div>

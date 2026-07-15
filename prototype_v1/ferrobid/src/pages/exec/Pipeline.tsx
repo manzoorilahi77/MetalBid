@@ -7,11 +7,12 @@ import type { LotStatus } from '../../types';
 const COLUMNS: { title: string; statuses: LotStatus[]; tone: string; to: string }[] = [
   { title: 'Submitted', statuses: ['submitted'], tone: 'border-t-sky-400', to: '/exec/lots' },
   { title: 'Under Verification', statuses: ['under_verification'], tone: 'border-t-amber-400', to: '/exec/lots' },
+  { title: 'Manager Review', statuses: ['pending_manager_approval'], tone: 'border-t-violet-400', to: '/exec/manager-review' },
   { title: 'Approved', statuses: ['approved'], tone: 'border-t-emerald-400', to: '/exec/auctions' },
   { title: 'Scheduled / Live', statuses: ['scheduled', 'live'], tone: 'border-t-ember-500', to: '/exec/auctions' },
-  { title: 'Won / Settlement', statuses: ['won', 'in_settlement'], tone: 'border-t-violet-400', to: '/exec/settlement' },
+  { title: 'Won / Settlement', statuses: ['won', 'in_settlement'], tone: 'border-t-violet-400', to: '/exec/settlement-desk' },
   { title: 'Logistics', statuses: ['ready_for_pickup', 'in_logistics'], tone: 'border-t-blue-400', to: '/exec/logistics' },
-  { title: 'Closed', statuses: ['handover_complete', 'closed', 'rejected'], tone: 'border-t-line-strong', to: '/exec/handover' },
+  { title: 'Closed', statuses: ['handover_complete', 'closed', 'rejected', 'cancelled'], tone: 'border-t-line-strong', to: '/exec/handover' },
 ];
 
 export default function Pipeline() {
