@@ -1,0 +1,45 @@
+[
+  {
+    "id": "ann-01",
+    "scope": "platform",
+    "title": "TCS @1% applicable on all scrap sales",
+    "body": "Per Section 206C(1H), TCS at 1% of sale consideration applies on all successful bids. TCS is collected with the final payment and reflected on the tax invoice.",
+    "at": "2026-07-07T06:30:00.000Z",
+    "severity": "info"
+  },
+  {
+    "id": "ann-02",
+    "scope": "platform",
+    "title": "Revised EMD refund timeline",
+    "body": "EMD for unsuccessful bidders is now auto-released within 24 hours of catalogue close (previously 72 hours).",
+    "at": "2026-07-11T06:30:00.000Z",
+    "severity": "info"
+  },
+  {
+    "id": "ann-03",
+    "scope": "catalogue",
+    "catalogueId": "cat-1",
+    "title": "Lot 07 quantity revised",
+    "body": "Indicative quantity for LOT-07 revised from 60 MT to 52 MT after re-measurement. Final quantity on weighment as always.",
+    "at": "2026-07-15T09:50:00.000Z",
+    "severity": "warning"
+  },
+  {
+    "id": "ann-04",
+    "scope": "catalogue",
+    "catalogueId": "cat-3",
+    "title": "Lifting window extended",
+    "body": "Due to yard congestion at Mancheswar Depot, the lifting window for all lots is extended by 5 working days.",
+    "at": "2026-07-16T03:30:00.000Z",
+    "severity": "info"
+  },
+  {
+    "id": "ann-05",
+    "scope": "catalogue",
+    "catalogueId": "cat-4",
+    "title": "Inspection: max 2 persons per firm",
+    "body": "Yard security requires prior gate-pass booking. Maximum 2 representatives per bidding firm. Carry photo ID matching the booking.",
+    "at": "2026-07-15T06:30:00.000Z",
+    "severity": "warning"
+  }
+]

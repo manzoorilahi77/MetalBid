@@ -1,0 +1,32 @@
+[
+  {
+    "buyerId": "u-buyer-1",
+    "catalogueId": "cat-1",
+    "lotIds": [
+      "lot-001",
+      "lot-002",
+      "lot-003",
+      "lot-004",
+      "lot-005"
+    ],
+    "emdFundedLotIds": [
+      "lot-001",
+      "lot-002",
+      "lot-003"
+    ]
+  },
+  {
+    "buyerId": "u-buyer-2",
+    "catalogueId": "cat-2",
+    "lotIds": [
+      "lot-019",
+      "lot-020",
+      "lot-021",
+      "lot-022"
+    ],
+    "emdFundedLotIds": [
+      "lot-019",
+      "lot-020"
+    ]
+  }
+]

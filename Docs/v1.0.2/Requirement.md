@@ -7,7 +7,7 @@ Important discovery: the current repo already is a prototype named ferroBid (fol
 This document is the deliverable: a full feature inventory + app flow, organized so it can be pasted directly into a prompt for the next build.
 
 1. What the app is
-A B2B scrap-metal/commodity auction marketplace ("ferroBid — Metal Auctions"). Sellers list lots of scrap metal (ferrous, copper, aluminium, brass, stainless, zinc, lead, tin), lots go through admin verification and get scheduled as timed live auctions, buyers place competitive bids (with EMD deposit gating and auto-bid), and winners go through a settlement → logistics → handover pipeline. A three-tier admin hierarchy (Super Admin / Executive Admin / Sub-Admin) runs verification, auction control, settlement, and fraud/defaulter management.
+A B2B all commodity auction marketplace ("ferroBid — Auctions"). Sellers list lots, lots go through field executive verification and get scheduled as timed live auctions, buyers place competitive bids (with EMD deposit gating and auto-bid), and winners go through a settlement → logistics → handover pipeline. A three-tier admin hierarchy (Super Admin / Executive Admin / Sub-Admin) runs verification, auction control, settlement, and fraud/defaulter management.
 
 2. Tech stack (current prototype)
 React 19 + TypeScript, Vite (rolldown-vite)

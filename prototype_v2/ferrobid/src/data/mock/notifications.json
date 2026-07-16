@@ -1,0 +1,99 @@
+[
+  {
+    "id": "ntf-01",
+    "userId": "u-buyer-1",
+    "kind": "bid",
+    "title": "You have been outbid",
+    "body": "OmShakti Metal Corp is leading LOT-02 (AUC-2412) at ₹26,550/MT.",
+    "at": "2026-07-16T06:27:00.000Z",
+    "read": false,
+    "href": "/bidding/cat-1?lot=lot-002"
+  },
+  {
+    "id": "ntf-02",
+    "userId": "u-buyer-1",
+    "kind": "lifecycle",
+    "title": "AUC-2418 closing soon",
+    "body": "East Coast Railway catalogue closes in under 30 minutes. 2 of your watched lots are still open.",
+    "at": "2026-07-16T06:14:00.000Z",
+    "read": false,
+    "href": "/catalogue/cat-3"
+  },
+  {
+    "id": "ntf-03",
+    "userId": "u-buyer-1",
+    "kind": "wallet",
+    "title": "EMD locked for 3 lots",
+    "body": "₹3,35,000 locked against AUC-2412 shortlist. 2 lots still unfunded.",
+    "at": "2026-07-15T08:05:00.000Z",
+    "read": true,
+    "href": "/buyer/shortlist"
+  },
+  {
+    "id": "ntf-04",
+    "userId": "u-buyer-1",
+    "kind": "bid",
+    "title": "You won 2 lots in AUC-2406",
+    "body": "Congratulations — H1 confirmed on both lots. Delivery order do-001 issued; payment pending on do-002.",
+    "at": "2026-07-14T11:20:00.000Z",
+    "read": true,
+    "href": "/buyer/fulfilment"
+  },
+  {
+    "id": "ntf-05",
+    "userId": "u-buyer-1",
+    "kind": "wallet",
+    "title": "Wallet top-up successful",
+    "body": "₹2,00,000 added via UPI (arvind@okhdfcbank). Available balance ₹8,50,000.",
+    "at": "2026-07-16T02:30:00.000Z",
+    "read": true,
+    "href": "/buyer/wallet"
+  },
+  {
+    "id": "ntf-06",
+    "userId": "u-buyer-1",
+    "kind": "system",
+    "title": "Inspection slot confirmed",
+    "body": "JSW Vijayanagar (AUC-2421) — visit booked. Gate pass QR available in Inspection & Contacts.",
+    "at": "2026-07-15T23:30:00.000Z",
+    "read": true,
+    "href": "/catalogue/cat-4"
+  },
+  {
+    "id": "ntf-07",
+    "userId": null,
+    "kind": "system",
+    "title": "Scheduled maintenance",
+    "body": "ferroBid will be unavailable Sun 02:00–04:00 IST for planned maintenance. No auctions close in this window.",
+    "at": "2026-07-15T06:30:00.000Z",
+    "read": false
+  },
+  {
+    "id": "ntf-08",
+    "userId": "u-buyer-1",
+    "kind": "lifecycle",
+    "title": "AUC-2421 starts tomorrow",
+    "body": "JSW Vijayanagar non-ferrous catalogue goes live at 14:00 IST tomorrow. 16 lots. Fund EMD early to avoid the rush.",
+    "at": "2026-07-16T04:30:00.000Z",
+    "read": false,
+    "href": "/catalogue/cat-4"
+  },
+  {
+    "id": "ntf-09",
+    "userId": "u-seller-2",
+    "kind": "lifecycle",
+    "title": "Your catalogue is live",
+    "body": "AUC-2415 (SS Offcuts) is receiving bids — 14 lots live, 9 with activity.",
+    "at": "2026-07-14T06:30:00.000Z",
+    "read": true
+  },
+  {
+    "id": "ntf-10",
+    "userId": "u-exec-1",
+    "kind": "system",
+    "title": "3 lots awaiting approval",
+    "body": "Inspected lots from ECoR and MSTC are pending your approval before cataloguing.",
+    "at": "2026-07-16T01:30:00.000Z",
+    "read": false
+  }
+]

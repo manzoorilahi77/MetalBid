@@ -1,0 +1,4386 @@
+[
+  {
+    "id": "lot-001",
+    "lotNo": "LOT-01",
+    "catalogueId": "cat-1",
+    "metal": "MS",
+    "category": "scrap",
+    "grade": "HMS 1",
+    "indicativeQty": 78,
+    "uom": "MT",
+    "yard": "BSP Scrap Yard 3",
+    "description": "Heavy melting scrap — plate cuttings, structural offcuts, thickness ≥ 6 mm",
+    "startRate": 29300,
+    "increment": 150,
+    "reserveRate": 32600,
+    "preBidEmd": 115000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-001-p0",
+        "label": "Overview",
+        "hue": 16
+      },
+      {
+        "id": "lot-001-p1",
+        "label": "Close-up",
+        "hue": 26
+      },
+      {
+        "id": "lot-001-p2",
+        "label": "Stack view",
+        "hue": 55
+      },
+      {
+        "id": "lot-001-p3",
+        "label": "Weighbridge",
+        "hue": 55
+      }
+    ],
+    "inspectionReportId": "ir-001",
+    "status": "live",
+    "currentRate": 29600,
+    "leadingBidderId": "u-buyer-1",
+    "bidCount": 2,
+    "endsAt": "2026-07-16T07:12:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-002",
+    "lotNo": "LOT-02",
+    "catalogueId": "cat-1",
+    "metal": "MS",
+    "category": "scrap",
+    "grade": "HMS 2",
+    "indicativeQty": 109,
+    "uom": "MT",
+    "yard": "BSP Scrap Yard 3",
+    "description": "Mixed heavy melting scrap incl. sheet, pipe and light structural, some rust",
+    "startRate": 25800,
+    "increment": 150,
+    "reserveRate": 27350,
+    "preBidEmd": 140000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-002-p0",
+        "label": "Overview",
+        "hue": 35
+      },
+      {
+        "id": "lot-002-p1",
+        "label": "Close-up",
+        "hue": 19
+      }
+    ],
+    "inspectionReportId": "ir-002",
+    "status": "live",
+    "currentRate": 26550,
+    "leadingBidderId": "u-buyer-6",
+    "bidCount": 4,
+    "endsAt": "2026-07-16T07:12:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-003",
+    "lotNo": "LOT-03",
+    "catalogueId": "cat-1",
+    "metal": "MS",
+    "category": "melting-products",
+    "grade": "Turnings",
+    "indicativeQty": 72,
+    "uom": "MT",
+    "yard": "BSP Scrap Yard 3",
+    "description": "MS turnings and borings from machine shop, loose, oil traces present",
+    "startRate": 22900,
+    "increment": 100,
+    "reserveRate": 25300,
+    "preBidEmd": 80000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": true,
+    "photos": [
+      {
+        "id": "lot-003-p0",
+        "label": "Overview",
+        "hue": 33
+      },
+      {
+        "id": "lot-003-p1",
+        "label": "Close-up",
+        "hue": 26
+      }
+    ],
+    "inspectionReportId": "ir-003",
+    "status": "live",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-16T07:12:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-004",
+    "lotNo": "LOT-04",
+    "catalogueId": "cat-1",
+    "metal": "MS",
+    "category": "scrap",
+    "grade": "Plate Cuttings",
+    "indicativeQty": 45,
+    "uom": "MT",
+    "yard": "BSP Scrap Yard 3",
+    "description": "Prime plate end-cuttings, 8–40 mm, sizes suitable for re-rolling",
+    "startRate": 29000,
+    "increment": 150,
+    "reserveRate": 31500,
+    "preBidEmd": 65000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-004-p0",
+        "label": "Overview",
+        "hue": 35
+      },
+      {
+        "id": "lot-004-p1",
+        "label": "Close-up",
+        "hue": 30
+      },
+      {
+        "id": "lot-004-p2",
+        "label": "Stack view",
+        "hue": 53
+      }
+    ],
+    "inspectionReportId": "ir-004",
+    "status": "live",
+    "currentRate": 29750,
+    "leadingBidderId": "u-buyer-1",
+    "bidCount": 2,
+    "endsAt": "2026-07-16T07:12:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-005",
+    "lotNo": "LOT-05",
+    "catalogueId": "cat-1",
+    "metal": "CI",
+    "category": "melting-products",
+    "grade": "Borings",
+    "indicativeQty": 28,
+    "uom": "MT",
+    "yard": "BSP Scrap Yard 3",
+    "description": "Cast iron borings, dry, free from foreign material as inspected",
+    "startRate": 24000,
+    "increment": 100,
+    "reserveRate": 25500,
+    "preBidEmd": 35000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-005-p0",
+        "label": "Overview",
+        "hue": 19
+      },
+      {
+        "id": "lot-005-p1",
+        "label": "Close-up",
+        "hue": 36
+      }
+    ],
+    "inspectionReportId": "ir-005",
+    "status": "live",
+    "currentRate": 24400,
+    "leadingBidderId": "u-buyer-7",
+    "bidCount": 2,
+    "endsAt": "2026-07-16T07:12:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-006",
+    "lotNo": "LOT-06",
+    "catalogueId": "cat-1",
+    "metal": "MS",
+    "category": "long-products",
+    "grade": "Rejected TMT",
+    "indicativeQty": 47,
+    "uom": "MT",
+    "yard": "BSP Scrap Yard 3",
+    "description": "Rejected/off-grade TMT bars, mixed dia 8–32 mm, bent and bundled",
+    "startRate": 35600,
+    "increment": 200,
+    "reserveRate": 39300,
+    "preBidEmd": 85000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-006-p0",
+        "label": "Overview",
+        "hue": 39
+      },
+      {
+        "id": "lot-006-p1",
+        "label": "Close-up",
+        "hue": 25
+      },
+      {
+        "id": "lot-006-p2",
+        "label": "Stack view",
+        "hue": 50
+      }
+    ],
+    "inspectionReportId": "ir-006",
+    "status": "live",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-16T07:12:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-007",
+    "lotNo": "LOT-07",
+    "catalogueId": "cat-1",
+    "metal": "MS",
+    "category": "scrap",
+    "grade": "HMS 1",
+    "indicativeQty": 42,
+    "uom": "MT",
+    "yard": "BSP Scrap Yard 3",
+    "description": "Heavy melting scrap — plate cuttings, structural offcuts, thickness ≥ 6 mm",
+    "startRate": 28900,
+    "increment": 150,
+    "reserveRate": 30200,
+    "preBidEmd": 60000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-007-p0",
+        "label": "Overview",
+        "hue": 21
+      },
+      {
+        "id": "lot-007-p1",
+        "label": "Close-up",
+        "hue": 28
+      }
+    ],
+    "inspectionReportId": "ir-007",
+    "status": "live",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-16T07:12:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-008",
+    "lotNo": "LOT-08",
+    "catalogueId": "cat-1",
+    "metal": "MS",
+    "category": "scrap",
+    "grade": "HMS 2",
+    "indicativeQty": 104,
+    "uom": "MT",
+    "yard": "BSP Scrap Yard 3",
+    "description": "Mixed heavy melting scrap incl. sheet, pipe and light structural, some rust",
+    "startRate": 26000,
+    "increment": 150,
+    "reserveRate": 27100,
+    "preBidEmd": 135000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-008-p0",
+        "label": "Overview",
+        "hue": 32
+      },
+      {
+        "id": "lot-008-p1",
+        "label": "Close-up",
+        "hue": 36
+      },
+      {
+        "id": "lot-008-p2",
+        "label": "Stack view",
+        "hue": 40
+      },
+      {
+        "id": "lot-008-p3",
+        "label": "Weighbridge",
+        "hue": 46
+      }
+    ],
+    "inspectionReportId": "ir-008",
+    "status": "live",
+    "currentRate": 26900,
+    "leadingBidderId": "u-buyer-2",
+    "bidCount": 2,
+    "endsAt": "2026-07-16T07:12:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-009",
+    "lotNo": "LOT-09",
+    "catalogueId": "cat-1",
+    "metal": "MS",
+    "category": "melting-products",
+    "grade": "Turnings",
+    "indicativeQty": 33,
+    "uom": "MT",
+    "yard": "BSP Scrap Yard 3",
+    "description": "MS turnings and borings from machine shop, loose, oil traces present",
+    "startRate": 19500,
+    "increment": 100,
+    "reserveRate": 20800,
+    "preBidEmd": 30000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": true,
+    "photos": [
+      {
+        "id": "lot-009-p0",
+        "label": "Overview",
+        "hue": 38
+      },
+      {
+        "id": "lot-009-p1",
+        "label": "Close-up",
+        "hue": 35
+      },
+      {
+        "id": "lot-009-p2",
+        "label": "Stack view",
+        "hue": 43
+      }
+    ],
+    "inspectionReportId": "ir-009",
+    "status": "live",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-16T07:12:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-010",
+    "lotNo": "LOT-10",
+    "catalogueId": "cat-1",
+    "metal": "MS",
+    "category": "scrap",
+    "grade": "Plate Cuttings",
+    "indicativeQty": 24,
+    "uom": "MT",
+    "yard": "BSP Scrap Yard 3",
+    "description": "Prime plate end-cuttings, 8–40 mm, sizes suitable for re-rolling",
+    "startRate": 29400,
+    "increment": 150,
+    "reserveRate": 32550,
+    "preBidEmd": 35000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-010-p0",
+        "label": "Overview",
+        "hue": 13
+      },
+      {
+        "id": "lot-010-p1",
+        "label": "Close-up",
+        "hue": 31
+      },
+      {
+        "id": "lot-010-p2",
+        "label": "Stack view",
+        "hue": 28
+      },
+      {
+        "id": "lot-010-p3",
+        "label": "Weighbridge",
+        "hue": 61
+      }
+    ],
+    "inspectionReportId": "ir-010",
+    "status": "live",
+    "currentRate": 30300,
+    "leadingBidderId": "u-buyer-5",
+    "bidCount": 3,
+    "endsAt": "2026-07-16T07:12:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-011",
+    "lotNo": "LOT-11",
+    "catalogueId": "cat-1",
+    "metal": "CI",
+    "category": "melting-products",
+    "grade": "Borings",
+    "indicativeQty": 41,
+    "uom": "MT",
+    "yard": "BSP Scrap Yard 3",
+    "description": "Cast iron borings, dry, free from foreign material as inspected",
+    "startRate": 23500,
+    "increment": 100,
+    "reserveRate": 25400,
+    "preBidEmd": 50000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-011-p0",
+        "label": "Overview",
+        "hue": 38
+      },
+      {
+        "id": "lot-011-p1",
+        "label": "Close-up",
+        "hue": 46
+      }
+    ],
+    "inspectionReportId": "ir-011",
+    "status": "live",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-16T07:12:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-012",
+    "lotNo": "LOT-12",
+    "catalogueId": "cat-1",
+    "metal": "MS",
+    "category": "long-products",
+    "grade": "Rejected TMT",
+    "indicativeQty": 41,
+    "uom": "MT",
+    "yard": "BSP Scrap Yard 3",
+    "description": "Rejected/off-grade TMT bars, mixed dia 8–32 mm, bent and bundled",
+    "startRate": 35800,
+    "increment": 200,
+    "reserveRate": 38750,
+    "preBidEmd": 75000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-012-p0",
+        "label": "Overview",
+        "hue": 39
+      },
+      {
+        "id": "lot-012-p1",
+        "label": "Close-up",
+        "hue": 37
+      },
+      {
+        "id": "lot-012-p2",
+        "label": "Stack view",
+        "hue": 32
+      }
+    ],
+    "inspectionReportId": "ir-012",
+    "status": "live",
+    "currentRate": 36800,
+    "leadingBidderId": "u-buyer-5",
+    "bidCount": 3,
+    "endsAt": "2026-07-16T07:12:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-013",
+    "lotNo": "LOT-13",
+    "catalogueId": "cat-1",
+    "metal": "MS",
+    "category": "scrap",
+    "grade": "HMS 1",
+    "indicativeQty": 90,
+    "uom": "MT",
+    "yard": "BSP Scrap Yard 3",
+    "description": "Heavy melting scrap — plate cuttings, structural offcuts, thickness ≥ 6 mm",
+    "startRate": 28300,
+    "increment": 150,
+    "reserveRate": 31050,
+    "preBidEmd": 125000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-013-p0",
+        "label": "Overview",
+        "hue": 17
+      },
+      {
+        "id": "lot-013-p1",
+        "label": "Close-up",
+        "hue": 40
+      },
+      {
+        "id": "lot-013-p2",
+        "label": "Stack view",
+        "hue": 54
+      },
+      {
+        "id": "lot-013-p3",
+        "label": "Weighbridge",
+        "hue": 39
+      }
+    ],
+    "inspectionReportId": "ir-013",
+    "status": "live",
+    "currentRate": 28600,
+    "leadingBidderId": "u-buyer-1",
+    "bidCount": 1,
+    "endsAt": "2026-07-16T07:12:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-014",
+    "lotNo": "LOT-14",
+    "catalogueId": "cat-1",
+    "metal": "MS",
+    "category": "scrap",
+    "grade": "HMS 2",
+    "indicativeQty": 29,
+    "uom": "MT",
+    "yard": "BSP Scrap Yard 3",
+    "description": "Mixed heavy melting scrap incl. sheet, pipe and light structural, some rust",
+    "startRate": 25400,
+    "increment": 150,
+    "reserveRate": 26800,
+    "preBidEmd": 35000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-014-p0",
+        "label": "Overview",
+        "hue": 20
+      },
+      {
+        "id": "lot-014-p1",
+        "label": "Close-up",
+        "hue": 19
+      },
+      {
+        "id": "lot-014-p2",
+        "label": "Stack view",
+        "hue": 50
+      }
+    ],
+    "inspectionReportId": "ir-014",
+    "status": "live",
+    "currentRate": 26000,
+    "leadingBidderId": "u-buyer-1",
+    "bidCount": 3,
+    "endsAt": "2026-07-16T07:12:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-015",
+    "lotNo": "LOT-15",
+    "catalogueId": "cat-1",
+    "metal": "MS",
+    "category": "melting-products",
+    "grade": "Turnings",
+    "indicativeQty": 16,
+    "uom": "MT",
+    "yard": "BSP Scrap Yard 3",
+    "description": "MS turnings and borings from machine shop, loose, oil traces present",
+    "startRate": 22600,
+    "increment": 100,
+    "reserveRate": 23650,
+    "preBidEmd": 20000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": true,
+    "photos": [
+      {
+        "id": "lot-015-p0",
+        "label": "Overview",
+        "hue": 22
+      },
+      {
+        "id": "lot-015-p1",
+        "label": "Close-up",
+        "hue": 38
+      },
+      {
+        "id": "lot-015-p2",
+        "label": "Stack view",
+        "hue": 47
+      },
+      {
+        "id": "lot-015-p3",
+        "label": "Weighbridge",
+        "hue": 54
+      }
+    ],
+    "inspectionReportId": "ir-015",
+    "status": "live",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-16T07:12:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-016",
+    "lotNo": "LOT-16",
+    "catalogueId": "cat-1",
+    "metal": "MS",
+    "category": "scrap",
+    "grade": "Plate Cuttings",
+    "indicativeQty": 39,
+    "uom": "MT",
+    "yard": "BSP Scrap Yard 3",
+    "description": "Prime plate end-cuttings, 8–40 mm, sizes suitable for re-rolling",
+    "startRate": 30400,
+    "increment": 150,
+    "reserveRate": 33100,
+    "preBidEmd": 60000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-016-p0",
+        "label": "Overview",
+        "hue": 26
+      },
+      {
+        "id": "lot-016-p1",
+        "label": "Close-up",
+        "hue": 35
+      },
+      {
+        "id": "lot-016-p2",
+        "label": "Stack view",
+        "hue": 52
+      },
+      {
+        "id": "lot-016-p3",
+        "label": "Weighbridge",
+        "hue": 58
+      }
+    ],
+    "inspectionReportId": "ir-016",
+    "status": "live",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-16T07:12:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-017",
+    "lotNo": "LOT-17",
+    "catalogueId": "cat-1",
+    "metal": "CI",
+    "category": "melting-products",
+    "grade": "Borings",
+    "indicativeQty": 70,
+    "uom": "MT",
+    "yard": "BSP Scrap Yard 3",
+    "description": "Cast iron borings, dry, free from foreign material as inspected",
+    "startRate": 24000,
+    "increment": 100,
+    "reserveRate": 25050,
+    "preBidEmd": 85000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-017-p0",
+        "label": "Overview",
+        "hue": 35
+      },
+      {
+        "id": "lot-017-p1",
+        "label": "Close-up",
+        "hue": 38
+      },
+      {
+        "id": "lot-017-p2",
+        "label": "Stack view",
+        "hue": 45
+      }
+    ],
+    "inspectionReportId": "ir-017",
+    "status": "live",
+    "currentRate": 24100,
+    "leadingBidderId": "u-buyer-2",
+    "bidCount": 1,
+    "endsAt": "2026-07-16T07:12:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-018",
+    "lotNo": "LOT-18",
+    "catalogueId": "cat-1",
+    "metal": "MS",
+    "category": "long-products",
+    "grade": "Rejected TMT",
+    "indicativeQty": 13,
+    "uom": "MT",
+    "yard": "BSP Scrap Yard 3",
+    "description": "Rejected/off-grade TMT bars, mixed dia 8–32 mm, bent and bundled",
+    "startRate": 36700,
+    "increment": 200,
+    "reserveRate": 39850,
+    "preBidEmd": 25000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-018-p0",
+        "label": "Overview",
+        "hue": 12
+      },
+      {
+        "id": "lot-018-p1",
+        "label": "Close-up",
+        "hue": 22
+      }
+    ],
+    "inspectionReportId": "ir-018",
+    "status": "live",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-16T07:12:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-019",
+    "lotNo": "LOT-01",
+    "catalogueId": "cat-2",
+    "metal": "SS 304",
+    "category": "flat-products",
+    "grade": "304 Offcuts",
+    "indicativeQty": 16400,
+    "uom": "KG",
+    "yard": "Burma Mines Yard",
+    "description": "SS 304 coil-end offcuts and side trims, 0.5–3 mm, coils strapped",
+    "startRate": 121,
+    "increment": 1,
+    "reserveRate": 126,
+    "preBidEmd": 100000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": true,
+    "photos": [
+      {
+        "id": "lot-019-p0",
+        "label": "Overview",
+        "hue": 21
+      },
+      {
+        "id": "lot-019-p1",
+        "label": "Close-up",
+        "hue": 36
+      }
+    ],
+    "inspectionReportId": "ir-019",
+    "status": "live",
+    "currentRate": 126,
+    "leadingBidderId": "u-buyer-3",
+    "bidCount": 2,
+    "endsAt": "2026-07-16T09:55:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-020",
+    "lotNo": "LOT-02",
+    "catalogueId": "cat-2",
+    "metal": "SS 316",
+    "category": "flat-products",
+    "grade": "316 Offcuts",
+    "indicativeQty": 10300,
+    "uom": "KG",
+    "yard": "Burma Mines Yard",
+    "description": "SS 316L sheet offcuts, mixed sizes, mill finish, bundled on pallets",
+    "startRate": 187,
+    "increment": 2,
+    "reserveRate": 195,
+    "preBidEmd": 95000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-020-p0",
+        "label": "Overview",
+        "hue": 30
+      },
+      {
+        "id": "lot-020-p1",
+        "label": "Close-up",
+        "hue": 29
+      }
+    ],
+    "inspectionReportId": "ir-020",
+    "status": "live",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-16T09:55:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-021",
+    "lotNo": "LOT-03",
+    "catalogueId": "cat-2",
+    "metal": "SS 409",
+    "category": "scrap",
+    "grade": "409 Scrap",
+    "indicativeQty": 7900,
+    "uom": "KG",
+    "yard": "Burma Mines Yard",
+    "description": "SS 409 ferritic scrap, punchings and skeletons, baled",
+    "startRate": 66,
+    "increment": 2,
+    "reserveRate": 72,
+    "preBidEmd": 25000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-021-p0",
+        "label": "Overview",
+        "hue": 30
+      },
+      {
+        "id": "lot-021-p1",
+        "label": "Close-up",
+        "hue": 21
+      }
+    ],
+    "inspectionReportId": "ir-021",
+    "status": "live",
+    "currentRate": 72,
+    "leadingBidderId": "u-buyer-6",
+    "bidCount": 1,
+    "endsAt": "2026-07-16T09:55:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-022",
+    "lotNo": "LOT-04",
+    "catalogueId": "cat-2",
+    "metal": "SS 304",
+    "category": "melting-products",
+    "grade": "304 Turnings",
+    "indicativeQty": 17600,
+    "uom": "KG",
+    "yard": "Burma Mines Yard",
+    "description": "SS 304 turnings, compacted briquettes, oil ≤ 2 % as inspected",
+    "startRate": 93,
+    "increment": 5,
+    "reserveRate": 99,
+    "preBidEmd": 80000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": true,
+    "photos": [
+      {
+        "id": "lot-022-p0",
+        "label": "Overview",
+        "hue": 19
+      },
+      {
+        "id": "lot-022-p1",
+        "label": "Close-up",
+        "hue": 28
+      },
+      {
+        "id": "lot-022-p2",
+        "label": "Stack view",
+        "hue": 31
+      }
+    ],
+    "inspectionReportId": "ir-022",
+    "status": "live",
+    "currentRate": 103,
+    "leadingBidderId": "u-buyer-2",
+    "bidCount": 1,
+    "endsAt": "2026-07-16T09:55:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-023",
+    "lotNo": "LOT-05",
+    "catalogueId": "cat-2",
+    "metal": "MS",
+    "category": "flat-products",
+    "grade": "CRC End Cuts",
+    "indicativeQty": 40,
+    "uom": "MT",
+    "yard": "Burma Mines Yard",
+    "description": "Cold-rolled coil end cuts, prime surface, 0.6–1.6 mm",
+    "startRate": 39400,
+    "increment": 200,
+    "reserveRate": 41800,
+    "preBidEmd": 80000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": true,
+    "photos": [
+      {
+        "id": "lot-023-p0",
+        "label": "Overview",
+        "hue": 29
+      },
+      {
+        "id": "lot-023-p1",
+        "label": "Close-up",
+        "hue": 39
+      },
+      {
+        "id": "lot-023-p2",
+        "label": "Stack view",
+        "hue": 50
+      }
+    ],
+    "inspectionReportId": "ir-023",
+    "status": "live",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-16T09:55:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-024",
+    "lotNo": "LOT-06",
+    "catalogueId": "cat-2",
+    "metal": "SS 304",
+    "category": "flat-products",
+    "grade": "304 Offcuts",
+    "indicativeQty": 4900,
+    "uom": "KG",
+    "yard": "Burma Mines Yard",
+    "description": "SS 304 coil-end offcuts and side trims, 0.5–3 mm, coils strapped",
+    "startRate": 139,
+    "increment": 5,
+    "reserveRate": 153,
+    "preBidEmd": 35000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": true,
+    "photos": [
+      {
+        "id": "lot-024-p0",
+        "label": "Overview",
+        "hue": 17
+      },
+      {
+        "id": "lot-024-p1",
+        "label": "Close-up",
+        "hue": 37
+      },
+      {
+        "id": "lot-024-p2",
+        "label": "Stack view",
+        "hue": 38
+      }
+    ],
+    "inspectionReportId": "ir-024",
+    "status": "live",
+    "currentRate": 164,
+    "leadingBidderId": "u-buyer-7",
+    "bidCount": 2,
+    "endsAt": "2026-07-16T09:55:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-025",
+    "lotNo": "LOT-07",
+    "catalogueId": "cat-2",
+    "metal": "SS 316",
+    "category": "flat-products",
+    "grade": "316 Offcuts",
+    "indicativeQty": 11500,
+    "uom": "KG",
+    "yard": "Burma Mines Yard",
+    "description": "SS 316L sheet offcuts, mixed sizes, mill finish, bundled on pallets",
+    "startRate": 191,
+    "increment": 2,
+    "reserveRate": 200,
+    "preBidEmd": 110000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-025-p0",
+        "label": "Overview",
+        "hue": 37
+      },
+      {
+        "id": "lot-025-p1",
+        "label": "Close-up",
+        "hue": 25
+      },
+      {
+        "id": "lot-025-p2",
+        "label": "Stack view",
+        "hue": 45
+      }
+    ],
+    "inspectionReportId": "ir-025",
+    "status": "live",
+    "currentRate": 199,
+    "leadingBidderId": "u-buyer-7",
+    "bidCount": 3,
+    "endsAt": "2026-07-16T09:55:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-026",
+    "lotNo": "LOT-08",
+    "catalogueId": "cat-2",
+    "metal": "SS 409",
+    "category": "scrap",
+    "grade": "409 Scrap",
+    "indicativeQty": 16700,
+    "uom": "KG",
+    "yard": "Burma Mines Yard",
+    "description": "SS 409 ferritic scrap, punchings and skeletons, baled",
+    "startRate": 73,
+    "increment": 2,
+    "reserveRate": 77,
+    "preBidEmd": 60000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-026-p0",
+        "label": "Overview",
+        "hue": 37
+      },
+      {
+        "id": "lot-026-p1",
+        "label": "Close-up",
+        "hue": 46
+      }
+    ],
+    "inspectionReportId": "ir-026",
+    "status": "live",
+    "currentRate": 87,
+    "leadingBidderId": "u-buyer-2",
+    "bidCount": 3,
+    "endsAt": "2026-07-16T09:55:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-027",
+    "lotNo": "LOT-09",
+    "catalogueId": "cat-2",
+    "metal": "SS 304",
+    "category": "melting-products",
+    "grade": "304 Turnings",
+    "indicativeQty": 6800,
+    "uom": "KG",
+    "yard": "Burma Mines Yard",
+    "description": "SS 304 turnings, compacted briquettes, oil ≤ 2 % as inspected",
+    "startRate": 101,
+    "increment": 1,
+    "reserveRate": 113,
+    "preBidEmd": 35000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": true,
+    "photos": [
+      {
+        "id": "lot-027-p0",
+        "label": "Overview",
+        "hue": 26
+      },
+      {
+        "id": "lot-027-p1",
+        "label": "Close-up",
+        "hue": 45
+      }
+    ],
+    "inspectionReportId": "ir-027",
+    "status": "live",
+    "currentRate": 108,
+    "leadingBidderId": "u-buyer-6",
+    "bidCount": 3,
+    "endsAt": "2026-07-16T09:55:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-028",
+    "lotNo": "LOT-10",
+    "catalogueId": "cat-2",
+    "metal": "MS",
+    "category": "flat-products",
+    "grade": "CRC End Cuts",
+    "indicativeQty": 28,
+    "uom": "MT",
+    "yard": "Burma Mines Yard",
+    "description": "Cold-rolled coil end cuts, prime surface, 0.6–1.6 mm",
+    "startRate": 40200,
+    "increment": 200,
+    "reserveRate": 42800,
+    "preBidEmd": 55000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": true,
+    "photos": [
+      {
+        "id": "lot-028-p0",
+        "label": "Overview",
+        "hue": 32
+      },
+      {
+        "id": "lot-028-p1",
+        "label": "Close-up",
+        "hue": 45
+      },
+      {
+        "id": "lot-028-p2",
+        "label": "Stack view",
+        "hue": 31
+      }
+    ],
+    "inspectionReportId": "ir-028",
+    "status": "live",
+    "currentRate": 40600,
+    "leadingBidderId": "u-buyer-6",
+    "bidCount": 1,
+    "endsAt": "2026-07-16T09:55:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-029",
+    "lotNo": "LOT-11",
+    "catalogueId": "cat-2",
+    "metal": "SS 304",
+    "category": "flat-products",
+    "grade": "304 Offcuts",
+    "indicativeQty": 9400,
+    "uom": "KG",
+    "yard": "Burma Mines Yard",
+    "description": "SS 304 coil-end offcuts and side trims, 0.5–3 mm, coils strapped",
+    "startRate": 125,
+    "increment": 1,
+    "reserveRate": 138,
+    "preBidEmd": 60000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": true,
+    "photos": [
+      {
+        "id": "lot-029-p0",
+        "label": "Overview",
+        "hue": 28
+      },
+      {
+        "id": "lot-029-p1",
+        "label": "Close-up",
+        "hue": 28
+      }
+    ],
+    "inspectionReportId": "ir-029",
+    "status": "live",
+    "currentRate": 127,
+    "leadingBidderId": "u-buyer-3",
+    "bidCount": 2,
+    "endsAt": "2026-07-16T09:55:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-030",
+    "lotNo": "LOT-12",
+    "catalogueId": "cat-2",
+    "metal": "SS 316",
+    "category": "flat-products",
+    "grade": "316 Offcuts",
+    "indicativeQty": 8100,
+    "uom": "KG",
+    "yard": "Burma Mines Yard",
+    "description": "SS 316L sheet offcuts, mixed sizes, mill finish, bundled on pallets",
+    "startRate": 195,
+    "increment": 1,
+    "reserveRate": 213,
+    "preBidEmd": 80000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-030-p0",
+        "label": "Overview",
+        "hue": 15
+      },
+      {
+        "id": "lot-030-p1",
+        "label": "Close-up",
+        "hue": 42
+      }
+    ],
+    "inspectionReportId": "ir-030",
+    "status": "live",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-16T09:55:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-031",
+    "lotNo": "LOT-13",
+    "catalogueId": "cat-2",
+    "metal": "SS 409",
+    "category": "scrap",
+    "grade": "409 Scrap",
+    "indicativeQty": 23500,
+    "uom": "KG",
+    "yard": "Burma Mines Yard",
+    "description": "SS 409 ferritic scrap, punchings and skeletons, baled",
+    "startRate": 64,
+    "increment": 5,
+    "reserveRate": 68,
+    "preBidEmd": 75000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-031-p0",
+        "label": "Overview",
+        "hue": 37
+      },
+      {
+        "id": "lot-031-p1",
+        "label": "Close-up",
+        "hue": 42
+      },
+      {
+        "id": "lot-031-p2",
+        "label": "Stack view",
+        "hue": 27
+      }
+    ],
+    "inspectionReportId": "ir-031",
+    "status": "live",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-16T09:55:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-032",
+    "lotNo": "LOT-14",
+    "catalogueId": "cat-2",
+    "metal": "SS 304",
+    "category": "melting-products",
+    "grade": "304 Turnings",
+    "indicativeQty": 12500,
+    "uom": "KG",
+    "yard": "Burma Mines Yard",
+    "description": "SS 304 turnings, compacted briquettes, oil ≤ 2 % as inspected",
+    "startRate": 90,
+    "increment": 1,
+    "reserveRate": 99,
+    "preBidEmd": 55000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": true,
+    "photos": [
+      {
+        "id": "lot-032-p0",
+        "label": "Overview",
+        "hue": 39
+      },
+      {
+        "id": "lot-032-p1",
+        "label": "Close-up",
+        "hue": 32
+      },
+      {
+        "id": "lot-032-p2",
+        "label": "Stack view",
+        "hue": 52
+      }
+    ],
+    "inspectionReportId": "ir-032",
+    "status": "live",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-16T09:55:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-033",
+    "lotNo": "LOT-01",
+    "catalogueId": "cat-3",
+    "metal": "MS",
+    "category": "scrap",
+    "grade": "Rail Scrap",
+    "indicativeQty": 66,
+    "uom": "MT",
+    "yard": "Mancheswar Depot",
+    "description": "Released rails 52/60 kg, cut pieces 1.5–6 m, class III condemned",
+    "startRate": 30700,
+    "increment": 150,
+    "reserveRate": 32700,
+    "preBidEmd": 100000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-033-p0",
+        "label": "Overview",
+        "hue": 35
+      },
+      {
+        "id": "lot-033-p1",
+        "label": "Close-up",
+        "hue": 41
+      }
+    ],
+    "inspectionReportId": "ir-033",
+    "status": "live",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-16T06:51:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-034",
+    "lotNo": "LOT-02",
+    "catalogueId": "cat-3",
+    "metal": "MS",
+    "category": "assets",
+    "grade": "Wagon Bodies",
+    "indicativeQty": 219,
+    "uom": "MT",
+    "yard": "Mancheswar Depot",
+    "description": "Condemned BOXN wagon bodies without wheelsets, as-is at siding",
+    "startRate": 26100,
+    "increment": 150,
+    "reserveRate": 27850,
+    "preBidEmd": 285000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-034-p0",
+        "label": "Overview",
+        "hue": 22
+      },
+      {
+        "id": "lot-034-p1",
+        "label": "Close-up",
+        "hue": 18
+      },
+      {
+        "id": "lot-034-p2",
+        "label": "Stack view",
+        "hue": 45
+      },
+      {
+        "id": "lot-034-p3",
+        "label": "Weighbridge",
+        "hue": 55
+      }
+    ],
+    "inspectionReportId": "ir-034",
+    "status": "live",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-16T06:51:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-035",
+    "lotNo": "LOT-03",
+    "catalogueId": "cat-3",
+    "metal": "CI",
+    "category": "scrap",
+    "grade": "Brake Blocks",
+    "indicativeQty": 33,
+    "uom": "MT",
+    "yard": "Mancheswar Depot",
+    "description": "Worn cast iron brake blocks, loose in heaps, yard stack no. 14",
+    "startRate": 24900,
+    "increment": 100,
+    "reserveRate": 27400,
+    "preBidEmd": 40000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-035-p0",
+        "label": "Overview",
+        "hue": 12
+      },
+      {
+        "id": "lot-035-p1",
+        "label": "Close-up",
+        "hue": 45
+      },
+      {
+        "id": "lot-035-p2",
+        "label": "Stack view",
+        "hue": 54
+      },
+      {
+        "id": "lot-035-p3",
+        "label": "Weighbridge",
+        "hue": 58
+      }
+    ],
+    "inspectionReportId": "ir-035",
+    "status": "live",
+    "currentRate": 25600,
+    "leadingBidderId": "u-buyer-7",
+    "bidCount": 3,
+    "endsAt": "2026-07-16T06:51:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-036",
+    "lotNo": "LOT-04",
+    "catalogueId": "cat-3",
+    "metal": "MS",
+    "category": "scrap",
+    "grade": "PSC Sleeper Scrap",
+    "indicativeQty": 229,
+    "uom": "MT",
+    "yard": "Mancheswar Depot",
+    "description": "Scrap from PSC sleepers — embedded MS inserts and SGCI, mixed",
+    "startRate": 12800,
+    "increment": 50,
+    "reserveRate": 13700,
+    "preBidEmd": 145000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-036-p0",
+        "label": "Overview",
+        "hue": 17
+      },
+      {
+        "id": "lot-036-p1",
+        "label": "Close-up",
+        "hue": 28
+      }
+    ],
+    "inspectionReportId": "ir-036",
+    "status": "live",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-16T06:51:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-037",
+    "lotNo": "LOT-05",
+    "catalogueId": "cat-3",
+    "metal": "Copper",
+    "category": "scrap",
+    "grade": "OHE Cu Wire",
+    "indicativeQty": 1600,
+    "uom": "KG",
+    "yard": "Mancheswar Depot",
+    "description": "Released OHE copper contact wire, cut lengths, verified purity 99 %+",
+    "startRate": 658,
+    "increment": 5,
+    "reserveRate": 737,
+    "preBidEmd": 55000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-037-p0",
+        "label": "Overview",
+        "hue": 35
+      },
+      {
+        "id": "lot-037-p1",
+        "label": "Close-up",
+        "hue": 35
+      },
+      {
+        "id": "lot-037-p2",
+        "label": "Stack view",
+        "hue": 38
+      }
+    ],
+    "inspectionReportId": "ir-037",
+    "status": "live",
+    "currentRate": 673,
+    "leadingBidderId": "u-buyer-2",
+    "bidCount": 2,
+    "endsAt": "2026-07-16T06:51:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-038",
+    "lotNo": "LOT-06",
+    "catalogueId": "cat-3",
+    "metal": "MS",
+    "category": "scrap",
+    "grade": "Rail Scrap",
+    "indicativeQty": 121,
+    "uom": "MT",
+    "yard": "Mancheswar Depot",
+    "description": "Released rails 52/60 kg, cut pieces 1.5–6 m, class III condemned",
+    "startRate": 31300,
+    "increment": 150,
+    "reserveRate": 32950,
+    "preBidEmd": 190000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-038-p0",
+        "label": "Overview",
+        "hue": 30
+      },
+      {
+        "id": "lot-038-p1",
+        "label": "Close-up",
+        "hue": 36
+      },
+      {
+        "id": "lot-038-p2",
+        "label": "Stack view",
+        "hue": 38
+      },
+      {
+        "id": "lot-038-p3",
+        "label": "Weighbridge",
+        "hue": 49
+      }
+    ],
+    "inspectionReportId": "ir-038",
+    "status": "live",
+    "currentRate": 31750,
+    "leadingBidderId": "u-buyer-5",
+    "bidCount": 1,
+    "endsAt": "2026-07-16T06:51:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-039",
+    "lotNo": "LOT-07",
+    "catalogueId": "cat-3",
+    "metal": "MS",
+    "category": "assets",
+    "grade": "Wagon Bodies",
+    "indicativeQty": 213,
+    "uom": "MT",
+    "yard": "Mancheswar Depot",
+    "description": "Condemned BOXN wagon bodies without wheelsets, as-is at siding",
+    "startRate": 27400,
+    "increment": 150,
+    "reserveRate": 28950,
+    "preBidEmd": 290000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-039-p0",
+        "label": "Overview",
+        "hue": 20
+      },
+      {
+        "id": "lot-039-p1",
+        "label": "Close-up",
+        "hue": 26
+      },
+      {
+        "id": "lot-039-p2",
+        "label": "Stack view",
+        "hue": 33
+      }
+    ],
+    "inspectionReportId": "ir-039",
+    "status": "live",
+    "currentRate": 27550,
+    "leadingBidderId": "u-buyer-7",
+    "bidCount": 1,
+    "endsAt": "2026-07-16T06:51:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-040",
+    "lotNo": "LOT-08",
+    "catalogueId": "cat-3",
+    "metal": "CI",
+    "category": "scrap",
+    "grade": "Brake Blocks",
+    "indicativeQty": 19,
+    "uom": "MT",
+    "yard": "Mancheswar Depot",
+    "description": "Worn cast iron brake blocks, loose in heaps, yard stack no. 14",
+    "startRate": 23200,
+    "increment": 100,
+    "reserveRate": 25700,
+    "preBidEmd": 20000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-040-p0",
+        "label": "Overview",
+        "hue": 32
+      },
+      {
+        "id": "lot-040-p1",
+        "label": "Close-up",
+        "hue": 40
+      }
+    ],
+    "inspectionReportId": "ir-040",
+    "status": "live",
+    "currentRate": 23500,
+    "leadingBidderId": "u-buyer-7",
+    "bidCount": 1,
+    "endsAt": "2026-07-16T06:51:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-041",
+    "lotNo": "LOT-09",
+    "catalogueId": "cat-3",
+    "metal": "MS",
+    "category": "scrap",
+    "grade": "PSC Sleeper Scrap",
+    "indicativeQty": 137,
+    "uom": "MT",
+    "yard": "Mancheswar Depot",
+    "description": "Scrap from PSC sleepers — embedded MS inserts and SGCI, mixed",
+    "startRate": 15200,
+    "increment": 100,
+    "reserveRate": 16800,
+    "preBidEmd": 105000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-041-p0",
+        "label": "Overview",
+        "hue": 35
+      },
+      {
+        "id": "lot-041-p1",
+        "label": "Close-up",
+        "hue": 42
+      },
+      {
+        "id": "lot-041-p2",
+        "label": "Stack view",
+        "hue": 34
+      },
+      {
+        "id": "lot-041-p3",
+        "label": "Weighbridge",
+        "hue": 39
+      }
+    ],
+    "inspectionReportId": "ir-041",
+    "status": "live",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-16T06:51:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-042",
+    "lotNo": "LOT-10",
+    "catalogueId": "cat-3",
+    "metal": "Copper",
+    "category": "scrap",
+    "grade": "OHE Cu Wire",
+    "indicativeQty": 2300,
+    "uom": "KG",
+    "yard": "Mancheswar Depot",
+    "description": "Released OHE copper contact wire, cut lengths, verified purity 99 %+",
+    "startRate": 623,
+    "increment": 5,
+    "reserveRate": 694,
+    "preBidEmd": 70000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-042-p0",
+        "label": "Overview",
+        "hue": 35
+      },
+      {
+        "id": "lot-042-p1",
+        "label": "Close-up",
+        "hue": 41
+      }
+    ],
+    "inspectionReportId": "ir-042",
+    "status": "live",
+    "currentRate": 648,
+    "leadingBidderId": "u-buyer-6",
+    "bidCount": 2,
+    "endsAt": "2026-07-16T06:51:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-043",
+    "lotNo": "LOT-11",
+    "catalogueId": "cat-3",
+    "metal": "MS",
+    "category": "scrap",
+    "grade": "Rail Scrap",
+    "indicativeQty": 153,
+    "uom": "MT",
+    "yard": "Mancheswar Depot",
+    "description": "Released rails 52/60 kg, cut pieces 1.5–6 m, class III condemned",
+    "startRate": 30700,
+    "increment": 150,
+    "reserveRate": 32350,
+    "preBidEmd": 235000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-043-p0",
+        "label": "Overview",
+        "hue": 26
+      },
+      {
+        "id": "lot-043-p1",
+        "label": "Close-up",
+        "hue": 28
+      }
+    ],
+    "inspectionReportId": "ir-043",
+    "status": "live",
+    "currentRate": 31600,
+    "leadingBidderId": "u-buyer-3",
+    "bidCount": 2,
+    "endsAt": "2026-07-16T06:51:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-044",
+    "lotNo": "LOT-12",
+    "catalogueId": "cat-3",
+    "metal": "MS",
+    "category": "assets",
+    "grade": "Wagon Bodies",
+    "indicativeQty": 222,
+    "uom": "MT",
+    "yard": "Mancheswar Depot",
+    "description": "Condemned BOXN wagon bodies without wheelsets, as-is at siding",
+    "startRate": 26000,
+    "increment": 150,
+    "reserveRate": 28850,
+    "preBidEmd": 290000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-044-p0",
+        "label": "Overview",
+        "hue": 31
+      },
+      {
+        "id": "lot-044-p1",
+        "label": "Close-up",
+        "hue": 37
+      },
+      {
+        "id": "lot-044-p2",
+        "label": "Stack view",
+        "hue": 48
+      },
+      {
+        "id": "lot-044-p3",
+        "label": "Weighbridge",
+        "hue": 62
+      }
+    ],
+    "inspectionReportId": "ir-044",
+    "status": "live",
+    "currentRate": 26750,
+    "leadingBidderId": "u-buyer-3",
+    "bidCount": 3,
+    "endsAt": "2026-07-16T06:51:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-045",
+    "lotNo": "LOT-01",
+    "catalogueId": "cat-4",
+    "metal": "Aluminium",
+    "category": "flat-products",
+    "grade": "Al Sheet 1050",
+    "indicativeQty": 11500,
+    "uom": "KG",
+    "yard": "VJNR Yard B",
+    "description": "Aluminium sheet offcuts 1050 grade, 0.8–3 mm, palletised",
+    "startRate": 167,
+    "increment": 5,
+    "reserveRate": 185,
+    "preBidEmd": 95000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-045-p0",
+        "label": "Overview",
+        "hue": 12
+      },
+      {
+        "id": "lot-045-p1",
+        "label": "Close-up",
+        "hue": 28
+      }
+    ],
+    "inspectionReportId": "ir-045",
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-17T13:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-046",
+    "lotNo": "LOT-02",
+    "catalogueId": "cat-4",
+    "metal": "Aluminium",
+    "category": "melting-products",
+    "grade": "Al Ingot Rejects",
+    "indicativeQty": 8600,
+    "uom": "KG",
+    "yard": "VJNR Yard B",
+    "description": "Off-spec aluminium ingots, analysis reports attached",
+    "startRate": 166,
+    "increment": 2,
+    "reserveRate": 173,
+    "preBidEmd": 70000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-046-p0",
+        "label": "Overview",
+        "hue": 23
+      },
+      {
+        "id": "lot-046-p1",
+        "label": "Close-up",
+        "hue": 25
+      }
+    ],
+    "inspectionReportId": "ir-046",
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-17T13:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-047",
+    "lotNo": "LOT-03",
+    "catalogueId": "cat-4",
+    "metal": "Copper",
+    "category": "scrap",
+    "grade": "Cu Wire Millberry",
+    "indicativeQty": 2500,
+    "uom": "KG",
+    "yard": "VJNR Yard B",
+    "description": "Bright bare copper wire scrap (Millberry), coiled, no attachments",
+    "startRate": 700,
+    "increment": 1,
+    "reserveRate": 752,
+    "preBidEmd": 90000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": true,
+    "photos": [
+      {
+        "id": "lot-047-p0",
+        "label": "Overview",
+        "hue": 26
+      },
+      {
+        "id": "lot-047-p1",
+        "label": "Close-up",
+        "hue": 44
+      }
+    ],
+    "inspectionReportId": "ir-047",
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-17T13:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-048",
+    "lotNo": "LOT-04",
+    "catalogueId": "cat-4",
+    "metal": "Brass",
+    "category": "scrap",
+    "grade": "Brass Honey",
+    "indicativeQty": 1400,
+    "uom": "KG",
+    "yard": "VJNR Yard B",
+    "description": "Mixed brass scrap (honey), valves and fittings, dezinced excluded",
+    "startRate": 391,
+    "increment": 5,
+    "reserveRate": 430,
+    "preBidEmd": 25000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-048-p0",
+        "label": "Overview",
+        "hue": 20
+      },
+      {
+        "id": "lot-048-p1",
+        "label": "Close-up",
+        "hue": 36
+      },
+      {
+        "id": "lot-048-p2",
+        "label": "Stack view",
+        "hue": 47
+      },
+      {
+        "id": "lot-048-p3",
+        "label": "Weighbridge",
+        "hue": 47
+      }
+    ],
+    "inspectionReportId": "ir-048",
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-17T13:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-049",
+    "lotNo": "LOT-05",
+    "catalogueId": "cat-4",
+    "metal": "Zinc",
+    "category": "melting-products",
+    "grade": "Zinc Dross",
+    "indicativeQty": 12,
+    "uom": "MT",
+    "yard": "VJNR Yard B",
+    "description": "Galvanising zinc dross, top dross, drummed, Zn ≥ 85 %",
+    "startRate": 123700,
+    "increment": 600,
+    "reserveRate": 136000,
+    "preBidEmd": 75000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-049-p0",
+        "label": "Overview",
+        "hue": 12
+      },
+      {
+        "id": "lot-049-p1",
+        "label": "Close-up",
+        "hue": 23
+      },
+      {
+        "id": "lot-049-p2",
+        "label": "Stack view",
+        "hue": 47
+      }
+    ],
+    "inspectionReportId": "ir-049",
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-17T13:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-050",
+    "lotNo": "LOT-06",
+    "catalogueId": "cat-4",
+    "metal": "Ferro Alloys",
+    "category": "ferro-alloys",
+    "grade": "FeSiMg Fines",
+    "indicativeQty": 28,
+    "uom": "MT",
+    "yard": "VJNR Yard B",
+    "description": "Ferro silicon magnesium fines, bagged 1 MT jumbo bags",
+    "startRate": 74500,
+    "increment": 350,
+    "reserveRate": 83100,
+    "preBidEmd": 105000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-050-p0",
+        "label": "Overview",
+        "hue": 19
+      },
+      {
+        "id": "lot-050-p1",
+        "label": "Close-up",
+        "hue": 33
+      }
+    ],
+    "inspectionReportId": "ir-050",
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-17T13:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-051",
+    "lotNo": "LOT-07",
+    "catalogueId": "cat-4",
+    "metal": "Aluminium",
+    "category": "flat-products",
+    "grade": "Al Sheet 1050",
+    "indicativeQty": 13000,
+    "uom": "KG",
+    "yard": "VJNR Yard B",
+    "description": "Aluminium sheet offcuts 1050 grade, 0.8–3 mm, palletised",
+    "startRate": 158,
+    "increment": 2,
+    "reserveRate": 173,
+    "preBidEmd": 105000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-051-p0",
+        "label": "Overview",
+        "hue": 14
+      },
+      {
+        "id": "lot-051-p1",
+        "label": "Close-up",
+        "hue": 38
+      },
+      {
+        "id": "lot-051-p2",
+        "label": "Stack view",
+        "hue": 39
+      }
+    ],
+    "inspectionReportId": "ir-051",
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-17T13:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-052",
+    "lotNo": "LOT-08",
+    "catalogueId": "cat-4",
+    "metal": "Aluminium",
+    "category": "melting-products",
+    "grade": "Al Ingot Rejects",
+    "indicativeQty": 7800,
+    "uom": "KG",
+    "yard": "VJNR Yard B",
+    "description": "Off-spec aluminium ingots, analysis reports attached",
+    "startRate": 174,
+    "increment": 1,
+    "reserveRate": 186,
+    "preBidEmd": 70000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-052-p0",
+        "label": "Overview",
+        "hue": 25
+      },
+      {
+        "id": "lot-052-p1",
+        "label": "Close-up",
+        "hue": 18
+      }
+    ],
+    "inspectionReportId": "ir-052",
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-17T13:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-053",
+    "lotNo": "LOT-09",
+    "catalogueId": "cat-4",
+    "metal": "Copper",
+    "category": "scrap",
+    "grade": "Cu Wire Millberry",
+    "indicativeQty": 3000,
+    "uom": "KG",
+    "yard": "VJNR Yard B",
+    "description": "Bright bare copper wire scrap (Millberry), coiled, no attachments",
+    "startRate": 700,
+    "increment": 1,
+    "reserveRate": 774,
+    "preBidEmd": 105000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": true,
+    "photos": [
+      {
+        "id": "lot-053-p0",
+        "label": "Overview",
+        "hue": 38
+      },
+      {
+        "id": "lot-053-p1",
+        "label": "Close-up",
+        "hue": 20
+      }
+    ],
+    "inspectionReportId": "ir-053",
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-17T13:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-054",
+    "lotNo": "LOT-10",
+    "catalogueId": "cat-4",
+    "metal": "Brass",
+    "category": "scrap",
+    "grade": "Brass Honey",
+    "indicativeQty": 1100,
+    "uom": "KG",
+    "yard": "VJNR Yard B",
+    "description": "Mixed brass scrap (honey), valves and fittings, dezinced excluded",
+    "startRate": 414,
+    "increment": 1,
+    "reserveRate": 432,
+    "preBidEmd": 25000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-054-p0",
+        "label": "Overview",
+        "hue": 24
+      },
+      {
+        "id": "lot-054-p1",
+        "label": "Close-up",
+        "hue": 47
+      },
+      {
+        "id": "lot-054-p2",
+        "label": "Stack view",
+        "hue": 48
+      }
+    ],
+    "inspectionReportId": "ir-054",
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-17T13:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-055",
+    "lotNo": "LOT-11",
+    "catalogueId": "cat-4",
+    "metal": "Zinc",
+    "category": "melting-products",
+    "grade": "Zinc Dross",
+    "indicativeQty": 14,
+    "uom": "MT",
+    "yard": "VJNR Yard B",
+    "description": "Galvanising zinc dross, top dross, drummed, Zn ≥ 85 %",
+    "startRate": 134600,
+    "increment": 650,
+    "reserveRate": 148600,
+    "preBidEmd": 95000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-055-p0",
+        "label": "Overview",
+        "hue": 15
+      },
+      {
+        "id": "lot-055-p1",
+        "label": "Close-up",
+        "hue": 21
+      },
+      {
+        "id": "lot-055-p2",
+        "label": "Stack view",
+        "hue": 28
+      }
+    ],
+    "inspectionReportId": "ir-055",
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-17T13:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-056",
+    "lotNo": "LOT-12",
+    "catalogueId": "cat-4",
+    "metal": "Ferro Alloys",
+    "category": "ferro-alloys",
+    "grade": "FeSiMg Fines",
+    "indicativeQty": 21,
+    "uom": "MT",
+    "yard": "VJNR Yard B",
+    "description": "Ferro silicon magnesium fines, bagged 1 MT jumbo bags",
+    "startRate": 74400,
+    "increment": 350,
+    "reserveRate": 78750,
+    "preBidEmd": 80000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-056-p0",
+        "label": "Overview",
+        "hue": 14
+      },
+      {
+        "id": "lot-056-p1",
+        "label": "Close-up",
+        "hue": 39
+      },
+      {
+        "id": "lot-056-p2",
+        "label": "Stack view",
+        "hue": 34
+      },
+      {
+        "id": "lot-056-p3",
+        "label": "Weighbridge",
+        "hue": 47
+      }
+    ],
+    "inspectionReportId": "ir-056",
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-17T13:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-057",
+    "lotNo": "LOT-13",
+    "catalogueId": "cat-4",
+    "metal": "Aluminium",
+    "category": "flat-products",
+    "grade": "Al Sheet 1050",
+    "indicativeQty": 3300,
+    "uom": "KG",
+    "yard": "VJNR Yard B",
+    "description": "Aluminium sheet offcuts 1050 grade, 0.8–3 mm, palletised",
+    "startRate": 165,
+    "increment": 2,
+    "reserveRate": 184,
+    "preBidEmd": 25000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-057-p0",
+        "label": "Overview",
+        "hue": 13
+      },
+      {
+        "id": "lot-057-p1",
+        "label": "Close-up",
+        "hue": 29
+      },
+      {
+        "id": "lot-057-p2",
+        "label": "Stack view",
+        "hue": 32
+      },
+      {
+        "id": "lot-057-p3",
+        "label": "Weighbridge",
+        "hue": 61
+      }
+    ],
+    "inspectionReportId": "ir-057",
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-17T13:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-058",
+    "lotNo": "LOT-14",
+    "catalogueId": "cat-4",
+    "metal": "Aluminium",
+    "category": "melting-products",
+    "grade": "Al Ingot Rejects",
+    "indicativeQty": 8800,
+    "uom": "KG",
+    "yard": "VJNR Yard B",
+    "description": "Off-spec aluminium ingots, analysis reports attached",
+    "startRate": 166,
+    "increment": 5,
+    "reserveRate": 179,
+    "preBidEmd": 75000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-058-p0",
+        "label": "Overview",
+        "hue": 13
+      },
+      {
+        "id": "lot-058-p1",
+        "label": "Close-up",
+        "hue": 41
+      },
+      {
+        "id": "lot-058-p2",
+        "label": "Stack view",
+        "hue": 40
+      },
+      {
+        "id": "lot-058-p3",
+        "label": "Weighbridge",
+        "hue": 52
+      }
+    ],
+    "inspectionReportId": "ir-058",
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-17T13:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-059",
+    "lotNo": "LOT-15",
+    "catalogueId": "cat-4",
+    "metal": "Copper",
+    "category": "scrap",
+    "grade": "Cu Wire Millberry",
+    "indicativeQty": 3200,
+    "uom": "KG",
+    "yard": "VJNR Yard B",
+    "description": "Bright bare copper wire scrap (Millberry), coiled, no attachments",
+    "startRate": 655,
+    "increment": 5,
+    "reserveRate": 727,
+    "preBidEmd": 105000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": true,
+    "photos": [
+      {
+        "id": "lot-059-p0",
+        "label": "Overview",
+        "hue": 33
+      },
+      {
+        "id": "lot-059-p1",
+        "label": "Close-up",
+        "hue": 27
+      }
+    ],
+    "inspectionReportId": "ir-059",
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-17T13:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-060",
+    "lotNo": "LOT-16",
+    "catalogueId": "cat-4",
+    "metal": "Brass",
+    "category": "scrap",
+    "grade": "Brass Honey",
+    "indicativeQty": 4700,
+    "uom": "KG",
+    "yard": "VJNR Yard B",
+    "description": "Mixed brass scrap (honey), valves and fittings, dezinced excluded",
+    "startRate": 387,
+    "increment": 1,
+    "reserveRate": 405,
+    "preBidEmd": 90000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-060-p0",
+        "label": "Overview",
+        "hue": 18
+      },
+      {
+        "id": "lot-060-p1",
+        "label": "Close-up",
+        "hue": 29
+      },
+      {
+        "id": "lot-060-p2",
+        "label": "Stack view",
+        "hue": 49
+      }
+    ],
+    "inspectionReportId": "ir-060",
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-17T13:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-061",
+    "lotNo": "LOT-01",
+    "catalogueId": "cat-5",
+    "metal": "Coal",
+    "category": "coal",
+    "grade": "Washery Rejects",
+    "indicativeQty": 1165,
+    "uom": "MT",
+    "yard": "RSTPS Ash Yard",
+    "description": "Coal washery rejects, GCV 2200–2800, ex-stack loading",
+    "startRate": 1800,
+    "increment": 50,
+    "reserveRate": 1950,
+    "preBidEmd": 105000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-061-p0",
+        "label": "Overview",
+        "hue": 20
+      },
+      {
+        "id": "lot-061-p1",
+        "label": "Close-up",
+        "hue": 18
+      },
+      {
+        "id": "lot-061-p2",
+        "label": "Stack view",
+        "hue": 28
+      },
+      {
+        "id": "lot-061-p3",
+        "label": "Weighbridge",
+        "hue": 48
+      }
+    ],
+    "inspectionReportId": "ir-061",
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-19T11:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-062",
+    "lotNo": "LOT-02",
+    "catalogueId": "cat-5",
+    "metal": "Coal",
+    "category": "coal",
+    "grade": "Unburnt Coal",
+    "indicativeQty": 1395,
+    "uom": "MT",
+    "yard": "RSTPS Ash Yard",
+    "description": "Mill reject unburnt coal, GCV 3000–3600, loose at ash dyke",
+    "startRate": 2400,
+    "increment": 50,
+    "reserveRate": 2500,
+    "preBidEmd": 165000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-062-p0",
+        "label": "Overview",
+        "hue": 34
+      },
+      {
+        "id": "lot-062-p1",
+        "label": "Close-up",
+        "hue": 22
+      }
+    ],
+    "inspectionReportId": "ir-062",
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-19T11:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-063",
+    "lotNo": "LOT-03",
+    "catalogueId": "cat-5",
+    "metal": "Minerals",
+    "category": "minerals",
+    "grade": "Fly Ash",
+    "indicativeQty": 4030,
+    "uom": "MT",
+    "yard": "RSTPS Ash Yard",
+    "description": "Dry fly ash ex-silo, suitable for cement/brick units, self-lifting",
+    "startRate": 500,
+    "increment": 50,
+    "reserveRate": 550,
+    "preBidEmd": 100000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-063-p0",
+        "label": "Overview",
+        "hue": 33
+      },
+      {
+        "id": "lot-063-p1",
+        "label": "Close-up",
+        "hue": 40
+      },
+      {
+        "id": "lot-063-p2",
+        "label": "Stack view",
+        "hue": 38
+      },
+      {
+        "id": "lot-063-p3",
+        "label": "Weighbridge",
+        "hue": 62
+      }
+    ],
+    "inspectionReportId": "ir-063",
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-19T11:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-064",
+    "lotNo": "LOT-04",
+    "catalogueId": "cat-5",
+    "metal": "Chemicals",
+    "category": "chemicals",
+    "grade": "Used Transformer Oil",
+    "indicativeQty": 22800,
+    "uom": "KG",
+    "yard": "RSTPS Ash Yard",
+    "description": "Used transformer oil in sealed drums, PCB-free certificates available",
+    "startRate": 47,
+    "increment": 2,
+    "reserveRate": 51,
+    "preBidEmd": 55000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": true,
+    "photos": [
+      {
+        "id": "lot-064-p0",
+        "label": "Overview",
+        "hue": 35
+      },
+      {
+        "id": "lot-064-p1",
+        "label": "Close-up",
+        "hue": 26
+      },
+      {
+        "id": "lot-064-p2",
+        "label": "Stack view",
+        "hue": 31
+      }
+    ],
+    "inspectionReportId": "ir-064",
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-19T11:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-065",
+    "lotNo": "LOT-05",
+    "catalogueId": "cat-5",
+    "metal": "Coal",
+    "category": "coal",
+    "grade": "Washery Rejects",
+    "indicativeQty": 981,
+    "uom": "MT",
+    "yard": "RSTPS Ash Yard",
+    "description": "Coal washery rejects, GCV 2200–2800, ex-stack loading",
+    "startRate": 1700,
+    "increment": 50,
+    "reserveRate": 1900,
+    "preBidEmd": 85000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-065-p0",
+        "label": "Overview",
+        "hue": 12
+      },
+      {
+        "id": "lot-065-p1",
+        "label": "Close-up",
+        "hue": 45
+      },
+      {
+        "id": "lot-065-p2",
+        "label": "Stack view",
+        "hue": 29
+      },
+      {
+        "id": "lot-065-p3",
+        "label": "Weighbridge",
+        "hue": 40
+      }
+    ],
+    "inspectionReportId": "ir-065",
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-19T11:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-066",
+    "lotNo": "LOT-06",
+    "catalogueId": "cat-5",
+    "metal": "Coal",
+    "category": "coal",
+    "grade": "Unburnt Coal",
+    "indicativeQty": 1024,
+    "uom": "MT",
+    "yard": "RSTPS Ash Yard",
+    "description": "Mill reject unburnt coal, GCV 3000–3600, loose at ash dyke",
+    "startRate": 2700,
+    "increment": 50,
+    "reserveRate": 2800,
+    "preBidEmd": 140000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-066-p0",
+        "label": "Overview",
+        "hue": 37
+      },
+      {
+        "id": "lot-066-p1",
+        "label": "Close-up",
+        "hue": 40
+      },
+      {
+        "id": "lot-066-p2",
+        "label": "Stack view",
+        "hue": 42
+      }
+    ],
+    "inspectionReportId": "ir-066",
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-19T11:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-067",
+    "lotNo": "LOT-07",
+    "catalogueId": "cat-5",
+    "metal": "Minerals",
+    "category": "minerals",
+    "grade": "Fly Ash",
+    "indicativeQty": 4672,
+    "uom": "MT",
+    "yard": "RSTPS Ash Yard",
+    "description": "Dry fly ash ex-silo, suitable for cement/brick units, self-lifting",
+    "startRate": 400,
+    "increment": 50,
+    "reserveRate": 400,
+    "preBidEmd": 95000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-067-p0",
+        "label": "Overview",
+        "hue": 39
+      },
+      {
+        "id": "lot-067-p1",
+        "label": "Close-up",
+        "hue": 21
+      },
+      {
+        "id": "lot-067-p2",
+        "label": "Stack view",
+        "hue": 49
+      }
+    ],
+    "inspectionReportId": "ir-067",
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-19T11:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-068",
+    "lotNo": "LOT-08",
+    "catalogueId": "cat-5",
+    "metal": "Chemicals",
+    "category": "chemicals",
+    "grade": "Used Transformer Oil",
+    "indicativeQty": 13100,
+    "uom": "KG",
+    "yard": "RSTPS Ash Yard",
+    "description": "Used transformer oil in sealed drums, PCB-free certificates available",
+    "startRate": 51,
+    "increment": 5,
+    "reserveRate": 55,
+    "preBidEmd": 35000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": true,
+    "photos": [
+      {
+        "id": "lot-068-p0",
+        "label": "Overview",
+        "hue": 22
+      },
+      {
+        "id": "lot-068-p1",
+        "label": "Close-up",
+        "hue": 22
+      }
+    ],
+    "inspectionReportId": "ir-068",
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-19T11:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-069",
+    "lotNo": "LOT-09",
+    "catalogueId": "cat-5",
+    "metal": "Coal",
+    "category": "coal",
+    "grade": "Washery Rejects",
+    "indicativeQty": 1487,
+    "uom": "MT",
+    "yard": "RSTPS Ash Yard",
+    "description": "Coal washery rejects, GCV 2200–2800, ex-stack loading",
+    "startRate": 1800,
+    "increment": 50,
+    "reserveRate": 2000,
+    "preBidEmd": 135000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-069-p0",
+        "label": "Overview",
+        "hue": 38
+      },
+      {
+        "id": "lot-069-p1",
+        "label": "Close-up",
+        "hue": 42
+      },
+      {
+        "id": "lot-069-p2",
+        "label": "Stack view",
+        "hue": 42
+      },
+      {
+        "id": "lot-069-p3",
+        "label": "Weighbridge",
+        "hue": 62
+      }
+    ],
+    "inspectionReportId": "ir-069",
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-19T11:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-070",
+    "lotNo": "LOT-10",
+    "catalogueId": "cat-5",
+    "metal": "Coal",
+    "category": "coal",
+    "grade": "Unburnt Coal",
+    "indicativeQty": 1212,
+    "uom": "MT",
+    "yard": "RSTPS Ash Yard",
+    "description": "Mill reject unburnt coal, GCV 3000–3600, loose at ash dyke",
+    "startRate": 2900,
+    "increment": 50,
+    "reserveRate": 3250,
+    "preBidEmd": 175000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-070-p0",
+        "label": "Overview",
+        "hue": 36
+      },
+      {
+        "id": "lot-070-p1",
+        "label": "Close-up",
+        "hue": 37
+      },
+      {
+        "id": "lot-070-p2",
+        "label": "Stack view",
+        "hue": 47
+      },
+      {
+        "id": "lot-070-p3",
+        "label": "Weighbridge",
+        "hue": 46
+      }
+    ],
+    "inspectionReportId": "ir-070",
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-19T11:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-071",
+    "lotNo": "LOT-01",
+    "catalogueId": "cat-6",
+    "metal": "Copper",
+    "category": "scrap",
+    "grade": "Cu Cable Scrap",
+    "indicativeQty": 3700,
+    "uom": "KG",
+    "yard": "MSTC Paradip Yard",
+    "description": "PVC insulated copper cable scrap, recovery 55–65 %, baled",
+    "startRate": 486,
+    "increment": 5,
+    "reserveRate": 530,
+    "preBidEmd": 90000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-071-p0",
+        "label": "Overview",
+        "hue": 17
+      },
+      {
+        "id": "lot-071-p1",
+        "label": "Close-up",
+        "hue": 29
+      }
+    ],
+    "inspectionReportId": "ir-071",
+    "status": "sold",
+    "currentRate": 561,
+    "leadingBidderId": "u-buyer-1",
+    "bidCount": 7,
+    "endsAt": "2026-07-14T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": 561
+  },
+  {
+    "id": "lot-072",
+    "lotNo": "LOT-02",
+    "catalogueId": "cat-6",
+    "metal": "Copper",
+    "category": "scrap",
+    "grade": "Cu Armature",
+    "indicativeQty": 2100,
+    "uom": "KG",
+    "yard": "MSTC Paradip Yard",
+    "description": "Copper armature scrap — motors and stators, iron attachments",
+    "startRate": 496,
+    "increment": 1,
+    "reserveRate": 538,
+    "preBidEmd": 50000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-072-p0",
+        "label": "Overview",
+        "hue": 18
+      },
+      {
+        "id": "lot-072-p1",
+        "label": "Close-up",
+        "hue": 30
+      },
+      {
+        "id": "lot-072-p2",
+        "label": "Stack view",
+        "hue": 32
+      },
+      {
+        "id": "lot-072-p3",
+        "label": "Weighbridge",
+        "hue": 41
+      }
+    ],
+    "inspectionReportId": "ir-072",
+    "status": "sold",
+    "currentRate": 513,
+    "leadingBidderId": "u-buyer-1",
+    "bidCount": 9,
+    "endsAt": "2026-07-14T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": 513
+  },
+  {
+    "id": "lot-073",
+    "lotNo": "LOT-03",
+    "catalogueId": "cat-6",
+    "metal": "Brass",
+    "category": "scrap",
+    "grade": "Brass Shell Scrap",
+    "indicativeQty": 4700,
+    "uom": "KG",
+    "yard": "MSTC Paradip Yard",
+    "description": "Brass shell/pipe scrap, clean, moisture-free as inspected",
+    "startRate": 424,
+    "increment": 2,
+    "reserveRate": 445,
+    "preBidEmd": 100000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-073-p0",
+        "label": "Overview",
+        "hue": 38
+      },
+      {
+        "id": "lot-073-p1",
+        "label": "Close-up",
+        "hue": 21
+      }
+    ],
+    "inspectionReportId": "ir-073",
+    "status": "sta",
+    "currentRate": 434,
+    "leadingBidderId": "u-buyer-5",
+    "bidCount": 4,
+    "endsAt": "2026-07-14T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": 434
+  },
+  {
+    "id": "lot-074",
+    "lotNo": "LOT-04",
+    "catalogueId": "cat-6",
+    "metal": "Aluminium",
+    "category": "scrap",
+    "grade": "Al Utensil Scrap",
+    "indicativeQty": 7100,
+    "uom": "KG",
+    "yard": "MSTC Paradip Yard",
+    "description": "Aluminium utensil scrap (taint/tabor), loose in bags",
+    "startRate": 133,
+    "increment": 1,
+    "reserveRate": 141,
+    "preBidEmd": 45000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-074-p0",
+        "label": "Overview",
+        "hue": 19
+      },
+      {
+        "id": "lot-074-p1",
+        "label": "Close-up",
+        "hue": 44
+      }
+    ],
+    "inspectionReportId": "ir-074",
+    "status": "sold",
+    "currentRate": 151,
+    "leadingBidderId": "u-buyer-1",
+    "bidCount": 7,
+    "endsAt": "2026-07-14T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": 151
+  },
+  {
+    "id": "lot-075",
+    "lotNo": "LOT-05",
+    "catalogueId": "cat-6",
+    "metal": "Copper",
+    "category": "scrap",
+    "grade": "Cu Cable Scrap",
+    "indicativeQty": 5900,
+    "uom": "KG",
+    "yard": "MSTC Paradip Yard",
+    "description": "PVC insulated copper cable scrap, recovery 55–65 %, baled",
+    "startRate": 476,
+    "increment": 2,
+    "reserveRate": 497,
+    "preBidEmd": 140000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-075-p0",
+        "label": "Overview",
+        "hue": 12
+      },
+      {
+        "id": "lot-075-p1",
+        "label": "Close-up",
+        "hue": 41
+      },
+      {
+        "id": "lot-075-p2",
+        "label": "Stack view",
+        "hue": 51
+      }
+    ],
+    "inspectionReportId": "ir-075",
+    "status": "sold",
+    "currentRate": 502,
+    "leadingBidderId": "u-buyer-5",
+    "bidCount": 5,
+    "endsAt": "2026-07-14T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": 502
+  },
+  {
+    "id": "lot-076",
+    "lotNo": "LOT-06",
+    "catalogueId": "cat-6",
+    "metal": "Copper",
+    "category": "scrap",
+    "grade": "Cu Armature",
+    "indicativeQty": 1900,
+    "uom": "KG",
+    "yard": "MSTC Paradip Yard",
+    "description": "Copper armature scrap — motors and stators, iron attachments",
+    "startRate": 530,
+    "increment": 1,
+    "reserveRate": 572,
+    "preBidEmd": 50000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-076-p0",
+        "label": "Overview",
+        "hue": 19
+      },
+      {
+        "id": "lot-076-p1",
+        "label": "Close-up",
+        "hue": 23
+      },
+      {
+        "id": "lot-076-p2",
+        "label": "Stack view",
+        "hue": 32
+      },
+      {
+        "id": "lot-076-p3",
+        "label": "Weighbridge",
+        "hue": 40
+      }
+    ],
+    "inspectionReportId": "ir-076",
+    "status": "sta",
+    "currentRate": 538,
+    "leadingBidderId": "u-buyer-2",
+    "bidCount": 3,
+    "endsAt": "2026-07-14T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": 538
+  },
+  {
+    "id": "lot-077",
+    "lotNo": "LOT-07",
+    "catalogueId": "cat-6",
+    "metal": "Brass",
+    "category": "scrap",
+    "grade": "Brass Shell Scrap",
+    "indicativeQty": 1900,
+    "uom": "KG",
+    "yard": "MSTC Paradip Yard",
+    "description": "Brass shell/pipe scrap, clean, moisture-free as inspected",
+    "startRate": 406,
+    "increment": 5,
+    "reserveRate": 438,
+    "preBidEmd": 40000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-077-p0",
+        "label": "Overview",
+        "hue": 27
+      },
+      {
+        "id": "lot-077-p1",
+        "label": "Close-up",
+        "hue": 45
+      }
+    ],
+    "inspectionReportId": "ir-077",
+    "status": "sold",
+    "currentRate": 451,
+    "leadingBidderId": "u-buyer-7",
+    "bidCount": 4,
+    "endsAt": "2026-07-14T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": 451
+  },
+  {
+    "id": "lot-078",
+    "lotNo": "LOT-08",
+    "catalogueId": "cat-6",
+    "metal": "Aluminium",
+    "category": "scrap",
+    "grade": "Al Utensil Scrap",
+    "indicativeQty": 4600,
+    "uom": "KG",
+    "yard": "MSTC Paradip Yard",
+    "description": "Aluminium utensil scrap (taint/tabor), loose in bags",
+    "startRate": 139,
+    "increment": 5,
+    "reserveRate": 147,
+    "preBidEmd": 30000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-078-p0",
+        "label": "Overview",
+        "hue": 12
+      },
+      {
+        "id": "lot-078-p1",
+        "label": "Close-up",
+        "hue": 46
+      },
+      {
+        "id": "lot-078-p2",
+        "label": "Stack view",
+        "hue": 49
+      },
+      {
+        "id": "lot-078-p3",
+        "label": "Weighbridge",
+        "hue": 35
+      }
+    ],
+    "inspectionReportId": "ir-078",
+    "status": "sold",
+    "currentRate": 169,
+    "leadingBidderId": "u-buyer-5",
+    "bidCount": 3,
+    "endsAt": "2026-07-14T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": 169
+  },
+  {
+    "id": "lot-079",
+    "lotNo": "LOT-09",
+    "catalogueId": "cat-6",
+    "metal": "Copper",
+    "category": "scrap",
+    "grade": "Cu Cable Scrap",
+    "indicativeQty": 2900,
+    "uom": "KG",
+    "yard": "MSTC Paradip Yard",
+    "description": "PVC insulated copper cable scrap, recovery 55–65 %, baled",
+    "startRate": 507,
+    "increment": 1,
+    "reserveRate": 530,
+    "preBidEmd": 75000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-079-p0",
+        "label": "Overview",
+        "hue": 27
+      },
+      {
+        "id": "lot-079-p1",
+        "label": "Close-up",
+        "hue": 26
+      },
+      {
+        "id": "lot-079-p2",
+        "label": "Stack view",
+        "hue": 43
+      }
+    ],
+    "inspectionReportId": "ir-079",
+    "status": "sta",
+    "currentRate": 524,
+    "leadingBidderId": "u-buyer-6",
+    "bidCount": 7,
+    "endsAt": "2026-07-14T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": 524
+  },
+  {
+    "id": "lot-080",
+    "lotNo": "LOT-10",
+    "catalogueId": "cat-6",
+    "metal": "Copper",
+    "category": "scrap",
+    "grade": "Cu Armature",
+    "indicativeQty": 2900,
+    "uom": "KG",
+    "yard": "MSTC Paradip Yard",
+    "description": "Copper armature scrap — motors and stators, iron attachments",
+    "startRate": 523,
+    "increment": 2,
+    "reserveRate": 566,
+    "preBidEmd": 75000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-080-p0",
+        "label": "Overview",
+        "hue": 27
+      },
+      {
+        "id": "lot-080-p1",
+        "label": "Close-up",
+        "hue": 35
+      }
+    ],
+    "inspectionReportId": "ir-080",
+    "status": "sta",
+    "currentRate": 549,
+    "leadingBidderId": "u-buyer-1",
+    "bidCount": 7,
+    "endsAt": "2026-07-14T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": 549
+  },
+  {
+    "id": "lot-081",
+    "lotNo": "LOT-11",
+    "catalogueId": "cat-6",
+    "metal": "Brass",
+    "category": "scrap",
+    "grade": "Brass Shell Scrap",
+    "indicativeQty": 1800,
+    "uom": "KG",
+    "yard": "MSTC Paradip Yard",
+    "description": "Brass shell/pipe scrap, clean, moisture-free as inspected",
+    "startRate": 404,
+    "increment": 5,
+    "reserveRate": 427,
+    "preBidEmd": 35000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-081-p0",
+        "label": "Overview",
+        "hue": 28
+      },
+      {
+        "id": "lot-081-p1",
+        "label": "Close-up",
+        "hue": 47
+      }
+    ],
+    "inspectionReportId": "ir-081",
+    "status": "sold",
+    "currentRate": 479,
+    "leadingBidderId": "u-buyer-7",
+    "bidCount": 7,
+    "endsAt": "2026-07-14T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": 479
+  },
+  {
+    "id": "lot-082",
+    "lotNo": "LOT-12",
+    "catalogueId": "cat-6",
+    "metal": "Aluminium",
+    "category": "scrap",
+    "grade": "Al Utensil Scrap",
+    "indicativeQty": 8100,
+    "uom": "KG",
+    "yard": "MSTC Paradip Yard",
+    "description": "Aluminium utensil scrap (taint/tabor), loose in bags",
+    "startRate": 146,
+    "increment": 5,
+    "reserveRate": 152,
+    "preBidEmd": 60000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-082-p0",
+        "label": "Overview",
+        "hue": 39
+      },
+      {
+        "id": "lot-082-p1",
+        "label": "Close-up",
+        "hue": 20
+      }
+    ],
+    "inspectionReportId": "ir-082",
+    "status": "sold",
+    "currentRate": 176,
+    "leadingBidderId": "u-buyer-6",
+    "bidCount": 3,
+    "endsAt": "2026-07-14T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": 176
+  },
+  {
+    "id": "lot-083",
+    "lotNo": "LOT-01",
+    "catalogueId": "cat-7",
+    "metal": "Assets",
+    "category": "assets",
+    "grade": "Lathe Machines",
+    "indicativeQty": 6,
+    "uom": "PCS",
+    "yard": "BHEL Unit II Yard",
+    "description": "Condemned centre lathes 8–12 ft, motors included, seized condition",
+    "startRate": 264300,
+    "increment": 1300,
+    "reserveRate": 287550,
+    "preBidEmd": 80000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-083-p0",
+        "label": "Overview",
+        "hue": 26
+      },
+      {
+        "id": "lot-083-p1",
+        "label": "Close-up",
+        "hue": 19
+      },
+      {
+        "id": "lot-083-p2",
+        "label": "Stack view",
+        "hue": 37
+      },
+      {
+        "id": "lot-083-p3",
+        "label": "Weighbridge",
+        "hue": 39
+      }
+    ],
+    "inspectionReportId": "ir-083",
+    "status": "sta",
+    "currentRate": 269500,
+    "leadingBidderId": "u-buyer-6",
+    "bidCount": 3,
+    "endsAt": "2026-07-10T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": 269500
+  },
+  {
+    "id": "lot-084",
+    "lotNo": "LOT-02",
+    "catalogueId": "cat-7",
+    "metal": "Assets",
+    "category": "assets",
+    "grade": "EOT Crane Parts",
+    "indicativeQty": 1,
+    "uom": "LOT",
+    "yard": "BHEL Unit II Yard",
+    "description": "Dismantled 20 T EOT crane — girders, trolley, hoist as one lot",
+    "startRate": 753600,
+    "increment": 3750,
+    "reserveRate": 790900,
+    "preBidEmd": 40000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-084-p0",
+        "label": "Overview",
+        "hue": 34
+      },
+      {
+        "id": "lot-084-p1",
+        "label": "Close-up",
+        "hue": 47
+      },
+      {
+        "id": "lot-084-p2",
+        "label": "Stack view",
+        "hue": 44
+      },
+      {
+        "id": "lot-084-p3",
+        "label": "Weighbridge",
+        "hue": 58
+      }
+    ],
+    "inspectionReportId": "ir-084",
+    "status": "sold",
+    "currentRate": 806100,
+    "leadingBidderId": "u-buyer-3",
+    "bidCount": 7,
+    "endsAt": "2026-07-10T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": 806100
+  },
+  {
+    "id": "lot-085",
+    "lotNo": "LOT-03",
+    "catalogueId": "cat-7",
+    "metal": "Assets",
+    "category": "assets",
+    "grade": "DG Sets",
+    "indicativeQty": 2,
+    "uom": "PCS",
+    "yard": "BHEL Unit II Yard",
+    "description": "Non-working 500 kVA DG sets, engine + alternator, as-is",
+    "startRate": 284300,
+    "increment": 1400,
+    "reserveRate": 305050,
+    "preBidEmd": 30000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-085-p0",
+        "label": "Overview",
+        "hue": 20
+      },
+      {
+        "id": "lot-085-p1",
+        "label": "Close-up",
+        "hue": 41
+      }
+    ],
+    "inspectionReportId": "ir-085",
+    "status": "sold",
+    "currentRate": 305300,
+    "leadingBidderId": "u-buyer-2",
+    "bidCount": 8,
+    "endsAt": "2026-07-10T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": 305300
+  },
+  {
+    "id": "lot-086",
+    "lotNo": "LOT-04",
+    "catalogueId": "cat-7",
+    "metal": "MS",
+    "category": "assets",
+    "grade": "Storage Tanks",
+    "indicativeQty": 41,
+    "uom": "MT",
+    "yard": "BHEL Unit II Yard",
+    "description": "Dismantled MS storage tanks, plate 8–12 mm, gas-cut pieces",
+    "startRate": 27500,
+    "increment": 150,
+    "reserveRate": 29600,
+    "preBidEmd": 55000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-086-p0",
+        "label": "Overview",
+        "hue": 26
+      },
+      {
+        "id": "lot-086-p1",
+        "label": "Close-up",
+        "hue": 41
+      }
+    ],
+    "inspectionReportId": "ir-086",
+    "status": "sta",
+    "currentRate": 29150,
+    "leadingBidderId": "u-buyer-2",
+    "bidCount": 6,
+    "endsAt": "2026-07-10T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": 29150
+  },
+  {
+    "id": "lot-087",
+    "lotNo": "LOT-05",
+    "catalogueId": "cat-7",
+    "metal": "Assets",
+    "category": "assets",
+    "grade": "Compressors",
+    "indicativeQty": 2,
+    "uom": "PCS",
+    "yard": "BHEL Unit II Yard",
+    "description": "Reciprocating air compressors, condemned, foundation bolts cut",
+    "startRate": 184000,
+    "increment": 900,
+    "reserveRate": 200050,
+    "preBidEmd": 20000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-087-p0",
+        "label": "Overview",
+        "hue": 14
+      },
+      {
+        "id": "lot-087-p1",
+        "label": "Close-up",
+        "hue": 32
+      },
+      {
+        "id": "lot-087-p2",
+        "label": "Stack view",
+        "hue": 44
+      }
+    ],
+    "inspectionReportId": "ir-087",
+    "status": "sta",
+    "currentRate": 197500,
+    "leadingBidderId": "u-buyer-3",
+    "bidCount": 7,
+    "endsAt": "2026-07-10T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": 197500
+  },
+  {
+    "id": "lot-088",
+    "lotNo": "LOT-06",
+    "catalogueId": "cat-7",
+    "metal": "Assets",
+    "category": "assets",
+    "grade": "Lathe Machines",
+    "indicativeQty": 6,
+    "uom": "PCS",
+    "yard": "BHEL Unit II Yard",
+    "description": "Condemned centre lathes 8–12 ft, motors included, seized condition",
+    "startRate": 169700,
+    "increment": 850,
+    "reserveRate": 179200,
+    "preBidEmd": 50000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-088-p0",
+        "label": "Overview",
+        "hue": 33
+      },
+      {
+        "id": "lot-088-p1",
+        "label": "Close-up",
+        "hue": 31
+      },
+      {
+        "id": "lot-088-p2",
+        "label": "Stack view",
+        "hue": 46
+      }
+    ],
+    "inspectionReportId": "ir-088",
+    "status": "sta",
+    "currentRate": 174800,
+    "leadingBidderId": "u-buyer-7",
+    "bidCount": 3,
+    "endsAt": "2026-07-10T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": 174800
+  },
+  {
+    "id": "lot-089",
+    "lotNo": "LOT-07",
+    "catalogueId": "cat-7",
+    "metal": "Assets",
+    "category": "assets",
+    "grade": "EOT Crane Parts",
+    "indicativeQty": 1,
+    "uom": "LOT",
+    "yard": "BHEL Unit II Yard",
+    "description": "Dismantled 20 T EOT crane — girders, trolley, hoist as one lot",
+    "startRate": 500400,
+    "increment": 2500,
+    "reserveRate": 532000,
+    "preBidEmd": 25000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-089-p0",
+        "label": "Overview",
+        "hue": 21
+      },
+      {
+        "id": "lot-089-p1",
+        "label": "Close-up",
+        "hue": 37
+      },
+      {
+        "id": "lot-089-p2",
+        "label": "Stack view",
+        "hue": 30
+      },
+      {
+        "id": "lot-089-p3",
+        "label": "Weighbridge",
+        "hue": 40
+      }
+    ],
+    "inspectionReportId": "ir-089",
+    "status": "sta",
+    "currentRate": 522900,
+    "leadingBidderId": "u-buyer-5",
+    "bidCount": 5,
+    "endsAt": "2026-07-10T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": 522900
+  },
+  {
+    "id": "lot-090",
+    "lotNo": "LOT-08",
+    "catalogueId": "cat-7",
+    "metal": "Assets",
+    "category": "assets",
+    "grade": "DG Sets",
+    "indicativeQty": 3,
+    "uom": "PCS",
+    "yard": "BHEL Unit II Yard",
+    "description": "Non-working 500 kVA DG sets, engine + alternator, as-is",
+    "startRate": 214800,
+    "increment": 1050,
+    "reserveRate": 231400,
+    "preBidEmd": 30000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-090-p0",
+        "label": "Overview",
+        "hue": 26
+      },
+      {
+        "id": "lot-090-p1",
+        "label": "Close-up",
+        "hue": 18
+      },
+      {
+        "id": "lot-090-p2",
+        "label": "Stack view",
+        "hue": 53
+      }
+    ],
+    "inspectionReportId": "ir-090",
+    "status": "sta",
+    "currentRate": 225300,
+    "leadingBidderId": "u-buyer-7",
+    "bidCount": 7,
+    "endsAt": "2026-07-10T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": 225300
+  },
+  {
+    "id": "lot-091",
+    "lotNo": "LOT-09",
+    "catalogueId": "cat-7",
+    "metal": "MS",
+    "category": "assets",
+    "grade": "Storage Tanks",
+    "indicativeQty": 65,
+    "uom": "MT",
+    "yard": "BHEL Unit II Yard",
+    "description": "Dismantled MS storage tanks, plate 8–12 mm, gas-cut pieces",
+    "startRate": 27200,
+    "increment": 150,
+    "reserveRate": 28900,
+    "preBidEmd": 90000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-091-p0",
+        "label": "Overview",
+        "hue": 38
+      },
+      {
+        "id": "lot-091-p1",
+        "label": "Close-up",
+        "hue": 24
+      },
+      {
+        "id": "lot-091-p2",
+        "label": "Stack view",
+        "hue": 32
+      },
+      {
+        "id": "lot-091-p3",
+        "label": "Weighbridge",
+        "hue": 54
+      }
+    ],
+    "inspectionReportId": "ir-091",
+    "status": "sold",
+    "currentRate": 29450,
+    "leadingBidderId": "u-buyer-5",
+    "bidCount": 7,
+    "endsAt": "2026-07-10T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": 29450
+  },
+  {
+    "id": "lot-092",
+    "lotNo": "LOT-10",
+    "catalogueId": "cat-7",
+    "metal": "Assets",
+    "category": "assets",
+    "grade": "Compressors",
+    "indicativeQty": 2,
+    "uom": "PCS",
+    "yard": "BHEL Unit II Yard",
+    "description": "Reciprocating air compressors, condemned, foundation bolts cut",
+    "startRate": 122400,
+    "increment": 600,
+    "reserveRate": 130450,
+    "preBidEmd": 10000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-092-p0",
+        "label": "Overview",
+        "hue": 39
+      },
+      {
+        "id": "lot-092-p1",
+        "label": "Close-up",
+        "hue": 23
+      },
+      {
+        "id": "lot-092-p2",
+        "label": "Stack view",
+        "hue": 38
+      }
+    ],
+    "inspectionReportId": "ir-092",
+    "status": "sta",
+    "currentRate": 124800,
+    "leadingBidderId": "u-buyer-5",
+    "bidCount": 3,
+    "endsAt": "2026-07-10T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": 124800
+  },
+  {
+    "id": "lot-093",
+    "lotNo": "UNL-93",
+    "catalogueId": null,
+    "metal": "MS",
+    "category": "scrap",
+    "grade": "Skull Scrap",
+    "indicativeQty": 45,
+    "uom": "MT",
+    "yard": "Burma Mines Yard",
+    "description": "Furnace skull scrap, oxy-cut to charge size, yard heap 9",
+    "startRate": 26500,
+    "increment": 150,
+    "reserveRate": 28360,
+    "preBidEmd": 60000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-093-p0",
+        "label": "Overview",
+        "hue": 20
+      },
+      {
+        "id": "lot-093-p1",
+        "label": "Close-up",
+        "hue": 30
+      },
+      {
+        "id": "lot-093-p2",
+        "label": "Stack view",
+        "hue": 40
+      }
+    ],
+    "inspectionReportId": null,
+    "status": "pending_inspection",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-08-15T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-094",
+    "lotNo": "UNL-94",
+    "catalogueId": null,
+    "metal": "Aluminium",
+    "category": "scrap",
+    "grade": "Al Extrusion 6063",
+    "indicativeQty": 5200,
+    "uom": "KG",
+    "yard": "VJNR Yard B",
+    "description": "Aluminium extrusion offcuts 6063, mill finish, bundled",
+    "startRate": 156,
+    "increment": 2,
+    "reserveRate": 170,
+    "preBidEmd": 40000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-094-p0",
+        "label": "Overview",
+        "hue": 20
+      },
+      {
+        "id": "lot-094-p1",
+        "label": "Close-up",
+        "hue": 30
+      },
+      {
+        "id": "lot-094-p2",
+        "label": "Stack view",
+        "hue": 40
+      }
+    ],
+    "inspectionReportId": null,
+    "status": "pending_inspection",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-08-15T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-095",
+    "lotNo": "UNL-95",
+    "catalogueId": null,
+    "metal": "MS",
+    "category": "melting-products",
+    "grade": "Mill Scale",
+    "indicativeQty": 220,
+    "uom": "MT",
+    "yard": "BSP Scrap Yard 3",
+    "description": "Mill scale, Fe ≥ 68 %, ex-rolling mill, loose",
+    "startRate": 9800,
+    "increment": 50,
+    "reserveRate": 10490,
+    "preBidEmd": 110000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-095-p0",
+        "label": "Overview",
+        "hue": 20
+      },
+      {
+        "id": "lot-095-p1",
+        "label": "Close-up",
+        "hue": 30
+      },
+      {
+        "id": "lot-095-p2",
+        "label": "Stack view",
+        "hue": 40
+      }
+    ],
+    "inspectionReportId": null,
+    "status": "pending_inspection",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-08-15T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-096",
+    "lotNo": "UNL-96",
+    "catalogueId": null,
+    "metal": "MS",
+    "category": "scrap",
+    "grade": "Point & Crossing Scrap",
+    "indicativeQty": 65,
+    "uom": "MT",
+    "yard": "Mancheswar Depot",
+    "description": "Released points and crossings, manganese steel portions included",
+    "startRate": 28800,
+    "increment": 150,
+    "reserveRate": 30820,
+    "preBidEmd": 95000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-096-p0",
+        "label": "Overview",
+        "hue": 20
+      },
+      {
+        "id": "lot-096-p1",
+        "label": "Close-up",
+        "hue": 30
+      },
+      {
+        "id": "lot-096-p2",
+        "label": "Stack view",
+        "hue": 40
+      }
+    ],
+    "inspectionReportId": "ir-096",
+    "status": "inspected",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-08-15T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-097",
+    "lotNo": "UNL-97",
+    "catalogueId": null,
+    "metal": "Copper",
+    "category": "scrap",
+    "grade": "Cu Radiators",
+    "indicativeQty": 2600,
+    "uom": "KG",
+    "yard": "MSTC Paradip Yard",
+    "description": "Copper-brass radiators, drained, no iron attachments",
+    "startRate": 445,
+    "increment": 2,
+    "reserveRate": 480,
+    "preBidEmd": 60000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-097-p0",
+        "label": "Overview",
+        "hue": 20
+      },
+      {
+        "id": "lot-097-p1",
+        "label": "Close-up",
+        "hue": 30
+      },
+      {
+        "id": "lot-097-p2",
+        "label": "Stack view",
+        "hue": 40
+      }
+    ],
+    "inspectionReportId": "ir-097",
+    "status": "inspected",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-08-15T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-098",
+    "lotNo": "UNL-98",
+    "catalogueId": null,
+    "metal": "SS 304",
+    "category": "scrap",
+    "grade": "304 Skeleton Scrap",
+    "indicativeQty": 8400,
+    "uom": "KG",
+    "yard": "Burma Mines Yard",
+    "description": "SS 304 punching skeletons, coiled, baled at source",
+    "startRate": 96,
+    "increment": 2,
+    "reserveRate": 100,
+    "preBidEmd": 40000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-098-p0",
+        "label": "Overview",
+        "hue": 20
+      },
+      {
+        "id": "lot-098-p1",
+        "label": "Close-up",
+        "hue": 30
+      },
+      {
+        "id": "lot-098-p2",
+        "label": "Stack view",
+        "hue": 40
+      }
+    ],
+    "inspectionReportId": "ir-098",
+    "status": "inspected",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-08-15T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-099",
+    "lotNo": "UNL-99",
+    "catalogueId": null,
+    "metal": "Ferro Alloys",
+    "category": "ferro-alloys",
+    "grade": "FeMn Slag",
+    "indicativeQty": 180,
+    "uom": "MT",
+    "yard": "VJNR Yard B",
+    "description": "Ferro manganese slag, metal recovery grade, ex-dump",
+    "startRate": 14500,
+    "increment": 50,
+    "reserveRate": 15520,
+    "preBidEmd": 130000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-099-p0",
+        "label": "Overview",
+        "hue": 20
+      },
+      {
+        "id": "lot-099-p1",
+        "label": "Close-up",
+        "hue": 30
+      },
+      {
+        "id": "lot-099-p2",
+        "label": "Stack view",
+        "hue": 40
+      }
+    ],
+    "inspectionReportId": "ir-099",
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-08-15T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-100",
+    "lotNo": "UNL-100",
+    "catalogueId": null,
+    "metal": "CI",
+    "category": "melting-products",
+    "grade": "CI Moulds",
+    "indicativeQty": 95,
+    "uom": "MT",
+    "yard": "BSP Scrap Yard 3",
+    "description": "Rejected CI ingot moulds, cracked, avg 4 MT per piece",
+    "startRate": 23800,
+    "increment": 100,
+    "reserveRate": 25470,
+    "preBidEmd": 115000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-100-p0",
+        "label": "Overview",
+        "hue": 20
+      },
+      {
+        "id": "lot-100-p1",
+        "label": "Close-up",
+        "hue": 30
+      },
+      {
+        "id": "lot-100-p2",
+        "label": "Stack view",
+        "hue": 40
+      }
+    ],
+    "inspectionReportId": "ir-100",
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-08-15T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-101",
+    "lotNo": "UNL-101",
+    "catalogueId": null,
+    "metal": "Minerals",
+    "category": "minerals",
+    "grade": "Bottom Ash",
+    "indicativeQty": 3200,
+    "uom": "MT",
+    "yard": "RSTPS Ash Yard",
+    "description": "Bottom ash ex-dyke, self-loading, moisture ≤ 20 %",
+    "startRate": 310,
+    "increment": 50,
+    "reserveRate": 330,
+    "preBidEmd": 50000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-101-p0",
+        "label": "Overview",
+        "hue": 20
+      },
+      {
+        "id": "lot-101-p1",
+        "label": "Close-up",
+        "hue": 30
+      },
+      {
+        "id": "lot-101-p2",
+        "label": "Stack view",
+        "hue": 40
+      }
+    ],
+    "inspectionReportId": "ir-101",
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-08-15T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-102",
+    "lotNo": "UNL-102",
+    "catalogueId": null,
+    "metal": "Assets",
+    "category": "assets",
+    "grade": "Condemned Cranes",
+    "indicativeQty": 3,
+    "uom": "PCS",
+    "yard": "Mancheswar Depot",
+    "description": "Condemned yard cranes — ownership document mismatch, on hold",
+    "startRate": 240000,
+    "increment": 1200,
+    "reserveRate": 256800,
+    "preBidEmd": 35000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-102-p0",
+        "label": "Overview",
+        "hue": 20
+      },
+      {
+        "id": "lot-102-p1",
+        "label": "Close-up",
+        "hue": 30
+      },
+      {
+        "id": "lot-102-p2",
+        "label": "Stack view",
+        "hue": 40
+      }
+    ],
+    "inspectionReportId": "ir-102",
+    "status": "flagged",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-08-15T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  },
+  {
+    "id": "lot-103",
+    "lotNo": "UNL-103",
+    "catalogueId": null,
+    "metal": "Brass",
+    "category": "scrap",
+    "grade": "Mixed Brass",
+    "indicativeQty": 1800,
+    "uom": "KG",
+    "yard": "MSTC Paradip Yard",
+    "description": "Mixed brass scrap — rejected: radioactive source scan pending",
+    "startRate": 372,
+    "increment": 2,
+    "reserveRate": 400,
+    "preBidEmd": 35000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-103-p0",
+        "label": "Overview",
+        "hue": 20
+      },
+      {
+        "id": "lot-103-p1",
+        "label": "Close-up",
+        "hue": 30
+      },
+      {
+        "id": "lot-103-p2",
+        "label": "Stack view",
+        "hue": 40
+      }
+    ],
+    "inspectionReportId": "ir-103",
+    "status": "rejected",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-08-15T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null
+  }
+]

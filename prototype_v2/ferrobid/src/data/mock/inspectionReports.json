@@ -1,0 +1,3402 @@
+[
+  {
+    "id": "ir-001",
+    "lotId": "lot-001",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-10T21:04:00.000Z",
+    "measuredQty": 79.59,
+    "uom": "MT",
+    "condition": "fair",
+    "notes": "Stack verified against yard register. Quantity indicative — final on weighment.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 4,
+    "status": "verified"
+  },
+  {
+    "id": "ir-002",
+    "lotId": "lot-002",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-12T01:48:00.000Z",
+    "measuredQty": 113.13,
+    "uom": "MT",
+    "condition": "mixed",
+    "notes": "Material matches description. Minor surface rust observed, within norms.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-003",
+    "lotId": "lot-003",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-11T08:19:00.000Z",
+    "measuredQty": 69.87,
+    "uom": "MT",
+    "condition": "fair",
+    "notes": "Segregation acceptable. Access for 20 ft trucks confirmed at yard gate.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": false
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-004",
+    "lotId": "lot-004",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-13T12:31:00.000Z",
+    "measuredQty": 45.37,
+    "uom": "MT",
+    "condition": "fair",
+    "notes": "Stack verified against yard register. Quantity indicative — final on weighment.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-005",
+    "lotId": "lot-005",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-14T00:27:00.000Z",
+    "measuredQty": 27.68,
+    "uom": "MT",
+    "condition": "good",
+    "notes": "Stack verified against yard register. Quantity indicative — final on weighment.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-006",
+    "lotId": "lot-006",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-10T14:09:00.000Z",
+    "measuredQty": 47.21,
+    "uom": "MT",
+    "condition": "good",
+    "notes": "Photos captured from all sides. Weighbridge within 2 km of the yard.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-007",
+    "lotId": "lot-007",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-14T05:56:00.000Z",
+    "measuredQty": 39.8,
+    "uom": "MT",
+    "condition": "good",
+    "notes": "Material matches description. Minor surface rust observed, within norms.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-008",
+    "lotId": "lot-008",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-12T23:58:00.000Z",
+    "measuredQty": 102.11,
+    "uom": "MT",
+    "condition": "mixed",
+    "notes": "Segregation acceptable. Access for 20 ft trucks confirmed at yard gate.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 4,
+    "status": "verified"
+  },
+  {
+    "id": "ir-009",
+    "lotId": "lot-009",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-12T15:41:00.000Z",
+    "measuredQty": 31.84,
+    "uom": "MT",
+    "condition": "mixed",
+    "notes": "Stack verified against yard register. Quantity indicative — final on weighment.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": false
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-010",
+    "lotId": "lot-010",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-13T17:43:00.000Z",
+    "measuredQty": 23.66,
+    "uom": "MT",
+    "condition": "mixed",
+    "notes": "Material matches description. Minor surface rust observed, within norms.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 4,
+    "status": "verified"
+  },
+  {
+    "id": "ir-011",
+    "lotId": "lot-011",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-14T01:45:00.000Z",
+    "measuredQty": 38.58,
+    "uom": "MT",
+    "condition": "fair",
+    "notes": "Stack verified against yard register. Quantity indicative — final on weighment.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-012",
+    "lotId": "lot-012",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-10T15:28:00.000Z",
+    "measuredQty": 40.67,
+    "uom": "MT",
+    "condition": "good",
+    "notes": "Material matches description. Minor surface rust observed, within norms.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-013",
+    "lotId": "lot-013",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-13T08:10:00.000Z",
+    "measuredQty": 86.48,
+    "uom": "MT",
+    "condition": "good",
+    "notes": "Segregation acceptable. Access for 20 ft trucks confirmed at yard gate.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 4,
+    "status": "verified"
+  },
+  {
+    "id": "ir-014",
+    "lotId": "lot-014",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-10T11:53:00.000Z",
+    "measuredQty": 27.81,
+    "uom": "MT",
+    "condition": "mixed",
+    "notes": "Stack verified against yard register. Quantity indicative — final on weighment.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-015",
+    "lotId": "lot-015",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-11T18:53:00.000Z",
+    "measuredQty": 15.25,
+    "uom": "MT",
+    "condition": "mixed",
+    "notes": "Segregation acceptable. Access for 20 ft trucks confirmed at yard gate.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": false
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 4,
+    "status": "verified"
+  },
+  {
+    "id": "ir-016",
+    "lotId": "lot-016",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-10T13:29:00.000Z",
+    "measuredQty": 40.55,
+    "uom": "MT",
+    "condition": "good",
+    "notes": "Photos captured from all sides. Weighbridge within 2 km of the yard.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 4,
+    "status": "verified"
+  },
+  {
+    "id": "ir-017",
+    "lotId": "lot-017",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-12T23:36:00.000Z",
+    "measuredQty": 68.46,
+    "uom": "MT",
+    "condition": "good",
+    "notes": "Segregation acceptable. Access for 20 ft trucks confirmed at yard gate.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-018",
+    "lotId": "lot-018",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-11T00:19:00.000Z",
+    "measuredQty": 12.34,
+    "uom": "MT",
+    "condition": "good",
+    "notes": "Segregation acceptable. Access for 20 ft trucks confirmed at yard gate.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-019",
+    "lotId": "lot-019",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-12T19:01:00.000Z",
+    "measuredQty": 16912.83,
+    "uom": "KG",
+    "condition": "fair",
+    "notes": "Segregation acceptable. Access for 20 ft trucks confirmed at yard gate.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": false
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-020",
+    "lotId": "lot-020",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-11T23:37:00.000Z",
+    "measuredQty": 9624.53,
+    "uom": "KG",
+    "condition": "good",
+    "notes": "Segregation acceptable. Access for 20 ft trucks confirmed at yard gate.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-021",
+    "lotId": "lot-021",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-14T18:53:00.000Z",
+    "measuredQty": 7954.91,
+    "uom": "KG",
+    "condition": "mixed",
+    "notes": "Stack verified against yard register. Quantity indicative — final on weighment.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-022",
+    "lotId": "lot-022",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-11T12:51:00.000Z",
+    "measuredQty": 17856.8,
+    "uom": "KG",
+    "condition": "mixed",
+    "notes": "Segregation acceptable. Access for 20 ft trucks confirmed at yard gate.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": false
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-023",
+    "lotId": "lot-023",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-13T02:16:00.000Z",
+    "measuredQty": 39.24,
+    "uom": "MT",
+    "condition": "good",
+    "notes": "Stack verified against yard register. Quantity indicative — final on weighment.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": false
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-024",
+    "lotId": "lot-024",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-13T18:28:00.000Z",
+    "measuredQty": 4788.45,
+    "uom": "KG",
+    "condition": "good",
+    "notes": "Photos captured from all sides. Weighbridge within 2 km of the yard.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": false
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-025",
+    "lotId": "lot-025",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-13T19:14:00.000Z",
+    "measuredQty": 12031.65,
+    "uom": "KG",
+    "condition": "good",
+    "notes": "Stack verified against yard register. Quantity indicative — final on weighment.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-026",
+    "lotId": "lot-026",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-14T06:19:00.000Z",
+    "measuredQty": 16794.35,
+    "uom": "KG",
+    "condition": "fair",
+    "notes": "Segregation acceptable. Access for 20 ft trucks confirmed at yard gate.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-027",
+    "lotId": "lot-027",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-11T09:02:00.000Z",
+    "measuredQty": 7021.88,
+    "uom": "KG",
+    "condition": "good",
+    "notes": "Material matches description. Minor surface rust observed, within norms.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": false
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-028",
+    "lotId": "lot-028",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-12T07:26:00.000Z",
+    "measuredQty": 27.08,
+    "uom": "MT",
+    "condition": "good",
+    "notes": "Segregation acceptable. Access for 20 ft trucks confirmed at yard gate.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": false
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-029",
+    "lotId": "lot-029",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-12T19:51:00.000Z",
+    "measuredQty": 9025.18,
+    "uom": "KG",
+    "condition": "mixed",
+    "notes": "Photos captured from all sides. Weighbridge within 2 km of the yard.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": false
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-030",
+    "lotId": "lot-030",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-14T12:51:00.000Z",
+    "measuredQty": 8278.81,
+    "uom": "KG",
+    "condition": "fair",
+    "notes": "Stack verified against yard register. Quantity indicative — final on weighment.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-031",
+    "lotId": "lot-031",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-13T01:58:00.000Z",
+    "measuredQty": 23551.1,
+    "uom": "KG",
+    "condition": "good",
+    "notes": "Stack verified against yard register. Quantity indicative — final on weighment.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-032",
+    "lotId": "lot-032",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-13T19:22:00.000Z",
+    "measuredQty": 12569.45,
+    "uom": "KG",
+    "condition": "mixed",
+    "notes": "Photos captured from all sides. Weighbridge within 2 km of the yard.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": false
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-033",
+    "lotId": "lot-033",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-13T16:24:00.000Z",
+    "measuredQty": 64.45,
+    "uom": "MT",
+    "condition": "good",
+    "notes": "Photos captured from all sides. Weighbridge within 2 km of the yard.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-034",
+    "lotId": "lot-034",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-13T16:13:00.000Z",
+    "measuredQty": 224.23,
+    "uom": "MT",
+    "condition": "good",
+    "notes": "Material matches description. Minor surface rust observed, within norms.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 4,
+    "status": "verified"
+  },
+  {
+    "id": "ir-035",
+    "lotId": "lot-035",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-14T21:20:00.000Z",
+    "measuredQty": 31.16,
+    "uom": "MT",
+    "condition": "good",
+    "notes": "Material matches description. Minor surface rust observed, within norms.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 4,
+    "status": "verified"
+  },
+  {
+    "id": "ir-036",
+    "lotId": "lot-036",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-14T07:28:00.000Z",
+    "measuredQty": 238.09,
+    "uom": "MT",
+    "condition": "mixed",
+    "notes": "Material matches description. Minor surface rust observed, within norms.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-037",
+    "lotId": "lot-037",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-13T05:31:00.000Z",
+    "measuredQty": 1497.83,
+    "uom": "KG",
+    "condition": "mixed",
+    "notes": "Photos captured from all sides. Weighbridge within 2 km of the yard.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-038",
+    "lotId": "lot-038",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-15T01:54:00.000Z",
+    "measuredQty": 116.75,
+    "uom": "MT",
+    "condition": "good",
+    "notes": "Photos captured from all sides. Weighbridge within 2 km of the yard.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 4,
+    "status": "verified"
+  },
+  {
+    "id": "ir-039",
+    "lotId": "lot-039",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-12T17:17:00.000Z",
+    "measuredQty": 200,
+    "uom": "MT",
+    "condition": "good",
+    "notes": "Stack verified against yard register. Quantity indicative — final on weighment.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-040",
+    "lotId": "lot-040",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-14T18:48:00.000Z",
+    "measuredQty": 18.18,
+    "uom": "MT",
+    "condition": "mixed",
+    "notes": "Material matches description. Minor surface rust observed, within norms.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-041",
+    "lotId": "lot-041",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-14T22:06:00.000Z",
+    "measuredQty": 136.38,
+    "uom": "MT",
+    "condition": "fair",
+    "notes": "Photos captured from all sides. Weighbridge within 2 km of the yard.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 4,
+    "status": "verified"
+  },
+  {
+    "id": "ir-042",
+    "lotId": "lot-042",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-12T20:47:00.000Z",
+    "measuredQty": 2288.92,
+    "uom": "KG",
+    "condition": "good",
+    "notes": "Segregation acceptable. Access for 20 ft trucks confirmed at yard gate.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-043",
+    "lotId": "lot-043",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-15T01:24:00.000Z",
+    "measuredQty": 158.93,
+    "uom": "MT",
+    "condition": "mixed",
+    "notes": "Photos captured from all sides. Weighbridge within 2 km of the yard.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-044",
+    "lotId": "lot-044",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-13T17:08:00.000Z",
+    "measuredQty": 227.07,
+    "uom": "MT",
+    "condition": "mixed",
+    "notes": "Segregation acceptable. Access for 20 ft trucks confirmed at yard gate.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 4,
+    "status": "verified"
+  },
+  {
+    "id": "ir-045",
+    "lotId": "lot-045",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-17T00:14:00.000Z",
+    "measuredQty": 11575.04,
+    "uom": "KG",
+    "condition": "good",
+    "notes": "Photos captured from all sides. Weighbridge within 2 km of the yard.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-046",
+    "lotId": "lot-046",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-17T01:07:00.000Z",
+    "measuredQty": 8875.91,
+    "uom": "KG",
+    "condition": "good",
+    "notes": "Stack verified against yard register. Quantity indicative — final on weighment.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-047",
+    "lotId": "lot-047",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-17T01:02:00.000Z",
+    "measuredQty": 2368.86,
+    "uom": "KG",
+    "condition": "mixed",
+    "notes": "Photos captured from all sides. Weighbridge within 2 km of the yard.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": false
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-048",
+    "lotId": "lot-048",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-17T00:43:00.000Z",
+    "measuredQty": 1395.31,
+    "uom": "KG",
+    "condition": "fair",
+    "notes": "Photos captured from all sides. Weighbridge within 2 km of the yard.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 4,
+    "status": "verified"
+  },
+  {
+    "id": "ir-049",
+    "lotId": "lot-049",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-16T17:38:00.000Z",
+    "measuredQty": 11.56,
+    "uom": "MT",
+    "condition": "good",
+    "notes": "Material matches description. Minor surface rust observed, within norms.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-050",
+    "lotId": "lot-050",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-16T22:13:00.000Z",
+    "measuredQty": 28.65,
+    "uom": "MT",
+    "condition": "fair",
+    "notes": "Photos captured from all sides. Weighbridge within 2 km of the yard.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-051",
+    "lotId": "lot-051",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-16T18:42:00.000Z",
+    "measuredQty": 13246.23,
+    "uom": "KG",
+    "condition": "fair",
+    "notes": "Photos captured from all sides. Weighbridge within 2 km of the yard.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-052",
+    "lotId": "lot-052",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-16T22:54:00.000Z",
+    "measuredQty": 7760.29,
+    "uom": "KG",
+    "condition": "fair",
+    "notes": "Material matches description. Minor surface rust observed, within norms.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-053",
+    "lotId": "lot-053",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-16T20:11:00.000Z",
+    "measuredQty": 3084.67,
+    "uom": "KG",
+    "condition": "mixed",
+    "notes": "Segregation acceptable. Access for 20 ft trucks confirmed at yard gate.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": false
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-054",
+    "lotId": "lot-054",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-16T20:55:00.000Z",
+    "measuredQty": 1026.74,
+    "uom": "KG",
+    "condition": "good",
+    "notes": "Stack verified against yard register. Quantity indicative — final on weighment.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-055",
+    "lotId": "lot-055",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-16T18:07:00.000Z",
+    "measuredQty": 13.45,
+    "uom": "MT",
+    "condition": "fair",
+    "notes": "Photos captured from all sides. Weighbridge within 2 km of the yard.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-056",
+    "lotId": "lot-056",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-17T05:20:00.000Z",
+    "measuredQty": 20.37,
+    "uom": "MT",
+    "condition": "fair",
+    "notes": "Photos captured from all sides. Weighbridge within 2 km of the yard.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 4,
+    "status": "verified"
+  },
+  {
+    "id": "ir-057",
+    "lotId": "lot-057",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-17T05:23:00.000Z",
+    "measuredQty": 3172.16,
+    "uom": "KG",
+    "condition": "fair",
+    "notes": "Material matches description. Minor surface rust observed, within norms.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 4,
+    "status": "verified"
+  },
+  {
+    "id": "ir-058",
+    "lotId": "lot-058",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-16T19:05:00.000Z",
+    "measuredQty": 8370.41,
+    "uom": "KG",
+    "condition": "good",
+    "notes": "Material matches description. Minor surface rust observed, within norms.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 4,
+    "status": "verified"
+  },
+  {
+    "id": "ir-059",
+    "lotId": "lot-059",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-16T23:53:00.000Z",
+    "measuredQty": 3003.81,
+    "uom": "KG",
+    "condition": "good",
+    "notes": "Segregation acceptable. Access for 20 ft trucks confirmed at yard gate.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": false
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-060",
+    "lotId": "lot-060",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-16T22:45:00.000Z",
+    "measuredQty": 4582.82,
+    "uom": "KG",
+    "condition": "fair",
+    "notes": "Stack verified against yard register. Quantity indicative — final on weighment.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-061",
+    "lotId": "lot-061",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-17T13:51:00.000Z",
+    "measuredQty": 1128.73,
+    "uom": "MT",
+    "condition": "good",
+    "notes": "Material matches description. Minor surface rust observed, within norms.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 4,
+    "status": "verified"
+  },
+  {
+    "id": "ir-062",
+    "lotId": "lot-062",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-17T20:47:00.000Z",
+    "measuredQty": 1446.08,
+    "uom": "MT",
+    "condition": "mixed",
+    "notes": "Segregation acceptable. Access for 20 ft trucks confirmed at yard gate.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-063",
+    "lotId": "lot-063",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-18T15:27:00.000Z",
+    "measuredQty": 3775.11,
+    "uom": "MT",
+    "condition": "fair",
+    "notes": "Material matches description. Minor surface rust observed, within norms.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 4,
+    "status": "verified"
+  },
+  {
+    "id": "ir-064",
+    "lotId": "lot-064",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-17T16:53:00.000Z",
+    "measuredQty": 22967.51,
+    "uom": "KG",
+    "condition": "fair",
+    "notes": "Stack verified against yard register. Quantity indicative — final on weighment.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": false
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-065",
+    "lotId": "lot-065",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-17T22:01:00.000Z",
+    "measuredQty": 971.72,
+    "uom": "MT",
+    "condition": "good",
+    "notes": "Photos captured from all sides. Weighbridge within 2 km of the yard.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 4,
+    "status": "verified"
+  },
+  {
+    "id": "ir-066",
+    "lotId": "lot-066",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-17T09:58:00.000Z",
+    "measuredQty": 1072.41,
+    "uom": "MT",
+    "condition": "good",
+    "notes": "Material matches description. Minor surface rust observed, within norms.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-067",
+    "lotId": "lot-067",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-18T04:17:00.000Z",
+    "measuredQty": 4772.22,
+    "uom": "MT",
+    "condition": "mixed",
+    "notes": "Photos captured from all sides. Weighbridge within 2 km of the yard.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-068",
+    "lotId": "lot-068",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-18T16:11:00.000Z",
+    "measuredQty": 12214.09,
+    "uom": "KG",
+    "condition": "mixed",
+    "notes": "Stack verified against yard register. Quantity indicative — final on weighment.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": false
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-069",
+    "lotId": "lot-069",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-17T12:55:00.000Z",
+    "measuredQty": 1539.16,
+    "uom": "MT",
+    "condition": "fair",
+    "notes": "Photos captured from all sides. Weighbridge within 2 km of the yard.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 4,
+    "status": "verified"
+  },
+  {
+    "id": "ir-070",
+    "lotId": "lot-070",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-17T10:17:00.000Z",
+    "measuredQty": 1136.95,
+    "uom": "MT",
+    "condition": "mixed",
+    "notes": "Material matches description. Minor surface rust observed, within norms.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 4,
+    "status": "verified"
+  },
+  {
+    "id": "ir-071",
+    "lotId": "lot-071",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-10T20:45:00.000Z",
+    "measuredQty": 3780.95,
+    "uom": "KG",
+    "condition": "good",
+    "notes": "Stack verified against yard register. Quantity indicative — final on weighment.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-072",
+    "lotId": "lot-072",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-10T12:19:00.000Z",
+    "measuredQty": 1959.89,
+    "uom": "KG",
+    "condition": "good",
+    "notes": "Segregation acceptable. Access for 20 ft trucks confirmed at yard gate.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 4,
+    "status": "verified"
+  },
+  {
+    "id": "ir-073",
+    "lotId": "lot-073",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-11T04:32:00.000Z",
+    "measuredQty": 4487.4,
+    "uom": "KG",
+    "condition": "good",
+    "notes": "Stack verified against yard register. Quantity indicative — final on weighment.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-074",
+    "lotId": "lot-074",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-11T13:17:00.000Z",
+    "measuredQty": 6883.55,
+    "uom": "KG",
+    "condition": "good",
+    "notes": "Stack verified against yard register. Quantity indicative — final on weighment.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-075",
+    "lotId": "lot-075",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-10T21:11:00.000Z",
+    "measuredQty": 5547.83,
+    "uom": "KG",
+    "condition": "mixed",
+    "notes": "Segregation acceptable. Access for 20 ft trucks confirmed at yard gate.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-076",
+    "lotId": "lot-076",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-12T02:10:00.000Z",
+    "measuredQty": 1815.1,
+    "uom": "KG",
+    "condition": "good",
+    "notes": "Photos captured from all sides. Weighbridge within 2 km of the yard.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 4,
+    "status": "verified"
+  },
+  {
+    "id": "ir-077",
+    "lotId": "lot-077",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-10T13:16:00.000Z",
+    "measuredQty": 1929.87,
+    "uom": "KG",
+    "condition": "good",
+    "notes": "Photos captured from all sides. Weighbridge within 2 km of the yard.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-078",
+    "lotId": "lot-078",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-11T18:20:00.000Z",
+    "measuredQty": 4702.63,
+    "uom": "KG",
+    "condition": "good",
+    "notes": "Segregation acceptable. Access for 20 ft trucks confirmed at yard gate.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 4,
+    "status": "verified"
+  },
+  {
+    "id": "ir-079",
+    "lotId": "lot-079",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-11T20:27:00.000Z",
+    "measuredQty": 2715.6,
+    "uom": "KG",
+    "condition": "good",
+    "notes": "Material matches description. Minor surface rust observed, within norms.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-080",
+    "lotId": "lot-080",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-11T12:04:00.000Z",
+    "measuredQty": 2774.69,
+    "uom": "KG",
+    "condition": "fair",
+    "notes": "Material matches description. Minor surface rust observed, within norms.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-081",
+    "lotId": "lot-081",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-10T17:11:00.000Z",
+    "measuredQty": 1792.37,
+    "uom": "KG",
+    "condition": "good",
+    "notes": "Material matches description. Minor surface rust observed, within norms.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-082",
+    "lotId": "lot-082",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-10T23:58:00.000Z",
+    "measuredQty": 7621,
+    "uom": "KG",
+    "condition": "fair",
+    "notes": "Stack verified against yard register. Quantity indicative — final on weighment.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-083",
+    "lotId": "lot-083",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-07T04:48:00.000Z",
+    "measuredQty": 6.09,
+    "uom": "PCS",
+    "condition": "fair",
+    "notes": "Stack verified against yard register. Quantity indicative — final on weighment.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 4,
+    "status": "verified"
+  },
+  {
+    "id": "ir-084",
+    "lotId": "lot-084",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-07T05:47:00.000Z",
+    "measuredQty": 1.04,
+    "uom": "LOT",
+    "condition": "good",
+    "notes": "Material matches description. Minor surface rust observed, within norms.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 4,
+    "status": "verified"
+  },
+  {
+    "id": "ir-085",
+    "lotId": "lot-085",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-07T12:59:00.000Z",
+    "measuredQty": 2.04,
+    "uom": "PCS",
+    "condition": "good",
+    "notes": "Segregation acceptable. Access for 20 ft trucks confirmed at yard gate.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-086",
+    "lotId": "lot-086",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-07T03:14:00.000Z",
+    "measuredQty": 39.67,
+    "uom": "MT",
+    "condition": "good",
+    "notes": "Material matches description. Minor surface rust observed, within norms.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 2,
+    "status": "verified"
+  },
+  {
+    "id": "ir-087",
+    "lotId": "lot-087",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-07T12:44:00.000Z",
+    "measuredQty": 1.92,
+    "uom": "PCS",
+    "condition": "mixed",
+    "notes": "Photos captured from all sides. Weighbridge within 2 km of the yard.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-088",
+    "lotId": "lot-088",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-07T20:14:00.000Z",
+    "measuredQty": 6.1,
+    "uom": "PCS",
+    "condition": "good",
+    "notes": "Segregation acceptable. Access for 20 ft trucks confirmed at yard gate.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-089",
+    "lotId": "lot-089",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-07T08:57:00.000Z",
+    "measuredQty": 0.97,
+    "uom": "LOT",
+    "condition": "mixed",
+    "notes": "Stack verified against yard register. Quantity indicative — final on weighment.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 4,
+    "status": "verified"
+  },
+  {
+    "id": "ir-090",
+    "lotId": "lot-090",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-06T18:05:00.000Z",
+    "measuredQty": 2.86,
+    "uom": "PCS",
+    "condition": "fair",
+    "notes": "Segregation acceptable. Access for 20 ft trucks confirmed at yard gate.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-091",
+    "lotId": "lot-091",
+    "inspectorId": "u-field-2",
+    "date": "2026-07-07T21:05:00.000Z",
+    "measuredQty": 62.61,
+    "uom": "MT",
+    "condition": "good",
+    "notes": "Material matches description. Minor surface rust observed, within norms.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 4,
+    "status": "verified"
+  },
+  {
+    "id": "ir-092",
+    "lotId": "lot-092",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-07T19:28:00.000Z",
+    "measuredQty": 2.04,
+    "uom": "PCS",
+    "condition": "fair",
+    "notes": "Photos captured from all sides. Weighbridge within 2 km of the yard.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-096",
+    "lotId": "lot-096",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-14T17:42:00.000Z",
+    "measuredQty": 65.53,
+    "uom": "MT",
+    "condition": "good",
+    "notes": "Verified at source yard. Ready for cataloguing.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-097",
+    "lotId": "lot-097",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-14T17:49:00.000Z",
+    "measuredQty": 2677.16,
+    "uom": "KG",
+    "condition": "good",
+    "notes": "Verified at source yard. Ready for cataloguing.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-098",
+    "lotId": "lot-098",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-14T17:56:00.000Z",
+    "measuredQty": 8399.6,
+    "uom": "KG",
+    "condition": "good",
+    "notes": "Verified at source yard. Ready for cataloguing.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-099",
+    "lotId": "lot-099",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-14T18:03:00.000Z",
+    "measuredQty": 183.2,
+    "uom": "MT",
+    "condition": "good",
+    "notes": "Verified at source yard. Ready for cataloguing.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-100",
+    "lotId": "lot-100",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-14T18:10:00.000Z",
+    "measuredQty": 94.72,
+    "uom": "MT",
+    "condition": "good",
+    "notes": "Verified at source yard. Ready for cataloguing.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-101",
+    "lotId": "lot-101",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-14T18:17:00.000Z",
+    "measuredQty": 3068.85,
+    "uom": "MT",
+    "condition": "good",
+    "notes": "Verified at source yard. Ready for cataloguing.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "verified"
+  },
+  {
+    "id": "ir-102",
+    "lotId": "lot-102",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-14T18:24:00.000Z",
+    "measuredQty": 2.84,
+    "uom": "PCS",
+    "condition": "mixed",
+    "notes": "Ownership papers do not match yard register — escalated to manager.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": true
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": true
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "flagged"
+  },
+  {
+    "id": "ir-103",
+    "lotId": "lot-103",
+    "inspectorId": "u-field-1",
+    "date": "2026-07-14T18:31:00.000Z",
+    "measuredQty": 1766.51,
+    "uom": "KG",
+    "condition": "good",
+    "notes": "Verified at source yard. Ready for cataloguing.",
+    "checklist": [
+      {
+        "item": "Material matches declared grade",
+        "ok": false
+      },
+      {
+        "item": "Quantity verified (visual/weighment)",
+        "ok": true
+      },
+      {
+        "item": "No hazardous contamination",
+        "ok": false
+      },
+      {
+        "item": "Loading access available",
+        "ok": true
+      },
+      {
+        "item": "Photos captured",
+        "ok": true
+      }
+    ],
+    "photoCount": 3,
+    "status": "rejected"
+  }
+]

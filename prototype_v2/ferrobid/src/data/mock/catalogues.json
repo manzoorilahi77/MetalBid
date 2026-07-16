@@ -1,0 +1,435 @@
+[
+  {
+    "id": "cat-1",
+    "code": "AUC-2412",
+    "title": "SAIL Bhilai — Mixed MS Scrap, Turnings & TMT Rejects",
+    "sellerId": "u-seller-1",
+    "type": "forward",
+    "status": "live",
+    "startsAt": "2026-07-13T06:30:00.000Z",
+    "endsAt": "2026-07-16T07:12:00.000Z",
+    "inspectionFrom": "2026-07-10T06:30:00.000Z",
+    "inspectionTo": "2026-07-14T06:30:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "S. K. Sahu",
+      "phone": "+91 94252 10883",
+      "role": "Yard In-charge (Inspection & Lifting)"
+    },
+    "yardName": "BSP Scrap Yard 3",
+    "yardAddress": "Gate 7, SAIL Bhilai Steel Plant, Bhilai, Chhattisgarh 490001",
+    "region": "Bhilai, CG",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "lot-001",
+      "lot-002",
+      "lot-003",
+      "lot-004",
+      "lot-005",
+      "lot-006",
+      "lot-007",
+      "lot-008",
+      "lot-009",
+      "lot-010",
+      "lot-011",
+      "lot-012",
+      "lot-013",
+      "lot-014",
+      "lot-015",
+      "lot-016",
+      "lot-017",
+      "lot-018"
+    ],
+    "documents": [
+      {
+        "id": "cat-1-doc-1",
+        "name": "AUC-2412 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.4 MB"
+      },
+      {
+        "id": "cat-1-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "810 KB"
+      },
+      {
+        "id": "cat-1-doc-3",
+        "name": "Payment Schedule & Bank Details.xlsx",
+        "type": "xlsx",
+        "size": "96 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of Mixed MS Scrap, Turnings & TMT Rejects on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Quantity indicative — final on weighment."
+  },
+  {
+    "id": "cat-2",
+    "code": "AUC-2415",
+    "title": "Tata Steel Jamshedpur — SS Offcuts, Coil Ends & Turnings",
+    "sellerId": "u-seller-2",
+    "type": "forward",
+    "status": "live",
+    "startsAt": "2026-07-14T06:30:00.000Z",
+    "endsAt": "2026-07-16T09:55:00.000Z",
+    "inspectionFrom": "2026-07-11T06:30:00.000Z",
+    "inspectionTo": "2026-07-15T06:30:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "M. Oraon",
+      "phone": "+91 82102 44561",
+      "role": "Dy. Manager, By-products"
+    },
+    "yardName": "Burma Mines Yard",
+    "yardAddress": "Burma Mines, Tata Steel Works, Jamshedpur, Jharkhand 831007",
+    "region": "Jamshedpur, JH",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "lot-019",
+      "lot-020",
+      "lot-021",
+      "lot-022",
+      "lot-023",
+      "lot-024",
+      "lot-025",
+      "lot-026",
+      "lot-027",
+      "lot-028",
+      "lot-029",
+      "lot-030",
+      "lot-031",
+      "lot-032"
+    ],
+    "documents": [
+      {
+        "id": "cat-2-doc-1",
+        "name": "AUC-2415 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.4 MB"
+      },
+      {
+        "id": "cat-2-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "810 KB"
+      },
+      {
+        "id": "cat-2-doc-3",
+        "name": "Payment Schedule & Bank Details.xlsx",
+        "type": "xlsx",
+        "size": "96 KB"
+      },
+      {
+        "id": "cat-2-doc-4",
+        "name": "Sample Test Certificates.zip",
+        "type": "zip",
+        "size": "5.1 MB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of SS Offcuts, Coil Ends & Turnings on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Quantity indicative — final on weighment."
+  },
+  {
+    "id": "cat-3",
+    "code": "AUC-2418",
+    "title": "East Coast Railway — Released Rails, Wagons & OHE Copper",
+    "sellerId": "u-seller-3",
+    "type": "forward",
+    "status": "live",
+    "startsAt": "2026-07-15T06:30:00.000Z",
+    "endsAt": "2026-07-16T06:51:00.000Z",
+    "inspectionFrom": "2026-07-12T06:30:00.000Z",
+    "inspectionTo": "2026-07-15T06:30:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "B. Pradhan",
+      "phone": "+91 89178 30425",
+      "role": "SSE / Depot Material Superintendent"
+    },
+    "yardName": "Mancheswar Depot",
+    "yardAddress": "Carriage Repair Workshop, Mancheswar, Bhubaneswar, Odisha 751017",
+    "region": "Bhubaneswar, OD",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 14,
+    "lotIds": [
+      "lot-033",
+      "lot-034",
+      "lot-035",
+      "lot-036",
+      "lot-037",
+      "lot-038",
+      "lot-039",
+      "lot-040",
+      "lot-041",
+      "lot-042",
+      "lot-043",
+      "lot-044"
+    ],
+    "documents": [
+      {
+        "id": "cat-3-doc-1",
+        "name": "AUC-2418 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.4 MB"
+      },
+      {
+        "id": "cat-3-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "810 KB"
+      },
+      {
+        "id": "cat-3-doc-3",
+        "name": "Payment Schedule & Bank Details.xlsx",
+        "type": "xlsx",
+        "size": "96 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of Released Rails, Wagons & OHE Copper on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Quantity indicative — final on weighment."
+  },
+  {
+    "id": "cat-4",
+    "code": "AUC-2421",
+    "title": "JSW Vijayanagar — Aluminium, Copper & Ferro Alloy Lots",
+    "sellerId": "u-seller-4",
+    "type": "forward",
+    "status": "upcoming",
+    "startsAt": "2026-07-17T08:30:00.000Z",
+    "endsAt": "2026-07-17T13:30:00.000Z",
+    "inspectionFrom": "2026-07-16T16:30:00.000Z",
+    "inspectionTo": "2026-07-17T06:30:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "H. Kulkarni",
+      "phone": "+91 90360 71182",
+      "role": "Manager, Commercial (Disposals)"
+    },
+    "yardName": "VJNR Yard B",
+    "yardAddress": "JSW Steel Vijayanagar Works, Toranagallu, Bellary, Karnataka 583275",
+    "region": "Bellary, KA",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "lot-045",
+      "lot-046",
+      "lot-047",
+      "lot-048",
+      "lot-049",
+      "lot-050",
+      "lot-051",
+      "lot-052",
+      "lot-053",
+      "lot-054",
+      "lot-055",
+      "lot-056",
+      "lot-057",
+      "lot-058",
+      "lot-059",
+      "lot-060"
+    ],
+    "documents": [
+      {
+        "id": "cat-4-doc-1",
+        "name": "AUC-2421 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.4 MB"
+      },
+      {
+        "id": "cat-4-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "810 KB"
+      },
+      {
+        "id": "cat-4-doc-3",
+        "name": "Payment Schedule & Bank Details.xlsx",
+        "type": "xlsx",
+        "size": "96 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of Aluminium, Copper & Ferro Alloy Lots on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Quantity indicative — final on weighment."
+  },
+  {
+    "id": "cat-5",
+    "code": "AUC-2424",
+    "title": "NTPC Ramagundam — Coal Rejects, Fly Ash & Used Oil",
+    "sellerId": "u-seller-5",
+    "type": "forward",
+    "status": "upcoming",
+    "startsAt": "2026-07-19T06:30:00.000Z",
+    "endsAt": "2026-07-19T11:30:00.000Z",
+    "inspectionFrom": "2026-07-17T06:30:00.000Z",
+    "inspectionTo": "2026-07-18T18:30:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "G. Srinivas",
+      "phone": "+91 87903 55240",
+      "role": "AGM (Fuel Handling)"
+    },
+    "yardName": "RSTPS Ash Yard",
+    "yardAddress": "NTPC Ramagundam, Jyothinagar, Peddapalli, Telangana 505215",
+    "region": "Ramagundam, TS",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "lot-061",
+      "lot-062",
+      "lot-063",
+      "lot-064",
+      "lot-065",
+      "lot-066",
+      "lot-067",
+      "lot-068",
+      "lot-069",
+      "lot-070"
+    ],
+    "documents": [
+      {
+        "id": "cat-5-doc-1",
+        "name": "AUC-2424 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.4 MB"
+      },
+      {
+        "id": "cat-5-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "810 KB"
+      },
+      {
+        "id": "cat-5-doc-3",
+        "name": "Payment Schedule & Bank Details.xlsx",
+        "type": "xlsx",
+        "size": "96 KB"
+      },
+      {
+        "id": "cat-5-doc-4",
+        "name": "PCB-Free Certificates (Used Oil).pdf",
+        "type": "pdf",
+        "size": "1.2 MB"
+      }
+    ],
+    "termsSetId": "ts-hazmat",
+    "description": "E-auction of Coal Rejects, Fly Ash & Used Oil on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Quantity indicative — final on weighment."
+  },
+  {
+    "id": "cat-6",
+    "code": "AUC-2406",
+    "title": "MSTC Eastern Region — Copper, Brass & Cable Scrap",
+    "sellerId": "u-seller-6",
+    "type": "forward",
+    "status": "closed",
+    "startsAt": "2026-07-13T06:30:00.000Z",
+    "endsAt": "2026-07-14T06:30:00.000Z",
+    "inspectionFrom": "2026-07-10T06:30:00.000Z",
+    "inspectionTo": "2026-07-12T06:30:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "T. Ghosh",
+      "phone": "+91 90070 18836",
+      "role": "Yard Supervisor"
+    },
+    "yardName": "MSTC Paradip Yard",
+    "yardAddress": "MSTC Stockyard, Paradip Port Area, Jagatsinghpur, Odisha 754142",
+    "region": "Paradip, OD",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "lot-071",
+      "lot-072",
+      "lot-073",
+      "lot-074",
+      "lot-075",
+      "lot-076",
+      "lot-077",
+      "lot-078",
+      "lot-079",
+      "lot-080",
+      "lot-081",
+      "lot-082"
+    ],
+    "documents": [
+      {
+        "id": "cat-6-doc-1",
+        "name": "AUC-2406 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.4 MB"
+      },
+      {
+        "id": "cat-6-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "810 KB"
+      },
+      {
+        "id": "cat-6-doc-3",
+        "name": "Payment Schedule & Bank Details.xlsx",
+        "type": "xlsx",
+        "size": "96 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of Copper, Brass & Cable Scrap on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Quantity indicative — final on weighment."
+  },
+  {
+    "id": "cat-7",
+    "code": "AUC-2402",
+    "title": "BHEL Trichy — Plant & Machinery, Condemned Assets",
+    "sellerId": "u-seller-7",
+    "type": "forward",
+    "status": "closed",
+    "startsAt": "2026-07-09T06:30:00.000Z",
+    "endsAt": "2026-07-10T06:30:00.000Z",
+    "inspectionFrom": "2026-07-06T06:30:00.000Z",
+    "inspectionTo": "2026-07-08T06:30:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "R. Elango",
+      "phone": "+91 94430 20951",
+      "role": "Sr. Engineer (Disposals)"
+    },
+    "yardName": "BHEL Unit II Yard",
+    "yardAddress": "BHEL Tiruchirappalli, Kailasapuram, Tamil Nadu 620014",
+    "region": "Trichy, TN",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 15,
+    "lotIds": [
+      "lot-083",
+      "lot-084",
+      "lot-085",
+      "lot-086",
+      "lot-087",
+      "lot-088",
+      "lot-089",
+      "lot-090",
+      "lot-091",
+      "lot-092"
+    ],
+    "documents": [
+      {
+        "id": "cat-7-doc-1",
+        "name": "AUC-2402 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.4 MB"
+      },
+      {
+        "id": "cat-7-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "810 KB"
+      },
+      {
+        "id": "cat-7-doc-3",
+        "name": "Payment Schedule & Bank Details.xlsx",
+        "type": "xlsx",
+        "size": "96 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of Plant & Machinery, Condemned Assets on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Quantity indicative — final on weighment."
+  }
+]

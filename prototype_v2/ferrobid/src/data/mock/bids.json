@@ -1,0 +1,1782 @@
+[
+  {
+    "id": "bid-0001",
+    "lotId": "lot-002",
+    "catalogueId": "cat-1",
+    "bidderId": "u-buyer-2",
+    "rate": 26100,
+    "at": "2026-07-16T04:22:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0002",
+    "lotId": "lot-002",
+    "catalogueId": "cat-1",
+    "bidderId": "u-buyer-3",
+    "rate": 26250,
+    "at": "2026-07-16T05:45:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0003",
+    "lotId": "lot-004",
+    "catalogueId": "cat-1",
+    "bidderId": "u-buyer-5",
+    "rate": 29300,
+    "at": "2026-07-16T04:22:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0004",
+    "lotId": "lot-004",
+    "catalogueId": "cat-1",
+    "bidderId": "u-buyer-1",
+    "rate": 29750,
+    "at": "2026-07-16T05:45:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0005",
+    "lotId": "lot-005",
+    "catalogueId": "cat-1",
+    "bidderId": "u-buyer-3",
+    "rate": 24100,
+    "at": "2026-07-16T04:22:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0006",
+    "lotId": "lot-005",
+    "catalogueId": "cat-1",
+    "bidderId": "u-buyer-7",
+    "rate": 24400,
+    "at": "2026-07-16T05:45:00.000Z",
+    "type": "auto",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0007",
+    "lotId": "lot-008",
+    "catalogueId": "cat-1",
+    "bidderId": "u-buyer-7",
+    "rate": 26450,
+    "at": "2026-07-16T04:22:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0008",
+    "lotId": "lot-008",
+    "catalogueId": "cat-1",
+    "bidderId": "u-buyer-2",
+    "rate": 26900,
+    "at": "2026-07-16T05:45:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0009",
+    "lotId": "lot-010",
+    "catalogueId": "cat-1",
+    "bidderId": "u-buyer-2",
+    "rate": 29550,
+    "at": "2026-07-16T04:22:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0010",
+    "lotId": "lot-010",
+    "catalogueId": "cat-1",
+    "bidderId": "u-buyer-5",
+    "rate": 29850,
+    "at": "2026-07-16T05:17:20.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0011",
+    "lotId": "lot-010",
+    "catalogueId": "cat-1",
+    "bidderId": "u-buyer-5",
+    "rate": 30300,
+    "at": "2026-07-16T06:12:40.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0012",
+    "lotId": "lot-012",
+    "catalogueId": "cat-1",
+    "bidderId": "u-buyer-3",
+    "rate": 36400,
+    "at": "2026-07-16T04:22:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0013",
+    "lotId": "lot-012",
+    "catalogueId": "cat-1",
+    "bidderId": "u-buyer-2",
+    "rate": 36600,
+    "at": "2026-07-16T05:17:20.000Z",
+    "type": "auto",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0014",
+    "lotId": "lot-012",
+    "catalogueId": "cat-1",
+    "bidderId": "u-buyer-5",
+    "rate": 36800,
+    "at": "2026-07-16T06:12:40.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0015",
+    "lotId": "lot-013",
+    "catalogueId": "cat-1",
+    "bidderId": "u-buyer-1",
+    "rate": 28600,
+    "at": "2026-07-16T04:22:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0016",
+    "lotId": "lot-014",
+    "catalogueId": "cat-1",
+    "bidderId": "u-buyer-3",
+    "rate": 25700,
+    "at": "2026-07-16T04:22:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0017",
+    "lotId": "lot-014",
+    "catalogueId": "cat-1",
+    "bidderId": "u-buyer-7",
+    "rate": 25850,
+    "at": "2026-07-16T05:17:20.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0018",
+    "lotId": "lot-014",
+    "catalogueId": "cat-1",
+    "bidderId": "u-buyer-1",
+    "rate": 26000,
+    "at": "2026-07-16T06:12:40.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0019",
+    "lotId": "lot-017",
+    "catalogueId": "cat-1",
+    "bidderId": "u-buyer-2",
+    "rate": 24100,
+    "at": "2026-07-16T04:22:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0020",
+    "lotId": "lot-019",
+    "catalogueId": "cat-2",
+    "bidderId": "u-buyer-7",
+    "rate": 124,
+    "at": "2026-07-16T07:05:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0021",
+    "lotId": "lot-019",
+    "catalogueId": "cat-2",
+    "bidderId": "u-buyer-3",
+    "rate": 126,
+    "at": "2026-07-16T08:28:00.000Z",
+    "type": "auto",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0022",
+    "lotId": "lot-021",
+    "catalogueId": "cat-2",
+    "bidderId": "u-buyer-6",
+    "rate": 72,
+    "at": "2026-07-16T07:05:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0023",
+    "lotId": "lot-022",
+    "catalogueId": "cat-2",
+    "bidderId": "u-buyer-2",
+    "rate": 103,
+    "at": "2026-07-16T07:05:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0024",
+    "lotId": "lot-024",
+    "catalogueId": "cat-2",
+    "bidderId": "u-buyer-3",
+    "rate": 149,
+    "at": "2026-07-16T07:05:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0025",
+    "lotId": "lot-024",
+    "catalogueId": "cat-2",
+    "bidderId": "u-buyer-7",
+    "rate": 164,
+    "at": "2026-07-16T08:28:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0026",
+    "lotId": "lot-025",
+    "catalogueId": "cat-2",
+    "bidderId": "u-buyer-2",
+    "rate": 193,
+    "at": "2026-07-16T07:05:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0027",
+    "lotId": "lot-025",
+    "catalogueId": "cat-2",
+    "bidderId": "u-buyer-6",
+    "rate": 195,
+    "at": "2026-07-16T08:00:20.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0028",
+    "lotId": "lot-025",
+    "catalogueId": "cat-2",
+    "bidderId": "u-buyer-7",
+    "rate": 199,
+    "at": "2026-07-16T08:55:40.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0029",
+    "lotId": "lot-026",
+    "catalogueId": "cat-2",
+    "bidderId": "u-buyer-3",
+    "rate": 79,
+    "at": "2026-07-16T07:05:00.000Z",
+    "type": "auto",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0030",
+    "lotId": "lot-026",
+    "catalogueId": "cat-2",
+    "bidderId": "u-buyer-3",
+    "rate": 85,
+    "at": "2026-07-16T08:00:20.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0031",
+    "lotId": "lot-026",
+    "catalogueId": "cat-2",
+    "bidderId": "u-buyer-2",
+    "rate": 87,
+    "at": "2026-07-16T08:55:40.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0032",
+    "lotId": "lot-027",
+    "catalogueId": "cat-2",
+    "bidderId": "u-buyer-3",
+    "rate": 104,
+    "at": "2026-07-16T07:05:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0033",
+    "lotId": "lot-027",
+    "catalogueId": "cat-2",
+    "bidderId": "u-buyer-2",
+    "rate": 106,
+    "at": "2026-07-16T08:00:20.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0034",
+    "lotId": "lot-027",
+    "catalogueId": "cat-2",
+    "bidderId": "u-buyer-6",
+    "rate": 108,
+    "at": "2026-07-16T08:55:40.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0035",
+    "lotId": "lot-028",
+    "catalogueId": "cat-2",
+    "bidderId": "u-buyer-6",
+    "rate": 40600,
+    "at": "2026-07-16T07:05:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0036",
+    "lotId": "lot-029",
+    "catalogueId": "cat-2",
+    "bidderId": "u-buyer-6",
+    "rate": 126,
+    "at": "2026-07-16T07:05:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0037",
+    "lotId": "lot-029",
+    "catalogueId": "cat-2",
+    "bidderId": "u-buyer-3",
+    "rate": 127,
+    "at": "2026-07-16T08:28:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0038",
+    "lotId": "lot-035",
+    "catalogueId": "cat-3",
+    "bidderId": "u-buyer-5",
+    "rate": 25200,
+    "at": "2026-07-16T04:01:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0039",
+    "lotId": "lot-035",
+    "catalogueId": "cat-3",
+    "bidderId": "u-buyer-2",
+    "rate": 25500,
+    "at": "2026-07-16T04:56:20.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0040",
+    "lotId": "lot-035",
+    "catalogueId": "cat-3",
+    "bidderId": "u-buyer-7",
+    "rate": 25600,
+    "at": "2026-07-16T05:51:40.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0041",
+    "lotId": "lot-037",
+    "catalogueId": "cat-3",
+    "bidderId": "u-buyer-3",
+    "rate": 668,
+    "at": "2026-07-16T04:01:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0042",
+    "lotId": "lot-037",
+    "catalogueId": "cat-3",
+    "bidderId": "u-buyer-2",
+    "rate": 673,
+    "at": "2026-07-16T05:24:00.000Z",
+    "type": "auto",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0043",
+    "lotId": "lot-038",
+    "catalogueId": "cat-3",
+    "bidderId": "u-buyer-5",
+    "rate": 31750,
+    "at": "2026-07-16T04:01:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0044",
+    "lotId": "lot-039",
+    "catalogueId": "cat-3",
+    "bidderId": "u-buyer-7",
+    "rate": 27550,
+    "at": "2026-07-16T04:01:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0045",
+    "lotId": "lot-040",
+    "catalogueId": "cat-3",
+    "bidderId": "u-buyer-7",
+    "rate": 23500,
+    "at": "2026-07-16T04:01:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0046",
+    "lotId": "lot-042",
+    "catalogueId": "cat-3",
+    "bidderId": "u-buyer-6",
+    "rate": 638,
+    "at": "2026-07-16T04:01:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0047",
+    "lotId": "lot-042",
+    "catalogueId": "cat-3",
+    "bidderId": "u-buyer-6",
+    "rate": 648,
+    "at": "2026-07-16T05:24:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0048",
+    "lotId": "lot-043",
+    "catalogueId": "cat-3",
+    "bidderId": "u-buyer-2",
+    "rate": 31150,
+    "at": "2026-07-16T04:01:00.000Z",
+    "type": "auto",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0049",
+    "lotId": "lot-043",
+    "catalogueId": "cat-3",
+    "bidderId": "u-buyer-3",
+    "rate": 31600,
+    "at": "2026-07-16T05:24:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0050",
+    "lotId": "lot-044",
+    "catalogueId": "cat-3",
+    "bidderId": "u-buyer-2",
+    "rate": 26300,
+    "at": "2026-07-16T04:01:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0051",
+    "lotId": "lot-044",
+    "catalogueId": "cat-3",
+    "bidderId": "u-buyer-2",
+    "rate": 26450,
+    "at": "2026-07-16T04:56:20.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0052",
+    "lotId": "lot-044",
+    "catalogueId": "cat-3",
+    "bidderId": "u-buyer-3",
+    "rate": 26750,
+    "at": "2026-07-16T05:51:40.000Z",
+    "type": "auto",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0053",
+    "lotId": "lot-071",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-1",
+    "rate": 501,
+    "at": "2026-07-14T01:30:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0054",
+    "lotId": "lot-071",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-7",
+    "rate": 516,
+    "at": "2026-07-14T02:18:20.000Z",
+    "type": "auto",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0055",
+    "lotId": "lot-071",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-6",
+    "rate": 526,
+    "at": "2026-07-14T03:06:40.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0056",
+    "lotId": "lot-071",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-2",
+    "rate": 536,
+    "at": "2026-07-14T03:55:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0057",
+    "lotId": "lot-071",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-5",
+    "rate": 546,
+    "at": "2026-07-14T04:43:20.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0058",
+    "lotId": "lot-071",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-6",
+    "rate": 551,
+    "at": "2026-07-14T05:31:40.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0059",
+    "lotId": "lot-072",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-1",
+    "rate": 498,
+    "at": "2026-07-14T01:30:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0060",
+    "lotId": "lot-072",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-5",
+    "rate": 500,
+    "at": "2026-07-14T02:06:15.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0061",
+    "lotId": "lot-072",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-6",
+    "rate": 501,
+    "at": "2026-07-14T02:42:30.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0062",
+    "lotId": "lot-072",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-6",
+    "rate": 504,
+    "at": "2026-07-14T03:18:45.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0063",
+    "lotId": "lot-072",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-5",
+    "rate": 505,
+    "at": "2026-07-14T03:55:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0064",
+    "lotId": "lot-072",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-3",
+    "rate": 508,
+    "at": "2026-07-14T04:31:15.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0065",
+    "lotId": "lot-072",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-2",
+    "rate": 510,
+    "at": "2026-07-14T05:07:30.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0066",
+    "lotId": "lot-072",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-2",
+    "rate": 511,
+    "at": "2026-07-14T05:43:45.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0067",
+    "lotId": "lot-073",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-7",
+    "rate": 428,
+    "at": "2026-07-14T01:30:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0068",
+    "lotId": "lot-073",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-1",
+    "rate": 430,
+    "at": "2026-07-14T02:42:30.000Z",
+    "type": "auto",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0069",
+    "lotId": "lot-073",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-1",
+    "rate": 432,
+    "at": "2026-07-14T03:55:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0070",
+    "lotId": "lot-073",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-5",
+    "rate": 434,
+    "at": "2026-07-14T05:07:30.000Z",
+    "type": "auto",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0071",
+    "lotId": "lot-074",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-5",
+    "rate": 136,
+    "at": "2026-07-14T01:30:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0072",
+    "lotId": "lot-074",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-2",
+    "rate": 139,
+    "at": "2026-07-14T02:11:25.714Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0073",
+    "lotId": "lot-074",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-1",
+    "rate": 142,
+    "at": "2026-07-14T02:52:51.428Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0074",
+    "lotId": "lot-074",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-6",
+    "rate": 143,
+    "at": "2026-07-14T03:34:17.142Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0075",
+    "lotId": "lot-074",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-6",
+    "rate": 146,
+    "at": "2026-07-14T04:15:42.857Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0076",
+    "lotId": "lot-074",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-3",
+    "rate": 149,
+    "at": "2026-07-14T04:57:08.571Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0077",
+    "lotId": "lot-074",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-1",
+    "rate": 151,
+    "at": "2026-07-14T05:38:34.285Z",
+    "type": "auto",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0078",
+    "lotId": "lot-075",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-1",
+    "rate": 482,
+    "at": "2026-07-14T01:30:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0079",
+    "lotId": "lot-075",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-3",
+    "rate": 488,
+    "at": "2026-07-14T02:28:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0080",
+    "lotId": "lot-075",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-1",
+    "rate": 490,
+    "at": "2026-07-14T03:26:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0081",
+    "lotId": "lot-075",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-7",
+    "rate": 496,
+    "at": "2026-07-14T04:24:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0082",
+    "lotId": "lot-075",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-5",
+    "rate": 502,
+    "at": "2026-07-14T05:22:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0083",
+    "lotId": "lot-076",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-3",
+    "rate": 533,
+    "at": "2026-07-14T01:30:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0084",
+    "lotId": "lot-076",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-2",
+    "rate": 536,
+    "at": "2026-07-14T03:06:40.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0085",
+    "lotId": "lot-076",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-2",
+    "rate": 538,
+    "at": "2026-07-14T04:43:20.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0086",
+    "lotId": "lot-077",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-7",
+    "rate": 416,
+    "at": "2026-07-14T01:30:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0087",
+    "lotId": "lot-077",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-5",
+    "rate": 431,
+    "at": "2026-07-14T02:42:30.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0088",
+    "lotId": "lot-077",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-3",
+    "rate": 441,
+    "at": "2026-07-14T03:55:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0089",
+    "lotId": "lot-077",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-7",
+    "rate": 451,
+    "at": "2026-07-14T05:07:30.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0090",
+    "lotId": "lot-078",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-1",
+    "rate": 149,
+    "at": "2026-07-14T01:30:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0091",
+    "lotId": "lot-078",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-7",
+    "rate": 154,
+    "at": "2026-07-14T03:06:40.000Z",
+    "type": "auto",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0092",
+    "lotId": "lot-078",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-5",
+    "rate": 169,
+    "at": "2026-07-14T04:43:20.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0093",
+    "lotId": "lot-079",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-3",
+    "rate": 510,
+    "at": "2026-07-14T01:30:00.000Z",
+    "type": "auto",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0094",
+    "lotId": "lot-079",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-5",
+    "rate": 512,
+    "at": "2026-07-14T02:11:25.714Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0095",
+    "lotId": "lot-079",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-2",
+    "rate": 515,
+    "at": "2026-07-14T02:52:51.428Z",
+    "type": "auto",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0096",
+    "lotId": "lot-079",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-5",
+    "rate": 518,
+    "at": "2026-07-14T03:34:17.142Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0097",
+    "lotId": "lot-079",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-6",
+    "rate": 520,
+    "at": "2026-07-14T04:15:42.857Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0098",
+    "lotId": "lot-079",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-6",
+    "rate": 522,
+    "at": "2026-07-14T04:57:08.571Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0099",
+    "lotId": "lot-079",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-6",
+    "rate": 524,
+    "at": "2026-07-14T05:38:34.285Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0100",
+    "lotId": "lot-080",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-2",
+    "rate": 529,
+    "at": "2026-07-14T01:30:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0101",
+    "lotId": "lot-080",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-1",
+    "rate": 531,
+    "at": "2026-07-14T02:11:25.714Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0102",
+    "lotId": "lot-080",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-5",
+    "rate": 535,
+    "at": "2026-07-14T02:52:51.428Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0103",
+    "lotId": "lot-080",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-1",
+    "rate": 537,
+    "at": "2026-07-14T03:34:17.142Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0104",
+    "lotId": "lot-080",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-7",
+    "rate": 539,
+    "at": "2026-07-14T04:15:42.857Z",
+    "type": "auto",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0105",
+    "lotId": "lot-080",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-3",
+    "rate": 545,
+    "at": "2026-07-14T04:57:08.571Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0106",
+    "lotId": "lot-080",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-1",
+    "rate": 549,
+    "at": "2026-07-14T05:38:34.285Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0107",
+    "lotId": "lot-081",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-6",
+    "rate": 414,
+    "at": "2026-07-14T01:30:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0108",
+    "lotId": "lot-081",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-1",
+    "rate": 424,
+    "at": "2026-07-14T02:11:25.714Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0109",
+    "lotId": "lot-081",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-1",
+    "rate": 439,
+    "at": "2026-07-14T02:52:51.428Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0110",
+    "lotId": "lot-081",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-5",
+    "rate": 444,
+    "at": "2026-07-14T03:34:17.142Z",
+    "type": "auto",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0111",
+    "lotId": "lot-081",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-7",
+    "rate": 459,
+    "at": "2026-07-14T04:15:42.857Z",
+    "type": "auto",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0112",
+    "lotId": "lot-081",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-5",
+    "rate": 469,
+    "at": "2026-07-14T04:57:08.571Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0113",
+    "lotId": "lot-081",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-7",
+    "rate": 479,
+    "at": "2026-07-14T05:38:34.285Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0114",
+    "lotId": "lot-082",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-7",
+    "rate": 156,
+    "at": "2026-07-14T01:30:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0115",
+    "lotId": "lot-082",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-3",
+    "rate": 161,
+    "at": "2026-07-14T03:06:40.000Z",
+    "type": "auto",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0116",
+    "lotId": "lot-082",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-6",
+    "rate": 176,
+    "at": "2026-07-14T04:43:20.000Z",
+    "type": "auto",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0117",
+    "lotId": "lot-083",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-2",
+    "rate": 265600,
+    "at": "2026-07-10T01:30:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0118",
+    "lotId": "lot-083",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-5",
+    "rate": 266900,
+    "at": "2026-07-10T03:06:40.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0119",
+    "lotId": "lot-083",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-6",
+    "rate": 269500,
+    "at": "2026-07-10T04:43:20.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0120",
+    "lotId": "lot-084",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-6",
+    "rate": 764850,
+    "at": "2026-07-10T01:30:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0121",
+    "lotId": "lot-084",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-7",
+    "rate": 768600,
+    "at": "2026-07-10T02:11:25.714Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0122",
+    "lotId": "lot-084",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-5",
+    "rate": 776100,
+    "at": "2026-07-10T02:52:51.428Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0123",
+    "lotId": "lot-084",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-7",
+    "rate": 779850,
+    "at": "2026-07-10T03:34:17.142Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0124",
+    "lotId": "lot-084",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-2",
+    "rate": 791100,
+    "at": "2026-07-10T04:15:42.857Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0125",
+    "lotId": "lot-084",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-7",
+    "rate": 794850,
+    "at": "2026-07-10T04:57:08.571Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0126",
+    "lotId": "lot-084",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-3",
+    "rate": 806100,
+    "at": "2026-07-10T05:38:34.285Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0127",
+    "lotId": "lot-085",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-7",
+    "rate": 288500,
+    "at": "2026-07-10T01:30:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0128",
+    "lotId": "lot-085",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-7",
+    "rate": 291300,
+    "at": "2026-07-10T02:06:15.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0129",
+    "lotId": "lot-085",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-3",
+    "rate": 295500,
+    "at": "2026-07-10T02:42:30.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0130",
+    "lotId": "lot-085",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-7",
+    "rate": 296900,
+    "at": "2026-07-10T03:18:45.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0131",
+    "lotId": "lot-085",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-5",
+    "rate": 298300,
+    "at": "2026-07-10T03:55:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0132",
+    "lotId": "lot-085",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-5",
+    "rate": 299700,
+    "at": "2026-07-10T04:31:15.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0133",
+    "lotId": "lot-085",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-7",
+    "rate": 301100,
+    "at": "2026-07-10T05:07:30.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0134",
+    "lotId": "lot-085",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-2",
+    "rate": 305300,
+    "at": "2026-07-10T05:43:45.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0135",
+    "lotId": "lot-086",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-2",
+    "rate": 27650,
+    "at": "2026-07-10T01:30:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0136",
+    "lotId": "lot-086",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-5",
+    "rate": 27800,
+    "at": "2026-07-10T02:18:20.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0137",
+    "lotId": "lot-086",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-2",
+    "rate": 28250,
+    "at": "2026-07-10T03:06:40.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0138",
+    "lotId": "lot-086",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-2",
+    "rate": 28400,
+    "at": "2026-07-10T03:55:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0139",
+    "lotId": "lot-086",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-5",
+    "rate": 28700,
+    "at": "2026-07-10T04:43:20.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0140",
+    "lotId": "lot-086",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-2",
+    "rate": 29150,
+    "at": "2026-07-10T05:31:40.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0141",
+    "lotId": "lot-087",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-5",
+    "rate": 185800,
+    "at": "2026-07-10T01:30:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0142",
+    "lotId": "lot-087",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-3",
+    "rate": 187600,
+    "at": "2026-07-10T02:11:25.714Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0143",
+    "lotId": "lot-087",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-3",
+    "rate": 190300,
+    "at": "2026-07-10T02:52:51.428Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0144",
+    "lotId": "lot-087",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-5",
+    "rate": 193000,
+    "at": "2026-07-10T03:34:17.142Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0145",
+    "lotId": "lot-087",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-3",
+    "rate": 194800,
+    "at": "2026-07-10T04:15:42.857Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0146",
+    "lotId": "lot-087",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-2",
+    "rate": 196600,
+    "at": "2026-07-10T04:57:08.571Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0147",
+    "lotId": "lot-087",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-3",
+    "rate": 197500,
+    "at": "2026-07-10T05:38:34.285Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0148",
+    "lotId": "lot-088",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-7",
+    "rate": 170550,
+    "at": "2026-07-10T01:30:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0149",
+    "lotId": "lot-088",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-7",
+    "rate": 173100,
+    "at": "2026-07-10T03:06:40.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0150",
+    "lotId": "lot-088",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-7",
+    "rate": 174800,
+    "at": "2026-07-10T04:43:20.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0151",
+    "lotId": "lot-089",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-7",
+    "rate": 507900,
+    "at": "2026-07-10T01:30:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0152",
+    "lotId": "lot-089",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-3",
+    "rate": 510400,
+    "at": "2026-07-10T02:28:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0153",
+    "lotId": "lot-089",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-6",
+    "rate": 512900,
+    "at": "2026-07-10T03:26:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0154",
+    "lotId": "lot-089",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-7",
+    "rate": 515400,
+    "at": "2026-07-10T04:24:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0155",
+    "lotId": "lot-089",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-5",
+    "rate": 522900,
+    "at": "2026-07-10T05:22:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0156",
+    "lotId": "lot-090",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-3",
+    "rate": 216900,
+    "at": "2026-07-10T01:30:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0157",
+    "lotId": "lot-090",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-5",
+    "rate": 219000,
+    "at": "2026-07-10T02:11:25.714Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0158",
+    "lotId": "lot-090",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-5",
+    "rate": 220050,
+    "at": "2026-07-10T02:52:51.428Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0159",
+    "lotId": "lot-090",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-3",
+    "rate": 221100,
+    "at": "2026-07-10T03:34:17.142Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0160",
+    "lotId": "lot-090",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-5",
+    "rate": 222150,
+    "at": "2026-07-10T04:15:42.857Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0161",
+    "lotId": "lot-090",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-5",
+    "rate": 223200,
+    "at": "2026-07-10T04:57:08.571Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0162",
+    "lotId": "lot-090",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-7",
+    "rate": 225300,
+    "at": "2026-07-10T05:38:34.285Z",
+    "type": "auto",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0163",
+    "lotId": "lot-091",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-7",
+    "rate": 27500,
+    "at": "2026-07-10T01:30:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0164",
+    "lotId": "lot-091",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-2",
+    "rate": 27950,
+    "at": "2026-07-10T02:11:25.714Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0165",
+    "lotId": "lot-091",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-7",
+    "rate": 28100,
+    "at": "2026-07-10T02:52:51.428Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0166",
+    "lotId": "lot-091",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-2",
+    "rate": 28400,
+    "at": "2026-07-10T03:34:17.142Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0167",
+    "lotId": "lot-091",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-6",
+    "rate": 28850,
+    "at": "2026-07-10T04:15:42.857Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0168",
+    "lotId": "lot-091",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-2",
+    "rate": 29000,
+    "at": "2026-07-10T04:57:08.571Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0169",
+    "lotId": "lot-091",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-5",
+    "rate": 29450,
+    "at": "2026-07-10T05:38:34.285Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0170",
+    "lotId": "lot-092",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-3",
+    "rate": 123000,
+    "at": "2026-07-10T01:30:00.000Z",
+    "type": "auto",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0171",
+    "lotId": "lot-092",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-7",
+    "rate": 124200,
+    "at": "2026-07-10T03:06:40.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0172",
+    "lotId": "lot-092",
+    "catalogueId": "cat-7",
+    "bidderId": "u-buyer-5",
+    "rate": 124800,
+    "at": "2026-07-10T04:43:20.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0173",
+    "lotId": "lot-001",
+    "catalogueId": "cat-1",
+    "bidderId": "u-buyer-6",
+    "rate": 29450,
+    "at": "2026-07-16T06:21:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0174",
+    "lotId": "lot-001",
+    "catalogueId": "cat-1",
+    "bidderId": "u-buyer-1",
+    "rate": 29600,
+    "at": "2026-07-16T06:27:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0175",
+    "lotId": "lot-002",
+    "catalogueId": "cat-1",
+    "bidderId": "u-buyer-1",
+    "rate": 26400,
+    "at": "2026-07-16T06:21:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0176",
+    "lotId": "lot-002",
+    "catalogueId": "cat-1",
+    "bidderId": "u-buyer-6",
+    "rate": 26550,
+    "at": "2026-07-16T06:27:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0177",
+    "lotId": "lot-071",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-1",
+    "rate": 561,
+    "at": "2026-07-14T06:16:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0178",
+    "lotId": "lot-072",
+    "catalogueId": "cat-6",
+    "bidderId": "u-buyer-1",
+    "rate": 513,
+    "at": "2026-07-14T06:16:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  }
+]

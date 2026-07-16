@@ -1,0 +1,110 @@
+[
+  {
+    "id": "aud-001",
+    "at": "2026-07-16T06:05:00.000Z",
+    "actorId": "u-super-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2412",
+    "detail": "Published SAIL Bhilai catalogue with 18 lots",
+    "severity": "info"
+  },
+  {
+    "id": "aud-002",
+    "at": "2026-07-16T00:25:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "lot.approve",
+    "target": "UNL-104",
+    "detail": "Approved Point & Crossing Scrap after inspection review",
+    "severity": "info"
+  },
+  {
+    "id": "aud-003",
+    "at": "2026-07-15T18:45:00.000Z",
+    "actorId": "u-sub-1",
+    "action": "bid.flag",
+    "target": "bid-0031",
+    "detail": "Flagged rapid bid pattern on LOT-09 (AUC-2415) for review",
+    "severity": "warning"
+  },
+  {
+    "id": "aud-004",
+    "at": "2026-07-15T13:05:00.000Z",
+    "actorId": "u-super-1",
+    "action": "bid.void",
+    "target": "bid-0018",
+    "detail": "Voided bid — bidder wallet failed EMD re-validation",
+    "severity": "critical"
+  },
+  {
+    "id": "aud-005",
+    "at": "2026-07-15T07:25:00.000Z",
+    "actorId": "u-super-1",
+    "action": "user.blacklist",
+    "target": "u-buyer-4",
+    "detail": "Moved Jindal Ispat Udyog to defaulters — repeat lifting default",
+    "severity": "critical"
+  },
+  {
+    "id": "aud-006",
+    "at": "2026-07-15T01:45:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "auction.extend",
+    "target": "AUC-2406",
+    "detail": "Anti-snipe auto-extension ×3 on LOT-02 (final 3 minutes)",
+    "severity": "info"
+  },
+  {
+    "id": "aud-007",
+    "at": "2026-07-14T20:05:00.000Z",
+    "actorId": "u-super-1",
+    "action": "config.update",
+    "target": "financial.tcs",
+    "detail": "TCS rate confirmed at 1% for FY 2026-27",
+    "severity": "info"
+  },
+  {
+    "id": "aud-008",
+    "at": "2026-07-14T14:25:00.000Z",
+    "actorId": "u-sub-1",
+    "action": "kyc.review",
+    "target": "u-buyer-8",
+    "detail": "Requested GSTIN clarification from Punjab Rolling Mills",
+    "severity": "info"
+  },
+  {
+    "id": "aud-009",
+    "at": "2026-07-14T08:45:00.000Z",
+    "actorId": "u-super-1",
+    "action": "auction.pause",
+    "target": "AUC-2402",
+    "detail": "Paused catalogue for 12 min during payment-gateway incident",
+    "severity": "warning"
+  },
+  {
+    "id": "aud-010",
+    "at": "2026-07-14T03:05:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "do-001",
+    "detail": "Approved settlement & DO issue for AUC-2406 / LOT-01",
+    "severity": "info"
+  },
+  {
+    "id": "aud-011",
+    "at": "2026-07-13T21:25:00.000Z",
+    "actorId": "u-field-1",
+    "action": "inspection.submit",
+    "target": "ir-101",
+    "detail": "Submitted inspection — Skull Scrap, Burma Mines Yard",
+    "severity": "info"
+  },
+  {
+    "id": "aud-012",
+    "at": "2026-07-13T15:45:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "lot.flag",
+    "target": "UNL-113",
+    "detail": "Held Condemned Cranes — ownership document mismatch",
+    "severity": "warning"
+  }
+]

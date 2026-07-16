@@ -1,0 +1,12 @@
+[
+  {
+    "id": "slot-001",
+    "catalogueId": "cat-4",
+    "userId": "u-buyer-1",
+    "date": "2026-07-17T02:30:00.000Z",
+    "window": "10:00–13:00 IST",
+    "persons": 2,
+    "status": "booked",
+    "passCode": "FB-GATE-7C42"
+  }
+]

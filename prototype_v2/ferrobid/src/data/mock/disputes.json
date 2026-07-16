@@ -1,0 +1,44 @@
+[
+  {
+    "id": "dsp-001",
+    "userId": "u-buyer-1",
+    "subject": "Weighment variance beyond 5% on LOT-04",
+    "category": "quantity",
+    "lotId": "lot-072",
+    "status": "in_review",
+    "createdAt": "2026-07-15T07:00:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "Weighbridge shows 7.2% less than the awarded indicative quantity. Requesting pro-rata adjustment on the balance payment as per clause 6.",
+        "at": "2026-07-15T07:00:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have requested the yard weighment slips and CCTV weighbridge log from MSTC. Expect an update within 2 working days.",
+        "at": "2026-07-15T10:00:00.000Z"
+      }
+    ]
+  },
+  {
+    "id": "dsp-002",
+    "userId": "u-buyer-1",
+    "subject": "Gate pass delay at BHEL Trichy",
+    "category": "lifting",
+    "lotId": "lot-083",
+    "status": "resolved",
+    "createdAt": "2026-07-11T06:30:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "Trucks waited 6 hours at Gate 2 on lifting day. Requesting waiver of ground rent for one day.",
+        "at": "2026-07-11T06:30:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Seller has confirmed the delay was on the yard side. One day ground-rent waiver approved and reflected in your ledger.",
+        "at": "2026-07-12T06:30:00.000Z"
+      }
+    ]
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "id": "do-001",
+    "lotId": "lot-071",
+    "catalogueId": "cat-6",
+    "buyerId": "u-buyer-1",
+    "stage": "lifting_scheduled",
+    "h1Rate": 561,
+    "awardedQty": 3700,
+    "uom": "KG",
+    "materialValue": 2075700,
+    "gstAmount": 373626,
+    "tcsAmount": 20757,
+    "paidAmount": 2470083,
+    "liftingBy": "2026-07-21T06:30:00.000Z",
+    "createdAt": "2026-07-14T11:30:00.000Z"
+  },
+  {
+    "id": "do-002",
+    "lotId": "lot-072",
+    "catalogueId": "cat-6",
+    "buyerId": "u-buyer-1",
+    "stage": "payment_pending",
+    "h1Rate": 513,
+    "awardedQty": 2100,
+    "uom": "KG",
+    "materialValue": 1077300,
+    "gstAmount": 193914,
+    "tcsAmount": 10773,
+    "paidAmount": 320497,
+    "liftingBy": "2026-07-21T06:30:00.000Z",
+    "createdAt": "2026-07-14T11:30:00.000Z"
+  },
+  {
+    "id": "do-003",
+    "lotId": "lot-083",
+    "catalogueId": "cat-7",
+    "buyerId": "u-buyer-1",
+    "stage": "completed",
+    "h1Rate": 291000,
+    "awardedQty": 2,
+    "uom": "PCS",
+    "materialValue": 582000,
+    "gstAmount": 104760,
+    "tcsAmount": 5820,
+    "paidAmount": 692580,
+    "liftingBy": "2026-07-15T06:30:00.000Z",
+    "createdAt": "2026-07-10T13:10:00.000Z"
+  }
+]

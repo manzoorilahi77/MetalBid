@@ -1,0 +1,38 @@
+[
+  {
+    "id": "ts-standard",
+    "name": "Standard Scrap Disposal Terms",
+    "version": "v4.2",
+    "general": [
+      "All material is sold on \"AS IS WHERE IS\" and \"NO COMPLAINT\" basis. Quantity, quality, grade and description are indicative only; bidders must satisfy themselves by physical inspection before bidding.",
+      "The rate quoted is per unit of measurement (UOM) stated against each lot, exclusive of GST, TCS and other statutory levies, which are payable extra at actuals.",
+      "Pre-bid EMD must be funded lot-wise before the bid is accepted. EMD of unsuccessful bidders is auto-released within 24 hours of catalogue close.",
+      "The highest bid (H1) is subject to seller approval where the reserve rate is not met (Subject To Approval — STA).",
+      "Full material value plus taxes must be paid within the bid-validity period stated on the catalogue, failing which EMD stands forfeited.",
+      "Final quantity is determined on weighment at the designated weighbridge; payment is adjusted pro-rata to the weighed quantity.",
+      "Material must be lifted within the lifting window in the delivery order. Ground rent applies thereafter."
+    ],
+    "special": [
+      "Gas cutting inside the yard is permitted only with yard in-charge approval and a valid hot-work permit.",
+      "Loading is the buyer’s responsibility. Cranes/forklifts may be available on chargeable basis with prior booking.",
+      "Vehicles must carry a valid e-way bill before exiting the plant gate."
+    ],
+    "lotSpecificNote": "Where lot-specific conditions are stated in the lot description or annexure, they take precedence over Special Conditions, which take precedence over General Conditions."
+  },
+  {
+    "id": "ts-hazmat",
+    "name": "Hazardous & Regulated Material Terms",
+    "version": "v2.1",
+    "general": [
+      "Sold on \"AS IS WHERE IS\" basis to buyers holding valid authorisation from the State Pollution Control Board for the applicable waste category.",
+      "Buyer must produce Form-10/manifest documentation at the time of lifting for each consignment.",
+      "Rates are exclusive of GST and applicable cess; statutory levies extra at actuals.",
+      "EMD is forfeited in full if authorisation documents are found invalid after award."
+    ],
+    "special": [
+      "Used oil lots: transportation only in leak-proof HDPE drums / tankers licensed for hazardous cargo.",
+      "PCB-free certificates are available in the Documents tab and form part of the sale description."
+    ],
+    "lotSpecificNote": "Lot-specific regulatory conditions in the annexure take precedence over all other conditions."
+  }
+]

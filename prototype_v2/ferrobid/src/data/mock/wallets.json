@@ -1,0 +1,163 @@
+[
+  {
+    "userId": "u-buyer-1",
+    "balance": 850000,
+    "emdLocked": 335000,
+    "ledger": [
+      {
+        "id": "led-001",
+        "at": "2026-07-04T06:30:00.000Z",
+        "type": "topup",
+        "amount": 1500000,
+        "ref": "UTR-N2607-118842",
+        "note": "RTGS top-up — HDFC ****4412"
+      },
+      {
+        "id": "led-002",
+        "at": "2026-07-14T05:30:00.000Z",
+        "type": "emd_lock",
+        "amount": -90000,
+        "ref": "EMD-2406-01",
+        "lotId": "lot-071",
+        "catalogueId": "cat-6",
+        "note": "EMD locked — LOT-01 (AUC-2406)"
+      },
+      {
+        "id": "led-003",
+        "at": "2026-07-14T11:50:00.000Z",
+        "type": "payment",
+        "amount": -692580,
+        "ref": "PAY-2402-77",
+        "lotId": "lot-083",
+        "catalogueId": "cat-7",
+        "note": "Material value + GST + TCS — AUC-2402"
+      },
+      {
+        "id": "led-004",
+        "at": "2026-07-15T03:10:00.000Z",
+        "type": "emd_release",
+        "amount": 90000,
+        "ref": "EMDR-2406-01",
+        "lotId": "lot-071",
+        "catalogueId": "cat-6",
+        "note": "EMD adjusted into payment — AUC-2406"
+      },
+      {
+        "id": "led-010",
+        "at": "2026-07-15T08:00:00.000Z",
+        "type": "emd_lock",
+        "amount": -115000,
+        "ref": "EMD-2412-01",
+        "lotId": "lot-001",
+        "catalogueId": "cat-1",
+        "note": "Pre-bid EMD locked — LOT-01 (AUC-2412)"
+      },
+      {
+        "id": "led-011",
+        "at": "2026-07-15T08:03:00.000Z",
+        "type": "emd_lock",
+        "amount": -140000,
+        "ref": "EMD-2412-02",
+        "lotId": "lot-002",
+        "catalogueId": "cat-1",
+        "note": "Pre-bid EMD locked — LOT-02 (AUC-2412)"
+      },
+      {
+        "id": "led-012",
+        "at": "2026-07-15T08:06:00.000Z",
+        "type": "emd_lock",
+        "amount": -80000,
+        "ref": "EMD-2412-03",
+        "lotId": "lot-003",
+        "catalogueId": "cat-1",
+        "note": "Pre-bid EMD locked — LOT-03 (AUC-2412)"
+      },
+      {
+        "id": "led-020",
+        "at": "2026-07-16T02:30:00.000Z",
+        "type": "topup",
+        "amount": 200000,
+        "ref": "UTR-U2607-90211",
+        "note": "UPI top-up — arvind@okhdfcbank"
+      }
+    ]
+  },
+  {
+    "userId": "u-buyer-2",
+    "balance": 640000,
+    "emdLocked": 180000,
+    "ledger": [
+      {
+        "id": "led-b2-1",
+        "at": "2026-07-08T06:30:00.000Z",
+        "type": "topup",
+        "amount": 900000,
+        "ref": "UTR-N2607-22101",
+        "note": "RTGS top-up"
+      }
+    ]
+  },
+  {
+    "userId": "u-buyer-3",
+    "balance": 120000,
+    "emdLocked": 45000,
+    "ledger": [
+      {
+        "id": "led-b3-1",
+        "at": "2026-07-01T06:30:00.000Z",
+        "type": "topup",
+        "amount": 200000,
+        "ref": "UTR-N2606-88452",
+        "note": "NetBanking top-up"
+      }
+    ]
+  },
+  {
+    "userId": "u-buyer-4",
+    "balance": 0,
+    "emdLocked": 0,
+    "ledger": [
+      {
+        "id": "led-b4-1",
+        "at": "2026-05-17T06:30:00.000Z",
+        "type": "emd_forfeit",
+        "amount": -75000,
+        "ref": "FORF-2394-02",
+        "note": "EMD forfeited — lifting default (AUC-2394)"
+      }
+    ]
+  },
+  {
+    "userId": "u-buyer-5",
+    "balance": 480000,
+    "emdLocked": 95000,
+    "ledger": []
+  },
+  {
+    "userId": "u-buyer-6",
+    "balance": 720000,
+    "emdLocked": 260000,
+    "ledger": []
+  },
+  {
+    "userId": "u-buyer-7",
+    "balance": 310000,
+    "emdLocked": 60000,
+    "ledger": []
+  },
+  {
+    "userId": "u-buyer-8",
+    "balance": 50000,
+    "emdLocked": 0,
+    "ledger": [
+      {
+        "id": "led-b8-1",
+        "at": "2026-07-14T06:30:00.000Z",
+        "type": "topup",
+        "amount": 50000,
+        "ref": "UTR-U2607-30112",
+        "note": "UPI top-up"
+      }
+    ]
+  }
+]
