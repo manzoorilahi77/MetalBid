@@ -124,7 +124,8 @@ interface State {
   audit: (action: string, target: string, detail: string, severity?: 'info' | 'warning' | 'critical') => void
 }
 
-const prefersDark = typeof window !== 'undefined' && window.matchMedia?.('(prefers-color-scheme: dark)').matches
+// defaults to light unless the user has manually chosen dark mode in settings
+const storedTheme = typeof window !== 'undefined' ? localStorage.getItem('theme') : null
 
 export const useStore = create<State>((set, get) => {
   /* ---------- internal helpers (operate via set/get) ---------- */
@@ -305,7 +306,7 @@ export const useStore = create<State>((set, get) => {
 
   return {
     now: Date.now(),
-    theme: prefersDark ? 'dark' : 'light',
+    theme: storedTheme === 'dark' ? 'dark' : 'light',
     role: 'buyer',
     currentUser: seed.users.find((u) => u.id === ROLE_DEMO_USER.buyer) ?? null,
     paused: {},
@@ -339,6 +340,7 @@ export const useStore = create<State>((set, get) => {
     toggleTheme: () => {
       const theme = get().theme === 'dark' ? 'light' : 'dark'
       document.documentElement.classList.toggle('dark', theme === 'dark')
+      localStorage.setItem('theme', theme)
       set({ theme })
     },
     switchRole: (role) => {

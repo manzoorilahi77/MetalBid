@@ -4,8 +4,9 @@ import App from './App'
 import './index.css'
 
 // apply initial theme class before first paint
-const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-document.documentElement.classList.toggle('dark', prefersDark)
+// defaults to light unless the user has manually chosen dark mode in settings
+const storedTheme = localStorage.getItem('theme')
+document.documentElement.classList.toggle('dark', storedTheme === 'dark')
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
