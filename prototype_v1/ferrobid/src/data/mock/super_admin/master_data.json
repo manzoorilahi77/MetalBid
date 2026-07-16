@@ -1,6 +1,0 @@
-{
-  "metals": ["Ferrous", "Copper", "Aluminium", "Brass", "Zinc", "Tin", "Nickel"],
-  "categories": ["Scrap", "Ingots", "Coils", "Sheets", "Turnings", "Castings"],
-  "yards": ["Chennai — Manali Yard", "Chennai — Ennore Gate 2", "Mumbai — Taloja MIDC", "Pune — Chakan Depot", "Delhi NCR — Ghaziabad Yard"],
-  "docTypes": ["GST Certificate", "PAN Card", "Bank Proof (Cancelled Cheque)", "MSME / Udyam Certificate", "Board Resolution", "Authorised Signatory Letter"]
-}

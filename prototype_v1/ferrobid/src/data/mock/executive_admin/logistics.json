@@ -1,4 +1,0 @@
-[
-  { "id": "LG-301", "lotId": "FB-2026-114", "pickupDate": "2026-07-09", "slot": "10:00 – 12:00", "handler": "BlueDart Heavy Cargo", "status": "in_transit", "checklist": { "Weighbridge re-check": true, "Material tally with invoice": true, "Gate pass issued": false, "Loading photos captured": false }, "proofUploaded": false },
-  { "id": "LG-287", "lotId": "FB-2026-088", "pickupDate": "2026-06-02", "slot": "14:00 – 16:00", "handler": "SafeXpress Logistics", "status": "completed", "checklist": { "Weighbridge re-check": true, "Material tally with invoice": true, "Gate pass issued": true, "Loading photos captured": true }, "proofUploaded": true }
-]

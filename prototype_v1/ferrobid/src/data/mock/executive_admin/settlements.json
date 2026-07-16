@@ -1,5 +1,0 @@
-[
-  { "id": "ST-501", "lotId": "FB-2026-096", "auctionId": "AU-096", "winnerId": "u-buyer1", "winnerName": "Arjun Mehta", "amount": 1662000, "paymentConfirmed": false, "emdHandled": false, "invoiceGenerated": false },
-  { "id": "ST-498", "lotId": "FB-2026-114", "auctionId": "AU-114", "winnerId": "b-01", "winnerName": "SteelCorp Industries", "amount": 1045000, "paymentConfirmed": true, "emdHandled": true, "invoiceGenerated": true },
-  { "id": "ST-472", "lotId": "FB-2026-088", "auctionId": "AU-088", "winnerId": "b-04", "winnerName": "Nirmal Traders", "amount": 1415000, "paymentConfirmed": true, "emdHandled": true, "invoiceGenerated": true }
-]

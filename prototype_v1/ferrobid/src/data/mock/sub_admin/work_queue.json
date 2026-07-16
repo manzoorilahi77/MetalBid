@@ -1,7 +1,0 @@
-[
-  { "id": "WT-501", "title": "Inspect lot photos & checklist — HMS 80:20 Ferrous Scrap", "module": "lots", "refId": "FB-2026-001", "assignedBy": "Ravi Kumar", "dueInMin": 240, "status": "open" },
-  { "id": "WT-502", "title": "Review entity documents — Suresh Traders & Co", "module": "entities", "refId": "EV-2041", "assignedBy": "Auto-routed (scope match)", "dueInMin": 90, "status": "open" },
-  { "id": "WT-503", "title": "Catalogue quality pass — copper coil images", "module": "lots", "refId": "FB-2026-002", "assignedBy": "Meera Pillai", "dueInMin": -30, "status": "open" },
-  { "id": "WT-504", "title": "Watch AU-101 closing window for late-bid spikes", "module": "monitor", "refId": "AU-101", "assignedBy": "Ravi Kumar", "dueInMin": 45, "status": "open" },
-  { "id": "WT-505", "title": "Verify weighbridge slip vs invoice — Lot FB-2026-114", "module": "settlement", "refId": "ST-498", "assignedBy": "Ravi Kumar", "dueInMin": 600, "status": "done" }
-]
