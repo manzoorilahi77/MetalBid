@@ -2,8 +2,8 @@
    Forge UI kit — every page composes these primitives so the theme stays
    cohesive. Flat surfaces, hairline borders, 16px radius, mono numerals.
 --------------------------------------------------------------------------- */
-import { useEffect, useRef, useState, type ReactNode, type ButtonHTMLAttributes, type InputHTMLAttributes, type SelectHTMLAttributes, type TextareaHTMLAttributes } from 'react'
-import { X, Loader2, Lock, Inbox, CheckCircle2 } from 'lucide-react'
+import { useEffect, useMemo, useRef, useState, type ReactNode, type ButtonHTMLAttributes, type InputHTMLAttributes, type SelectHTMLAttributes, type TextareaHTMLAttributes } from 'react'
+import { X, Loader2, Lock, Inbox, CheckCircle2, Minus, Plus } from 'lucide-react'
 import { useStore } from '../store/store'
 import { countdown } from '../lib/format'
 import { useNow } from '../lib/useTick'
@@ -143,6 +143,59 @@ export function Segmented<T extends string>({ options, value, onChange, classNam
           {o.label}
         </button>
       ))}
+    </div>
+  )
+}
+
+/* ----------------------------- Amount stepper ------------------------------ */
+/** Bid-step ladder — real rupee rungs, not multiples of the lot increment.
+    Scaled to the lot's own rate so a ₹1k lot never offers a ₹10k rung. */
+const STEP_LADDER = [200, 500, 1000, 2000, 5000, 10000]
+
+export function stepOptionsFor(rate: number, increment: number): number[] {
+  const opts = STEP_LADDER.filter((s) => s >= increment && s <= Math.max(rate * 0.5, increment))
+  return opts.length ? opts : [increment]
+}
+
+const stepLabel = (n: number) => (n >= 1000 && n % 1000 === 0 ? `₹${n / 1000}k` : `₹${n}`)
+
+/** −/+ bid builder with a selectable step-size ladder (₹200…₹10k, scaled to the lot). */
+export function AmountStepper({ minNext, increment, value, onChange, size = 'md', className }: {
+  minNext: number; increment: number; value: number; onChange: (v: number) => void
+  size?: 'md' | 'lg'; className?: string
+}) {
+  const steps = useMemo(() => stepOptionsFor(minNext, increment), [minNext, increment])
+  const [step, setStep] = useState(steps[0])
+  const activeStep = steps.includes(step) ? step : steps[0]
+  const lg = size === 'lg'
+  return (
+    <div className={cx('inline-flex flex-col gap-2', className)}>
+      <div className="flex flex-wrap gap-1.5" role="radiogroup" aria-label="Bid step size">
+        {steps.map((s) => (
+          <button key={s} type="button" role="radio" aria-checked={s === activeStep} onClick={() => setStep(s)}
+            className={cx('num rounded-full border font-bold transition-colors',
+              lg ? 'h-7 px-3 text-xs' : 'h-6 px-2.5 text-[11px]',
+              s === activeStep ? 'bg-ember text-white border-ember' : 'bg-surface-2 text-ink-muted border-line hover:border-line-strong')}>
+            +{stepLabel(s)}
+          </button>
+        ))}
+      </div>
+      <div className="inline-flex items-stretch rounded-xl border border-line-strong bg-surface overflow-hidden w-fit">
+        <button type="button" aria-label="Decrease bid" disabled={value <= minNext}
+          onClick={() => onChange(Math.max(minNext, value - activeStep))}
+          className={cx('grid place-items-center shrink-0 text-ink-muted hover:bg-surface-2 hover:text-ink disabled:opacity-30 disabled:pointer-events-none',
+            lg ? 'w-12' : 'w-9')}>
+          <Minus size={lg ? 18 : 14} />
+        </button>
+        <input inputMode="numeric" aria-label="Bid amount" value={value.toLocaleString('en-IN')}
+          onChange={(e) => { const n = Number(e.target.value.replace(/[^\d]/g, '')); onChange(n) }}
+          className={cx('num font-bold text-center bg-transparent focus:outline-none border-x border-line',
+            lg ? 'h-12 w-32 text-xl' : 'h-9 w-24 text-sm')} />
+        <button type="button" aria-label="Increase bid" onClick={() => onChange(value + activeStep)}
+          className={cx('grid place-items-center shrink-0 text-ink-muted hover:bg-surface-2 hover:text-ink', lg ? 'w-12' : 'w-9')}>
+          <Plus size={lg ? 18 : 14} />
+        </button>
+      </div>
     </div>
   )
 }
