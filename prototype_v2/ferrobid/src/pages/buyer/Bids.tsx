@@ -3,11 +3,18 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Gavel, Trophy, UserRound } from 'lucide-react'
 import { Page } from '../../layout/Chrome'
-import { Button, Chip, Countdown, EmptyState, PageHeader, PhotoThumb, Tabs } from '../../components/ui'
-import { useStore } from '../../store/store'
+import { Button, Chip, Countdown, EmptyState, PageHeader, PhotoThumb, Tabs, cx } from '../../components/ui'
+import { myLotResult, useStore } from '../../store/store'
 import { fmtDateTime, inr, inrCompact, num } from '../../lib/format'
 
-type TabKey = 'active' | 'won' | 'lost' | 'all'
+type TabKey = 'active' | 'won' | 'results' | 'all'
+
+const OUTCOME_CHIP: Record<'won' | 'lost' | 'sta' | 'unsold', { tone: 'success' | 'neutral' | 'warning'; label: string }> = {
+  won: { tone: 'success', label: 'Won' },
+  lost: { tone: 'neutral', label: 'Lost' },
+  sta: { tone: 'warning', label: 'Subject to approval' },
+  unsold: { tone: 'neutral', label: 'Unsold' },
+}
 
 export default function Bids() {
   const me = useStore((s) => s.currentUser)
@@ -48,17 +55,21 @@ export default function Bids() {
   // Won: sold + I'm H1 (all time)
   const wonLots = lots.filter((l) => l.status === 'sold' && l.leadingBidderId === me.id)
 
-  // Lost & STA: closed lots I bid on but didn't win, plus STA lots where I'm H1
-  const staMine = lots.filter((l) => l.status === 'sta' && l.leadingBidderId === me.id)
-  const lostLots = bidLotIds
-    .map((id) => lotById.get(id))
-    .filter((l): l is NonNullable<typeof l> =>
-      !!l &&
-      ['sold', 'sta', 'unsold'].includes(l.status) &&
-      !(l.status === 'sold' && l.leadingBidderId === me.id) &&
-      !(l.status === 'sta' && l.leadingBidderId === me.id),
-    )
-  const lostAndSta = [...staMine, ...lostLots]
+  // Results: every closed catalogue where I placed ≥1 valid bid, grouped, with
+  // my rank/outcome/best-bid/closing-H1 per lot (myLotResult reuses the same
+  // ranking logic as the live bid ladder).
+  const resultCatalogues = catalogues
+    .filter((c) => c.status === 'closed')
+    .map((cat) => {
+      const rows = lots
+        .filter((l) => l.catalogueId === cat.id && bidLotIds.includes(l.id))
+        .map((lot) => ({ lot, result: myLotResult(bids, lot, me.id) }))
+        .filter((r): r is { lot: typeof r.lot; result: NonNullable<typeof r.result> } => !!r.result)
+      return { cat, rows }
+    })
+    .filter((g) => g.rows.length > 0)
+    .sort((a, b) => Date.parse(b.cat.endsAt) - Date.parse(a.cat.endsAt))
+  const resultsCount = resultCatalogues.reduce((sum, g) => sum + g.rows.length, 0)
 
   const allMine = [...myBids].sort((a, b) => Date.parse(b.at) - Date.parse(a.at))
 
@@ -66,14 +77,14 @@ export default function Bids() {
     <Page>
       <PageHeader
         title="My bids & results"
-        sub="Every rate you've quoted — live positions first, then confirmed wins, losses and lots pending seller approval (STA)."
+        sub="Every rate you've quoted — live positions first, then confirmed wins and your outcome/rank on every closed lot."
       />
 
       <Tabs<TabKey>
         tabs={[
           { key: 'active', label: 'Active', count: activeLots.length },
           { key: 'won', label: 'Won', count: wonLots.length },
-          { key: 'lost', label: 'Lost & STA', count: lostAndSta.length },
+          { key: 'results', label: 'Results', count: resultsCount },
           { key: 'all', label: 'All history', count: allMine.length },
         ]}
         value={tab}
@@ -177,53 +188,74 @@ export default function Bids() {
         )
       )}
 
-      {/* ----------------------------- Lost & STA ----------------------------- */}
-      {tab === 'lost' && (
-        lostAndSta.length === 0 ? (
+      {/* ------------------------------- Results ------------------------------ */}
+      {tab === 'results' && (
+        resultCatalogues.length === 0 ? (
           <EmptyState
-            title="No lost or STA lots"
-            body="Lots you bid on but didn't win, and lots where your H1 is subject to seller approval, appear here."
+            title="No results yet"
+            body="Once a catalogue you bid in closes, your outcome, rank and closing H1 on every lot appear here — win or lose."
           />
         ) : (
-          <div className="space-y-3">
-            {lostAndSta.map((lot) => {
-              const cat = catById.get(lot.catalogueId)
-              const isSta = lot.status === 'sta' && lot.leadingBidderId === me.id
-              const mine = myBestOn(lot.id)
+          <div className="space-y-6">
+            {resultCatalogues.map(({ cat, rows }) => {
+              const wonCount = rows.filter((r) => r.result.outcome === 'won').length
               return (
-                <div key={lot.id} className="card p-4 flex flex-wrap items-center gap-3">
-                  <PhotoThumb hue={lot.photos[0]?.hue ?? 24} className="w-16 h-12" />
-                  <div className="min-w-0 flex-1 basis-52">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="num text-sm font-bold">{lot.lotNo}</span>
-                      <span className="num text-xs text-ink-faint">{cat?.code}</span>
-                      {isSta
-                        ? <Chip tone="warning">Subject to approval</Chip>
-                        : <Chip tone="neutral">Lost</Chip>}
+                <div key={cat.id}>
+                  <div className="flex items-center justify-between gap-2 mb-2 px-1">
+                    <div>
+                      <span className="num text-sm font-bold">{cat.code}</span>
+                      <span className="text-sm text-ink-muted ml-2">{cat.title}</span>
                     </div>
-                    <div className="text-sm text-ink-muted mt-0.5 line-clamp-1">{lot.description}</div>
-                    {isSta && (
-                      <div className="text-xs text-ink-faint mt-0.5">
-                        Your H1 was below reserve — the seller has {cat?.bidValidityDays ?? 7} days to accept or decline.
-                      </div>
-                    )}
+                    <span className="text-xs font-semibold text-ink-muted">
+                      You won {wonCount} of {rows.length} lot{rows.length > 1 ? 's' : ''} you bid on
+                    </span>
                   </div>
-                  {mine > 0 && (
-                    <div className="text-right">
-                      <div className="text-[11px] uppercase tracking-wider text-ink-faint">My best</div>
-                      <div className="num text-sm font-semibold">{inr(mine)}<span className="text-xs text-ink-faint">/{lot.uom}</span></div>
-                    </div>
-                  )}
-                  <div className="text-right">
-                    <div className="text-[11px] uppercase tracking-wider text-ink-faint">Closing H1</div>
-                    <div className="num text-sm font-semibold">
-                      {lot.resultH1Rate ?? lot.currentRate ? inr((lot.resultH1Rate ?? lot.currentRate)!) : '—'}
-                      <span className="text-xs text-ink-faint">/{lot.uom}</span>
-                    </div>
+                  <div className="space-y-3">
+                    {rows.map(({ lot, result }) => {
+                      const chip = OUTCOME_CHIP[result.outcome]
+                      return (
+                        <div key={lot.id} className={cx('card p-4 flex flex-wrap items-center gap-3', result.outcome === 'won' && 'border-l-4 border-l-success')}>
+                          <PhotoThumb hue={lot.photos[0]?.hue ?? 24} className="w-16 h-12" />
+                          <span className={cx('rounded-lg grid place-items-center font-bold shrink-0 size-7 text-[10px]',
+                            result.rank === 1 ? 'bg-ember text-white' : 'bg-surface-2 text-ink-faint')}>
+                            H{result.rank}
+                          </span>
+                          <div className="min-w-0 flex-1 basis-52">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="num text-sm font-bold">{lot.lotNo}</span>
+                              <Chip tone={chip.tone}>{chip.label}</Chip>
+                            </div>
+                            <div className="text-sm text-ink-muted mt-0.5 line-clamp-1">{lot.description}</div>
+                            {result.outcome === 'sta' && (
+                              <div className="text-xs text-ink-faint mt-0.5">
+                                Your H1 was below reserve — the seller has {cat.bidValidityDays} days to accept or decline.
+                              </div>
+                            )}
+                          </div>
+                          <div className="text-right">
+                            <div className="text-[11px] uppercase tracking-wider text-ink-faint">Your bid</div>
+                            <div className="num text-sm font-semibold">{inr(result.myBestRate)}<span className="text-xs text-ink-faint">/{lot.uom}</span></div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-[11px] uppercase tracking-wider text-ink-faint">Closing H1</div>
+                            <div className="num text-sm font-semibold">
+                              {result.closingH1 != null ? inr(result.closingH1) : '—'}
+                              <span className="text-xs text-ink-faint">/{lot.uom}</span>
+                            </div>
+                          </div>
+                          {result.outcome === 'won' ? (
+                            <Link to="/buyer/fulfilment">
+                              <Button size="sm" variant="success">Track fulfilment <ArrowRight size={14} /></Button>
+                            </Link>
+                          ) : (
+                            <Link to={`/catalogue/${lot.catalogueId}`}>
+                              <Button size="sm" variant="ghost">View lot</Button>
+                            </Link>
+                          )}
+                        </div>
+                      )
+                    })}
                   </div>
-                  <Link to={`/catalogue/${lot.catalogueId}`}>
-                    <Button size="sm" variant="ghost">View lot</Button>
-                  </Link>
                 </div>
               )
             })}

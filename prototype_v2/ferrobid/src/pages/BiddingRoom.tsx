@@ -15,7 +15,7 @@ import { Page } from '../layout/Chrome'
 import {
   AmountStepper, Button, Chip, Countdown, EmptyState, Input, Modal, Segmented, StatusChip, Toggle, cx,
 } from '../components/ui'
-import { ladderStandings, selectionSummary, useStore } from '../store/store'
+import { ladderStandings, myBidTrail, selectionSummary, useStore } from '../store/store'
 import { fireConfetti } from '../lib/confetti'
 import { inr, num, relTime } from '../lib/format'
 import { useNow } from '../lib/useTick'
@@ -32,6 +32,7 @@ export default function BiddingRoom() {
   const catalogues = useStore((s) => s.catalogues)
   const lots = useStore((s) => s.lots)
   const bids = useStore((s) => s.bids)
+  const auditEvents = useStore((s) => s.auditEvents)
   const users = useStore((s) => s.users)
   const selections = useStore((s) => s.selections)
   const autoBids = useStore((s) => s.autoBids)
@@ -57,6 +58,7 @@ export default function BiddingRoom() {
   const [emdGateDismissed, setEmdGateDismissed] = useState(false)
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [confirmRate, setConfirmRate] = useState(0)
+  const [ladderView, setLadderView] = useState<'ladder' | 'mine'>('ladder')
 
   // cockpit lots: shortlisted first (funded first within), else all
   const cockpitLots = useMemo(() => {
@@ -83,7 +85,7 @@ export default function BiddingRoom() {
   // or someone else's bid moves the floor out from under a stale amount
   useEffect(() => { setBidAmount(minNext) }, [lot?.id, minNext])
   useEffect(() => { setEmdGateDismissed(false) }, [catalogueId])
-  useEffect(() => { setConfirmOpen(false) }, [lot?.id])
+  useEffect(() => { setConfirmOpen(false); setLadderView('ladder') }, [lot?.id])
 
   if (!cat || !lot) {
     return <Page><EmptyState title="Nothing to bid on here" body="This catalogue has no lots, or it doesn't exist in this demo session." action={<Link to="/browse"><Button variant="secondary">Browse auctions</Button></Link>} /></Page>
@@ -205,51 +207,79 @@ export default function BiddingRoom() {
   /* ------------------------------ shared ladder ---------------------------- */
   const renderLadder = (dense: boolean) => {
     const standings = ladderStandings(bids, lot.id, me?.id)
+    const myTrail = myBidTrail(bids, auditEvents, lot, me?.id)
+    const view = myTrail.length > 0 ? ladderView : 'ladder'
     return (
       <div className="card overflow-hidden">
-        <div className={cx('px-4 py-3 border-b border-line flex items-center justify-between', dense && 'py-2.5')}>
-          <span className="font-bold text-sm">Bid ladder — {lot.lotNo}</span>
-          <span className="num text-xs text-ink-faint">{lotBids.length} bids</span>
-        </div>
-        <div className={cx('overflow-y-auto divide-y divide-line', dense ? 'max-h-[340px]' : 'max-h-[430px]')}>
-          {standings.top3.length === 0 && (
-            <div className="p-8 text-center text-sm text-ink-faint">No bids yet. Be the first at <b className="num text-ink">{inr(lot.startRate)}</b>.</div>
+        <div className={cx('px-4 py-3 border-b border-line flex items-center justify-between gap-2', dense && 'py-2.5')}>
+          <span className="font-bold text-sm">{view === 'mine' ? `My bids — ${lot.lotNo}` : `Bid ladder — ${lot.lotNo}`}</span>
+          {myTrail.length > 0 ? (
+            <Segmented value={view} onChange={setLadderView} options={[
+              { key: 'ladder', label: 'Ladder' },
+              { key: 'mine', label: `My bids (${myTrail.length})` },
+            ]} />
+          ) : (
+            <span className="num text-xs text-ink-faint">{lotBids.length} bids</span>
           )}
-          {standings.top3.map((row) => (
-            <div key={row.bidderId} className={cx('flex items-center gap-3 px-4', dense ? 'py-1.5' : 'py-2.5', row.rank === 1 && 'animate-bid-in', row.isMe && 'bg-ember-soft/30')}>
-              <span className={cx('rounded-lg grid place-items-center font-bold shrink-0', dense ? 'size-6 text-[9px]' : 'size-7 text-[10px]',
-                row.rank === 1 ? 'bg-ember text-white' : 'bg-surface-2 text-ink-faint')}>
-                H{row.rank}
-              </span>
-              <div className="flex-1 min-w-0">
-                <div className={cx('font-semibold truncate', dense ? 'text-xs' : 'text-sm', row.isMe && 'text-ember-strong')}>{maskBidder(row.bidderId)}
-                  {row.type === 'auto' && <Bot size={11} className="inline ml-1.5 text-steel" />}
+        </div>
+        {view === 'mine' ? (
+          <div className={cx('overflow-y-auto divide-y divide-line', dense ? 'max-h-[340px]' : 'max-h-[430px]')}>
+            {myTrail.map((row) => (
+              <div key={row.id} className={cx('flex items-center gap-3 px-4', dense ? 'py-1.5' : 'py-2.5')}>
+                <div className="flex-1 min-w-0">
+                  <div className={cx('font-semibold truncate', dense ? 'text-xs' : 'text-sm', row.struck && 'line-through text-ink-faint')}>
+                    You bid {inr(row.rate)} at {relTime(row.at, now)}
+                    {row.type === 'auto' && <Bot size={11} className="inline ml-1.5 text-steel" />}
+                  </div>
+                  {row.detail && !dense && <div className="text-[11px] text-ink-faint truncate mt-0.5">{row.detail}</div>}
                 </div>
-                {!dense && <div className="text-[11px] text-ink-faint">{relTime(row.at, now)}</div>}
+                <Chip tone={row.tone} className="shrink-0">{row.reasonLabel}</Chip>
               </div>
-              <span className={cx('num font-bold', dense ? 'text-xs' : 'text-sm', row.rank === 1 ? 'text-ink' : 'text-ink-muted')}>{inr(row.rate)}</span>
-            </div>
-          ))}
-          {standings.myRow && (
-            <div className="border-t-2 border-dashed border-line">
-              <div className="px-4 pt-2 pb-0.5 text-[10px] font-bold uppercase tracking-wider text-ink-faint">Your position</div>
-              <div className={cx('flex items-center gap-3 px-4 bg-ember-soft/30', dense ? 'py-1.5' : 'py-2.5')}>
-                <span className={cx('rounded-lg grid place-items-center font-bold shrink-0 bg-surface-2 text-ink-faint', dense ? 'size-6 text-[9px]' : 'size-7 text-[10px]')}>
-                  H{standings.myRow.rank}
+            ))}
+          </div>
+        ) : (
+          <div className={cx('overflow-y-auto divide-y divide-line', dense ? 'max-h-[340px]' : 'max-h-[430px]')}>
+            {standings.top3.length === 0 && (
+              <div className="p-8 text-center text-sm text-ink-faint">No bids yet. Be the first at <b className="num text-ink">{inr(lot.startRate)}</b>.</div>
+            )}
+            {standings.top3.map((row) => (
+              <div key={row.bidderId} className={cx('flex items-center gap-3 px-4', dense ? 'py-1.5' : 'py-2.5', row.rank === 1 && 'animate-bid-in', row.isMe && 'bg-ember-soft/30')}>
+                <span className={cx('rounded-lg grid place-items-center font-bold shrink-0', dense ? 'size-6 text-[9px]' : 'size-7 text-[10px]',
+                  row.rank === 1 ? 'bg-ember text-white' : 'bg-surface-2 text-ink-faint')}>
+                  H{row.rank}
                 </span>
                 <div className="flex-1 min-w-0">
-                  <div className={cx('font-semibold truncate text-ember-strong', dense ? 'text-xs' : 'text-sm')}>You
-                    {standings.myRow.type === 'auto' && <Bot size={11} className="inline ml-1.5 text-steel" />}
+                  <div className={cx('font-semibold truncate', dense ? 'text-xs' : 'text-sm', row.isMe && 'text-ember-strong')}>{maskBidder(row.bidderId)}
+                    {row.type === 'auto' && <Bot size={11} className="inline ml-1.5 text-steel" />}
                   </div>
-                  {!dense && <div className="text-[11px] text-ink-faint">{relTime(standings.myRow.at, now)}</div>}
+                  {!dense && <div className="text-[11px] text-ink-faint">{relTime(row.at, now)}</div>}
                 </div>
-                <span className={cx('num font-bold text-ink-muted', dense ? 'text-xs' : 'text-sm')}>{inr(standings.myRow.rate)}</span>
+                <span className={cx('num font-bold', dense ? 'text-xs' : 'text-sm', row.rank === 1 ? 'text-ink' : 'text-ink-muted')}>{inr(row.rate)}</span>
               </div>
-            </div>
-          )}
-        </div>
+            ))}
+            {standings.myRow && (
+              <div className="border-t-2 border-dashed border-line">
+                <div className="px-4 pt-2 pb-0.5 text-[10px] font-bold uppercase tracking-wider text-ink-faint">Your position</div>
+                <div className={cx('flex items-center gap-3 px-4 bg-ember-soft/30', dense ? 'py-1.5' : 'py-2.5')}>
+                  <span className={cx('rounded-lg grid place-items-center font-bold shrink-0 bg-surface-2 text-ink-faint', dense ? 'size-6 text-[9px]' : 'size-7 text-[10px]')}>
+                    H{standings.myRow.rank}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <div className={cx('font-semibold truncate text-ember-strong', dense ? 'text-xs' : 'text-sm')}>You
+                      {standings.myRow.type === 'auto' && <Bot size={11} className="inline ml-1.5 text-steel" />}
+                    </div>
+                    {!dense && <div className="text-[11px] text-ink-faint">{relTime(standings.myRow.at, now)}</div>}
+                  </div>
+                  <span className={cx('num font-bold text-ink-muted', dense ? 'text-xs' : 'text-sm')}>{inr(standings.myRow.rate)}</span>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
         <div className="px-4 py-3 border-t border-line bg-surface-2 text-[11px] text-ink-faint">
-          Rival identities are masked. Simulated competitors are bidding on live lots — expect action near the close.
+          {view === 'mine'
+            ? 'Your full bid trail on this lot, including any bids voided by Control Tower.'
+            : "Rival identities are masked. Simulated competitors are bidding on live lots — expect action near the close."}
         </div>
       </div>
     )

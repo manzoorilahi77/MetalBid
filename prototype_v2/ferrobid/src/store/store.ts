@@ -7,7 +7,7 @@ import { create } from 'zustand'
 import { loadSeed } from './seed'
 import { uid, inr } from '../lib/format'
 import type {
-  AppNotification, AutoBidSetting, Bid, BidType, BuyerLotSelection,
+  AppNotification, AuditEvent, AutoBidSetting, Bid, BidType, BuyerLotSelection,
   Catalogue, DeliveryOrder, Dispute, InspectionReport, Lot, LotStatus,
   NotificationKind, Role, User,
 } from '../types'
@@ -697,10 +697,9 @@ export interface LadderRow {
   isMe: boolean
 }
 
-/** Bid ladder standings for a lot — valid bids deduped to each bidder's best
- *  rate, ranked descending. Returns the top 3 plus the current user's own
- *  row (only when they're not already inside the top 3). */
-export function ladderStandings(bids: Bid[], lotId: string, meId: string | undefined) {
+/** Full bid ranking for a lot — valid bids deduped to each bidder's best
+ *  rate, ranked descending (ties broken by earliest bid). Uncapped. */
+export function rankBidders(bids: Bid[], lotId: string, meId?: string): LadderRow[] {
   const best = new Map<string, Bid>()
   for (const b of bids) {
     if (b.lotId !== lotId || b.status !== 'valid') continue
@@ -709,10 +708,70 @@ export function ladderStandings(bids: Bid[], lotId: string, meId: string | undef
       best.set(b.bidderId, b)
     }
   }
-  const ranked: LadderRow[] = [...best.values()]
+  return [...best.values()]
     .sort((a, b) => b.rate - a.rate || Date.parse(a.at) - Date.parse(b.at))
     .map((b, i) => ({ rank: i + 1, bidderId: b.bidderId, rate: b.rate, at: b.at, type: b.type, isMe: b.bidderId === meId }))
+}
+
+/** Bid ladder standings for a lot. Returns the top 3 plus the current user's
+ *  own row (only when they're not already inside the top 3). */
+export function ladderStandings(bids: Bid[], lotId: string, meId: string | undefined) {
+  const ranked = rankBidders(bids, lotId, meId)
   const top3 = ranked.slice(0, 3)
   const myRow = meId ? ranked.find((r) => r.bidderId === meId && r.rank > 3) ?? null : null
   return { top3, myRow }
+}
+
+export interface MyBidTrailRow {
+  id: string
+  rate: number
+  at: string
+  type: BidType
+  struck: boolean
+  reasonLabel: string
+  tone: 'success' | 'danger' | 'neutral' | 'warning'
+  detail?: string // longer explanation (e.g. the void audit note) — never chip content
+}
+
+/** The current user's own bid trail on a lot, newest first, with a
+ *  plain-language outcome per bid (leading / outbid / won / voided). */
+export function myBidTrail(bids: Bid[], auditEvents: AuditEvent[], lot: Lot, meId: string | undefined): MyBidTrailRow[] {
+  if (!meId) return []
+  return bids
+    .filter((b) => b.lotId === lot.id && b.bidderId === meId)
+    .sort((a, b) => Date.parse(b.at) - Date.parse(a.at))
+    .map((b) => {
+      if (b.status === 'void') {
+        const detail = auditEvents.find((e) => e.action === 'bid.void' && e.target === b.id)?.detail
+        return { id: b.id, rate: b.rate, at: b.at, type: b.type, struck: true, reasonLabel: 'Voided', tone: 'danger' as const, detail }
+      }
+      const leading = b.rate === lot.currentRate && lot.leadingBidderId === meId
+      if (leading) {
+        const label = lot.status === 'sold' ? 'Won' : 'Leading'
+        return { id: b.id, rate: b.rate, at: b.at, type: b.type, struck: false, reasonLabel: label, tone: 'success' as const }
+      }
+      return { id: b.id, rate: b.rate, at: b.at, type: b.type, struck: false, reasonLabel: 'Outbid', tone: 'neutral' as const }
+    })
+}
+
+export interface MyLotResult {
+  rank: number
+  myBestRate: number
+  outcome: 'won' | 'lost' | 'sta' | 'unsold'
+  closingH1: number | null
+}
+
+/** My standing on a (closed) lot I bid on — rank, best bid, outcome, closing
+ *  H1 — for post-auction results. Null if I never placed a valid bid on it. */
+export function myLotResult(bids: Bid[], lot: Lot, meId: string | undefined): MyLotResult | null {
+  if (!meId) return null
+  const ranked = rankBidders(bids, lot.id, meId)
+  const mine = ranked.find((r) => r.bidderId === meId)
+  if (!mine) return null
+  const outcome: MyLotResult['outcome'] =
+    lot.status === 'unsold' ? 'unsold'
+      : lot.status === 'sold' ? (lot.leadingBidderId === meId ? 'won' : 'lost')
+      : lot.status === 'sta' ? (lot.leadingBidderId === meId ? 'sta' : 'lost')
+      : 'lost'
+  return { rank: mine.rank, myBestRate: mine.rate, outcome, closingH1: lot.resultH1Rate ?? lot.currentRate ?? null }
 }
