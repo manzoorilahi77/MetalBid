@@ -22,8 +22,8 @@ export default function Logistics() {
   const advanceDeliveryOrder = useStore((s) => s.advanceDeliveryOrder)
   const pushToast = useStore((s) => s.pushToast)
 
-  const awaiting = deliveryOrders.filter((d) => d.stage === 'payment_pending' || d.stage === 'do_issued')
-  const lifting = deliveryOrders.filter((d) => d.stage === 'lifting_scheduled' || d.stage === 'weighment')
+  const awaiting = deliveryOrders.filter((d) => d.stage === 'payment_pending' || d.stage === 'dd_issued')
+  const lifting = deliveryOrders.filter((d) => d.stage === 'lifting_scheduled' || d.stage === 'lifted')
   const completed = deliveryOrders.filter((d) => d.stage === 'completed')
 
   const firm = (id: string) => users.find((u) => u.id === id)?.firm ?? '—'
@@ -62,19 +62,25 @@ export default function Logistics() {
                 onClick={() => pushToast({ kind: 'success', title: `Gate pass ${gatePassFor(d)} issued`, body: `${vehicleFor(d)} cleared for entry — SMS sent to the driver.` })}>
                 Issue gate pass
               </Button>
-              <Button size="sm" variant="success" className="flex-1"
-                onClick={() => {
-                  advanceDeliveryOrder(d.id)
-                  pushToast({ kind: 'success', title: `${d.id.toUpperCase()} weighment recorded`, body: d.stage === 'weighment' ? 'Delivery order completed.' : 'Moved to weighment.' })
-                }}>
-                Mark weighment done
-              </Button>
+              {d.stage === 'lifting_scheduled' ? (
+                <Button size="sm" variant="success" className="flex-1"
+                  onClick={() => {
+                    advanceDeliveryOrder(d.id)
+                    pushToast({ kind: 'success', title: `${d.id.toUpperCase()} lifting started`, body: 'Weighbridge checklist now active — buyer tracks it in Fulfilment.' })
+                  }}>
+                  Confirm lifting started
+                </Button>
+              ) : (
+                <div className="flex-1 flex items-center justify-center text-xs text-ink-muted num">
+                  {d.liftingChecklist.filter((i) => i.done).length}/{d.liftingChecklist.length} checklist complete
+                </div>
+              )}
             </div>
           </>
         )}
         {kind === 'awaiting' && (
           <div className="text-xs text-ink-faint pt-0.5">
-            {d.stage === 'payment_pending' ? 'Full payment due before the DO is released.' : 'DO issued — buyer to schedule lifting.'}
+            {d.stage === 'payment_pending' ? 'Balance due before the Demand Draft is recorded.' : 'DD received — buyer to schedule lifting.'}
           </div>
         )}
       </div>

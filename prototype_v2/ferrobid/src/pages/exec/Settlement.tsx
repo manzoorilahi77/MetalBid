@@ -1,36 +1,46 @@
 /* Executive Manager — post-auction settlement desk: STA decisions and DO payments. */
+import { useState } from 'react'
+import { Landmark } from 'lucide-react'
 import { Page } from '../../layout/Chrome'
-import { PageHeader, Button, Chip, Stat, ProgressBar, EmptyState } from '../../components/ui'
+import { PageHeader, Button, Chip, Stat, ProgressBar, EmptyState, Modal, Field, Input, LockChip } from '../../components/ui'
 import { useStore } from '../../store/store'
 import { inr, inrCompact, num } from '../../lib/format'
 import type { DeliveryOrder, FulfilmentStage } from '../../types'
 
 const STAGE_LABEL: Record<FulfilmentStage, string> = {
   payment_pending: 'Payment pending',
-  do_issued: 'DO issued',
+  dd_issued: 'DD received',
   lifting_scheduled: 'Lifting scheduled',
-  weighment: 'Weighment',
+  lifted: 'Lifted',
   completed: 'Completed',
 }
 const STAGE_TONE: Record<FulfilmentStage, 'warning' | 'steel' | 'success' | 'neutral'> = {
   payment_pending: 'warning',
-  do_issued: 'steel',
+  dd_issued: 'steel',
   lifting_scheduled: 'steel',
-  weighment: 'steel',
+  lifted: 'steel',
   completed: 'success',
 }
 
 const doTotal = (d: DeliveryOrder) => d.materialValue + d.gstAmount + d.tcsAmount
 
 export default function Settlement() {
+  const role = useStore((s) => s.role)
   const lots = useStore((s) => s.lots)
   const users = useStore((s) => s.users)
   const catalogues = useStore((s) => s.catalogues)
   const deliveryOrders = useStore((s) => s.deliveryOrders)
   const setLotStatus = useStore((s) => s.setLotStatus)
   const advanceDeliveryOrder = useStore((s) => s.advanceDeliveryOrder)
+  const issueDemandDraft = useStore((s) => s.issueDemandDraft)
   const audit = useStore((s) => s.audit)
   const pushToast = useStore((s) => s.pushToast)
+
+  const canIssueDd = role === 'sub_admin' || role === 'exec_manager'
+  const [ddTarget, setDdTarget] = useState<DeliveryOrder | null>(null)
+  const [ddNumber, setDdNumber] = useState('')
+  const [issuingBank, setIssuingBank] = useState('')
+  const [amount, setAmount] = useState(0)
 
   const closedIds = catalogues.filter((c) => c.status === 'closed').map((c) => c.id)
   const staLots = lots.filter((l) => l.status === 'sta' && closedIds.includes(l.catalogueId))
@@ -51,6 +61,13 @@ export default function Settlement() {
     setLotStatus(id, 'unsold')
     audit('settlement.sta_reject', l.lotNo, `H1 rejected below reserve — lot marked unsold (${catCode(l.catalogueId)})`, 'warning')
     pushToast({ kind: 'info', title: `${l.lotNo} marked unsold`, body: 'EMD will be auto-released; lot returns to the pipeline for re-auction.' })
+  }
+
+  const openDdModal = (d: DeliveryOrder) => {
+    setDdTarget(d)
+    setDdNumber('')
+    setIssuingBank('')
+    setAmount(doTotal(d) - d.paidAmount)
   }
 
   return (
@@ -101,6 +118,12 @@ export default function Settlement() {
       )}
 
       <h2 className="font-display text-lg font-bold mb-3 mt-8">Payments & delivery orders</h2>
+      {!canIssueDd && (
+        <div className="card bg-surface-2 p-3 flex items-center justify-between gap-3 mb-3">
+          <span className="text-xs text-ink-muted">Issuing a Demand Draft record needs Sub-Admin or Exec Manager access.</span>
+          <LockChip label="Issue DD requires Sub-Admin/Exec Manager" />
+        </div>
+      )}
       {deliveryOrders.length === 0 ? (
         <EmptyState title="No delivery orders yet" body="DOs are created automatically when a sold lot is confirmed." />
       ) : (
@@ -133,7 +156,11 @@ export default function Settlement() {
                       <ProgressBar value={d.paidAmount} max={total} tone={d.paidAmount >= total ? 'success' : 'warning'} />
                     </td>
                     <td className="px-4 py-3 text-right">
-                      {d.stage !== 'completed' ? (
+                      {d.stage === 'payment_pending' ? (
+                        <Button size="sm" variant="secondary" disabled={!canIssueDd} onClick={() => openDdModal(d)}>
+                          <Landmark size={14} /> Issue Demand Draft
+                        </Button>
+                      ) : d.stage === 'dd_issued' || d.stage === 'lifting_scheduled' ? (
                         <Button size="sm" variant="secondary"
                           onClick={() => {
                             advanceDeliveryOrder(d.id)
@@ -141,6 +168,8 @@ export default function Settlement() {
                           }}>
                           Advance stage
                         </Button>
+                      ) : d.stage === 'lifted' ? (
+                        <span className="text-xs text-ink-muted num">{d.liftingChecklist.filter((i) => i.done).length}/{d.liftingChecklist.length} checklist complete</span>
                       ) : (
                         <Chip tone="success">Settled</Chip>
                       )}
@@ -152,6 +181,39 @@ export default function Settlement() {
           </table>
         </div>
       )}
+
+      {/* issue Demand Draft */}
+      <Modal open={!!ddTarget} onClose={() => setDdTarget(null)} title="Issue Demand Draft">
+        {ddTarget && (
+          <div className="space-y-4">
+            <div className="card bg-surface-2 border-0 p-3.5 text-sm space-y-1.5">
+              <div className="flex justify-between"><span className="text-ink-muted">Delivery order</span><span className="num font-semibold">{ddTarget.id.toUpperCase()}</span></div>
+              <div className="flex justify-between"><span className="text-ink-muted">Buyer</span><span className="font-semibold">{firm(ddTarget.buyerId)}</span></div>
+              <div className="flex justify-between"><span className="text-ink-muted">Balance due</span><span className="num font-bold">{inr(doTotal(ddTarget) - ddTarget.paidAmount)}</span></div>
+            </div>
+            <Field label="DD number">
+              <Input value={ddNumber} onChange={(e) => setDdNumber(e.target.value)} placeholder="e.g. DD-3391827" />
+            </Field>
+            <Field label="Issuing bank">
+              <Input value={issuingBank} onChange={(e) => setIssuingBank(e.target.value)} placeholder="e.g. HDFC Bank" />
+            </Field>
+            <Field label="Amount">
+              <Input type="number" className="num" value={amount} onChange={(e) => setAmount(Math.max(0, Number(e.target.value)))} />
+            </Field>
+            <div className="flex gap-2">
+              <Button variant="secondary" className="flex-1" onClick={() => setDdTarget(null)}>Cancel</Button>
+              <Button className="flex-1" disabled={!ddNumber.trim() || !issuingBank.trim() || amount <= 0}
+                onClick={() => {
+                  issueDemandDraft(ddTarget.id, { ddNumber: ddNumber.trim(), issuingBank: issuingBank.trim(), amount })
+                  pushToast({ kind: 'success', title: `${ddTarget.id.toUpperCase()} — DD recorded`, body: 'Delivery order issued; buyer can now schedule lifting.' })
+                  setDdTarget(null)
+                }}>
+                Confirm & issue DO
+              </Button>
+            </div>
+          </div>
+        )}
+      </Modal>
     </Page>
   )
 }

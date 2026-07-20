@@ -13,6 +13,7 @@ import inspectionReportsJson from '../data/mock/inspectionReports.json'
 import notificationsJson from '../data/mock/notifications.json'
 import termsSetsJson from '../data/mock/termsSets.json'
 import deliveryOrdersJson from '../data/mock/deliveryOrders.json'
+import demandDraftsJson from '../data/mock/demandDrafts.json'
 import announcementsJson from '../data/mock/announcements.json'
 import disputesJson from '../data/mock/disputes.json'
 import auditEventsJson from '../data/mock/auditEvents.json'
@@ -21,7 +22,7 @@ import autoBidsJson from '../data/mock/autoBids.json'
 import inspectionSlotsJson from '../data/mock/inspectionSlots.json'
 import type {
   Announcement, AppNotification, AuditEvent, AutoBidSetting, Bid,
-  BuyerLotSelection, Catalogue, DeliveryOrder, Dispute, InspectionReport,
+  BuyerLotSelection, Catalogue, DemandDraft, DeliveryOrder, Dispute, InspectionReport,
   InspectionSlot, Lot, TermsSet, User, Wallet,
 } from '../types'
 
@@ -51,6 +52,7 @@ export interface SeedData {
   notifications: AppNotification[]
   termsSets: TermsSet[]
   deliveryOrders: DeliveryOrder[]
+  demandDrafts: DemandDraft[]
   announcements: Announcement[]
   disputes: Dispute[]
   auditEvents: AuditEvent[]
@@ -70,6 +72,7 @@ export function loadSeed(): SeedData {
     notifications: deepShift(notificationsJson) as unknown as AppNotification[],
     termsSets: termsSetsJson as unknown as TermsSet[],
     deliveryOrders: deepShift(deliveryOrdersJson) as unknown as DeliveryOrder[],
+    demandDrafts: deepShift(demandDraftsJson) as unknown as DemandDraft[],
     announcements: deepShift(announcementsJson) as unknown as Announcement[],
     disputes: deepShift(disputesJson) as unknown as Dispute[],
     auditEvents: deepShift(auditEventsJson) as unknown as AuditEvent[],

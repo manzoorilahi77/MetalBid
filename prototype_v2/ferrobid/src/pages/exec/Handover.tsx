@@ -5,14 +5,6 @@ import { Page } from '../../layout/Chrome'
 import { PageHeader, Button, Chip, Avatar, EmptyState } from '../../components/ui'
 import { useStore } from '../../store/store'
 import { inr, num, fmtDate } from '../../lib/format'
-import type { DeliveryOrder } from '../../types'
-
-const hash = (s: string) => [...s].reduce((a, c) => a + c.charCodeAt(0), 0)
-/** Deterministic weighed quantity: awarded ± up to 0.6%. */
-const weighedQty = (d: DeliveryOrder) => {
-  const deltaPct = ((hash(d.id) % 13) - 6) / 1000
-  return Math.round(d.awardedQty * (1 + deltaPct) * 100) / 100
-}
 
 export default function Handover() {
   const deliveryOrders = useStore((s) => s.deliveryOrders)
@@ -60,7 +52,7 @@ export default function Handover() {
                 </div>
                 <div className="text-sm">
                   <div className="text-xs text-ink-faint">Weighed qty</div>
-                  <div className="num font-semibold">{num(weighedQty(d))} {d.uom}</div>
+                  <div className="num font-semibold">{num(d.weighedQty ?? d.awardedQty)} {d.uom}</div>
                   <div className="text-[11px] text-ink-faint">final on weighment</div>
                 </div>
                 <div className="text-sm">

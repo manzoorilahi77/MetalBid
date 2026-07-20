@@ -1,9 +1,9 @@
-/* Fulfilment tracker — from payment to gate pass for every won lot. */
+/* Fulfilment tracker — from Demand Draft to gate pass for every won lot. */
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Check, FileDown, Scale, Truck, UserRound } from 'lucide-react'
+import { Check, FileDown, Landmark, Scale, Truck, UserRound } from 'lucide-react'
 import { Page } from '../../layout/Chrome'
-import { Button, Chip, EmptyState, MockPayModal, PageHeader, PhotoThumb, cx } from '../../components/ui'
+import { Button, Chip, EmptyState, Input, PageHeader, PhotoThumb, cx } from '../../components/ui'
 import { useStore } from '../../store/store'
 import { inr, num, relTime } from '../../lib/format'
 import { useNow } from '../../lib/useTick'
@@ -11,9 +11,9 @@ import type { FulfilmentStage } from '../../types'
 
 const STAGES: { key: FulfilmentStage; label: string }[] = [
   { key: 'payment_pending', label: 'Payment' },
-  { key: 'do_issued', label: 'DO issued' },
+  { key: 'dd_issued', label: 'DD received' },
   { key: 'lifting_scheduled', label: 'Lifting scheduled' },
-  { key: 'weighment', label: 'Weighment' },
+  { key: 'lifted', label: 'Lifted' },
   { key: 'completed', label: 'Completed' },
 ]
 
@@ -23,9 +23,12 @@ export default function Fulfilment() {
   const lots = useStore((s) => s.lots)
   const catalogues = useStore((s) => s.catalogues)
   const advanceDeliveryOrder = useStore((s) => s.advanceDeliveryOrder)
+  const toggleLiftingChecklistItem = useStore((s) => s.toggleLiftingChecklistItem)
+  const recordWeighment = useStore((s) => s.recordWeighment)
+  const completeLifting = useStore((s) => s.completeLifting)
   const pushToast = useStore((s) => s.pushToast)
   const now = useNow()
-  const [payDoId, setPayDoId] = useState<string | null>(null)
+  const [weighInputs, setWeighInputs] = useState<Record<string, string>>({})
 
   if (!me) {
     return (
@@ -44,14 +47,11 @@ export default function Fulfilment() {
     .filter((d) => d.buyerId === me.id)
     .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
 
-  const payDo = myDos.find((d) => d.id === payDoId)
-  const payBalance = payDo ? payDo.materialValue + payDo.gstAmount + payDo.tcsAmount - payDo.paidAmount : 0
-
   return (
     <Page>
       <PageHeader
         title="Fulfilment tracker"
-        sub="Won lots move payment → delivery order → lifting → weighment → gate pass. Invoices adjust pro-rata on final weighed quantity."
+        sub="Won lots move Demand Draft → delivery order → lifting → weighbridge checklist → gate pass. Invoices adjust pro-rata on final weighed quantity."
       />
 
       {myDos.length === 0 ? (
@@ -70,6 +70,7 @@ export default function Fulfilment() {
             const balance = total - d.paidAmount
             const stageIdx = STAGES.findIndex((s) => s.key === d.stage)
             const liftMsLeft = Date.parse(d.liftingBy) - now
+            const checklistDone = d.liftingChecklist.every((i) => i.done)
             return (
               <section key={d.id} className="card overflow-hidden">
                 {/* ----------------------------- header ---------------------------- */}
@@ -126,15 +127,18 @@ export default function Fulfilment() {
                       })}
                     </ol>
 
-                    <div className="mt-5 flex flex-wrap items-center gap-2">
+                    <div className="mt-5">
                       {d.stage === 'payment_pending' && (
-                        <>
-                          <Button size="sm" onClick={() => setPayDoId(d.id)}>Pay balance {inr(balance)}</Button>
-                          <span className="text-xs text-ink-muted">Delivery order is issued once the full sale value is settled.</span>
-                        </>
+                        <div className="flex items-start gap-2.5 rounded-xl bg-surface-2 px-4 py-3">
+                          <Landmark size={16} className="text-ink-faint shrink-0 mt-0.5" />
+                          <span className="text-xs text-ink-muted">
+                            Balance of <b className="num text-ink">{inr(balance)}</b> is payable via Demand Draft favouring the platform.
+                            Once your DD is received, the settlement team confirms it here and issues the delivery order — usually within 1 business day.
+                          </span>
+                        </div>
                       )}
-                      {d.stage === 'do_issued' && (
-                        <>
+                      {d.stage === 'dd_issued' && (
+                        <div className="flex flex-wrap items-center gap-2">
                           <Button size="sm" variant="secondary"
                             onClick={() => pushToast({ kind: 'success', title: 'Delivery order downloaded (demo)', body: `${d.id.toUpperCase()} — present at the yard gate with your ID.` })}>
                             <FileDown size={14} /> Download DO (PDF)
@@ -145,31 +149,67 @@ export default function Fulfilment() {
                           }}>
                             <Truck size={14} /> Schedule lifting
                           </Button>
-                        </>
+                        </div>
                       )}
                       {d.stage === 'lifting_scheduled' && (
-                        <>
+                        <div className="flex flex-wrap items-center gap-2">
                           <Button size="sm" onClick={() => {
                             advanceDeliveryOrder(d.id)
-                            pushToast({ kind: 'info', title: 'Vehicle at weighbridge', body: 'Tare recorded — gross weighment in progress at the yard.' })
+                            pushToast({ kind: 'info', title: 'Lifting started', body: 'Track vehicle arrival, loading and weighment against the checklist.' })
                           }}>
-                            <Scale size={14} /> Vehicle at weighbridge
+                            <Truck size={14} /> Confirm lifting started
                           </Button>
                           <span className="text-xs text-ink-muted num">Lift by {relTime(d.liftingBy, now).replace('in ', '')} from now — demurrage applies after.</span>
-                        </>
+                        </div>
                       )}
-                      {d.stage === 'weighment' && (
-                        <Button size="sm" variant="success" onClick={() => {
-                          const weighed = Math.round(d.awardedQty * (1 + (Math.random() * 0.06 - 0.03)) * 100) / 100
-                          advanceDeliveryOrder(d.id)
-                          pushToast({
-                            kind: 'success',
-                            title: `Weighment confirmed — ${num(weighed)} ${d.uom}`,
-                            body: `Indicative was ${num(d.awardedQty)} ${d.uom}. Invoice adjusts pro-rata at ${inr(d.h1Rate)}/${d.uom} on the weighed quantity.`,
-                          })
-                        }}>
-                          <Scale size={14} /> Confirm weighment
-                        </Button>
+                      {d.stage === 'lifted' && (
+                        <div className="space-y-2">
+                          {d.liftingChecklist.map((item) => {
+                            if (item.key === 'gross_weighment') {
+                              return item.done ? (
+                                <div key={item.key} className="flex items-center justify-between gap-2 rounded-xl border border-success/25 bg-success-soft px-3 py-2 text-sm font-semibold text-success">
+                                  <span className="flex items-center gap-2"><Check size={14} /> Gross weighment — {num(d.weighedQty ?? d.awardedQty)} {d.uom}</span>
+                                  {item.at && <span className="text-xs font-medium">{relTime(item.at, now)}</span>}
+                                </div>
+                              ) : (
+                                <div key={item.key} className="flex items-center gap-2 rounded-xl border border-line px-3 py-2">
+                                  <Scale size={14} className="text-ink-faint shrink-0" />
+                                  <Input type="number" min={0} className="num h-8 flex-1" placeholder={`Weighed qty (${d.uom})`}
+                                    value={weighInputs[d.id] ?? ''}
+                                    onChange={(e) => setWeighInputs((w) => ({ ...w, [d.id]: e.target.value }))} />
+                                  <Button size="sm" onClick={() => {
+                                    const qty = Number(weighInputs[d.id])
+                                    if (!(qty > 0)) return
+                                    recordWeighment(d.id, qty)
+                                    pushToast({ kind: 'success', title: `Weighment confirmed — ${num(qty)} ${d.uom}`, body: `Indicative was ${num(d.awardedQty)} ${d.uom}. Invoice adjusts pro-rata at ${inr(d.h1Rate)}/${d.uom}.` })
+                                    setWeighInputs((w) => ({ ...w, [d.id]: '' }))
+                                  }}>
+                                    Record
+                                  </Button>
+                                </div>
+                              )
+                            }
+                            return (
+                              <button key={item.key} onClick={() => toggleLiftingChecklistItem(d.id, item.key)}
+                                className="w-full flex items-center justify-between gap-2 rounded-xl border border-line px-3 py-2 text-left hover:border-line-strong transition-colors">
+                                <span className="flex items-center gap-2 text-sm font-semibold">
+                                  <span className={cx('size-5 rounded-md border-2 flex items-center justify-center shrink-0',
+                                    item.done ? 'bg-success border-success text-white' : 'border-line-strong')}>
+                                    {item.done && <Check size={12} />}
+                                  </span>
+                                  {item.label}
+                                </span>
+                                {item.at && <span className="text-xs text-ink-faint">{relTime(item.at, now)}</span>}
+                              </button>
+                            )
+                          })}
+                          <Button size="sm" variant="success" className="mt-1" disabled={!checklistDone} onClick={() => {
+                            completeLifting(d.id)
+                            pushToast({ kind: 'success', title: 'Lifting complete', body: `${lot?.lotNo ?? d.lotId} — gate pass ready to download.` })
+                          }}>
+                            <Check size={14} /> Mark lifting complete
+                          </Button>
+                        </div>
                       )}
                       {d.stage === 'completed' && (
                         <div className="w-full flex flex-wrap items-center gap-3 rounded-xl bg-success-soft border border-success/25 px-4 py-3">
@@ -220,19 +260,6 @@ export default function Fulfilment() {
           })}
         </div>
       )}
-
-      <MockPayModal
-        open={!!payDo && payBalance > 0}
-        onClose={() => setPayDoId(null)}
-        title={`Balance payment — ${payDo?.id.toUpperCase() ?? ''}`}
-        amount={inr(payBalance)}
-        onSuccess={() => {
-          if (!payDo) return
-          advanceDeliveryOrder(payDo.id)
-          pushToast({ kind: 'success', title: 'Payment settled — DO issued', body: 'Your delivery order is ready to download.' })
-          setPayDoId(null)
-        }}
-      />
     </Page>
   )
 }

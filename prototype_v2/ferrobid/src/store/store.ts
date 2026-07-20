@@ -5,10 +5,10 @@
 --------------------------------------------------------------------------- */
 import { create } from 'zustand'
 import { loadSeed } from './seed'
-import { uid, inr } from '../lib/format'
+import { uid, inr, num } from '../lib/format'
 import type {
   AppNotification, AuditEvent, AutoBidSetting, Bid, BidType, BuyerLotSelection,
-  Catalogue, DeliveryOrder, Dispute, InspectionReport, Lot, LotStatus,
+  Catalogue, DemandDraft, DeliveryOrder, Dispute, InspectionReport, LiftingChecklistItem, Lot, LotStatus,
   NotificationKind, Role, User,
 } from '../types'
 
@@ -46,6 +46,12 @@ export const ROLE_HOME: Record<Role, string> = {
 
 const BOT_IDS = ['u-buyer-2', 'u-buyer-3', 'u-buyer-5', 'u-buyer-6', 'u-buyer-7']
 
+const emptyLiftingChecklist = (): LiftingChecklistItem[] => [
+  { key: 'vehicle_at_weighbridge', label: 'Vehicle at weighbridge', done: false },
+  { key: 'loading_complete', label: 'Loading complete', done: false },
+  { key: 'gross_weighment', label: 'Gross weighment recorded', done: false },
+]
+
 export interface Toast {
   id: string
   kind: 'success' | 'info' | 'warning' | 'danger'
@@ -69,6 +75,7 @@ interface State {
   notifications: AppNotification[]
   termsSets: typeof seed.termsSets
   deliveryOrders: DeliveryOrder[]
+  demandDrafts: DemandDraft[]
   announcements: typeof seed.announcements
   disputes: Dispute[]
   auditEvents: typeof seed.auditEvents
@@ -99,6 +106,9 @@ interface State {
   bookInspectionSlot: (catalogueId: string, date: string, window: string, persons: number) => void
   submitKyc: () => void
   advanceDeliveryOrder: (doId: string) => void
+  toggleLiftingChecklistItem: (doId: string, key: LiftingChecklistItem['key']) => void
+  recordWeighment: (doId: string, qty: number) => void
+  completeLifting: (doId: string) => void
 
   /* --- seller --- */
   createLot: (lot: Partial<Lot>) => void
@@ -113,6 +123,7 @@ interface State {
   cancelCatalogue: (catalogueId: string) => void
   voidBid: (bidId: string) => void
   setUserStanding: (userId: string, standing: User['standing'], reason?: string) => void
+  issueDemandDraft: (doId: string, dd: { ddNumber: string; issuingBank: string; amount: number }) => void
 
   /* --- misc --- */
   pushToast: (t: Omit<Toast, 'id'>) => void
@@ -252,6 +263,7 @@ export const useStore = create<State>((set, get) => {
               materialValue: Math.round(lot.currentRate! * lot.indicativeQty),
               gstAmount: Math.round(lot.currentRate! * lot.indicativeQty * 0.18),
               tcsAmount: Math.round(lot.currentRate! * lot.indicativeQty * 0.01),
+              liftingChecklist: emptyLiftingChecklist(),
               paidAmount: 0, liftingBy: new Date(s.now + 7 * 86400_000).toISOString(),
               createdAt: new Date(s.now).toISOString(),
             }],
@@ -488,19 +500,59 @@ export const useStore = create<State>((set, get) => {
       get().notify({ userId: me.id, kind: 'system', title: 'Seller KYC submitted', body: 'Our team will verify your GSTIN and bank details within 1 business day (demo: instantly approvable from Sub-Admin).' })
     },
 
+    // valid only for the two hops needing no extra data — payment_pending needs
+    // issueDemandDraft, and lifted needs completeLifting (checklist-gated)
     advanceDeliveryOrder: (doId) => {
-      const order = ['payment_pending', 'do_issued', 'lifting_scheduled', 'weighment', 'completed'] as const
+      const order = ['payment_pending', 'dd_issued', 'lifting_scheduled', 'lifted', 'completed'] as const
       set((st) => ({
         deliveryOrders: st.deliveryOrders.map((d) => {
           if (d.id !== doId) return d
+          if (d.stage !== 'dd_issued' && d.stage !== 'lifting_scheduled') return d
           const idx = order.indexOf(d.stage)
-          const stage = order[Math.min(idx + 1, order.length - 1)]
+          return { ...d, stage: order[idx + 1] }
+        }),
+      }))
+    },
+
+    toggleLiftingChecklistItem: (doId, key) => {
+      const me = get().currentUser
+      set((st) => ({
+        deliveryOrders: st.deliveryOrders.map((d) => {
+          if (d.id !== doId || d.stage !== 'lifted' || !me || d.buyerId !== me.id) return d
           return {
-            ...d, stage,
-            paidAmount: stage === 'do_issued' ? d.materialValue + d.gstAmount + d.tcsAmount : d.paidAmount,
+            ...d,
+            liftingChecklist: d.liftingChecklist.map((item) =>
+              item.key !== key ? item : { ...item, done: !item.done, at: !item.done ? new Date(st.now).toISOString() : undefined },
+            ),
           }
         }),
       }))
+    },
+
+    recordWeighment: (doId, qty) => {
+      const me = get().currentUser
+      set((st) => ({
+        deliveryOrders: st.deliveryOrders.map((d) => {
+          if (d.id !== doId || d.stage !== 'lifted' || !me || d.buyerId !== me.id) return d
+          return {
+            ...d,
+            weighedQty: qty,
+            liftingChecklist: d.liftingChecklist.map((item) =>
+              item.key !== 'gross_weighment' ? item : { ...item, done: true, at: new Date(st.now).toISOString() },
+            ),
+          }
+        }),
+      }))
+    },
+
+    completeLifting: (doId) => {
+      const me = get().currentUser
+      const d = get().deliveryOrders.find((x) => x.id === doId)
+      if (!d || !me || d.buyerId !== me.id || d.stage !== 'lifted' || !d.liftingChecklist.every((i) => i.done)) return
+      set((st) => ({
+        deliveryOrders: st.deliveryOrders.map((x) => (x.id === doId ? { ...x, stage: 'completed' as const } : x)),
+      }))
+      get().audit('do.complete', doId, `Lifting completed — ${num(d.weighedQty ?? d.awardedQty)} ${d.uom} weighed vs ${num(d.awardedQty)} ${d.uom} indicative`)
     },
 
     /* ------------------------------ seller ------------------------------ */
@@ -609,6 +661,28 @@ export const useStore = create<State>((set, get) => {
       }))
       const u = get().users.find((x) => x.id === userId)
       get().audit('user.standing', u?.firm ?? userId, `Standing set to ${standing}${reason ? ` — ${reason}` : ''}`, standing === 'defaulter' ? 'critical' : 'warning')
+    },
+    // ops-only — staff record a Demand Draft they received from the buyer
+    // offline; this replaces the generic advance for payment_pending→dd_issued
+    issueDemandDraft: (doId, dd) => {
+      const role = get().role
+      if (role !== 'sub_admin' && role !== 'exec_manager') return
+      const me = get().currentUser
+      const d = get().deliveryOrders.find((x) => x.id === doId)
+      if (!d || d.stage !== 'payment_pending') return
+      const draft: DemandDraft = {
+        id: uid('dd'), doId, ddNumber: dd.ddNumber, issuingBank: dd.issuingBank, amount: dd.amount,
+        issuedAt: new Date(get().now).toISOString(), issuedBy: me?.id ?? 'system',
+      }
+      set((st) => ({
+        demandDrafts: [...st.demandDrafts, draft],
+        deliveryOrders: st.deliveryOrders.map((x) =>
+          x.id === doId
+            ? { ...x, ddId: draft.id, stage: 'dd_issued' as const, paidAmount: x.materialValue + x.gstAmount + x.tcsAmount }
+            : x,
+        ),
+      }))
+      get().audit('dd.issue', doId, `Demand Draft ${dd.ddNumber} (${dd.issuingBank}) for ${inr(dd.amount)} recorded`)
     },
 
     /* ------------------------------- misc ------------------------------- */

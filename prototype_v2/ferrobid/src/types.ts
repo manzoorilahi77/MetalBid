@@ -212,10 +212,27 @@ export interface TermsSet {
 
 export type FulfilmentStage =
   | 'payment_pending'
-  | 'do_issued'
+  | 'dd_issued'
   | 'lifting_scheduled'
-  | 'weighment'
+  | 'lifted'
   | 'completed'
+
+export interface DemandDraft {
+  id: string
+  doId: string
+  ddNumber: string
+  issuingBank: string
+  amount: number
+  issuedAt: string
+  issuedBy: string
+}
+
+export interface LiftingChecklistItem {
+  key: 'vehicle_at_weighbridge' | 'loading_complete' | 'gross_weighment'
+  label: string
+  done: boolean
+  at?: string
+}
 
 export interface DeliveryOrder {
   id: string
@@ -232,6 +249,9 @@ export interface DeliveryOrder {
   paidAmount: number
   liftingBy: string
   createdAt: string
+  ddId?: string
+  liftingChecklist: LiftingChecklistItem[]
+  weighedQty?: number
 }
 
 /** Per-buyer, per-catalogue shortlist + scoped EMD funding (§9). */
