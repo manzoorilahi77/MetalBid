@@ -20,10 +20,14 @@ import auditEventsJson from '../data/mock/auditEvents.json'
 import selectionsJson from '../data/mock/selections.json'
 import autoBidsJson from '../data/mock/autoBids.json'
 import inspectionSlotsJson from '../data/mock/inspectionSlots.json'
+import bankAccountsJson from '../data/mock/bankAccounts.json'
+import depositClaimsJson from '../data/mock/depositClaims.json'
+import withdrawalRequestsJson from '../data/mock/withdrawalRequests.json'
+import companyBankAccountsJson from '../data/mock/companyBankAccounts.json'
 import type {
-  Announcement, AppNotification, AuditEvent, AutoBidSetting, Bid,
-  BuyerLotSelection, Catalogue, DemandDraft, DeliveryOrder, Dispute, InspectionReport,
-  InspectionSlot, Lot, TermsSet, User, Wallet,
+  Announcement, AppNotification, AuditEvent, AutoBidSetting, BankAccount, Bid,
+  BuyerLotSelection, Catalogue, CompanyBankAccount, DemandDraft, DeliveryOrder, DepositClaim,
+  Dispute, InspectionReport, InspectionSlot, Lot, TermsSet, User, Wallet, WithdrawalRequest,
 } from '../types'
 
 const delta = Date.now() - Date.parse((anchorJson as { anchor: string }).anchor)
@@ -59,6 +63,10 @@ export interface SeedData {
   selections: BuyerLotSelection[]
   autoBids: AutoBidSetting[]
   inspectionSlots: InspectionSlot[]
+  bankAccounts: BankAccount[]
+  depositClaims: DepositClaim[]
+  withdrawalRequests: WithdrawalRequest[]
+  companyBankAccounts: CompanyBankAccount[]
 }
 
 export function loadSeed(): SeedData {
@@ -79,5 +87,9 @@ export function loadSeed(): SeedData {
     selections: selectionsJson as unknown as BuyerLotSelection[],
     autoBids: autoBidsJson as unknown as AutoBidSetting[],
     inspectionSlots: deepShift(inspectionSlotsJson) as unknown as InspectionSlot[],
+    bankAccounts: deepShift(bankAccountsJson) as unknown as BankAccount[],
+    depositClaims: deepShift(depositClaimsJson) as unknown as DepositClaim[],
+    withdrawalRequests: deepShift(withdrawalRequestsJson) as unknown as WithdrawalRequest[],
+    companyBankAccounts: companyBankAccountsJson as unknown as CompanyBankAccount[],
   }
 }

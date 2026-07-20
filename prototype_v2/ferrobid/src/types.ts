@@ -165,6 +165,63 @@ export interface Wallet {
   ledger: LedgerEntry[]
 }
 
+/* --------------------------- SmartPay (§ wallet) --------------------------- */
+
+export interface BankAccount {
+  id: string
+  userId: string
+  bankName: string
+  ifsc: string
+  accountHolderName: string
+  last4: string // only the last 4 digits are ever persisted
+  accountNumberMasked: string // e.g. "•••• •••• 1234" — display-ready, never the full number
+  status: 'pending' | 'verified' | 'rejected'
+  rejectionReason?: string
+  createdAt: string
+}
+
+export interface DepositClaim {
+  id: string
+  userId: string
+  amount: number
+  utr: string // buyer-supplied bank reference / UTR
+  transferDate: string
+  proofFilename?: string
+  status: 'submitted' | 'approved' | 'rejected'
+  rejectionReason?: string
+  createdAt: string
+  decidedAt?: string
+  decidedBy?: string
+}
+
+export interface WithdrawalRequest {
+  id: string
+  userId: string
+  amount: number
+  bankAccountId: string
+  ref: string
+  status: 'requested' | 'under_review' | 'processed' | 'failed' | 'cancelled'
+  reason?: string
+  requestedAt: string
+  decidedAt?: string
+}
+
+export interface CompanyBankAccount {
+  id: string
+  bank: string
+  accountNumberMasked: string
+  ifsc: string
+  purpose: string
+}
+
+export interface WithdrawalWindowConfig {
+  days: number[] // 0=Sun … 6=Sat, IST calendar day
+  startHour: number
+  startMinute: number
+  endHour: number
+  endMinute: number // IST, e.g. 11:00–14:00
+}
+
 export interface InspectionChecklistItem {
   item: string
   ok: boolean

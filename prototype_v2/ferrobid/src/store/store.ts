@@ -7,9 +7,9 @@ import { create } from 'zustand'
 import { loadSeed } from './seed'
 import { uid, inr, num } from '../lib/format'
 import type {
-  AppNotification, AuditEvent, AutoBidSetting, Bid, BidType, BuyerLotSelection,
-  Catalogue, DemandDraft, DeliveryOrder, Dispute, InspectionReport, LiftingChecklistItem, Lot, LotStatus,
-  NotificationKind, Role, User,
+  AppNotification, AuditEvent, AutoBidSetting, BankAccount, Bid, BidType, BuyerLotSelection,
+  Catalogue, CompanyBankAccount, DemandDraft, DeliveryOrder, DepositClaim, Dispute, InspectionReport,
+  LiftingChecklistItem, Lot, LotStatus, NotificationKind, Role, User, WithdrawalRequest, WithdrawalWindowConfig,
 } from '../types'
 
 const seed = loadSeed()
@@ -52,6 +52,24 @@ const emptyLiftingChecklist = (): LiftingChecklistItem[] => [
   { key: 'gross_weighment', label: 'Gross weighment recorded', done: false },
 ]
 
+/** Default withdrawal processing window — Mon–Fri, 11:00–14:00 IST. */
+export const DEFAULT_WITHDRAWAL_WINDOW: WithdrawalWindowConfig = {
+  days: [1, 2, 3, 4, 5],
+  startHour: 11, startMinute: 0, endHour: 14, endMinute: 0,
+}
+
+export const WEEKDAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+const WEEKDAY_FULL = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+
+/** Mask a bank account number immediately — only the last 4 digits are ever
+ *  persisted or displayed again after initial entry. */
+const maskAccountNumber = (accountNumber: string): { last4: string; masked: string } => {
+  const digits = accountNumber.replace(/\D/g, '')
+  const last4 = digits.slice(-4).padStart(4, '•')
+  const groups = Math.max(0, Math.ceil(Math.max(0, digits.length - 4) / 4))
+  return { last4, masked: `${'•••• '.repeat(groups)}${last4}` }
+}
+
 export interface Toast {
   id: string
   kind: 'success' | 'info' | 'warning' | 'danger'
@@ -82,6 +100,11 @@ interface State {
   selections: BuyerLotSelection[]
   autoBids: AutoBidSetting[]
   inspectionSlots: typeof seed.inspectionSlots
+  bankAccounts: BankAccount[]
+  depositClaims: DepositClaim[]
+  withdrawalRequests: WithdrawalRequest[]
+  companyBankAccounts: CompanyBankAccount[]
+  withdrawalWindow: WithdrawalWindowConfig
 
   termsAccepted: Record<string, string> // catalogueId → version accepted (per current session)
   toasts: Toast[]
@@ -109,6 +132,10 @@ interface State {
   toggleLiftingChecklistItem: (doId: string, key: LiftingChecklistItem['key']) => void
   recordWeighment: (doId: string, qty: number) => void
   completeLifting: (doId: string) => void
+  registerBankAccount: (bankName: string, accountNumber: string, ifsc: string, accountHolderName: string) => void
+  submitDepositClaim: (amount: number, utr: string, transferDate: string, proofFilename?: string) => { ok: boolean; error?: string }
+  requestWithdrawal: (amount: number, bankAccountId: string) => { ok: boolean; error?: string }
+  cancelWithdrawal: (id: string) => void
 
   /* --- seller --- */
   createLot: (lot: Partial<Lot>) => void
@@ -124,6 +151,15 @@ interface State {
   voidBid: (bidId: string) => void
   setUserStanding: (userId: string, standing: User['standing'], reason?: string) => void
   issueDemandDraft: (doId: string, dd: { ddNumber: string; issuingBank: string; amount: number }) => void
+  verifyBankAccount: (id: string) => void
+  rejectBankAccount: (id: string, reason?: string) => void
+  approveDepositClaim: (id: string) => void
+  rejectDepositClaim: (id: string, reason?: string) => void
+  approveWithdrawal: (id: string) => void
+  processWithdrawal: (id: string) => void
+  failWithdrawal: (id: string, reason?: string) => void
+  setWithdrawalWindow: (config: WithdrawalWindowConfig) => void
+  setCompanyBankAccounts: (accounts: CompanyBankAccount[]) => void
 
   /* --- misc --- */
   pushToast: (t: Omit<Toast, 'id'>) => void
@@ -325,6 +361,7 @@ export const useStore = create<State>((set, get) => {
 
     ...seed,
 
+    withdrawalWindow: DEFAULT_WITHDRAWAL_WINDOW,
     termsAccepted: {},
     toasts: [],
     lastWonLotId: null,
@@ -555,6 +592,81 @@ export const useStore = create<State>((set, get) => {
       get().audit('do.complete', doId, `Lifting completed — ${num(d.weighedQty ?? d.awardedQty)} ${d.uom} weighed vs ${num(d.awardedQty)} ${d.uom} indicative`)
     },
 
+    registerBankAccount: (bankName, accountNumber, ifsc, accountHolderName) => {
+      const me = get().currentUser
+      if (!me) return
+      const { last4, masked } = maskAccountNumber(accountNumber)
+      const acc: BankAccount = {
+        id: uid('bank'), userId: me.id, bankName, ifsc, accountHolderName,
+        last4, accountNumberMasked: masked, status: 'pending', createdAt: new Date(get().now).toISOString(),
+      }
+      set((st) => ({ bankAccounts: [...st.bankAccounts, acc] }))
+      get().audit('bankaccount.register', acc.id, `${bankName} account ${masked} registered for verification`)
+    },
+
+    submitDepositClaim: (amount, utr, transferDate, proofFilename) => {
+      const me = get().currentUser
+      if (!me) return { ok: false, error: 'Sign in to submit a claim' }
+      const norm = utr.trim().toLowerCase()
+      if (!norm) return { ok: false, error: 'Enter the UTR / reference number' }
+      if (get().depositClaims.some((c) => c.utr.trim().toLowerCase() === norm)) {
+        return { ok: false, error: 'A claim with this reference already exists' }
+      }
+      const claim: DepositClaim = {
+        id: uid('dep'), userId: me.id, amount, utr: utr.trim(), transferDate, proofFilename,
+        status: 'submitted', createdAt: new Date(get().now).toISOString(),
+      }
+      set((st) => ({ depositClaims: [...st.depositClaims, claim] }))
+      get().audit('deposit.submit', claim.id, `Deposit claim of ${inr(amount)} submitted — UTR ${claim.utr}`)
+      return { ok: true }
+    },
+
+    requestWithdrawal: (amount, bankAccountId) => {
+      const me = get().currentUser
+      if (!me) return { ok: false, error: 'Sign in to request a withdrawal' }
+      const account = get().bankAccounts.find((a) => a.id === bankAccountId && a.userId === me.id)
+      if (!account || account.status !== 'verified') return { ok: false, error: 'Select a verified bank account' }
+      if (!(amount > 0)) return { ok: false, error: 'Enter an amount to withdraw' }
+      const w = wallet(me.id)
+      if (!w || amount > w.balance) return { ok: false, error: 'Insufficient available balance' }
+      if (!withinWithdrawalWindow(get().withdrawalWindow, get().now)) {
+        return { ok: false, error: `Outside the withdrawal processing window. ${nextWithdrawalWindowLabel(get().withdrawalWindow, get().now)}` }
+      }
+      const ref = uid('wdr').toUpperCase()
+      const req: WithdrawalRequest = {
+        id: uid('wdr'), userId: me.id, amount, bankAccountId, ref,
+        status: 'requested', requestedAt: new Date(get().now).toISOString(),
+      }
+      set((st) => ({
+        withdrawalRequests: [...st.withdrawalRequests, req],
+        wallets: st.wallets.map((x) =>
+          x.userId === me.id
+            ? {
+                ...x, balance: x.balance - amount,
+                ledger: [{ id: uid('led'), at: new Date(st.now).toISOString(), type: 'withdraw' as const, amount: -amount, ref, note: `Withdrawal requested to •••• ${account.last4}` }, ...x.ledger],
+              }
+            : x,
+        ),
+      }))
+      get().audit('withdrawal.request', req.id, `Withdrawal of ${inr(amount)} requested to •••• ${account.last4}`)
+      return { ok: true }
+    },
+
+    cancelWithdrawal: (id) => {
+      const me = get().currentUser
+      const req = get().withdrawalRequests.find((r) => r.id === id)
+      if (!req || !me || req.userId !== me.id || req.status !== 'requested') return
+      set((st) => ({
+        withdrawalRequests: st.withdrawalRequests.map((r) => (r.id === id ? { ...r, status: 'cancelled' as const, decidedAt: new Date(st.now).toISOString() } : r)),
+        wallets: st.wallets.map((w) =>
+          w.userId === req.userId
+            ? { ...w, balance: w.balance + req.amount, ledger: [{ id: uid('led'), at: new Date(st.now).toISOString(), type: 'refund' as const, amount: req.amount, ref: req.ref, note: 'Withdrawal cancelled by buyer — reversed' }, ...w.ledger] }
+            : w,
+        ),
+      }))
+      get().audit('withdrawal.cancel', id, `Withdrawal of ${inr(req.amount)} cancelled by buyer — reversed`)
+    },
+
     /* ------------------------------ seller ------------------------------ */
     createLot: (partial) => {
       const me = get().currentUser
@@ -683,6 +795,111 @@ export const useStore = create<State>((set, get) => {
         ),
       }))
       get().audit('dd.issue', doId, `Demand Draft ${dd.ddNumber} (${dd.issuingBank}) for ${inr(dd.amount)} recorded`)
+    },
+
+    verifyBankAccount: (id) => {
+      const role = get().role
+      if (role !== 'sub_admin' && role !== 'exec_manager') return
+      const a = get().bankAccounts.find((x) => x.id === id)
+      if (!a || a.status !== 'pending') return
+      set((st) => ({ bankAccounts: st.bankAccounts.map((x) => (x.id === id ? { ...x, status: 'verified' as const } : x)) }))
+      get().audit('bankaccount.verify', id, `${a.bankName} account •••• ${a.last4} verified`)
+      get().notify({ userId: a.userId, kind: 'wallet', title: 'Bank account verified', body: `${a.bankName} •••• ${a.last4} can now receive withdrawals.`, href: '/buyer/wallet' })
+    },
+
+    rejectBankAccount: (id, reason) => {
+      const role = get().role
+      if (role !== 'sub_admin' && role !== 'exec_manager') return
+      const a = get().bankAccounts.find((x) => x.id === id)
+      if (!a || a.status !== 'pending') return
+      set((st) => ({ bankAccounts: st.bankAccounts.map((x) => (x.id === id ? { ...x, status: 'rejected' as const, rejectionReason: reason } : x)) }))
+      get().audit('bankaccount.reject', id, `${a.bankName} account •••• ${a.last4} rejected${reason ? ` — ${reason}` : ''}`, 'warning')
+      get().notify({ userId: a.userId, kind: 'wallet', title: 'Bank account rejected', body: reason || 'Please re-register with correct details.', href: '/buyer/wallet' })
+    },
+
+    approveDepositClaim: (id) => {
+      const role = get().role
+      if (role !== 'sub_admin' && role !== 'exec_manager') return
+      const me = get().currentUser
+      const claim = get().depositClaims.find((c) => c.id === id)
+      if (!claim || claim.status !== 'submitted') return
+      ensureWallet(claim.userId)
+      set((st) => ({
+        depositClaims: st.depositClaims.map((c) => (c.id === id ? { ...c, status: 'approved' as const, decidedAt: new Date(st.now).toISOString(), decidedBy: me?.id } : c)),
+        wallets: st.wallets.map((w) =>
+          w.userId === claim.userId
+            ? {
+                ...w, balance: w.balance + claim.amount,
+                ledger: [{ id: uid('led'), at: new Date(st.now).toISOString(), type: 'topup' as const, amount: claim.amount, ref: claim.utr, note: `Deposit claim approved — UTR ${claim.utr}` }, ...w.ledger],
+              }
+            : w,
+        ),
+      }))
+      get().audit('deposit.approve', id, `Deposit claim approved — ${inr(claim.amount)} credited (UTR ${claim.utr})`)
+      get().notify({ userId: claim.userId, kind: 'wallet', title: 'Deposit approved', body: `${inr(claim.amount)} credited to your wallet.`, href: '/buyer/wallet' })
+    },
+
+    rejectDepositClaim: (id, reason) => {
+      const role = get().role
+      if (role !== 'sub_admin' && role !== 'exec_manager') return
+      const me = get().currentUser
+      const claim = get().depositClaims.find((c) => c.id === id)
+      if (!claim || claim.status !== 'submitted') return
+      set((st) => ({
+        depositClaims: st.depositClaims.map((c) => (c.id === id ? { ...c, status: 'rejected' as const, rejectionReason: reason, decidedAt: new Date(st.now).toISOString(), decidedBy: me?.id } : c)),
+      }))
+      get().audit('deposit.reject', id, `Deposit claim rejected${reason ? ` — ${reason}` : ''}`, 'warning')
+      get().notify({ userId: claim.userId, kind: 'wallet', title: 'Deposit claim rejected', body: reason || 'Contact support for details.', href: '/buyer/wallet' })
+    },
+
+    approveWithdrawal: (id) => {
+      const role = get().role
+      if (role !== 'sub_admin' && role !== 'exec_manager') return
+      const req = get().withdrawalRequests.find((r) => r.id === id)
+      if (!req || req.status !== 'requested') return
+      set((st) => ({ withdrawalRequests: st.withdrawalRequests.map((r) => (r.id === id ? { ...r, status: 'under_review' as const } : r)) }))
+      get().audit('withdrawal.review', id, `Withdrawal of ${inr(req.amount)} picked up for processing`)
+    },
+
+    processWithdrawal: (id) => {
+      const role = get().role
+      if (role !== 'sub_admin' && role !== 'exec_manager') return
+      const req = get().withdrawalRequests.find((r) => r.id === id)
+      if (!req || req.status !== 'under_review') return
+      set((st) => ({ withdrawalRequests: st.withdrawalRequests.map((r) => (r.id === id ? { ...r, status: 'processed' as const, decidedAt: new Date(st.now).toISOString() } : r)) }))
+      get().audit('withdrawal.process', id, `Withdrawal of ${inr(req.amount)} processed to bank`)
+      get().notify({ userId: req.userId, kind: 'wallet', title: 'Withdrawal processed', body: `${inr(req.amount)} sent to your bank account.`, href: '/buyer/wallet' })
+    },
+
+    failWithdrawal: (id, reason) => {
+      const role = get().role
+      if (role !== 'sub_admin' && role !== 'exec_manager') return
+      const req = get().withdrawalRequests.find((r) => r.id === id)
+      if (!req || req.status !== 'under_review') return
+      set((st) => ({
+        withdrawalRequests: st.withdrawalRequests.map((r) => (r.id === id ? { ...r, status: 'failed' as const, reason, decidedAt: new Date(st.now).toISOString() } : r)),
+        wallets: st.wallets.map((w) =>
+          w.userId === req.userId
+            ? { ...w, balance: w.balance + req.amount, ledger: [{ id: uid('led'), at: new Date(st.now).toISOString(), type: 'refund' as const, amount: req.amount, ref: req.ref, note: `Withdrawal failed — reversed${reason ? `: ${reason}` : ''}` }, ...w.ledger] }
+            : w,
+        ),
+      }))
+      get().audit('withdrawal.fail', id, `Withdrawal of ${inr(req.amount)} failed${reason ? ` — ${reason}` : ''} — reversed to wallet`, 'warning')
+      get().notify({ userId: req.userId, kind: 'wallet', title: 'Withdrawal failed', body: `${inr(req.amount)} reversed to your wallet.${reason ? ` Reason: ${reason}` : ''}`, href: '/buyer/wallet' })
+    },
+
+    setWithdrawalWindow: (config) => {
+      const role = get().role
+      if (role !== 'super_admin') return
+      set({ withdrawalWindow: config })
+      get().audit('withdrawal.window_config', 'withdrawal_window', `Withdrawal window updated — ${config.days.length} day(s)/week, ${String(config.startHour).padStart(2, '0')}:${String(config.startMinute).padStart(2, '0')}–${String(config.endHour).padStart(2, '0')}:${String(config.endMinute).padStart(2, '0')} IST`)
+    },
+
+    setCompanyBankAccounts: (accounts) => {
+      const role = get().role
+      if (role !== 'super_admin') return
+      set({ companyBankAccounts: accounts })
+      get().audit('companybank.update', 'company_bank_accounts', `Company bank account list updated — ${accounts.length} account(s)`)
     },
 
     /* ------------------------------- misc ------------------------------- */
@@ -848,4 +1065,47 @@ export function myLotResult(bids: Bid[], lot: Lot, meId: string | undefined): My
       : lot.status === 'sta' ? (lot.leadingBidderId === meId ? 'sta' : 'lost')
       : 'lost'
   return { rank: mine.rank, myBestRate: mine.rate, outcome, closingH1: lot.resultH1Rate ?? lot.currentRate ?? null }
+}
+
+const IST_OFFSET_MS = 5.5 * 60 * 60_000
+
+/** IST wall-clock components for an epoch ms instant, via explicit UTC+5:30
+ *  offset arithmetic — never Date#getHours(), which reads the host's own
+ *  timezone (state.now is real Date.now(), not a timezone-shifted clock). */
+const istParts = (nowMs: number) => {
+  const ist = new Date(nowMs + IST_OFFSET_MS)
+  return { day: ist.getUTCDay(), minutes: ist.getUTCHours() * 60 + ist.getUTCMinutes() }
+}
+
+export const fmtClock = (h: number, m: number): string => {
+  const period = h < 12 ? 'AM' : 'PM'
+  const h12 = h % 12 === 0 ? 12 : h % 12
+  return `${h12}:${String(m).padStart(2, '0')} ${period}`
+}
+
+/** Pure — is `nowMs` inside the configured withdrawal processing window?
+ *  Used by BOTH requestWithdrawal (enforcement) and the Wallet UI (button
+ *  gating + copy) — one source of truth, not duplicated logic. */
+export function withinWithdrawalWindow(config: WithdrawalWindowConfig, nowMs: number): boolean {
+  const { day, minutes } = istParts(nowMs)
+  if (!config.days.includes(day)) return false
+  const start = config.startHour * 60 + config.startMinute
+  const end = config.endHour * 60 + config.endMinute
+  return minutes >= start && minutes < end
+}
+
+/** Pure — human copy for the next available window, e.g.
+ *  "Next window: Monday 11:00 AM". */
+export function nextWithdrawalWindowLabel(config: WithdrawalWindowConfig, nowMs: number): string {
+  if (config.days.length === 0) return 'Withdrawals are currently disabled.'
+  const { day: today, minutes: nowMinutes } = istParts(nowMs)
+  const start = config.startHour * 60 + config.startMinute
+  for (let add = 0; add <= 7; add++) {
+    const day = (today + add) % 7
+    if (!config.days.includes(day)) continue
+    if (add === 0 && nowMinutes >= start) continue
+    const dayLabel = add === 0 ? 'today' : add === 1 ? 'tomorrow' : WEEKDAY_FULL[day]
+    return `Next window: ${dayLabel} ${fmtClock(config.startHour, config.startMinute)}`
+  }
+  return 'No upcoming withdrawal window configured.'
 }

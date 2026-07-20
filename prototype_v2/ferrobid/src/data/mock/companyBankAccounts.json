@@ -1,0 +1,4 @@
+[
+  { "id": "cba-1", "bank": "HDFC Bank", "accountNumberMasked": "5020 00•• ••81 234", "ifsc": "HDFC0000060", "purpose": "EMD pool" },
+  { "id": "cba-2", "bank": "ICICI Bank", "accountNumberMasked": "0004 05•• ••77 910", "ifsc": "ICIC0000004", "purpose": "Settlement" }
+]

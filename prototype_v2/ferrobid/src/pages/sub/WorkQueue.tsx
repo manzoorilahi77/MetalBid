@@ -1,16 +1,19 @@
-/* Sub-admin work queue — SLA-tracked triage of flagged lots, KYC, disputes and
-   STA chases. Sub-admin resolves what's in scope and escalates the rest. */
+/* Sub-admin work queue — SLA-tracked triage of flagged lots, KYC, disputes,
+   STA chases, and SmartPay reviews (deposit claims, withdrawals, bank
+   accounts). Sub-admin resolves what's in scope and escalates the rest. */
 import { useMemo, useState } from 'react'
-import { Check, Flag, MessageSquareWarning, ShieldQuestion, UserCheck } from 'lucide-react'
+import {
+  Building2, Check, Flag, Landmark, MessageSquareWarning, ShieldQuestion, UserCheck, Wallet,
+} from 'lucide-react'
 import { Page } from '../../layout/Chrome'
 import {
   Avatar, Button, Chip, EmptyState, Field, LockChip, Modal, PageHeader, Segmented, Textarea, cx,
 } from '../../components/ui'
 import { useStore } from '../../store/store'
 import { inr, num, fmtDateTime } from '../../lib/format'
-import type { Dispute, Lot, User } from '../../types'
+import type { BankAccount, DepositClaim, Dispute, Lot, User, WithdrawalRequest } from '../../types'
 
-type Kind = 'flag' | 'kyc' | 'dispute' | 'sta'
+type Kind = 'flag' | 'kyc' | 'dispute' | 'sta' | 'deposit_claim' | 'withdrawal_request' | 'bank_account'
 type Priority = 'all' | 'soon' | 'overdue'
 
 interface QueueItem {
@@ -25,13 +28,18 @@ interface QueueItem {
   lot?: Lot
   user?: User
   dispute?: Dispute
+  depositClaim?: DepositClaim
+  withdrawalRequest?: WithdrawalRequest
+  bankAccount?: BankAccount
 }
 
 const KIND_ICON: Record<Kind, typeof Flag> = {
   flag: Flag, kyc: UserCheck, dispute: MessageSquareWarning, sta: ShieldQuestion,
+  deposit_claim: Landmark, withdrawal_request: Wallet, bank_account: Building2,
 }
 const KIND_LABEL: Record<Kind, string> = {
   flag: 'Flagged lot', kyc: 'KYC', dispute: 'Dispute', sta: 'STA chase',
+  deposit_claim: 'Deposit claim', withdrawal_request: 'Withdrawal', bank_account: 'Bank account',
 }
 
 /** Deterministic hash → the same item always shows the same SLA countdown. */
@@ -53,6 +61,16 @@ export default function WorkQueue() {
   const disputes = useStore((s) => s.disputes)
   const catalogues = useStore((s) => s.catalogues)
   const inspectionReports = useStore((s) => s.inspectionReports)
+  const depositClaims = useStore((s) => s.depositClaims)
+  const withdrawalRequests = useStore((s) => s.withdrawalRequests)
+  const bankAccounts = useStore((s) => s.bankAccounts)
+  const approveDepositClaim = useStore((s) => s.approveDepositClaim)
+  const rejectDepositClaim = useStore((s) => s.rejectDepositClaim)
+  const approveWithdrawal = useStore((s) => s.approveWithdrawal)
+  const processWithdrawal = useStore((s) => s.processWithdrawal)
+  const failWithdrawal = useStore((s) => s.failWithdrawal)
+  const verifyBankAccount = useStore((s) => s.verifyBankAccount)
+  const rejectBankAccount = useStore((s) => s.rejectBankAccount)
   const audit = useStore((s) => s.audit)
   const pushToast = useStore((s) => s.pushToast)
 
@@ -62,12 +80,19 @@ export default function WorkQueue() {
   const [flagLot, setFlagLot] = useState<Lot | null>(null)
   const [openDispute, setOpenDispute] = useState<Dispute | null>(null)
   const [reply, setReply] = useState('')
+  const [depositItem, setDepositItem] = useState<DepositClaim | null>(null)
+  const [depositReason, setDepositReason] = useState('')
+  const [withdrawalItem, setWithdrawalItem] = useState<WithdrawalRequest | null>(null)
+  const [withdrawalReason, setWithdrawalReason] = useState('')
+  const [bankItem, setBankItem] = useState<BankAccount | null>(null)
+  const [bankReason, setBankReason] = useState('')
 
   const assignee = users.find((u) => u.id === 'u-sub-1')
+  const firmOf = (userId: string) => users.find((u) => u.id === userId)?.firm ?? 'Buyer'
 
   const items = useMemo<QueueItem[]>(() => {
     const closedCatIds = new Set(catalogues.filter((c) => c.status === 'closed').map((c) => c.id))
-    const raw: { id: string; kind: Kind; title: string; sub: string; dueH: number; lot?: Lot; user?: User; dispute?: Dispute }[] = [
+    const raw: { id: string; kind: Kind; title: string; sub: string; dueH: number; lot?: Lot; user?: User; dispute?: Dispute; depositClaim?: DepositClaim; withdrawalRequest?: WithdrawalRequest; bankAccount?: BankAccount }[] = [
       ...lots.filter((l) => l.status === 'flagged').map((l) => ({
         id: `wq-flag-${l.id}`, kind: 'flag' as Kind,
         title: `Review flagged lot ${l.lotNo}`,
@@ -92,6 +117,24 @@ export default function WorkQueue() {
         sub: `H1 ${inr(l.resultH1Rate ?? l.currentRate ?? 0)}/${l.uom} below reserve · ${catalogues.find((c) => c.id === l.catalogueId)?.code ?? ''}`,
         dueH: 48, lot: l,
       })),
+      ...depositClaims.filter((c) => c.status === 'submitted').map((c) => ({
+        id: `wq-dep-${c.id}`, kind: 'deposit_claim' as Kind,
+        title: `Verify deposit claim — ${inr(c.amount)}`,
+        sub: `${firmOf(c.userId)} · UTR ${c.utr}`,
+        dueH: 24, depositClaim: c,
+      })),
+      ...bankAccounts.filter((a) => a.status === 'pending').map((a) => ({
+        id: `wq-bank-${a.id}`, kind: 'bank_account' as Kind,
+        title: `Verify bank account — ${a.bankName} •••• ${a.last4}`,
+        sub: `${firmOf(a.userId)} · ${a.accountHolderName}`,
+        dueH: 24, bankAccount: a,
+      })),
+      ...withdrawalRequests.filter((r) => r.status === 'requested' || r.status === 'under_review').map((r) => ({
+        id: `wq-wdr-${r.id}`, kind: 'withdrawal_request' as Kind,
+        title: `${r.status === 'requested' ? 'Review' : 'Process'} withdrawal — ${inr(r.amount)}`,
+        sub: `${firmOf(r.userId)} · ${r.status === 'requested' ? 'awaiting review' : 'awaiting processing'}`,
+        dueH: 24, withdrawalRequest: r,
+      })),
     ]
 
     const withSla = raw.map((r) => {
@@ -114,7 +157,7 @@ export default function WorkQueue() {
       worst.dueLabel = 'Overdue'
     }
     return withSla.sort((a, b) => Number(b.overdue) - Number(a.overdue) || a.leftMs - b.leftMs)
-  }, [lots, users, disputes, catalogues])
+  }, [lots, users, disputes, catalogues, depositClaims, bankAccounts, withdrawalRequests])
 
   const visible = items.filter((i) =>
     priority === 'all' ? true : priority === 'overdue' ? i.overdue : i.amber)
@@ -168,6 +211,7 @@ export default function WorkQueue() {
                     item.kind === 'flag' ? 'bg-warning-soft text-warning'
                     : item.kind === 'kyc' ? 'bg-steel-soft text-steel-strong'
                     : item.kind === 'dispute' ? 'bg-danger-soft text-danger'
+                    : item.kind === 'deposit_claim' || item.kind === 'withdrawal_request' || item.kind === 'bank_account' ? 'bg-ember-soft text-ember-strong'
                     : 'bg-surface-2 text-ink-muted')}>
                     <Icon size={16} />
                   </span>
@@ -198,12 +242,21 @@ export default function WorkQueue() {
                       pushToast({ kind: 'info', title: 'Reminder sent to seller', body: `${item.lot!.lotNo} — STA decision pending, 48h SLA.` })
                     }}>Send reminder</Button>
                   )}
+                  {item.kind === 'deposit_claim' && item.depositClaim && (
+                    <Button variant="secondary" size="sm" onClick={() => { setDepositItem(item.depositClaim!); setDepositReason('') }}>Review claim</Button>
+                  )}
+                  {item.kind === 'bank_account' && item.bankAccount && (
+                    <Button variant="secondary" size="sm" onClick={() => { setBankItem(item.bankAccount!); setBankReason('') }}>Review account</Button>
+                  )}
+                  {item.kind === 'withdrawal_request' && item.withdrawalRequest && (
+                    <Button variant="secondary" size="sm" onClick={() => { setWithdrawalItem(item.withdrawalRequest!); setWithdrawalReason('') }}>Review withdrawal</Button>
+                  )}
                 </li>
               )
             })}
           </ul>
           <div className="px-5 py-3 bg-surface-2 border-t border-line text-xs text-ink-muted">
-            {num(items.length)} items on your desk · SLAs: flagged lots 4h · disputes 8h · KYC 24h · STA chase 48h.
+            {num(items.length)} items on your desk · SLAs: flagged lots 4h · disputes 8h · KYC/SmartPay 24h · STA chase 48h.
           </div>
         </div>
       )}
@@ -322,6 +375,108 @@ export default function WorkQueue() {
                 setOpenDispute(null)
               }}>Send reply</Button>
             </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* -------------------------- deposit claim modal ------------------------ */}
+      <Modal open={!!depositItem} onClose={() => setDepositItem(null)} title="Deposit claim review">
+        {depositItem && (
+          <div className="space-y-4">
+            <div className="card bg-surface-2 p-3.5 text-sm space-y-1.5">
+              <div className="flex justify-between"><span className="text-ink-muted">Buyer</span><span className="font-semibold">{firmOf(depositItem.userId)}</span></div>
+              <div className="flex justify-between"><span className="text-ink-muted">Amount</span><span className="num font-bold">{inr(depositItem.amount)}</span></div>
+              <div className="flex justify-between"><span className="text-ink-muted">UTR</span><span className="num font-semibold">{depositItem.utr}</span></div>
+              <div className="flex justify-between"><span className="text-ink-muted">Transfer date</span><span className="num font-semibold">{depositItem.transferDate}</span></div>
+              {depositItem.proofFilename && <div className="flex justify-between"><span className="text-ink-muted">Proof</span><span className="font-semibold">{depositItem.proofFilename}</span></div>}
+            </div>
+            <Field label="Rejection reason" hint="Only needed if rejecting">
+              <Textarea value={depositReason} onChange={(e) => setDepositReason(e.target.value)} placeholder="e.g. UTR does not match any credit on the company statement" />
+            </Field>
+            <div className="flex justify-end gap-2">
+              <Button variant="ghost" className="text-danger hover:text-danger" onClick={() => {
+                rejectDepositClaim(depositItem.id, depositReason.trim() || undefined)
+                pushToast({ kind: 'warning', title: 'Deposit claim rejected', body: firmOf(depositItem.userId) })
+                setDepositItem(null)
+              }}>Reject</Button>
+              <Button variant="success" onClick={() => {
+                approveDepositClaim(depositItem.id)
+                pushToast({ kind: 'success', title: 'Deposit approved', body: `${inr(depositItem.amount)} credited to ${firmOf(depositItem.userId)}.` })
+                setDepositItem(null)
+              }}>Approve & credit</Button>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* -------------------------- bank account modal -------------------------- */}
+      <Modal open={!!bankItem} onClose={() => setBankItem(null)} title="Bank account review">
+        {bankItem && (
+          <div className="space-y-4">
+            <div className="card bg-surface-2 p-3.5 text-sm space-y-1.5">
+              <div className="flex justify-between"><span className="text-ink-muted">Buyer</span><span className="font-semibold">{firmOf(bankItem.userId)}</span></div>
+              <div className="flex justify-between"><span className="text-ink-muted">Holder name</span><span className="font-semibold">{bankItem.accountHolderName}</span></div>
+              <div className="flex justify-between"><span className="text-ink-muted">Bank</span><span className="font-semibold">{bankItem.bankName}</span></div>
+              <div className="flex justify-between"><span className="text-ink-muted">Account</span><span className="num font-semibold">{bankItem.accountNumberMasked}</span></div>
+              <div className="flex justify-between"><span className="text-ink-muted">IFSC</span><span className="num font-semibold">{bankItem.ifsc}</span></div>
+            </div>
+            <Field label="Rejection reason" hint="Only needed if rejecting">
+              <Textarea value={bankReason} onChange={(e) => setBankReason(e.target.value)} placeholder="e.g. Holder name doesn't match KYC records" />
+            </Field>
+            <div className="flex justify-end gap-2">
+              <Button variant="ghost" className="text-danger hover:text-danger" onClick={() => {
+                rejectBankAccount(bankItem.id, bankReason.trim() || undefined)
+                pushToast({ kind: 'warning', title: 'Bank account rejected', body: firmOf(bankItem.userId) })
+                setBankItem(null)
+              }}>Reject</Button>
+              <Button variant="success" onClick={() => {
+                verifyBankAccount(bankItem.id)
+                pushToast({ kind: 'success', title: 'Bank account verified', body: `${firmOf(bankItem.userId)} can now request withdrawals to this account.` })
+                setBankItem(null)
+              }}>Verify</Button>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* -------------------------- withdrawal modal ---------------------------- */}
+      <Modal open={!!withdrawalItem} onClose={() => setWithdrawalItem(null)} title="Withdrawal review">
+        {withdrawalItem && (
+          <div className="space-y-4">
+            <div className="card bg-surface-2 p-3.5 text-sm space-y-1.5">
+              <div className="flex justify-between"><span className="text-ink-muted">Buyer</span><span className="font-semibold">{firmOf(withdrawalItem.userId)}</span></div>
+              <div className="flex justify-between"><span className="text-ink-muted">Amount</span><span className="num font-bold">{inr(withdrawalItem.amount)}</span></div>
+              <div className="flex justify-between"><span className="text-ink-muted">Reference</span><span className="num font-semibold">{withdrawalItem.ref}</span></div>
+              <div className="flex justify-between"><span className="text-ink-muted">Status</span><Chip tone={withdrawalItem.status === 'requested' ? 'warning' : 'steel'}>{withdrawalItem.status.replace('_', ' ')}</Chip></div>
+            </div>
+            {withdrawalItem.status === 'requested' ? (
+              <div className="flex justify-end gap-2">
+                <Button variant="ghost" onClick={() => setWithdrawalItem(null)}>Close</Button>
+                <Button onClick={() => {
+                  approveWithdrawal(withdrawalItem.id)
+                  pushToast({ kind: 'success', title: 'Picked up for processing', body: `${inr(withdrawalItem.amount)} — ${firmOf(withdrawalItem.userId)}.` })
+                  setWithdrawalItem(null)
+                }}>Start processing</Button>
+              </div>
+            ) : (
+              <>
+                <Field label="Failure reason" hint="Only needed if the transfer failed">
+                  <Textarea value={withdrawalReason} onChange={(e) => setWithdrawalReason(e.target.value)} placeholder="e.g. Bank returned the transfer — account frozen" />
+                </Field>
+                <div className="flex justify-end gap-2">
+                  <Button variant="ghost" className="text-danger hover:text-danger" onClick={() => {
+                    failWithdrawal(withdrawalItem.id, withdrawalReason.trim() || undefined)
+                    pushToast({ kind: 'warning', title: 'Withdrawal failed — reversed', body: `${inr(withdrawalItem.amount)} returned to ${firmOf(withdrawalItem.userId)}'s wallet.` })
+                    setWithdrawalItem(null)
+                  }}>Mark failed</Button>
+                  <Button variant="success" onClick={() => {
+                    processWithdrawal(withdrawalItem.id)
+                    pushToast({ kind: 'success', title: 'Withdrawal processed', body: `${inr(withdrawalItem.amount)} sent to ${firmOf(withdrawalItem.userId)}.` })
+                    setWithdrawalItem(null)
+                  }}>Mark processed</Button>
+                </div>
+              </>
+            )}
           </div>
         )}
       </Modal>
