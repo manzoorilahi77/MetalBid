@@ -687,3 +687,32 @@ export function catalogueUiStatus(cat: Catalogue, now: number, lots?: Lot[]): 'l
     : Date.parse(cat.endsAt)
   return end - now < 30 * 60_000 ? 'closing' : 'live'
 }
+
+export interface LadderRow {
+  rank: number
+  bidderId: string
+  rate: number
+  at: string
+  type: BidType
+  isMe: boolean
+}
+
+/** Bid ladder standings for a lot — valid bids deduped to each bidder's best
+ *  rate, ranked descending. Returns the top 3 plus the current user's own
+ *  row (only when they're not already inside the top 3). */
+export function ladderStandings(bids: Bid[], lotId: string, meId: string | undefined) {
+  const best = new Map<string, Bid>()
+  for (const b of bids) {
+    if (b.lotId !== lotId || b.status !== 'valid') continue
+    const cur = best.get(b.bidderId)
+    if (!cur || b.rate > cur.rate || (b.rate === cur.rate && Date.parse(b.at) < Date.parse(cur.at))) {
+      best.set(b.bidderId, b)
+    }
+  }
+  const ranked: LadderRow[] = [...best.values()]
+    .sort((a, b) => b.rate - a.rate || Date.parse(a.at) - Date.parse(b.at))
+    .map((b, i) => ({ rank: i + 1, bidderId: b.bidderId, rate: b.rate, at: b.at, type: b.type, isMe: b.bidderId === meId }))
+  const top3 = ranked.slice(0, 3)
+  const myRow = meId ? ranked.find((r) => r.bidderId === meId && r.rank > 3) ?? null : null
+  return { top3, myRow }
+}

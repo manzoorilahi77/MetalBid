@@ -15,11 +15,11 @@ import { Page } from '../layout/Chrome'
 import {
   AmountStepper, Button, Chip, Countdown, EmptyState, Input, Modal, Segmented, StatusChip, Toggle, cx,
 } from '../components/ui'
-import { selectionSummary, useStore } from '../store/store'
+import { ladderStandings, selectionSummary, useStore } from '../store/store'
 import { fireConfetti } from '../lib/confetti'
 import { inr, num, relTime } from '../lib/format'
 import { useNow } from '../lib/useTick'
-import type { Bid, Lot } from '../types'
+import type { Lot } from '../types'
 
 type Style = 'classic' | 'quick' | 'desk'
 
@@ -54,6 +54,9 @@ export default function BiddingRoom() {
   const [bidAmount, setBidAmount] = useState(0)
   const [autoOpen, setAutoOpen] = useState(false)
   const [emdGateLot, setEmdGateLot] = useState<Lot | null>(null)
+  const [emdGateDismissed, setEmdGateDismissed] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [confirmRate, setConfirmRate] = useState(0)
 
   // cockpit lots: shortlisted first (funded first within), else all
   const cockpitLots = useMemo(() => {
@@ -79,9 +82,68 @@ export default function BiddingRoom() {
   // bid builder tracks the lot's own minimum — reset whenever the lot changes
   // or someone else's bid moves the floor out from under a stale amount
   useEffect(() => { setBidAmount(minNext) }, [lot?.id, minNext])
+  useEffect(() => { setEmdGateDismissed(false) }, [catalogueId])
+  useEffect(() => { setConfirmOpen(false) }, [lot?.id])
 
   if (!cat || !lot) {
     return <Page><EmptyState title="Nothing to bid on here" body="This catalogue has no lots, or it doesn't exist in this demo session." action={<Link to="/browse"><Button variant="secondary">Browse auctions</Button></Link>} /></Page>
+  }
+
+  if (summary.count === 0) {
+    return (
+      <Page>
+        <EmptyState title="Nothing shortlisted yet"
+          body="Shortlist at least one lot from the catalogue to enter its bidding room."
+          action={<Link to={`/catalogue/${cat.id}`}><Button variant="secondary">Back to catalogue</Button></Link>} />
+      </Page>
+    )
+  }
+
+  if (summary.funded === 0 && !emdGateDismissed) {
+    const gateLots = catLots.filter((l) => summary.lotIds.includes(l.id))
+    return (
+      <Page>
+        <div className="max-w-lg mx-auto mt-6 sm:mt-10 card p-6 sm:p-8">
+          <div className="flex flex-col items-center text-center gap-2">
+            <div className="size-12 rounded-2xl bg-warning-soft grid place-items-center text-warning"><Lock size={22} /></div>
+            <h1 className="text-lg font-bold mt-1">Fund EMD to enter the bidding room</h1>
+            <p className="text-sm text-ink-muted max-w-sm">
+              {gateLots.length} lot{gateLots.length > 1 ? 's' : ''} shortlisted in {cat.code} — lock pre-bid EMD to unlock live bidding.
+            </p>
+          </div>
+          <div className="mt-5 divide-y divide-line border border-line rounded-xl overflow-hidden">
+            {gateLots.map((l) => (
+              <div key={l.id} className="flex items-center justify-between px-4 py-2.5">
+                <div>
+                  <div className="num text-sm font-bold">{l.lotNo}</div>
+                  <div className="text-xs text-ink-muted">{l.grade}</div>
+                </div>
+                <span className="num text-sm font-bold text-warning">{inr(l.preBidEmd)}</span>
+              </div>
+            ))}
+          </div>
+          {me && (
+            <p className="text-xs text-ink-faint mt-3 text-center">
+              Wallet balance {inr(wallets.find((w) => w.userId === me.id)?.balance ?? 0)}. EMD is scoped per lot and auto-releases if you don't win.
+            </p>
+          )}
+          <Button size="lg" className="w-full mt-5" onClick={() => {
+            const ok = fundEmd(cat.id, summary.unfundedLotIds, 'Wallet')
+            if (ok) {
+              pushToast({ kind: 'success', title: 'EMD locked', body: `${gateLots.length} lot${gateLots.length > 1 ? 's' : ''} unlocked for bidding.` })
+            } else {
+              pushToast({ kind: 'danger', title: 'Insufficient balance', body: 'Top up your wallet from Wallet & EMD ledger.' })
+            }
+          }}>
+            Fund {inr(summary.shortfall)} to enter
+          </Button>
+          <button className="block w-full text-center text-sm font-semibold text-ink-muted hover:text-ink mt-3"
+            onClick={() => setEmdGateDismissed(true)}>
+            Not now — browse without bidding
+          </button>
+        </div>
+      </Page>
+    )
   }
 
   const funded = summary.fundedLotIds.includes(lot.id)
@@ -93,11 +155,11 @@ export default function BiddingRoom() {
     .filter((b) => b.lotId === lot.id && b.status === 'valid')
     .sort((a, b) => Date.parse(b.at) - Date.parse(a.at))
 
-  const maskBidder = (b: Bid) => {
-    if (b.bidderId === me?.id) return 'You'
-    const u = users.find((x) => x.id === b.bidderId)
+  const maskBidder = (bidderId: string) => {
+    if (bidderId === me?.id) return 'You'
+    const u = users.find((x) => x.id === bidderId)
     // stable pseudonym — rivals never see firm names
-    const n = (b.bidderId.split('').reduce((s, c) => s + c.charCodeAt(0), 0) % 89) + 10
+    const n = (bidderId.split('').reduce((s, c) => s + c.charCodeAt(0), 0) % 89) + 10
     return u ? `Bidder #${n}` : `Bidder #${n}`
   }
 
@@ -124,7 +186,7 @@ export default function BiddingRoom() {
       <div className="flex flex-wrap items-center gap-2">
         <Button size={size === 'lg' ? 'lg' : 'md'} disabled={isPaused || bidAmount < minNext}
           className={size === 'lg' ? 'flex-1' : undefined}
-          onClick={() => doBid(bidAmount)}>
+          onClick={() => gateOr(() => { setConfirmRate(bidAmount); setConfirmOpen(true) })}>
           <Gavel size={16} /> Bid {inr(bidAmount)}
         </Button>
         <Button variant="ghost" size={size === 'lg' ? 'lg' : 'md'} onClick={() => gateOr(() => setAutoOpen(true))}>
@@ -141,46 +203,63 @@ export default function BiddingRoom() {
   )
 
   /* ------------------------------ shared ladder ---------------------------- */
-  const renderLadder = (dense: boolean) => (
-    <div className="card overflow-hidden">
-      <div className={cx('px-4 py-3 border-b border-line flex items-center justify-between', dense && 'py-2.5')}>
-        <span className="font-bold text-sm">Bid ladder — {lot.lotNo}</span>
-        <span className="num text-xs text-ink-faint">{lotBids.length} bids</span>
-      </div>
-      <div className={cx('overflow-y-auto divide-y divide-line', dense ? 'max-h-[340px]' : 'max-h-[430px]')}>
-        {lotBids.length === 0 && (
-          <div className="p-8 text-center text-sm text-ink-faint">No bids yet. Be the first at <b className="num text-ink">{inr(lot.startRate)}</b>.</div>
-        )}
-        {lotBids.map((b, i) => {
-          const isMe = b.bidderId === me?.id
-          return (
-            <div key={b.id} className={cx('flex items-center gap-3 px-4', dense ? 'py-1.5' : 'py-2.5', i === 0 && 'animate-bid-in', isMe && 'bg-ember-soft/30')}>
+  const renderLadder = (dense: boolean) => {
+    const standings = ladderStandings(bids, lot.id, me?.id)
+    return (
+      <div className="card overflow-hidden">
+        <div className={cx('px-4 py-3 border-b border-line flex items-center justify-between', dense && 'py-2.5')}>
+          <span className="font-bold text-sm">Bid ladder — {lot.lotNo}</span>
+          <span className="num text-xs text-ink-faint">{lotBids.length} bids</span>
+        </div>
+        <div className={cx('overflow-y-auto divide-y divide-line', dense ? 'max-h-[340px]' : 'max-h-[430px]')}>
+          {standings.top3.length === 0 && (
+            <div className="p-8 text-center text-sm text-ink-faint">No bids yet. Be the first at <b className="num text-ink">{inr(lot.startRate)}</b>.</div>
+          )}
+          {standings.top3.map((row) => (
+            <div key={row.bidderId} className={cx('flex items-center gap-3 px-4', dense ? 'py-1.5' : 'py-2.5', row.rank === 1 && 'animate-bid-in', row.isMe && 'bg-ember-soft/30')}>
               <span className={cx('rounded-lg grid place-items-center font-bold shrink-0', dense ? 'size-6 text-[9px]' : 'size-7 text-[10px]',
-                i === 0 ? 'bg-ember text-white' : 'bg-surface-2 text-ink-faint')}>
-                {i === 0 ? 'H1' : `H${i + 1}`}
+                row.rank === 1 ? 'bg-ember text-white' : 'bg-surface-2 text-ink-faint')}>
+                H{row.rank}
               </span>
               <div className="flex-1 min-w-0">
-                <div className={cx('font-semibold truncate', dense ? 'text-xs' : 'text-sm', isMe && 'text-ember-strong')}>{maskBidder(b)}
-                  {b.type === 'auto' && <Bot size={11} className="inline ml-1.5 text-steel" />}
+                <div className={cx('font-semibold truncate', dense ? 'text-xs' : 'text-sm', row.isMe && 'text-ember-strong')}>{maskBidder(row.bidderId)}
+                  {row.type === 'auto' && <Bot size={11} className="inline ml-1.5 text-steel" />}
                 </div>
-                {!dense && <div className="text-[11px] text-ink-faint">{relTime(b.at, now)}</div>}
+                {!dense && <div className="text-[11px] text-ink-faint">{relTime(row.at, now)}</div>}
               </div>
-              <span className={cx('num font-bold', dense ? 'text-xs' : 'text-sm', i === 0 ? 'text-ink' : 'text-ink-muted')}>{inr(b.rate)}</span>
+              <span className={cx('num font-bold', dense ? 'text-xs' : 'text-sm', row.rank === 1 ? 'text-ink' : 'text-ink-muted')}>{inr(row.rate)}</span>
             </div>
-          )
-        })}
+          ))}
+          {standings.myRow && (
+            <div className="border-t-2 border-dashed border-line">
+              <div className="px-4 pt-2 pb-0.5 text-[10px] font-bold uppercase tracking-wider text-ink-faint">Your position</div>
+              <div className={cx('flex items-center gap-3 px-4 bg-ember-soft/30', dense ? 'py-1.5' : 'py-2.5')}>
+                <span className={cx('rounded-lg grid place-items-center font-bold shrink-0 bg-surface-2 text-ink-faint', dense ? 'size-6 text-[9px]' : 'size-7 text-[10px]')}>
+                  H{standings.myRow.rank}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <div className={cx('font-semibold truncate text-ember-strong', dense ? 'text-xs' : 'text-sm')}>You
+                    {standings.myRow.type === 'auto' && <Bot size={11} className="inline ml-1.5 text-steel" />}
+                  </div>
+                  {!dense && <div className="text-[11px] text-ink-faint">{relTime(standings.myRow.at, now)}</div>}
+                </div>
+                <span className={cx('num font-bold text-ink-muted', dense ? 'text-xs' : 'text-sm')}>{inr(standings.myRow.rate)}</span>
+              </div>
+            </div>
+          )}
+        </div>
+        <div className="px-4 py-3 border-t border-line bg-surface-2 text-[11px] text-ink-faint">
+          Rival identities are masked. Simulated competitors are bidding on live lots — expect action near the close.
+        </div>
       </div>
-      <div className="px-4 py-3 border-t border-line bg-surface-2 text-[11px] text-ink-faint">
-        Rival identities are masked. Simulated competitors are bidding on live lots — expect action near the close.
-      </div>
-    </div>
-  )
+    )
+  }
 
   const statusChipFor = () => lot.status === 'live'
     ? (leading
       ? <Chip tone="success" pulse>You are H1</Chip>
       : lot.leadingBidderId
-        ? <Chip tone="danger">{lotBids[0] ? maskBidder(lotBids[0]) : 'Rival'} is leading</Chip>
+        ? <Chip tone="danger">{lotBids[0] ? maskBidder(lotBids[0].bidderId) : 'Rival'} is leading</Chip>
         : <Chip tone="neutral">No bids yet — start at {inr(lot.startRate)}</Chip>)
     : null
 
@@ -318,7 +397,7 @@ export default function BiddingRoom() {
       )}
 
       {style === 'quick' && (
-        <div className="max-w-md mx-auto mt-3 w-full">
+        <div className="max-w-md mx-auto mt-3 w-full space-y-4">
           <div className="card overflow-hidden">
             {/* one-line status banner — the first thing the eye lands on */}
             <div className={cx('flex items-center justify-center gap-1.5 px-5 py-2.5 text-xs font-extrabold',
@@ -363,20 +442,9 @@ export default function BiddingRoom() {
                 </div>
               )}
             </div>
-
-            {/* mini leaderboard — top 3 only, tap through for the full ladder */}
-            <div className="border-t border-line divide-y divide-line">
-              {lotBids.slice(0, 3).map((b, i) => (
-                <div key={b.id} className={cx('flex items-center gap-3 px-5 py-2', b.bidderId === me?.id && 'bg-ember-soft/30')}>
-                  <span className={cx('size-6 rounded-lg grid place-items-center text-[9px] font-bold shrink-0',
-                    i === 0 ? 'bg-ember text-white' : 'bg-surface-2 text-ink-faint')}>H{i + 1}</span>
-                  <span className="flex-1 text-xs font-semibold truncate">{maskBidder(b)}</span>
-                  <span className="num text-xs font-bold text-ink-muted">{inr(b.rate)}</span>
-                </div>
-              ))}
-              {lotBids.length === 0 && <div className="px-5 py-3 text-center text-xs text-ink-faint">No bids yet. Be the first at {inr(lot.startRate)}.</div>}
-            </div>
           </div>
+
+          {renderLadder(true)}
         </div>
       )}
 
@@ -459,6 +527,34 @@ export default function BiddingRoom() {
             ? { kind: 'success', title: 'Auto-bid armed', body: `We'll counter rivals up to ${inr(max)}/${lot.uom} on ${lot.lotNo}.` }
             : { kind: 'info', title: 'Auto-bid disabled', body: lot.lotNo })
         }} />
+
+      {/* bid confirmation modal */}
+      <Modal open={confirmOpen} onClose={() => setConfirmOpen(false)} title="Confirm your bid">
+        <div className="space-y-4">
+          <p className="text-sm text-ink-muted">
+            Confirm bid of <b className="num text-ink">{inr(confirmRate)}/{lot.uom}</b> for <b className="num text-ink">{lot.lotNo}</b>?
+          </p>
+          <div className="card bg-surface-2 border-0 p-3.5 text-sm space-y-1.5">
+            <div className="flex justify-between"><span className="text-ink-muted">Current H1</span><span className="num font-semibold">{lot.currentRate ? inr(lot.currentRate) : '—'}</span></div>
+            {myAuto && <div className="flex justify-between"><span className="text-ink-muted">Your auto-bid ceiling</span><span className="num font-semibold">{inr(myAuto.maxRate)}</span></div>}
+          </div>
+          {confirmRate < minNext && (
+            <div className="rounded-xl bg-warning-soft border border-warning/25 px-3.5 py-2.5 text-sm font-semibold text-warning">
+              Someone just bid — minimum is now {inr(minNext)}/{lot.uom}.
+            </div>
+          )}
+          <div className="flex gap-2">
+            <Button variant="secondary" className="flex-1" onClick={() => setConfirmOpen(false)}>Cancel</Button>
+            <Button className="flex-1" onClick={() => {
+              const rate = confirmRate < minNext ? minNext : confirmRate
+              doBid(rate)
+              setConfirmOpen(false)
+            }}>
+              {confirmRate < minNext ? `Bid ${inr(minNext)} instead` : 'Confirm'}
+            </Button>
+          </div>
+        </div>
+      </Modal>
 
       {/* EMD gate modal */}
       <Modal open={!!emdGateLot} onClose={() => setEmdGateLot(null)} title="Fund EMD to bid">
