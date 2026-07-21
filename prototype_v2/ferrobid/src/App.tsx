@@ -1,5 +1,6 @@
 import { HashRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom'
-import Chrome, { Page, SubNav } from './layout/Chrome'
+import Chrome, { NAV_BY_ROLE, Page, SubNav } from './layout/Chrome'
+import type { Role } from './types'
 import { ToastHost } from './components/ui'
 import { useTick } from './lib/useTick'
 import { useStore } from './store/store'
@@ -62,18 +63,18 @@ import MasterData from './pages/admin/MasterData'
 import Audit from './pages/admin/Audit'
 
 /* contextual module nav per area — tabs under the header, never a sidebar */
+/** Derives a role's sub-nav tabs from the same NAV_BY_ROLE config the top nav uses,
+ *  so the two surfaces can't drift out of sync. */
+function subNavItems(role: Role) {
+  return NAV_BY_ROLE[role]
+    .filter((i) => i.in.includes('sub'))
+    .map((i) => ({ to: i.to, label: i.subLabel ?? i.label, end: i.end, locked: i.locked }))
+}
+
 function ExecLayout() {
   return (
     <>
-      <SubNav items={[
-        { to: '/exec', label: 'Pipeline', end: true },
-        { to: '/exec/approvals', label: 'Lot approval' },
-        { to: '/exec/catalogue-builder', label: 'Catalogue builder' },
-        { to: '/exec/auction-setup', label: 'Auction setup' },
-        { to: '/exec/settlement', label: 'Settlement' },
-        { to: '/exec/logistics', label: 'Logistics' },
-        { to: '/exec/handover', label: 'Handover' },
-      ]} />
+      <SubNav items={subNavItems('exec_manager')} />
       <Outlet />
     </>
   )
@@ -82,14 +83,7 @@ function ExecLayout() {
 function SubAdminLayout() {
   return (
     <>
-      <SubNav items={[
-        { to: '/sub', label: 'Ops console', end: true },
-        { to: '/sub/bid-monitor', label: 'Bid monitor' },
-        { to: '/sub/queue', label: 'Work queue' },
-        { to: '/sub/approvals', label: 'Approvals' },
-        { to: '/admin/finance', label: 'Financial config', locked: true },
-        { to: '/admin/master-data', label: 'Master data', locked: true },
-      ]} />
+      <SubNav items={subNavItems('sub_admin')} />
       <Outlet />
     </>
   )
@@ -98,16 +92,7 @@ function SubAdminLayout() {
 function AdminLayout() {
   return (
     <>
-      <SubNav items={[
-        { to: '/admin', label: 'Dashboard', end: true },
-        { to: '/admin/control-tower', label: 'Control tower' },
-        { to: '/admin/users', label: 'User management' },
-        { to: '/admin/team', label: 'Team & permissions' },
-        { to: '/admin/blacklist', label: 'Blacklist & defaulters' },
-        { to: '/admin/finance', label: 'Financial config' },
-        { to: '/admin/master-data', label: 'Master data' },
-        { to: '/admin/audit', label: 'Audit trail' },
-      ]} />
+      <SubNav items={subNavItems('super_admin')} />
       <Outlet />
     </>
   )
@@ -116,14 +101,7 @@ function AdminLayout() {
 function BuyerLayout() {
   return (
     <>
-      <SubNav items={[
-        { to: '/buyer', label: 'Dashboard', end: true },
-        { to: '/buyer/shortlist', label: 'Shortlist & EMD' },
-        { to: '/buyer/bids', label: 'Bids & results' },
-        { to: '/buyer/fulfilment', label: 'Fulfilment' },
-        { to: '/buyer/wallet', label: 'Wallet & ledger' },
-        { to: '/buyer/kyc', label: 'Become a seller' },
-      ]} />
+      <SubNav items={subNavItems('buyer')} />
       <Outlet />
     </>
   )
@@ -132,13 +110,7 @@ function BuyerLayout() {
 function SellerLayout() {
   return (
     <>
-      <SubNav items={[
-        { to: '/seller', label: 'Workspace', end: true },
-        { to: '/seller/create-lot', label: 'Create lot' },
-        { to: '/seller/lots', label: 'My lots & batches' },
-        { to: '/seller/monitor', label: 'Live monitor' },
-        { to: '/seller/reports', label: 'Results & reports' },
-      ]} />
+      <SubNav items={subNavItems('seller')} />
       <Outlet />
     </>
   )

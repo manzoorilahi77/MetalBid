@@ -13,51 +13,73 @@ import { inrCompact, relTime } from '../lib/format'
 import { Avatar, Chip, cx } from '../components/ui'
 import type { Role } from '../types'
 
-const NAV_BY_ROLE: Record<Role, { to: string; label: string }[]> = {
+/** A single source of truth per role: which nav item(s) appear on the top
+ *  nav and/or the contextual sub-nav, so the two surfaces can't drift apart. */
+export type NavItem = {
+  to: string
+  label: string
+  subLabel?: string
+  end?: boolean
+  locked?: boolean
+  in: ('top' | 'sub')[]
+}
+
+export const NAV_BY_ROLE: Record<Role, NavItem[]> = {
   guest: [
-    { to: '/browse', label: 'Browse auctions' },
-    { to: '/noticeboard', label: 'Noticeboard' },
-    { to: '/help', label: 'How it works' },
+    { to: '/browse', label: 'Browse auctions', in: ['top'] },
+    { to: '/noticeboard', label: 'Noticeboard', in: ['top'] },
+    { to: '/help', label: 'How it works', in: ['top'] },
   ],
   buyer: [
-    { to: '/buyer', label: 'Dashboard' },
-    { to: '/browse', label: 'Browse' },
-    { to: '/buyer/shortlist', label: 'Shortlist' },
-    { to: '/buyer/bids', label: 'My bids' },
-    { to: '/buyer/fulfilment', label: 'Fulfilment' },
-    { to: '/noticeboard', label: 'Noticeboard' },
+    { to: '/buyer', label: 'Dashboard', end: true, in: ['top', 'sub'] },
+    { to: '/browse', label: 'Browse', in: ['top'] },
+    { to: '/buyer/shortlist', label: 'Shortlist', subLabel: 'Shortlist & EMD', in: ['sub'] },
+    { to: '/buyer/bids', label: 'My bids', subLabel: 'Bids & results', in: ['sub'] },
+    { to: '/buyer/fulfilment', label: 'Fulfilment', in: ['sub'] },
+    { to: '/noticeboard', label: 'Noticeboard', in: ['top'] },
+    { to: '/buyer/wallet', label: 'Wallet & ledger', in: ['sub'] },
+    { to: '/buyer/kyc', label: 'Become a seller', in: ['sub'] },
   ],
   seller: [
-    { to: '/seller', label: 'Workspace' },
-    { to: '/seller/lots', label: 'My lots' },
-    { to: '/seller/monitor', label: 'Live monitor' },
-    { to: '/seller/reports', label: 'Results & reports' },
-    { to: '/browse', label: 'Browse' },
+    { to: '/seller', label: 'Workspace', end: true, in: ['top', 'sub'] },
+    { to: '/seller/create-lot', label: 'Create lot', in: ['sub'] },
+    { to: '/seller/lots', label: 'My lots', subLabel: 'My lots & batches', in: ['sub'] },
+    { to: '/seller/monitor', label: 'Live monitor', in: ['sub'] },
+    { to: '/seller/reports', label: 'Results & reports', in: ['sub'] },
+    { to: '/browse', label: 'Browse', in: ['top'] },
   ],
   field_exec: [
-    { to: '/field', label: 'Inspection queue' },
-    { to: '/browse', label: 'Browse' },
-    { to: '/noticeboard', label: 'Noticeboard' },
+    { to: '/field', label: 'Inspection queue', in: ['top'] },
+    { to: '/browse', label: 'Browse', in: ['top'] },
+    { to: '/noticeboard', label: 'Noticeboard', in: ['top'] },
   ],
   exec_manager: [
-    { to: '/exec', label: 'Pipeline' },
-    { to: '/exec/catalogue-builder', label: 'Catalogue builder' },
-    { to: '/exec/settlement', label: 'Settlement' },
-    { to: '/exec/logistics', label: 'Logistics' },
-    { to: '/browse', label: 'Browse' },
+    { to: '/exec', label: 'Pipeline', end: true, in: ['top', 'sub'] },
+    { to: '/exec/approvals', label: 'Lot approval', in: ['sub'] },
+    { to: '/exec/catalogue-builder', label: 'Catalogue builder', in: ['sub'] },
+    { to: '/exec/auction-setup', label: 'Auction setup', in: ['sub'] },
+    { to: '/exec/settlement', label: 'Settlement', in: ['sub'] },
+    { to: '/exec/logistics', label: 'Logistics', in: ['sub'] },
+    { to: '/exec/handover', label: 'Handover', in: ['sub'] },
+    { to: '/browse', label: 'Browse', in: ['top'] },
   ],
   sub_admin: [
-    { to: '/sub', label: 'Ops console' },
-    { to: '/sub/bid-monitor', label: 'Bid monitor' },
-    { to: '/sub/queue', label: 'Work queue' },
-    { to: '/sub/approvals', label: 'Approvals' },
+    { to: '/sub', label: 'Ops console', end: true, in: ['top', 'sub'] },
+    { to: '/sub/bid-monitor', label: 'Bid monitor', in: ['sub'] },
+    { to: '/sub/queue', label: 'Work queue', in: ['sub'] },
+    { to: '/sub/approvals', label: 'Approvals', in: ['sub'] },
+    { to: '/admin/finance', label: 'Financial config', locked: true, in: ['sub'] },
+    { to: '/admin/master-data', label: 'Master data', locked: true, in: ['sub'] },
   ],
   super_admin: [
-    { to: '/admin', label: 'Dashboard' },
-    { to: '/admin/control-tower', label: 'Control tower' },
-    { to: '/admin/users', label: 'Users' },
-    { to: '/admin/team', label: 'Team' },
-    { to: '/admin/audit', label: 'Audit trail' },
+    { to: '/admin', label: 'Dashboard', end: true, in: ['top', 'sub'] },
+    { to: '/admin/control-tower', label: 'Control tower', in: ['sub'] },
+    { to: '/admin/users', label: 'Users', subLabel: 'User management', in: ['sub'] },
+    { to: '/admin/team', label: 'Team', subLabel: 'Team & permissions', in: ['sub'] },
+    { to: '/admin/blacklist', label: 'Blacklist & defaulters', in: ['sub'] },
+    { to: '/admin/finance', label: 'Financial config', in: ['sub'] },
+    { to: '/admin/master-data', label: 'Master data', in: ['sub'] },
+    { to: '/admin/audit', label: 'Audit trail', in: ['sub'] },
   ],
 }
 
@@ -223,7 +245,7 @@ function TopNav() {
   const location = useLocation()
   useEffect(() => setMobileOpen(false), [location.pathname])
 
-  const links = NAV_BY_ROLE[role]
+  const links = NAV_BY_ROLE[role].filter((i) => i.in.includes('top'))
   const wallet = wallets.find((w) => w.userId === me?.id)
   const showWallet = role === 'buyer' || role === 'seller'
 
