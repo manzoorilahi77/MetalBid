@@ -111,7 +111,7 @@ export default function Shortlist() {
                     const funded = sel.emdFundedLotIds.includes(lot.id)
                     return (
                       <div key={lot.id} className="flex flex-wrap items-center gap-3 px-5 py-3.5">
-                        <PhotoThumb hue={lot.photos[0]?.hue ?? 24} label={lot.photos[0]?.label} className="w-16 h-12" />
+                        <PhotoThumb hue={lot.photos[0]?.hue ?? 24} category={lot.category} label={lot.photos[0]?.label} className="w-16 h-12" />
                         <div className="min-w-0 flex-1 basis-56">
                           <div className="flex items-center gap-2 flex-wrap">
                             <span className="num text-sm font-bold">{lot.lotNo}</span>

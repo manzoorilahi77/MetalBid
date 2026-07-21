@@ -227,7 +227,7 @@ export default function CatalogueBuilder() {
                   return (
                     <label key={l.id} className={cx('flex items-center gap-3 p-3.5 cursor-pointer transition-colors', on ? 'bg-ember-soft/40' : 'hover:bg-surface-2')}>
                       <input type="checkbox" checked={on} onChange={() => toggleLot(l.id)} className="size-4 accent-[var(--color-ember,#c2410c)]" />
-                      <PhotoThumb hue={l.photos[0]?.hue ?? 24} className="w-14 h-11" />
+                      <PhotoThumb hue={l.photos[0]?.hue ?? 24} category={l.category} className="w-14 h-11" />
                       <div className="flex-1 min-w-0">
                         <div className="text-sm font-semibold truncate">{l.grade} · {l.metal}</div>
                         <div className="text-xs text-ink-muted truncate">
@@ -465,7 +465,7 @@ export default function CatalogueBuilder() {
                   const e = effective(l)
                   return (
                     <div key={l.id} className="flex items-center gap-3 p-3 bg-surface">
-                      <PhotoThumb hue={l.photos[0]?.hue ?? 24} className="w-14 h-11" />
+                      <PhotoThumb hue={l.photos[0]?.hue ?? 24} category={l.category} className="w-14 h-11" />
                       <div className="flex-1 min-w-0">
                         <div className="text-sm font-semibold truncate">
                           <span className="num text-ember-strong mr-1.5">LOT-{String(i + 1).padStart(2, '0')}</span>{l.grade} · {l.metal}

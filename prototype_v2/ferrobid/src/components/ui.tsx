@@ -7,7 +7,8 @@ import { X, Loader2, Lock, Inbox, CheckCircle2, Minus, Plus } from 'lucide-react
 import { useStore } from '../store/store'
 import { countdown } from '../lib/format'
 import { useNow } from '../lib/useTick'
-import type { CatalogueStatus, LotStatus } from '../types'
+import type { CatalogueStatus, LotStatus, MetalCategory } from '../types'
+import { categoryImageUrl } from '../data/categoryImages'
 
 const cx = (...parts: (string | false | null | undefined)[]) => parts.filter(Boolean).join(' ')
 export { cx }
@@ -295,13 +296,17 @@ export function EmptyState({ icon, title, body, action }: { icon?: ReactNode; ti
 }
 
 /* ------------------------------ PhotoThumb -------------------------------- */
-/** Photo placeholder — warm-industrial gradient keyed by hue. */
-export function PhotoThumb({ hue, label, className }: { hue: number; label?: string; className?: string }) {
+/** Lot/product photo — real category photo when known, gradient fallback otherwise. */
+export function PhotoThumb({ hue, category, label, className }: { hue: number; category?: MetalCategory; label?: string; className?: string }) {
+  const [errored, setErrored] = useState(false)
+  const src = category && !errored ? categoryImageUrl(category, hue) : null
   return (
-    <div className={cx('relative overflow-hidden rounded-lg border border-line shrink-0', className ?? 'w-16 h-12')}
-      style={{ background: `linear-gradient(135deg, hsl(${hue} 32% 72%), hsl(${hue + 18} 38% 46%))` }}
+    <div className={cx('relative overflow-hidden rounded-lg border border-line shrink-0 bg-surface-2', className ?? 'w-16 h-12')}
+      style={!src ? { background: `linear-gradient(135deg, hsl(${hue} 32% 72%), hsl(${hue + 18} 38% 46%))` } : undefined}
       title={label}>
-      <div className="absolute inset-0 opacity-25" style={{ backgroundImage: 'repeating-linear-gradient(45deg, rgba(0,0,0,0.25) 0 2px, transparent 2px 9px)' }} />
+      {src
+        ? <img src={src} alt={label ?? ''} loading="lazy" className="absolute inset-0 w-full h-full object-cover" onError={() => setErrored(true)} />
+        : <div className="absolute inset-0 opacity-25" style={{ backgroundImage: 'repeating-linear-gradient(45deg, rgba(0,0,0,0.25) 0 2px, transparent 2px 9px)' }} />}
       {label && <span className="absolute bottom-0.5 left-1.5 text-[9px] font-semibold text-white/90 drop-shadow">{label}</span>}
     </div>
   )

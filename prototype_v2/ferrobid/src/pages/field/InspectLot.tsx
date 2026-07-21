@@ -105,7 +105,7 @@ export default function InspectLot() {
                 className={cx('h-28 rounded-2xl grid place-items-center transition-colors overflow-hidden',
                   taken ? 'p-0' : 'border-2 border-dashed border-line-strong text-ink-faint hover:border-ember/60 hover:text-ember')}>
                 {taken
-                  ? <PhotoThumb hue={22 + i * 12} label={['Overview', 'Close-up', 'Stack view', 'Access'][i]} className="w-full h-full rounded-2xl" />
+                  ? <PhotoThumb hue={22 + i * 12} category={lot.category} label={['Overview', 'Close-up', 'Stack view', 'Access'][i]} className="w-full h-full rounded-2xl" />
                   : <span className="flex flex-col items-center gap-1.5 text-sm font-semibold"><Camera size={22} /> Tap to capture</span>}
               </button>
             ))}

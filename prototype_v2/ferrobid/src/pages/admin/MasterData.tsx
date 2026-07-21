@@ -4,6 +4,7 @@ import { Plus } from 'lucide-react'
 import { Page } from '../../layout/Chrome'
 import { Button, Chip, Field, Input, Modal, PageHeader, Tabs } from '../../components/ui'
 import { CATEGORY_META } from '../../components/domain'
+import { categoryImageUrl } from '../../data/categoryImages'
 import { useStore } from '../../store/store'
 import type { TermsSet } from '../../types'
 
@@ -53,7 +54,7 @@ export default function MasterData() {
               {CATEGORY_META.map((c) => (
                 <tr key={c.key} className="hover:bg-surface-2/60">
                   <td className="px-5 py-2.5 font-semibold flex items-center gap-2.5">
-                    <span className="size-6 rounded-lg" style={{ background: `linear-gradient(135deg, hsl(${c.hue} 35% 68%), hsl(${c.hue + 20} 42% 42%))` }} />
+                    <img src={categoryImageUrl(c.key, c.hue)} alt="" loading="lazy" className="size-6 rounded-lg object-cover" />
                     {c.label}
                   </td>
                   <td className="px-4 py-2.5 num text-ink-muted">{c.key}</td>

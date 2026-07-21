@@ -4,6 +4,7 @@ import { Layers, MapPin } from 'lucide-react'
 import type { Catalogue, MetalCategory } from '../types'
 import { useStore, catalogueUiStatus } from '../store/store'
 import { inrCompact, relTime } from '../lib/format'
+import { categoryImageUrl } from '../data/categoryImages'
 import { useNow } from '../lib/useTick'
 import { Chip, Countdown, PhotoThumb, StatusChip, cx } from './ui'
 
@@ -16,7 +17,7 @@ export function CatalogueCard({ cat, className }: { cat: Catalogue; className?: 
   const seller = users.find((u) => u.id === cat.sellerId)
   const ui = catalogueUiStatus(cat, now, catLots)
   const emdFrom = catLots.length ? Math.min(...catLots.map((l) => l.preBidEmd)) : 0
-  const hues = catLots.slice(0, 3).flatMap((l) => l.photos.slice(0, 1))
+  const covers = catLots.slice(0, 3).flatMap((l) => l.photos.slice(0, 1).map((p) => ({ photo: p, category: l.category })))
   return (
     <Link to={`/catalogue/${cat.id}`}
       className={cx('card card-hover p-4 flex flex-col gap-3 min-w-[290px] focus-visible:outline-2 focus-visible:outline-ember', className)}>
@@ -29,7 +30,7 @@ export function CatalogueCard({ cat, className }: { cat: Catalogue; className?: 
             : <span className="text-xs text-ink-faint">{relTime(cat.endsAt, now)}</span>}
       </div>
       <div className="flex gap-1.5">
-        {hues.map((p, i) => <PhotoThumb key={i} hue={p.hue} className="h-20 flex-1" />)}
+        {covers.map((c, i) => <PhotoThumb key={i} hue={c.photo.hue} category={c.category} className="h-20 flex-1" />)}
       </div>
       <div>
         <div className="text-[11px] num font-semibold text-ink-faint">{cat.code}</div>
@@ -63,8 +64,8 @@ export function CategoryTile({ category }: { category: (typeof CATEGORY_META)[nu
   return (
     <Link to={`/browse?category=${category.key}`}
       className="card card-hover p-4 flex items-center gap-3">
-      <span className="size-10 rounded-xl shrink-0"
-        style={{ background: `linear-gradient(135deg, hsl(${category.hue} 35% 68%), hsl(${category.hue + 20} 42% 42%))` }} />
+      <img src={categoryImageUrl(category.key, category.hue)} alt="" loading="lazy"
+        className="size-10 rounded-xl shrink-0 object-cover" />
       <span>
         <span className="block font-semibold text-sm leading-tight">{category.label}</span>
         <span className="num block text-xs text-ink-faint mt-0.5">{count} lots</span>

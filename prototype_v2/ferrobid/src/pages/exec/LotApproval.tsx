@@ -60,7 +60,7 @@ export default function LotApproval() {
                   </div>
                 </div>
                 <div className="flex gap-1.5">
-                  {l.photos.map((p) => <PhotoThumb key={p.id} hue={p.hue} label={p.label} className="w-20 h-14" />)}
+                  {l.photos.map((p) => <PhotoThumb key={p.id} hue={p.hue} category={l.category} label={p.label} className="w-20 h-14" />)}
                 </div>
               </div>
 

@@ -75,7 +75,7 @@ export default function Fulfilment() {
               <section key={d.id} className="card overflow-hidden">
                 {/* ----------------------------- header ---------------------------- */}
                 <div className="flex flex-wrap items-center gap-3 px-5 pt-4 pb-3 border-b border-line">
-                  <PhotoThumb hue={lot?.photos[0]?.hue ?? 24} className="w-14 h-11" />
+                  <PhotoThumb hue={lot?.photos[0]?.hue ?? 24} category={lot?.category} className="w-14 h-11" />
                   <div className="min-w-0 flex-1 basis-56">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="num text-sm font-bold">{lot?.lotNo ?? d.lotId}</span>

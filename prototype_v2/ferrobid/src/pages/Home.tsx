@@ -69,9 +69,10 @@ export default function Home() {
     return { live, upcoming, nextClosing }
   }, [catalogues, now])
 
-  const heroHues = useMemo(() => {
+  const heroLots = useMemo(() => {
     const liveIds = new Set(live.map((c) => c.id))
-    return lots.filter((l) => l.catalogueId && liveIds.has(l.catalogueId)).slice(0, 4).map((l) => l.photos[0]?.hue ?? 20)
+    return lots.filter((l) => l.catalogueId && liveIds.has(l.catalogueId)).slice(0, 4)
+      .map((l) => ({ hue: l.photos[0]?.hue ?? 20, category: l.category }))
   }, [lots, live])
 
   const submitSearch = (e: React.FormEvent) => {
@@ -129,10 +130,10 @@ export default function Home() {
           </div>
         </div>
 
-        {heroHues.length > 0 && (
+        {heroLots.length > 0 && (
           <div className="mt-8 flex gap-2">
-            {heroHues.map((h, i) => (
-              <PhotoThumb key={i} hue={h} className={cx('h-24 sm:h-32 flex-1 rounded-2xl', i > 1 && 'hidden sm:block')} />
+            {heroLots.map((l, i) => (
+              <PhotoThumb key={i} hue={l.hue} category={l.category} className={cx('h-24 sm:h-32 flex-1 rounded-2xl', i > 1 && 'hidden sm:block')} />
             ))}
           </div>
         )}

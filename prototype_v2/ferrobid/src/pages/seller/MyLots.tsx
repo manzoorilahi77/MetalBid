@@ -47,7 +47,7 @@ export default function MyLots() {
           return (
             <article key={l.id} className={cx('card p-4', attention && (l.status === 'rejected' ? 'border-danger/40' : 'border-warning/40'))}>
               <div className="flex flex-col md:flex-row md:items-center gap-4">
-                <PhotoThumb hue={l.photos[0]?.hue ?? 24} className="w-20 h-14" />
+                <PhotoThumb hue={l.photos[0]?.hue ?? 24} category={l.category} className="w-20 h-14" />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="num font-bold">{l.lotNo}</span>

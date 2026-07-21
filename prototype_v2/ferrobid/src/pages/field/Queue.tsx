@@ -37,7 +37,7 @@ export default function FieldQueue() {
         {queue.map((l) => (
           <article key={l.id} className="card p-4">
             <div className="flex gap-3">
-              <PhotoThumb hue={l.photos[0]?.hue ?? 24} className="w-20 h-16" />
+              <PhotoThumb hue={l.photos[0]?.hue ?? 24} category={l.category} className="w-20 h-16" />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="num font-bold">{l.lotNo}</span>

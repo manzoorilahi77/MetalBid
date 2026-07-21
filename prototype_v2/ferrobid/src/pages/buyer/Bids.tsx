@@ -109,7 +109,7 @@ export default function Bids() {
               const leading = lot.leadingBidderId === me.id
               return (
                 <div key={lot.id} className="card p-4 flex flex-wrap items-center gap-3">
-                  <PhotoThumb hue={lot.photos[0]?.hue ?? 24} className="w-16 h-12" />
+                  <PhotoThumb hue={lot.photos[0]?.hue ?? 24} category={lot.category} className="w-16 h-12" />
                   <div className="min-w-0 flex-1 basis-52">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="num text-sm font-bold">{lot.lotNo}</span>
@@ -158,7 +158,7 @@ export default function Bids() {
               const rate = lot.resultH1Rate ?? lot.currentRate ?? 0
               return (
                 <div key={lot.id} className="card p-4 flex flex-wrap items-center gap-3 border-l-4 border-l-success">
-                  <PhotoThumb hue={lot.photos[0]?.hue ?? 24} className="w-16 h-12" />
+                  <PhotoThumb hue={lot.photos[0]?.hue ?? 24} category={lot.category} className="w-16 h-12" />
                   <div className="min-w-0 flex-1 basis-52">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="num text-sm font-bold">{lot.lotNo}</span>
@@ -215,7 +215,7 @@ export default function Bids() {
                       const chip = OUTCOME_CHIP[result.outcome]
                       return (
                         <div key={lot.id} className={cx('card p-4 flex flex-wrap items-center gap-3', result.outcome === 'won' && 'border-l-4 border-l-success')}>
-                          <PhotoThumb hue={lot.photos[0]?.hue ?? 24} className="w-16 h-12" />
+                          <PhotoThumb hue={lot.photos[0]?.hue ?? 24} category={lot.category} className="w-16 h-12" />
                           <span className={cx('rounded-lg grid place-items-center font-bold shrink-0 size-7 text-[10px]',
                             result.rank === 1 ? 'bg-ember text-white' : 'bg-surface-2 text-ink-faint')}>
                             H{result.rank}

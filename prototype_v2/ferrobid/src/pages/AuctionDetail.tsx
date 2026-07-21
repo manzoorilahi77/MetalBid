@@ -316,7 +316,7 @@ export default function AuctionDetail() {
                             </p>
                           )}
                           <div className="flex gap-1.5 mt-2">
-                            {lot.photos.map((p) => <PhotoThumb key={p.id} hue={p.hue} label={p.label} className="w-14 h-10" />)}
+                            {lot.photos.map((p) => <PhotoThumb key={p.id} hue={p.hue} category={lot.category} label={p.label} className="w-14 h-10" />)}
                           </div>
                         </div>
                       </div>
