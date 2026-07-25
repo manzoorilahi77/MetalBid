@@ -6,6 +6,7 @@
 
 export type Role =
   | 'guest'
+  | 'guest1'
   | 'buyer'
   | 'seller'
   | 'field_exec'

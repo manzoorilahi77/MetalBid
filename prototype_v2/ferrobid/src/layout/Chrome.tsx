@@ -8,7 +8,7 @@ import {
   Bell, ChevronDown, Flame, LogOut, Menu, Moon, Search, Sun, User as UserIcon,
   Wallet as WalletIcon, X, ShieldCheck, LifeBuoy, FileText, SlidersHorizontal,
 } from 'lucide-react'
-import { ROLE_HOME, ROLE_LABEL, useStore } from '../store/store'
+import { ROLE_HOME, ROLE_LABEL, ROLE_ORDER, useStore } from '../store/store'
 import { inrCompact, relTime } from '../lib/format'
 import { Avatar, Chip, cx } from '../components/ui'
 import type { Role } from '../types'
@@ -30,6 +30,9 @@ export const NAV_BY_ROLE: Record<Role, NavItem[]> = {
     { to: '/noticeboard', label: 'Noticeboard', in: ['top'] },
     { to: '/help', label: 'How it works', in: ['top'] },
   ],
+  // guest1 renders its own standalone app (Guest1App) outside this Chrome
+  // shell, so it needs no top/sub nav items here — the map only requires a key.
+  guest1: [],
   buyer: [
     { to: '/buyer', label: 'Dashboard', end: true, in: ['top', 'sub'] },
     { to: '/browse', label: 'Browse', in: ['top'] },
@@ -115,7 +118,7 @@ function RoleSwitcher() {
   const [open, setOpen] = useState(false)
   const ref = useClickAway(() => setOpen(false))
   const nav = useNavigate()
-  const roles: Role[] = ['guest', 'buyer', 'seller', 'field_exec', 'exec_manager', 'sub_admin', 'super_admin']
+  const roles = ROLE_ORDER
   return (
     <div className="relative" ref={ref}>
       <button onClick={() => setOpen(!open)}

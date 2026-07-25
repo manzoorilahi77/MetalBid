@@ -14,8 +14,9 @@ import type {
 
 const seed = loadSeed()
 
-/** Demo identity per role for the header role switcher. */
-export const ROLE_DEMO_USER: Record<Exclude<Role, 'guest'>, string> = {
+/** Demo identity per role for the header role switcher.
+ *  'guest' and 'guest1' are public/unauthenticated shells with no demo user. */
+export const ROLE_DEMO_USER: Record<Exclude<Role, 'guest' | 'guest1'>, string> = {
   buyer: 'u-buyer-1',
   seller: 'u-seller-2',
   field_exec: 'u-field-1',
@@ -26,6 +27,7 @@ export const ROLE_DEMO_USER: Record<Exclude<Role, 'guest'>, string> = {
 
 export const ROLE_LABEL: Record<Role, string> = {
   guest: 'Guest',
+  guest1: 'Guest 1',
   buyer: 'Buyer',
   seller: 'Seller',
   field_exec: 'Field Executive',
@@ -36,6 +38,7 @@ export const ROLE_LABEL: Record<Role, string> = {
 
 export const ROLE_HOME: Record<Role, string> = {
   guest: '/',
+  guest1: '/guest1',
   buyer: '/buyer',
   seller: '/seller',
   field_exec: '/field',
@@ -43,6 +46,30 @@ export const ROLE_HOME: Record<Role, string> = {
   sub_admin: '/sub',
   super_admin: '/admin',
 }
+
+/** Canonical display order for the role switcher(s). Single source of truth —
+ *  consumed by the Chrome header switcher and the Guest1 homepage switcher so
+ *  the list can't drift between them. */
+export const ROLE_ORDER: Role[] = [
+  'guest', 'guest1', 'buyer', 'seller', 'field_exec', 'exec_manager', 'sub_admin', 'super_admin',
+]
+
+/** Demo sign-in credentials for the manager Login page: user ID → role.
+ *  Every account uses DEMO_PASSWORD. */
+export const DEMO_LOGINS: Record<string, Exclude<Role, 'guest' | 'guest1'>> = {
+  'buy@gmail.com': 'buyer',
+  'sell@gmail.com': 'seller',
+  'field@gmail.com': 'field_exec',
+  'executive@gmail.com': 'exec_manager',
+  'sub@gmail.com': 'sub_admin',
+  'super@gmail.com': 'super_admin',
+}
+export const DEMO_PASSWORD = 'Admin@123'
+
+/** Password enforcement on the Login page. OFF for now — any password (or none)
+ *  signs in as long as the user ID is known. Flip to true to require
+ *  DEMO_PASSWORD again. */
+export const ENFORCE_LOGIN_PASSWORD = false
 
 const BOT_IDS = ['u-buyer-2', 'u-buyer-3', 'u-buyer-5', 'u-buyer-6', 'u-buyer-7']
 
@@ -116,6 +143,7 @@ interface State {
   /* --- session --- */
   toggleTheme: () => void
   switchRole: (role: Role) => void
+  signIn: (username: string, password: string) => { ok: boolean; role?: Role; error?: string }
   login: (phone: string) => void
   logout: () => void
 
@@ -393,12 +421,23 @@ export const useStore = create<State>((set, get) => {
       set({ theme })
     },
     switchRole: (role) => {
-      if (role === 'guest') {
+      // guest and guest1 are unauthenticated public shells — no demo identity
+      if (role === 'guest' || role === 'guest1') {
         set({ role, currentUser: null })
         return
       }
       const user = get().users.find((u) => u.id === ROLE_DEMO_USER[role]) ?? null
       set({ role, currentUser: user })
+    },
+    signIn: (username, password) => {
+      const role = DEMO_LOGINS[username.trim().toLowerCase()]
+      if (!role) return { ok: false, error: 'Unknown user ID' }
+      // Password check is disabled for now (ENFORCE_LOGIN_PASSWORD = false).
+      if (ENFORCE_LOGIN_PASSWORD && password !== DEMO_PASSWORD) {
+        return { ok: false, error: 'Incorrect password' }
+      }
+      get().switchRole(role)
+      return { ok: true, role }
     },
     login: (phone) => {
       const existing = get().users.find((u) => u.phone.replace(/\D/g, '').endsWith(phone.replace(/\D/g, '').slice(-10)))

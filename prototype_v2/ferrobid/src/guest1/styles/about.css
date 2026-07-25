@@ -1,0 +1,586 @@
+/* ═══════════════════════════════════════════════
+   COMPACT, RICH, AND POLISHED ABOUT US
+   ═══════════════════════════════════════════════ */
+
+.story-page {
+  background: var(--bg-white, #ffffff);
+  color: #1c1917;
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ─── Global Animation Keyframes ─── */
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+/* ─── 1. Unified Compact Hero & KPIs ─── */
+.unified-hero {
+  position: relative;
+  padding: 100px 24px 60px;
+  background: radial-gradient(circle at 50% 10%, rgba(228, 87, 46, 0.05) 0%, transparent 80%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hero-blueprint {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(228, 87, 46, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(228, 87, 46, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  z-index: 0;
+}
+
+.unified-hero-container {
+  position: relative;
+  z-index: 10;
+  max-width: 1280px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+}
+
+.unified-hero-text {
+  text-align: center;
+  max-width: 800px;
+}
+
+.story-hero-title {
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: #1c1917;
+  margin-bottom: 16px;
+}
+
+.story-hero-title .gold-accent {
+  background: linear-gradient(135deg, var(--primary), #c8441f);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+.hero-subtitle {
+  font-size: 16px;
+  color: #6b6560;
+  line-height: 1.6;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Compact KPI Grid within Hero */
+.hero-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  width: 100%;
+  max-width: 900px;
+}
+
+.hero-kpi-card {
+  background: var(--bg-white);
+  border: 1px solid rgba(0,0,0,0.05);
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+  transition: transform 0.3s ease;
+}
+
+.hero-kpi-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 40px rgba(228, 87, 46, 0.08);
+  border-color: rgba(228, 87, 46, 0.2);
+}
+
+.kpi-val {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 28px;
+  font-weight: 800;
+  color: #1c1917;
+  margin-bottom: 4px;
+}
+
+.kpi-lab {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--primary);
+  font-weight: 700;
+}
+
+/* ─── 3. 3D Transaction Pipeline (Ultra Compact) ─── */
+.workflow-section {
+  padding: 40px 24px;
+  background: var(--bg-white);
+  perspective: 1000px;
+}
+
+.workflow-container {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.wf-pipeline {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 12px;
+  position: relative;
+  margin-top: 20px;
+}
+
+/* Horizontal connecting line */
+.wf-pipeline::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, rgba(228, 87, 46, 0.1), rgba(228, 87, 46, 0.6), rgba(228, 87, 46, 0.1));
+  z-index: 0;
+}
+
+.wf-item {
+  flex: 1;
+  background: white;
+  border: 1px solid rgba(0,0,0,0.05);
+  border-radius: 12px;
+  padding: 24px 16px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.02);
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  transform-style: preserve-3d;
+  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.wf-item:hover {
+  transform: translateY(-10px) rotateX(10deg) rotateY(-5deg);
+  box-shadow: -10px 20px 30px rgba(228, 87, 46, 0.1), 0 0 15px rgba(0,0,0,0.05);
+  border-color: var(--primary);
+  z-index: 20;
+}
+
+.wf-number {
+  width: 32px;
+  height: 32px;
+  background: rgba(228, 87, 46, 0.1);
+  color: var(--primary);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  margin-bottom: 12px;
+  font-size: 14px;
+  transform: translateZ(20px);
+}
+
+.wf-content h4 {
+  font-size: 15px;
+  font-weight: 800;
+  color: #1c1917;
+  margin-bottom: 8px;
+  transform: translateZ(30px);
+}
+
+.wf-content p {
+  font-size: 12px;
+  color: #6b6560;
+  margin: 0;
+  line-height: 1.5;
+  transform: translateZ(10px);
+}
+
+@media (max-width: 900px) {
+  .wf-pipeline {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .wf-pipeline::before {
+    top: 0; bottom: 0; left: 30px; right: auto; width: 2px; height: auto;
+  }
+  .wf-item {
+    text-align: left;
+    display: flex;
+    align-items: center;
+    padding: 16px;
+  }
+  .wf-number {
+    margin-bottom: 0; margin-right: 16px;
+    min-width: 32px;
+  }
+}
+
+/* ─── 4. Light Theme Orbital Ecosystem ─── */
+.ecosystem-section {
+  padding: 120px 24px;
+  background: var(--bg-white, #ffffff);
+  position: relative;
+  overflow: hidden;
+}
+
+.eco-wrapper {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 800px;
+}
+
+.orbit-container {
+  position: relative;
+  width: 600px;
+  height: 600px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .orbit-container {
+    width: 320px;
+    height: 320px;
+  }
+}
+
+/* The radial orbit layout needs real estate the ring math can't recover on
+   phone widths, so below 640px we swap it for a flat grid of the same roles. */
+.eco-mobile-grid {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .eco-wrapper {
+    min-height: 0;
+  }
+  .orbit-container {
+    display: none;
+  }
+  .eco-mobile-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    width: 100%;
+    max-width: 420px;
+  }
+  .eco-mobile-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: white;
+    border: 1px solid rgba(0,0,0,0.06);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-weight: 700;
+    font-size: 13px;
+    color: #1c1917;
+  }
+  .eco-mobile-icon {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(228, 87, 46, 0.15), rgba(228, 87, 46, 0.03));
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* ─── The Core ─── */
+.orbit-core {
+  position: absolute;
+  z-index: 50;
+  background: linear-gradient(135deg, var(--primary), #c8441f);
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  box-shadow: 0 10px 30px rgba(228, 87, 46, 0.3), inset 0 4px 10px rgba(255,255,255,0.4);
+  text-align: center;
+}
+
+.orbit-core span {
+  font-weight: 800;
+  font-size: 16px;
+  margin-top: 4px;
+}
+
+/* ─── Rings ─── */
+.orbit-ring {
+  position: absolute;
+  border: 1px dashed rgba(0,0,0,0.1);
+  border-radius: 50%;
+  animation: spin linear infinite;
+}
+
+.orbit-ring-1 {
+  width: 340px;
+  height: 340px;
+  animation-duration: 40s;
+}
+
+.orbit-ring-2 {
+  width: 580px;
+  height: 580px;
+  animation-duration: 60s;
+  animation-direction: reverse;
+}
+
+@media (max-width: 768px) {
+  .orbit-ring-1 { width: 220px; height: 220px; }
+  .orbit-ring-2 { width: 340px; height: 340px; }
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+/* ─── Nodes on Rings ─── */
+.orbit-node {
+  position: absolute;
+  top: 50%; left: 50%;
+  background: white;
+  border: 1px solid rgba(0,0,0,0.05);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  padding: 12px 20px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #1c1917;
+  font-weight: 700;
+  font-size: 14px;
+  white-space: nowrap;
+  
+  /* The counter-rotation keeps the text upright while the ring spins */
+  animation: counter-spin linear infinite;
+}
+
+.orbit-ring-1 .orbit-node {
+  animation-duration: 40s;
+}
+.orbit-ring-2 .orbit-node {
+  animation-duration: 60s;
+  animation-direction: reverse;
+}
+
+@keyframes counter-spin {
+  100% { transform: translate(-50%, -50%) rotate(-360deg); }
+}
+.orbit-node {
+  transform: translate(-50%, -50%) rotate(0deg); /* Initial state */
+}
+
+/* Positioning Nodes using Math (Translating out to the ring radius) */
+.orbit-ring-1 .orbit-node:nth-child(1) { margin-top: -170px; }
+.orbit-ring-1 .orbit-node:nth-child(2) { margin-left: 170px; }
+.orbit-ring-1 .orbit-node:nth-child(3) { margin-top: 170px; }
+.orbit-ring-1 .orbit-node:nth-child(4) { margin-left: -170px; }
+
+.orbit-ring-2 .orbit-node:nth-child(1) { margin-top: -290px; }
+.orbit-ring-2 .orbit-node:nth-child(2) { margin-top: -205px; margin-left: 205px; }
+.orbit-ring-2 .orbit-node:nth-child(3) { margin-left: 290px; }
+.orbit-ring-2 .orbit-node:nth-child(4) { margin-top: 205px; margin-left: 205px; }
+.orbit-ring-2 .orbit-node:nth-child(5) { margin-top: 290px; }
+.orbit-ring-2 .orbit-node:nth-child(6) { margin-top: 205px; margin-left: -205px; }
+.orbit-ring-2 .orbit-node:nth-child(7) { margin-left: -290px; }
+.orbit-ring-2 .orbit-node:nth-child(8) { margin-top: -205px; margin-left: -205px; }
+
+@media (max-width: 768px) {
+  .orbit-ring-1 .orbit-node:nth-child(1) { margin-top: -110px; }
+  .orbit-ring-1 .orbit-node:nth-child(2) { margin-left: 110px; }
+  .orbit-ring-1 .orbit-node:nth-child(3) { margin-top: 110px; }
+  .orbit-ring-1 .orbit-node:nth-child(4) { margin-left: -110px; }
+
+  .orbit-ring-2 .orbit-node:nth-child(1) { margin-top: -170px; }
+  .orbit-ring-2 .orbit-node:nth-child(2) { margin-top: -120px; margin-left: 120px; }
+  .orbit-ring-2 .orbit-node:nth-child(3) { margin-left: 170px; }
+  .orbit-ring-2 .orbit-node:nth-child(4) { margin-top: 120px; margin-left: 120px; }
+  .orbit-ring-2 .orbit-node:nth-child(5) { margin-top: 170px; }
+  .orbit-ring-2 .orbit-node:nth-child(6) { margin-top: 120px; margin-left: -120px; }
+  .orbit-ring-2 .orbit-node:nth-child(7) { margin-left: -170px; }
+  .orbit-ring-2 .orbit-node:nth-child(8) { margin-top: -120px; margin-left: -120px; }
+}
+
+/* Detail Panel */
+.eco-detail-panel {
+  flex: 1;
+  position: sticky;
+  top: 120px;
+  background: var(--bg-white);
+  color: #1c1917;
+  padding: 40px;
+  border-radius: 24px;
+  border: 1px solid rgba(0,0,0,0.05);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.05);
+  min-height: 400px;
+}
+
+.eco-detail-role {
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 24px;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.eco-detail-section {
+  margin-bottom: 24px;
+}
+
+.eco-detail-section h4 {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #9c948c;
+  margin-bottom: 8px;
+}
+
+.eco-detail-section p, .eco-detail-section ul {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #6b6560;
+  margin: 0;
+}
+
+.eco-detail-section ul {
+  padding-left: 20px;
+}
+
+.eco-detail-section li {
+  margin-bottom: 4px;
+}
+
+/* ─── 5. Operational Infrastructure (Bento Grid) ─── */
+.bento-section {
+  padding: 80px 24px;
+  background: var(--bg-light);
+}
+
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 250px;
+  gap: 24px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.bento-card {
+  background: var(--bg-white);
+  border: 1px solid rgba(0,0,0,0.05);
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bento-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(228, 87, 46, 0.1);
+  border-color: rgba(228, 87, 46, 0.3);
+}
+
+.bento-icon {
+  width: 48px;
+  height: 48px;
+  background: rgba(228, 87, 46, 0.1);
+  color: var(--primary);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.bento-card h4 {
+  font-size: 20px;
+  font-weight: 800;
+  color: #1c1917;
+  margin-bottom: 12px;
+}
+
+.bento-card p {
+  font-size: 14px;
+  color: #6b6560;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.bento-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  margin-top: auto; /* push to bottom */
+}
+
+.bento-list li {
+  font-size: 13px;
+  color: #6b6560;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.bento-list li::before {
+  content: '→';
+  color: var(--primary);
+  font-weight: bold;
+}
+
+/* Bento Spanning Rules */
+.span-col-2 { grid-column: span 2; }
+.span-col-3 { grid-column: span 3; }
+.span-row-2 { grid-row: span 2; }
+
+@media (max-width: 1024px) {
+  .bento-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .span-col-3 { grid-column: span 2; }
+}
+
+@media (max-width: 768px) {
+  .bento-grid {
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+  }
+  .bento-card {
+    min-height: 250px;
+  }
+  .span-col-2, .span-col-3, .span-row-2 {
+    grid-column: span 1;
+    grid-row: span 1;
+  }
+}
+
+/* ─── Final CTA ─── */
+.ent-cta {
+  padding: 80px 24px;
+  background: var(--bg-light);
+  text-align: center;
+  border-top: 1px solid rgba(0,0,0,0.05);
+}
