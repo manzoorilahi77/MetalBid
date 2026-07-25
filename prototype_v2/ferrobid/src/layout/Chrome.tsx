@@ -8,7 +8,7 @@ import {
   Bell, Check, ChevronDown, Flame, Globe, LogOut, Menu, Moon, Search, Sun, User as UserIcon,
   Wallet as WalletIcon, X, ShieldCheck, LifeBuoy, FileText, SlidersHorizontal,
 } from 'lucide-react'
-import { ALL_ROLES, ROLE_HOME, ROLE_LABEL, useStore } from '../store/store'
+import { ROLE_HOME, ROLE_LABEL, ROLE_ORDER, useStore } from '../store/store'
 import { inrCompact, relTime } from '../lib/format'
 import { requestExitInterstitial } from '../lib/exitInterstitial'
 import { useClientIp } from '../lib/useClientIp'
@@ -32,6 +32,9 @@ export const NAV_BY_ROLE: Record<Role, NavItem[]> = {
     { to: '/noticeboard', label: 'Noticeboard', in: ['top'] },
     { to: '/help', label: 'How it works', in: ['top'] },
   ],
+  // guest1 renders its own standalone app (Guest1App) outside this Chrome
+  // shell, so it needs no top/sub nav items here — the map only requires a key.
+  guest1: [],
   // Guest 2 (public-site role) — uses the shared chrome like every other role.
   // Lean top nav, no sub-nav (like the guest role); deeper content lives on the
   // home page and the two solution pages.
@@ -127,7 +130,7 @@ function RoleSwitcher() {
   const [open, setOpen] = useState(false)
   const ref = useClickAway(() => setOpen(false))
   const nav = useNavigate()
-  const roles = ALL_ROLES
+  const roles = ROLE_ORDER
   return (
     <div className="relative" ref={ref}>
       <button onClick={() => setOpen(!open)}

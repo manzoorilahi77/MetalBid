@@ -14,9 +14,10 @@ import type {
 
 const seed = loadSeed()
 
-/** Demo identity per role for the header role switcher. 'guest' and 'guest2'
- *  are both anonymous — no demo user to look up. */
-export const ROLE_DEMO_USER: Record<Exclude<Role, 'guest' | 'guest2'>, string> = {
+/** Demo identity per role for the header role switcher. 'guest', 'guest1' and
+ *  'guest2' are all public/unauthenticated shells — anonymous, so there is no
+ *  demo user to look up. */
+export const ROLE_DEMO_USER: Record<Exclude<Role, 'guest' | 'guest1' | 'guest2'>, string> = {
   buyer: 'u-buyer-1',
   seller: 'u-seller-2',
   field_exec: 'u-field-1',
@@ -27,6 +28,7 @@ export const ROLE_DEMO_USER: Record<Exclude<Role, 'guest' | 'guest2'>, string> =
 
 export const ROLE_LABEL: Record<Role, string> = {
   guest: 'Guest',
+  guest1: 'Guest 1',
   guest2: 'Guest 2',
   buyer: 'Buyer',
   seller: 'Seller',
@@ -38,6 +40,7 @@ export const ROLE_LABEL: Record<Role, string> = {
 
 export const ROLE_HOME: Record<Role, string> = {
   guest: '/',
+  guest1: '/guest1',
   guest2: '/g2',
   buyer: '/buyer',
   seller: '/seller',
@@ -46,6 +49,31 @@ export const ROLE_HOME: Record<Role, string> = {
   sub_admin: '/sub',
   super_admin: '/admin',
 }
+
+/** Canonical display order for the role switcher(s). Single source of truth —
+ *  consumed by the Chrome header switcher and the Guest1 homepage switcher so
+ *  the list can't drift between them, and used to validate the persisted role
+ *  read back from localStorage. */
+export const ROLE_ORDER: Role[] = [
+  'guest', 'guest1', 'guest2', 'buyer', 'seller', 'field_exec', 'exec_manager', 'sub_admin', 'super_admin',
+]
+
+/** Demo sign-in credentials for the manager Login page: user ID → role.
+ *  Every account uses DEMO_PASSWORD. */
+export const DEMO_LOGINS: Record<string, Exclude<Role, 'guest' | 'guest1' | 'guest2'>> = {
+  'buy@gmail.com': 'buyer',
+  'sell@gmail.com': 'seller',
+  'field@gmail.com': 'field_exec',
+  'executive@gmail.com': 'exec_manager',
+  'sub@gmail.com': 'sub_admin',
+  'super@gmail.com': 'super_admin',
+}
+export const DEMO_PASSWORD = 'Admin@123'
+
+/** Password enforcement on the Login page. OFF for now — any password (or none)
+ *  signs in as long as the user ID is known. Flip to true to require
+ *  DEMO_PASSWORD again. */
+export const ENFORCE_LOGIN_PASSWORD = false
 
 const BOT_IDS = ['u-buyer-2', 'u-buyer-3', 'u-buyer-5', 'u-buyer-6', 'u-buyer-7']
 
@@ -119,6 +147,7 @@ interface State {
   /* --- session --- */
   toggleTheme: () => void
   switchRole: (role: Role) => void
+  signIn: (username: string, password: string) => { ok: boolean; role?: Role; error?: string }
   login: (phone: string) => void
   logout: () => void
 
@@ -177,10 +206,6 @@ interface State {
 // defaults to light unless the user has manually chosen dark mode in settings
 const storedTheme = typeof window !== 'undefined' ? localStorage.getItem('theme') : null
 
-/** Canonical role order — drives the demo switcher and validates stored input.
- *  Derived from ROLE_LABEL so the two can't drift apart. */
-export const ALL_ROLES = Object.keys(ROLE_LABEL) as Role[]
-
 const ROLE_KEY = 'fb.demo.role'
 
 /** The demo role has to survive a refresh. HashRouter keeps the URL, so a role
@@ -189,7 +214,7 @@ const ROLE_KEY = 'fb.demo.role'
 const storedRole: Role = (() => {
   try {
     const r = localStorage.getItem(ROLE_KEY) as Role | null
-    if (r && ALL_ROLES.includes(r)) return r
+    if (r && ROLE_ORDER.includes(r)) return r
   } catch {
     /* private mode — fall through to the default */
   }
@@ -204,9 +229,9 @@ function rememberRole(role: Role) {
   }
 }
 
-/** Demo user backing a role; the two anonymous roles have none. */
+/** Demo user backing a role; the anonymous public shells have none. */
 const demoUserFor = (role: Role) =>
-  role === 'guest' || role === 'guest2'
+  role === 'guest' || role === 'guest1' || role === 'guest2'
     ? null
     : seed.users.find((u) => u.id === ROLE_DEMO_USER[role]) ?? null
 
@@ -430,12 +455,23 @@ export const useStore = create<State>((set, get) => {
     },
     switchRole: (role) => {
       rememberRole(role)
-      if (role === 'guest' || role === 'guest2') {
+      // guest, guest1 and guest2 are unauthenticated public shells — no demo identity
+      if (role === 'guest' || role === 'guest1' || role === 'guest2') {
         set({ role, currentUser: null })
         return
       }
       const user = get().users.find((u) => u.id === ROLE_DEMO_USER[role]) ?? null
       set({ role, currentUser: user })
+    },
+    signIn: (username, password) => {
+      const role = DEMO_LOGINS[username.trim().toLowerCase()]
+      if (!role) return { ok: false, error: 'Unknown user ID' }
+      // Password check is disabled for now (ENFORCE_LOGIN_PASSWORD = false).
+      if (ENFORCE_LOGIN_PASSWORD && password !== DEMO_PASSWORD) {
+        return { ok: false, error: 'Incorrect password' }
+      }
+      get().switchRole(role)
+      return { ok: true, role }
     },
     login: (phone) => {
       const existing = get().users.find((u) => u.phone.replace(/\D/g, '').endsWith(phone.replace(/\D/g, '').slice(-10)))

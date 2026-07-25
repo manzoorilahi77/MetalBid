@@ -6,6 +6,7 @@
 
 export type Role =
   | 'guest'
+  | 'guest1' // isolated standalone public homepage app (own router, at /guest1)
   | 'guest2' // redesigned public/marketing site, anonymous like 'guest'
   | 'buyer'
   | 'seller'
