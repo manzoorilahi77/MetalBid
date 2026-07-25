@@ -14,7 +14,7 @@ export const AuctionCard = ({ auction, isLive = false }) => {
       transition={{ duration: 0.4, ease: "easeOut" }}
     >
       <div className="auction-card-image-wrap">
-        <img src={auction.img || '/hero.jpg'} alt={auction.material} className="auction-card-bg-img" />
+        <img src={auction.img || `${import.meta.env.BASE_URL}hero.jpg`} alt={auction.material} className="auction-card-bg-img" />
         <div className="auction-card-img-overlay"></div>
         
         {isLive ? (

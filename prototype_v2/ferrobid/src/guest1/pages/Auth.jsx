@@ -371,7 +371,7 @@ export const Auth = () => {
         <div className="auth-right-inner">
           {/* Logo */}
           <Link to="/" className="auth-logo-link">
-            <img src="/logo.png" alt="FerroBid Logo" className="auth-logo-img" />
+            <img src={`${import.meta.env.BASE_URL}logo.png`} alt="FerroBid Logo" className="auth-logo-img" />
           </Link>
 
           {/* Success Message */}

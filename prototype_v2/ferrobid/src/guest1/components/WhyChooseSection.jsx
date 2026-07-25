@@ -2,9 +2,9 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 const reasons = [
-  { img: '/transparent.jfif', title: 'Transparent Auctions' },
-  { img: '/ai.jfif', title: 'AI Fraud Detection' },
-  { img: '/global.jfif', title: 'Pan-India Enterprise Network' },
+  { img: `${import.meta.env.BASE_URL}transparent.jfif`, title: 'Transparent Auctions' },
+  { img: `${import.meta.env.BASE_URL}ai.jfif`, title: 'AI Fraud Detection' },
+  { img: `${import.meta.env.BASE_URL}global.jfif`, title: 'Pan-India Enterprise Network' },
 ];
 
 export const WhyChooseSection = () => (

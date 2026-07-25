@@ -695,37 +695,37 @@ type Testimonial = {
 const TESTIMONIALS: Testimonial[] = [
   {
     id: 't-david', name: 'David Okonkwo', role: 'Group Purchasing Head',
-    company: 'Atlas Resources', location: 'Lagos, Nigeria', img: '/images/exec_david.jpg',
+    company: 'Atlas Resources', location: 'Lagos, Nigeria', img: `${import.meta.env.BASE_URL}images/exec_david.jpg`,
     quote: 'The live bid trail changed how we negotiate internally. We walk into every auction with data, and we walk out having saved real capital.',
     metric: '$2.7M saved / yr',
   },
   {
     id: 't-kenji', name: 'Kenji Tanaka', role: 'Director of Global Sourcing',
-    company: 'Rinkai Steel Works', location: 'Osaka, Japan', img: '/images/exec_kenji.jpg',
+    company: 'Rinkai Steel Works', location: 'Osaka, Japan', img: `${import.meta.env.BASE_URL}images/exec_kenji.jpg`,
     quote: 'Reserve protection and EMD-backed bidders mean every lot we list meets serious demand. It is the first platform our board trusted with mill-grade volume.',
     metric: '¥1.2B traded',
   },
   {
     id: 't-arjun', name: 'Arjun Sharma', role: 'Head of Supply Chain',
-    company: 'Meridian Metals', location: 'Mumbai, India', img: '/images/exec_arjun.jpg',
+    company: 'Meridian Metals', location: 'Mumbai, India', img: `${import.meta.env.BASE_URL}images/exec_arjun.jpg`,
     quote: 'The transparency is unlike anything in this industry. My team sees every bid and every settlement in real time — no back-room deals, no surprises.',
     metric: '18% cost reduction',
   },
   {
     id: 't-lars', name: 'Lars Eriksson', role: 'VP, Raw Materials',
-    company: 'Nordfjord Industries', location: 'Oslo, Norway', img: '/images/exec_lars.jpg',
+    company: 'Nordfjord Industries', location: 'Oslo, Norway', img: `${import.meta.env.BASE_URL}images/exec_lars.jpg`,
     quote: 'From inspection reports to lifting logistics, the whole loop is one login. We onboarded four regional yards without adding a single headcount.',
     metric: '4 yards onboarded',
   },
   {
     id: 't-omar', name: 'Omar Al-Rashid', role: 'Managing Director',
-    company: 'Gulf Alloy Trading', location: 'Dubai, UAE', img: '/images/exec_omar.jpg',
+    company: 'Gulf Alloy Trading', location: 'Dubai, UAE', img: `${import.meta.env.BASE_URL}images/exec_omar.jpg`,
     quote: 'ferroBid gave us verified demand across three continents overnight. Our surplus now clears at a genuinely competitive rate, every single cycle.',
     metric: '3 continents reach',
   },
   {
     id: 't-rafael', name: 'Rafael Almeida', role: 'Chief Procurement Officer',
-    company: 'Vale Ferro Group', location: 'São Paulo, Brazil', img: '/images/exec_rafael.jpg',
+    company: 'Vale Ferro Group', location: 'São Paulo, Brazil', img: `${import.meta.env.BASE_URL}images/exec_rafael.jpg`,
     quote: 'We replaced three weeks of yard visits with a single afternoon of live bidding. The audit trail alone made our compliance team fall in love with ferroBid.',
     metric: '31% faster sourcing',
   },
@@ -930,27 +930,27 @@ const INSIGHTS: Insight[] = [
     title: 'Steel HRC Hits an 18-Month High as Asian Demand Outpaces Supply',
     excerpt: 'Hot-rolled coil benchmarks climbed 3.2% this week as East-Asian restocking collided with tight mill output — reshaping reserve strategies on the auction floor.',
     author: 'Ferrobid Research', date: 'Jul 22, 2026', read: '6 min read',
-    img: '/images/auction_steel_coils.png',
+    img: `${import.meta.env.BASE_URL}images/auction_steel_coils.png`,
   },
   {
     id: 'in-2', tone: 'steel', category: 'Non-Ferrous',
     title: 'Copper Cathode Premiums Tighten Ahead of Q3 Restocking',
-    date: 'Jul 20, 2026', read: '4 min read', img: '/images/tile_copper.jpg',
+    date: 'Jul 20, 2026', read: '4 min read', img: `${import.meta.env.BASE_URL}images/tile_copper.jpg`,
   },
   {
     id: 'in-3', tone: 'warning', category: 'Machinery',
     title: 'Used-Equipment Values Climb as Construction Fleets Electrify',
-    date: 'Jul 18, 2026', read: '5 min read', img: '/images/auction_cat_excavator.png',
+    date: 'Jul 18, 2026', read: '5 min read', img: `${import.meta.env.BASE_URL}images/auction_cat_excavator.png`,
   },
   {
     id: 'in-4', tone: 'steel', category: 'Platform',
     title: 'Inside Anti-Snipe: How Live-Bid Mechanics Protect Fair Pricing',
-    date: 'Jul 16, 2026', read: '3 min read', img: '/images/why_ai_real.jpg',
+    date: 'Jul 16, 2026', read: '3 min read', img: `${import.meta.env.BASE_URL}images/why_ai_real.jpg`,
   },
   {
     id: 'in-5', tone: 'ember', category: 'Auctions',
     title: 'Aluminium Billet Sales Draw Record Cross-Border Bidders',
-    date: 'Jul 14, 2026', read: '4 min read', img: '/images/tile_aluminium.jpg',
+    date: 'Jul 14, 2026', read: '4 min read', img: `${import.meta.env.BASE_URL}images/tile_aluminium.jpg`,
   },
 ]
 
@@ -1122,7 +1122,7 @@ export default function Guest2Home() {
       startsAt: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000 + 5 * 60 * 60 * 1000).toISOString(),
       progress: 72,
       spark: [58, 60, 59, 62, 61, 64, 66, 68],
-      img: '/images/auction_steel_coils.png',
+      img: `${import.meta.env.BASE_URL}images/auction_steel_coils.png`,
     },
     {
       id: 'up-2',
@@ -1135,7 +1135,7 @@ export default function Guest2Home() {
       startsAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000 + 3 * 60 * 60 * 1000).toISOString(),
       progress: 88,
       spark: [41, 43, 42, 44, 46, 45, 48, 50],
-      img: '/images/auction_copper_cathodes.png',
+      img: `${import.meta.env.BASE_URL}images/auction_copper_cathodes.png`,
     },
     {
       id: 'up-3',
@@ -1148,7 +1148,7 @@ export default function Guest2Home() {
       startsAt: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000 + 2 * 60 * 60 * 1000).toISOString(),
       progress: 46,
       spark: [30, 33, 32, 35, 34, 38, 40, 43],
-      img: '/images/auction_cat_excavator.png',
+      img: `${import.meta.env.BASE_URL}images/auction_cat_excavator.png`,
     },
     {
       id: 'up-4',
@@ -1161,7 +1161,7 @@ export default function Guest2Home() {
       startsAt: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000 + 4 * 60 * 60 * 1000).toISOString(),
       progress: 63,
       spark: [49, 50, 49, 51, 52, 51, 53, 54],
-      img: '/images/tile_aluminium.jpg',
+      img: `${import.meta.env.BASE_URL}images/tile_aluminium.jpg`,
     },
   ]
 
@@ -1248,27 +1248,27 @@ export default function Guest2Home() {
                 {/* composite showcase — bento mosaic of real photos: steel · pipes · machinery · copper · aluminium */}
                 <div className="grid grid-cols-3 grid-rows-3 gap-1.5 h-[430px] sm:h-[480px] rounded-2xl overflow-hidden">
                   <img
-                    src="/images/tile_steel.jpg"
+                    src={`${import.meta.env.BASE_URL}images/tile_steel.jpg`}
                     alt="Steel coil ready for auction"
                     className="col-start-1 row-start-1 row-span-2 w-full h-full object-cover"
                   />
                   <img
-                    src="/images/tile_pipes.jpg"
+                    src={`${import.meta.env.BASE_URL}images/tile_pipes.jpg`}
                     alt="Stacked steel pipes ready for auction"
                     className="col-start-1 row-start-3 w-full h-full object-cover"
                   />
                   <img
-                    src="/images/hero_assets.jpg"
+                    src={`${import.meta.env.BASE_URL}images/hero_assets.jpg`}
                     alt="Excavators lined up in an industrial auction yard"
                     className="col-start-2 row-start-1 row-span-3 w-full h-full object-cover object-center saturate-[1.03] contrast-[1.02]"
                   />
                   <img
-                    src="/images/tile_copper.jpg"
+                    src={`${import.meta.env.BASE_URL}images/tile_copper.jpg`}
                     alt="Copper coil ready for auction"
                     className="col-start-3 row-start-1 row-span-2 w-full h-full object-cover"
                   />
                   <img
-                    src="/images/tile_aluminium.jpg"
+                    src={`${import.meta.env.BASE_URL}images/tile_aluminium.jpg`}
                     alt="Aluminium billets ready for auction"
                     className="col-start-3 row-start-3 w-full h-full object-cover"
                   />
@@ -1514,7 +1514,7 @@ export default function Guest2Home() {
 
               <div className="col-span-5 h-36 relative rounded-2xl overflow-hidden bg-gradient-to-br from-surface-2 to-surface-3 border border-line-strong/80 shadow-inner shrink-0">
                 <img
-                  src="/images/why_transparent_real.jpg"
+                  src={`${import.meta.env.BASE_URL}images/why_transparent_real.jpg`}
                   alt="Steel coils in an industrial warehouse"
                   loading="lazy"
                   className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500"
@@ -1550,7 +1550,7 @@ export default function Guest2Home() {
 
               <div className="col-span-5 h-36 relative rounded-2xl overflow-hidden bg-gradient-to-br from-surface-2 to-surface-3 border border-line-strong/80 shadow-inner shrink-0">
                 <img
-                  src="/images/why_ai_real.jpg"
+                  src={`${import.meta.env.BASE_URL}images/why_ai_real.jpg`}
                   alt="Secure data-center server racks with network cabling"
                   loading="lazy"
                   className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500"
@@ -1586,7 +1586,7 @@ export default function Guest2Home() {
 
               <div className="col-span-5 h-36 relative rounded-2xl overflow-hidden bg-gradient-to-br from-surface-2 to-surface-3 border border-line-strong/80 shadow-inner shrink-0">
                 <img
-                  src="/images/why_global_real.jpg"
+                  src={`${import.meta.env.BASE_URL}images/why_global_real.jpg`}
                   alt="Container ship and cranes at a global shipping port"
                   loading="lazy"
                   className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500"
@@ -1899,7 +1899,7 @@ export default function Guest2Home() {
           <div ref={successRef} className="card p-8 bg-surface border border-line grid lg:grid-cols-12 gap-8 items-center shadow-md">
             <div style={directionalReveal(successShown, reduceMotion, 'left', 0)} className="lg:col-span-5 relative rounded-2xl overflow-hidden h-72 group border border-line">
               <img
-                src="/images/success_story_yard.png"
+                src={`${import.meta.env.BASE_URL}images/success_story_yard.png`}
                 alt="Global Mining Corp Enterprise Facility"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
@@ -1953,7 +1953,7 @@ export default function Guest2Home() {
 
               <div className="flex items-center gap-3.5 pt-1">
                 <img
-                  src="/images/executive_michael.png"
+                  src={`${import.meta.env.BASE_URL}images/executive_michael.png`}
                   alt="Michael Carter"
                   className="size-11 rounded-full object-cover border border-line shadow-sm"
                 />

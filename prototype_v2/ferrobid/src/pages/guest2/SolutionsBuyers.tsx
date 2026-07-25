@@ -46,7 +46,7 @@ const INSPECTION_LOTS: InspectionLot[] = [
     inspector: 'Rajesh V. Sharma',
     inspectorId: 'FE-1049',
     inspectedDate: 'Yesterday at 14:30',
-    images: ['/images/auction_steel_coils.png', '/images/inspection.jpg', '/images/hero_bidding_facility.jpg'],
+    images: [`${import.meta.env.BASE_URL}images/auction_steel_coils.png`, `${import.meta.env.BASE_URL}images/inspection.jpg`, `${import.meta.env.BASE_URL}images/hero_bidding_facility.jpg`],
     specs: [
       { label: 'Fe Metal Purity', value: '94.2%', pct: 94.2 },
       { label: 'Piece Thickness (>6mm)', value: '88.0%', pct: 88.0 },
@@ -70,7 +70,7 @@ const INSPECTION_LOTS: InspectionLot[] = [
     inspector: 'Anand Kumar',
     inspectorId: 'FE-8812',
     inspectedDate: 'Today at 09:15',
-    images: ['/images/buyer_hero.jpg', '/images/tile_steel.jpg', '/images/hero_coils.png'],
+    images: [`${import.meta.env.BASE_URL}images/buyer_hero.jpg`, `${import.meta.env.BASE_URL}images/tile_steel.jpg`, `${import.meta.env.BASE_URL}images/hero_coils.png`],
     specs: [
       { label: 'Yield Strength (ReH)', value: '290 MPa', pct: 92.0 },
       { label: 'Tensile Strength (Rm)', value: '440 MPa', pct: 95.0 },
@@ -94,7 +94,7 @@ const INSPECTION_LOTS: InspectionLot[] = [
     inspector: 'Priya Sundaram',
     inspectorId: 'FE-3301',
     inspectedDate: 'Jul 24, 2026',
-    images: ['/images/auction_copper_cathodes.png', '/images/tile_copper.jpg', '/images/hero_copper.png'],
+    images: [`${import.meta.env.BASE_URL}images/auction_copper_cathodes.png`, `${import.meta.env.BASE_URL}images/tile_copper.jpg`, `${import.meta.env.BASE_URL}images/hero_copper.png`],
     specs: [
       { label: 'Cu Content Grade', value: '99.96%', pct: 99.96 },
       { label: 'Insulation / Enamel Residual', value: '<0.08%', pct: 99.2 },
