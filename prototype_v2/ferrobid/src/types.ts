@@ -6,6 +6,7 @@
 
 export type Role =
   | 'guest'
+  | 'guest2' // redesigned public/marketing site, anonymous like 'guest'
   | 'buyer'
   | 'seller'
   | 'field_exec'

@@ -5,11 +5,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import {
-  Bell, ChevronDown, Flame, LogOut, Menu, Moon, Search, Sun, User as UserIcon,
+  Bell, Check, ChevronDown, Flame, Globe, LogOut, Menu, Moon, Search, Sun, User as UserIcon,
   Wallet as WalletIcon, X, ShieldCheck, LifeBuoy, FileText, SlidersHorizontal,
 } from 'lucide-react'
-import { ROLE_HOME, ROLE_LABEL, useStore } from '../store/store'
+import { ALL_ROLES, ROLE_HOME, ROLE_LABEL, useStore } from '../store/store'
 import { inrCompact, relTime } from '../lib/format'
+import { requestExitInterstitial } from '../lib/exitInterstitial'
+import { useClientIp } from '../lib/useClientIp'
 import { Avatar, Chip, cx } from '../components/ui'
 import type { Role } from '../types'
 
@@ -29,6 +31,16 @@ export const NAV_BY_ROLE: Record<Role, NavItem[]> = {
     { to: '/browse', label: 'Browse auctions', in: ['top'] },
     { to: '/noticeboard', label: 'Noticeboard', in: ['top'] },
     { to: '/help', label: 'How it works', in: ['top'] },
+  ],
+  // Guest 2 (public-site role) — uses the shared chrome like every other role.
+  // Lean top nav, no sub-nav (like the guest role); deeper content lives on the
+  // home page and the two solution pages.
+  guest2: [
+    { to: '/g2', label: 'Home', end: true, in: ['top'] },
+    { to: '/g2/solutions/buyers', label: 'For buyers', in: ['top'] },
+    { to: '/g2/solutions/sellers', label: 'For sellers', in: ['top'] },
+    { to: '/g2/how-it-works', label: 'How it works', in: ['top'] },
+    { to: '/g2/contact', label: 'Contact', in: ['top'] },
   ],
   buyer: [
     { to: '/buyer', label: 'Dashboard', end: true, in: ['top', 'sub'] },
@@ -115,7 +127,7 @@ function RoleSwitcher() {
   const [open, setOpen] = useState(false)
   const ref = useClickAway(() => setOpen(false))
   const nav = useNavigate()
-  const roles: Role[] = ['guest', 'buyer', 'seller', 'field_exec', 'exec_manager', 'sub_admin', 'super_admin']
+  const roles = ALL_ROLES
   return (
     <div className="relative" ref={ref}>
       <button onClick={() => setOpen(!open)}
@@ -130,7 +142,16 @@ function RoleSwitcher() {
           <div className="px-2.5 py-1.5 text-[11px] font-bold uppercase tracking-wider text-ink-faint">Jump to role</div>
           {roles.map((r) => (
             <button key={r}
-              onClick={() => { switchRole(r); setOpen(false); nav(ROLE_HOME[r]) }}
+              onClick={() => {
+                setOpen(false)
+                const go = () => { switchRole(r); nav(ROLE_HOME[r]) }
+                /* Jumping out of a public marketing site is a genuine exit, so
+                   give the current page a chance to show its leave-interstitial
+                   (Guest 2's WhatsApp invite) and finish the switch afterwards.
+                   No interstitial registered → switches immediately. */
+                if (r !== role && requestExitInterstitial(go)) return
+                go()
+              }}
               className={cx('w-full text-left px-2.5 py-2 rounded-lg text-sm font-medium hover:bg-surface-2',
                 r === role ? 'text-ember-strong bg-ember-soft/60' : 'text-ink')}>
               {ROLE_LABEL[r]}
@@ -233,6 +254,69 @@ function ProfileMenu() {
   )
 }
 
+/**
+ * SessionIp — the visitor's public IP, in the slot the catalogue search used to
+ * occupy. Reads as an enterprise session/audit marker, so it's styled as a
+ * static readout (not a control) and never shifts width while resolving.
+ *
+ * IPv6 addresses are far wider than the chip, so the value truncates and the
+ * full address lives in the tooltip + copy action.
+ */
+function SessionIp({ className }: { className?: string }) {
+  const { ip, state } = useClientIp()
+  const [copied, setCopied] = useState(false)
+
+  useEffect(() => {
+    if (!copied) return
+    const t = window.setTimeout(() => setCopied(false), 1400)
+    return () => window.clearTimeout(t)
+  }, [copied])
+
+  const copy = async () => {
+    if (!ip) return
+    try {
+      await navigator.clipboard.writeText(ip)
+      setCopied(true)
+    } catch {
+      /* clipboard blocked (insecure origin / denied) — the tooltip still shows it */
+    }
+  }
+
+  const label =
+    state === 'ready' ? ip : state === 'loading' ? 'Resolving…' : 'Unavailable'
+
+  return (
+    <button
+      type="button"
+      onClick={copy}
+      disabled={state !== 'ready'}
+      title={state === 'ready' ? `Session IP ${ip} — click to copy` : 'Session IP unavailable'}
+      aria-label={state === 'ready' ? `Session IP ${ip}. Click to copy.` : 'Session IP unavailable'}
+      className={cx(
+        'h-9 px-3 rounded-xl bg-surface-2 border border-line inline-flex items-center gap-2 max-w-[13rem] shrink-0',
+        state === 'ready'
+          ? 'hover:border-line-strong cursor-pointer'
+          : 'cursor-default opacity-70',
+        className,
+      )}
+    >
+      {copied ? (
+        <Check size={13} className="text-success shrink-0" />
+      ) : (
+        <Globe size={13} className={cx('shrink-0', state === 'ready' ? 'text-steel' : 'text-ink-faint')} />
+      )}
+      <span className="flex flex-col items-start leading-none min-w-0">
+        <span className="text-[9px] font-bold uppercase tracking-wider text-ink-faint">
+          {copied ? 'Copied' : 'Session IP'}
+        </span>
+        <span className={cx('num text-[12px] font-bold mt-0.5 truncate max-w-full', state === 'ready' ? 'text-ink' : 'text-ink-faint')}>
+          {label}
+        </span>
+      </span>
+    </button>
+  )
+}
+
 function TopNav() {
   const role = useStore((s) => s.role)
   const me = useStore((s) => s.currentUser)
@@ -248,6 +332,9 @@ function TopNav() {
   const links = NAV_BY_ROLE[role].filter((i) => i.in.includes('top'))
   const wallet = wallets.find((w) => w.userId === me?.id)
   const showWallet = role === 'buyer' || role === 'seller'
+  /* Guest 2 is the public marketing site: no catalogue search in its chrome —
+     it shows the session IP readout instead. Every other role keeps search. */
+  const isGuest2 = role === 'guest2'
 
   const submitSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -270,11 +357,17 @@ function TopNav() {
             </NavLink>
           ))}
         </nav>
-        <form onSubmit={submitSearch} className="ml-auto hidden md:flex items-center relative">
-          <Search size={15} className="absolute left-3 text-ink-faint pointer-events-none" />
-          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search catalogues…"
-            className="h-9 w-40 xl:w-52 pl-9 pr-3 rounded-xl bg-surface-2 border border-line text-sm placeholder:text-ink-faint focus:outline-2 focus:outline-ember/50 focus:bg-surface" />
-        </form>
+        {isGuest2 ? (
+          <div className="ml-auto hidden md:block">
+            <SessionIp />
+          </div>
+        ) : (
+          <form onSubmit={submitSearch} className="ml-auto hidden md:flex items-center relative">
+            <Search size={15} className="absolute left-3 text-ink-faint pointer-events-none" />
+            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search catalogues…"
+              className="h-9 w-40 xl:w-52 pl-9 pr-3 rounded-xl bg-surface-2 border border-line text-sm placeholder:text-ink-faint focus:outline-2 focus:outline-ember/50 focus:bg-surface" />
+          </form>
+        )}
         {showWallet && wallet && (
           <Link to="/buyer/wallet" className="hidden sm:inline-flex items-center gap-1.5 h-9 px-3 rounded-xl bg-surface-2 border border-line hover:border-line-strong whitespace-nowrap shrink-0" title="Wallet & EMD">
             <WalletIcon size={14} className="text-ember" />
@@ -291,11 +384,17 @@ function TopNav() {
       </div>
       {mobileOpen && (
         <nav className="lg:hidden border-t border-line bg-surface px-4 py-3 space-y-1 animate-fade-up">
-          <form onSubmit={submitSearch} className="relative mb-2">
-            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint" />
-            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search catalogues, lots…"
-              className="h-10 w-full pl-9 pr-3 rounded-xl bg-surface-2 border border-line text-sm" />
-          </form>
+          {isGuest2 ? (
+            <div className="mb-2">
+              <SessionIp />
+            </div>
+          ) : (
+            <form onSubmit={submitSearch} className="relative mb-2">
+              <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint" />
+              <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search catalogues, lots…"
+                className="h-10 w-full pl-9 pr-3 rounded-xl bg-surface-2 border border-line text-sm" />
+            </form>
+          )}
           {links.map((l) => (
             <NavLink key={l.to} to={l.to}
               className={({ isActive }) => cx('block px-3 py-2.5 rounded-lg text-sm font-semibold',

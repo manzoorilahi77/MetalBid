@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import { HashRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom'
 import Chrome, { NAV_BY_ROLE, Page, SubNav } from './layout/Chrome'
 import type { Role } from './types'
@@ -17,6 +18,15 @@ import Legal from './pages/Legal'
 import Disputes from './pages/Disputes'
 import NotificationPrefs from './pages/NotificationPrefs'
 import Profile from './pages/Profile'
+
+/* guest 2 — redesigned public site (code-split from the authenticated app;
+   Phase 9). Each page loads on demand behind the Guest2Layout Suspense. */
+const Guest2Home = lazy(() => import('./pages/guest2/Home'))
+const Guest2SolutionsBuyers = lazy(() => import('./pages/guest2/SolutionsBuyers'))
+const Guest2SolutionsSellers = lazy(() => import('./pages/guest2/SolutionsSellers'))
+const Guest2HowItWorks = lazy(() => import('./pages/guest2/HowItWorks'))
+const Guest2Contact = lazy(() => import('./pages/guest2/Contact'))
+const Guest2ExitIntent = lazy(() => import('./pages/guest2/ExitIntentWhatsApp'))
 
 /* buyer */
 import BuyerDashboard from './pages/buyer/Dashboard'
@@ -116,6 +126,19 @@ function SellerLayout() {
   )
 }
 
+/** Guest 2 public site — shared chrome like every other role. A lean top nav
+ *  (no sub-nav) drives the few marketing pages; this layout is the Suspense
+ *  boundary for the lazy pages and the single mount point for the exit-intent
+ *  WhatsApp community invite (so it can fire from any Guest 2 page, once). */
+function Guest2Layout() {
+  return (
+    <Suspense fallback={<Page className="py-24 text-center text-ink-faint">Loading…</Page>}>
+      <Outlet />
+      <Guest2ExitIntent />
+    </Suspense>
+  )
+}
+
 function NotFound() {
   return (
     <Page className="text-center py-24">
@@ -150,6 +173,15 @@ export default function App() {
           <Route path="/disputes" element={<Disputes />} />
           <Route path="/settings/notifications" element={<NotificationPrefs />} />
           <Route path="/profile" element={<Profile />} />
+
+          {/* Guest 2 public site — shared chrome, lean top nav (Phase 3/6) */}
+          <Route element={<Guest2Layout />}>
+            <Route path="/g2" element={<Guest2Home />} />
+            <Route path="/g2/solutions/buyers" element={<Guest2SolutionsBuyers />} />
+            <Route path="/g2/solutions/sellers" element={<Guest2SolutionsSellers />} />
+            <Route path="/g2/how-it-works" element={<Guest2HowItWorks />} />
+            <Route path="/g2/contact" element={<Guest2Contact />} />
+          </Route>
 
           <Route element={<BuyerLayout />}>
             <Route path="/buyer" element={<BuyerDashboard />} />

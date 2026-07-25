@@ -14,8 +14,9 @@ import type {
 
 const seed = loadSeed()
 
-/** Demo identity per role for the header role switcher. */
-export const ROLE_DEMO_USER: Record<Exclude<Role, 'guest'>, string> = {
+/** Demo identity per role for the header role switcher. 'guest' and 'guest2'
+ *  are both anonymous — no demo user to look up. */
+export const ROLE_DEMO_USER: Record<Exclude<Role, 'guest' | 'guest2'>, string> = {
   buyer: 'u-buyer-1',
   seller: 'u-seller-2',
   field_exec: 'u-field-1',
@@ -26,6 +27,7 @@ export const ROLE_DEMO_USER: Record<Exclude<Role, 'guest'>, string> = {
 
 export const ROLE_LABEL: Record<Role, string> = {
   guest: 'Guest',
+  guest2: 'Guest 2',
   buyer: 'Buyer',
   seller: 'Seller',
   field_exec: 'Field Executive',
@@ -36,6 +38,7 @@ export const ROLE_LABEL: Record<Role, string> = {
 
 export const ROLE_HOME: Record<Role, string> = {
   guest: '/',
+  guest2: '/g2',
   buyer: '/buyer',
   seller: '/seller',
   field_exec: '/field',
@@ -173,6 +176,39 @@ interface State {
 
 // defaults to light unless the user has manually chosen dark mode in settings
 const storedTheme = typeof window !== 'undefined' ? localStorage.getItem('theme') : null
+
+/** Canonical role order — drives the demo switcher and validates stored input.
+ *  Derived from ROLE_LABEL so the two can't drift apart. */
+export const ALL_ROLES = Object.keys(ROLE_LABEL) as Role[]
+
+const ROLE_KEY = 'fb.demo.role'
+
+/** The demo role has to survive a refresh. HashRouter keeps the URL, so a role
+ *  that resets to 'buyer' on load leaves the switcher chip contradicting the
+ *  page you're actually looking at (refresh on /g2 → chip reads "Buyer"). */
+const storedRole: Role = (() => {
+  try {
+    const r = localStorage.getItem(ROLE_KEY) as Role | null
+    if (r && ALL_ROLES.includes(r)) return r
+  } catch {
+    /* private mode — fall through to the default */
+  }
+  return 'buyer'
+})()
+
+function rememberRole(role: Role) {
+  try {
+    localStorage.setItem(ROLE_KEY, role)
+  } catch {
+    /* private mode — role just won't survive the refresh */
+  }
+}
+
+/** Demo user backing a role; the two anonymous roles have none. */
+const demoUserFor = (role: Role) =>
+  role === 'guest' || role === 'guest2'
+    ? null
+    : seed.users.find((u) => u.id === ROLE_DEMO_USER[role]) ?? null
 
 export const useStore = create<State>((set, get) => {
   /* ---------- internal helpers (operate via set/get) ---------- */
@@ -355,8 +391,8 @@ export const useStore = create<State>((set, get) => {
   return {
     now: Date.now(),
     theme: storedTheme === 'dark' ? 'dark' : 'light',
-    role: 'buyer',
-    currentUser: seed.users.find((u) => u.id === ROLE_DEMO_USER.buyer) ?? null,
+    role: storedRole,
+    currentUser: demoUserFor(storedRole),
     paused: {},
 
     ...seed,
@@ -393,7 +429,8 @@ export const useStore = create<State>((set, get) => {
       set({ theme })
     },
     switchRole: (role) => {
-      if (role === 'guest') {
+      rememberRole(role)
+      if (role === 'guest' || role === 'guest2') {
         set({ role, currentUser: null })
         return
       }
@@ -403,9 +440,13 @@ export const useStore = create<State>((set, get) => {
     login: (phone) => {
       const existing = get().users.find((u) => u.phone.replace(/\D/g, '').endsWith(phone.replace(/\D/g, '').slice(-10)))
       const user = existing ?? get().users.find((u) => u.id === 'u-buyer-1')!
+      rememberRole(user.role)
       set({ role: user.role, currentUser: user })
     },
-    logout: () => set({ role: 'guest', currentUser: null }),
+    logout: () => {
+      rememberRole('guest')
+      set({ role: 'guest', currentUser: null })
+    },
 
     /* ------------------------------- buyer ------------------------------ */
     toggleShortlist: (catalogueId, lotId) => {
