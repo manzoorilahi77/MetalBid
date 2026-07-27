@@ -159,10 +159,17 @@
   --space-section-sm: clamp(40px, 3vw + 12px, 48px);
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+/* The reset lives in Tailwind's `base` layer on purpose. Unlayered CSS beats
+   layered CSS regardless of specificity, so a bare `*` rule here would silently
+   override every Tailwind margin/padding utility in the app. Scoping it to
+   `base` keeps the reset while letting `@layer utilities` win, which is the
+   cascade order Tailwind expects. */
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 }
 
 html, body {
@@ -540,17 +547,10 @@ ul {
   align-items: center;
   justify-content: center;
 }
-.hero-visual-img {
-  width: 100%;
-  height: auto;
-  display: block;
-  /* The image is a rectangular render with its own light backdrop (not a
-     transparent cutout), so a drop-shadow would just outline the rectangle
-     and create a visible seam. Blend it into the section instead — multiply
-     drops the image's near-white background into the section's matching
-     near-white, leaving only the products/cards visible. */
-  mix-blend-mode: multiply;
-}
+/* The hero render is now composed by components/hero/HeroIllustration, which
+   owns its own blend/mask layers (the same multiply trick documented there:
+   the render is a rectangle with a light backdrop, not a transparent cutout,
+   so it is multiplied into the section rather than drop-shadowed). */
 .hero-title {
   font-family: var(--font-heading);
   font-size: var(--text-hero);
@@ -2605,7 +2605,7 @@ ul {
   clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 22px 50%);
 }
 .hiw-step-card::after {
-  /* Orange top-border glow, shown only while `.is-active`. */
+  /* Accent top-border glow, shown only while `.is-active`. */
   content: '';
   position: absolute;
   top: 0;
@@ -2613,18 +2613,43 @@ ul {
   right: 18%;
   height: 2px;
   border-radius: 2px;
-  background: var(--color-ember-light);
+  background: var(--hiw-accent, var(--color-ember-light));
   opacity: 0;
   transition: opacity 0.35s ease;
   pointer-events: none;
 }
+.hiw-step-card::before {
+  /* Accent wash that blooms from the top edge while the step is playing —
+     each step tints the card in its own colour, then fades back to navy. */
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: radial-gradient(115% 78% at 50% 0%, var(--hiw-accent-soft, transparent) 0%, transparent 64%);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+/* Keep the card's own content above the wash. */
+.hiw-step-card > .hiw-step-num,
+.hiw-step-card > .hiw-step-icon-stage,
+.hiw-step-card > div {
+  position: relative;
+  z-index: 1;
+}
 .hiw-step-card.is-active {
   transform: translateY(-6px);
-  box-shadow: 0 18px 30px -16px rgba(0, 0, 0, 0.55);
+  /* Outer shadow is clipped by the arrow `clip-path`, so the active lift is
+     sold with an inset accent glow instead. */
+  box-shadow: inset 0 0 32px -10px var(--hiw-accent-soft, transparent);
   z-index: 2;
 }
-.hiw-step-card.is-active::after {
+.hiw-step-card.is-active::after,
+.hiw-step-card.is-active::before {
   opacity: 1;
+}
+.hiw-step-card.is-active h4 {
+  color: var(--hiw-accent, #ffffff);
 }
 
 .hiw-connector-glow {
@@ -2635,7 +2660,9 @@ ul {
   height: 11px;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: radial-gradient(circle, var(--color-ember-light) 0%, rgba(239, 122, 82, 0) 72%);
+  /* Lit in the *incoming* step's accent — the spark carries that step's colour
+     into the card it is handing off to. */
+  background: radial-gradient(circle, var(--hiw-accent, var(--color-ember-light)) 0%, transparent 72%);
   pointer-events: none;
   z-index: 3;
 }
@@ -2647,9 +2674,29 @@ ul {
   width: 74px;
   height: 74px;
   margin-bottom: 14px;
+  position: relative;
+  /* Own stacking context, so the accent halo's `z-index: -1` is guaranteed to
+     land behind the artwork rather than behind the whole card. */
+  isolation: isolate;
   /* Fixed box so the larger animated scenes (particles, a truck driving off,
      rising bid tags) can overflow visually without ever nudging the layout. */
   overflow: visible;
+}
+.hiw-step-icon-stage::before {
+  /* Accent halo behind the icon — sits under the artwork (z-index: -1 inside
+     the stage's own stacking context) and only lights while the step plays. */
+  content: '';
+  position: absolute;
+  inset: -8px;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--hiw-accent-soft, transparent) 0%, transparent 66%);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+.hiw-step-card.is-active .hiw-step-icon-stage::before {
+  opacity: 1;
 }
 
 .hiw-step-num {
@@ -2657,16 +2704,28 @@ ul {
   font-family: var(--font-mono);
   font-size: 13px;
   font-weight: 700;
-  color: var(--color-ember-light);
+  color: var(--hiw-accent, var(--color-ember-light));
   margin-bottom: 8px;
 }
 
 .hiw-step-icon {
-  color: var(--color-ember-light);
+  /* Base line-work inherits the step's accent through `currentColor`; the
+     icons layer their own semantic colours (green verified, red LIVE, gold
+     won) on top of it. */
+  color: var(--hiw-accent, var(--color-ember-light));
   overflow: visible;
+}
+/* Once the sequence finishes, the icons swap every semantic colour back to
+   `currentColor` and the card accent reverts to ember — this transition is
+   what turns that swap into a single graceful settle to the theme colour. */
+.hiw-step-icon,
+.hiw-step-icon *,
+.hiw-step-num {
+  transition: fill 0.6s ease, stroke 0.6s ease, color 0.6s ease;
 }
 
 .hiw-step-card h4 {
+  transition: color 0.35s ease;
   font-size: 14px;
   font-weight: 700;
   color: #ffffff;

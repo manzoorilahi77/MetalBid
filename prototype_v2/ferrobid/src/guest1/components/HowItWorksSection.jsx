@@ -8,12 +8,27 @@ import { AnimatedBidIcon } from './icons/AnimatedBidIcon';
 import { AnimatedPayIcon } from './icons/AnimatedPayIcon';
 import { AnimatedDeliveryIcon } from './icons/AnimatedDeliveryIcon';
 
+// `accent` drives the whole card while its step plays: the step number, the
+// icon's base line-work (via `currentColor`), the top-edge glow, the connector
+// spark and the active wash. `accentSoft` is the same hue at wash strength —
+// kept as a literal rgba so the CSS never has to derive alpha from a var.
+//
+// Once the full sequence has run, every card swaps back to the theme ember
+// (see `unified` below) so the finished row reads as one brand-coloured strip.
+const THEME_ACCENT = 'var(--color-ember-light)';
+const THEME_ACCENT_SOFT = 'rgba(239, 122, 82, 0.28)';
+
 const steps = [
-  { num: '01', Icon: AnimatedDiscoverIcon, title: 'Discover', desc: 'Find the best deals from verified sellers' },
-  { num: '02', Icon: AnimatedRegisterIcon, title: 'Register', desc: 'Sign up and complete your KYC' },
-  { num: '03', Icon: AnimatedBidIcon, title: 'Bid', desc: 'Join live auctions or place forward bids' },
-  { num: '04', Icon: AnimatedPayIcon, title: 'Pay', desc: 'Enjoy secure payments and instant confirmation' },
-  { num: '05', Icon: AnimatedDeliveryIcon, title: 'Lift & Deliver', desc: 'Safe logistics and on-time delivery assured' },
+  { num: '01', Icon: AnimatedDiscoverIcon, title: 'Discover', desc: 'Find the best deals from verified sellers',
+    accent: '#38bdf8', accentSoft: 'rgba(56, 189, 248, 0.28)' },
+  { num: '02', Icon: AnimatedRegisterIcon, title: 'Register', desc: 'Sign up and complete your KYC',
+    accent: '#a78bfa', accentSoft: 'rgba(167, 139, 250, 0.28)' },
+  { num: '03', Icon: AnimatedBidIcon, title: 'Bid', desc: 'Join live auctions or place forward bids',
+    accent: '#ff8f5e', accentSoft: 'rgba(255, 143, 94, 0.28)' },
+  { num: '04', Icon: AnimatedPayIcon, title: 'Pay', desc: 'Enjoy secure payments and instant confirmation',
+    accent: '#34d399', accentSoft: 'rgba(52, 211, 153, 0.28)' },
+  { num: '05', Icon: AnimatedDeliveryIcon, title: 'Lift & Deliver', desc: 'Safe logistics and on-time delivery assured',
+    accent: '#fbbf24', accentSoft: 'rgba(251, 191, 36, 0.28)' },
 ];
 
 export const HowItWorksSection = () => {
@@ -23,7 +38,7 @@ export const HowItWorksSection = () => {
     <section id="how-it-works" className="hiw-horizontal-section">
       <div className="container">
         <HowItWorksAnimationController stepCount={steps.length}>
-          {({ sectionRef, reducedMotion, isStepActive, isStepDone, isConnectorLit }) => (
+          {({ sectionRef, reducedMotion, unified, isStepActive, isStepDone, isConnectorLit }) => (
             <div className="hiw-dark-panel" ref={sectionRef}>
               <div className="hiw-dark-header">
                 <div className="hiw-dark-eyebrow">How It Works</div>
@@ -39,6 +54,10 @@ export const HowItWorksSection = () => {
                     <motion.div
                       key={idx}
                       className={`hiw-step-card${active ? ' is-active' : ''}`}
+                      style={{
+                        '--hiw-accent': unified ? THEME_ACCENT : step.accent,
+                        '--hiw-accent-soft': unified ? THEME_ACCENT_SOFT : step.accentSoft,
+                      }}
                       initial={{ opacity: 0, y: 16 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true, margin: '-50px' }}
@@ -71,6 +90,7 @@ export const HowItWorksSection = () => {
                         <Icon
                           active={active}
                           played={isStepDone(idx)}
+                          unified={unified}
                           reducedMotion={reducedMotion}
                           enableHover={enableHover}
                           size={82}
