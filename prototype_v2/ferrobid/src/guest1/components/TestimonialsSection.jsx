@@ -5,7 +5,7 @@ import { BadgeCheck, ChevronLeft, ChevronRight } from 'lucide-react';
 // TODO: swap in real co-founder/director names, roles, quotes, and photos.
 const leadership = [
   {
-    photo: `${import.meta.env.BASE_URL}zaid.jpg`,
+    photo: '/zaid.jpg',
     quote:
       'I started FerroBid because I watched too many honest traders lose money to middlemen and guesswork. Today, every lot on our platform is verified and every bid is transparent.',
     name: 'Zaid Ahmed',

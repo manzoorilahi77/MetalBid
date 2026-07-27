@@ -167,7 +167,7 @@ export const WhatsAppCommunityModal = () => {
             {/* Chat header */}
             <div className="wa-head">
               <div className="wa-head-avatar">
-                <img src={`${import.meta.env.BASE_URL}image.png`} alt="FerroBid" />
+                <img src="/image.png" alt="FerroBid" />
               </div>
               <div className="wa-head-meta">
                 <div className="wa-head-name">FerroBid Alerts</div>
