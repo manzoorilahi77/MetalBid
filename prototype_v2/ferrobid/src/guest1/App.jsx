@@ -25,7 +25,6 @@ import { MarketInsightsSection } from './components/MarketInsightsSection';
 import { TestimonialsSection } from './components/TestimonialsSection';
 import { AnnouncementsSection } from './components/AnnouncementsSection';
 import { WhatsAppCommunityModal } from './components/WhatsAppCommunityModal';
-import { HeroIllustration } from './components/hero/HeroIllustration';
 import { Auth } from './pages/Auth';
 import RoleSwitcher from './components/RoleSwitcher';
 import './styles/auth.css';
@@ -358,11 +357,14 @@ function Home() {
             </div>
           </MotionDiv>
 
-          {/* The floating cards are live React components, not baked pixels —
-              see components/hero/HeroIllustration. */}
-          <div className="hero-visual">
-            <HeroIllustration />
-          </div>
+          <MotionDiv
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="hero-visual"
+          >
+            <img src={`${import.meta.env.BASE_URL}hero.jpg`} alt="Live metal auction dashboard preview" fetchPriority="high" className="hero-visual-img" />
+          </MotionDiv>
         </div>
       </section>
 
@@ -415,6 +417,7 @@ function Home() {
               <span className="ticker-name">{item.material}</span>
               <span className="ticker-loc">{item.city}, {item.state}</span>
               <span className="ticker-price">EMD {item.emd}</span>
+              <span className="ticker-qty">{item.qty}</span>
             </div>
           ))}
         </div>
