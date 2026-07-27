@@ -1,11 +1,8 @@
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 
-const STEP_DURATION_MS = 1000; // snappy, cinematic per-step storytelling; keep in sync with `D` in the step icons
+const STEP_DURATION_MS = 1500; // snappy, cinematic per-step storytelling
 const STEP_GAP_MS = 320;
-// Beat after the last step lands, before the five icons drop their per-step
-// colours and resolve together into the theme ember.
-const FINALE_DELAY_MS = 420;
 const VIEWPORT_THRESHOLD = 0.4;
 
 const HowItWorksAnimationContext = createContext(null);
@@ -27,8 +24,6 @@ export function HowItWorksAnimationController({ stepCount, children }) {
   const [activeStep, setActiveStep] = useState(-1);
   const [litConnector, setLitConnector] = useState(-1);
   const [doneSteps, setDoneSteps] = useState(() => new Set());
-  // True once every step has played: the whole row unifies on the theme colour.
-  const [unified, setUnified] = useState(false);
 
   // Reduced motion: skip the timed choreography entirely. Every step settles
   // in its resting state immediately — icons render static, cards just fade
@@ -37,7 +32,6 @@ export function HowItWorksAnimationController({ stepCount, children }) {
     if (!reducedMotion) return;
     setStarted(true);
     setDoneSteps(new Set(Array.from({ length: stepCount }, (_, i) => i)));
-    setUnified(true);
   }, [reducedMotion, stepCount]);
 
   useEffect(() => {
@@ -88,14 +82,6 @@ export function HowItWorksAnimationController({ stepCount, children }) {
         const isLastStep = i >= stepCount - 1;
         if (!isLastStep) setLitConnector(i);
 
-        if (isLastStep) {
-          schedule(() => {
-            if (cancelled) return;
-            setUnified(true);
-          }, FINALE_DELAY_MS);
-          return;
-        }
-
         schedule(() => {
           if (cancelled) return;
           setLitConnector(-1);
@@ -123,7 +109,6 @@ export function HowItWorksAnimationController({ stepCount, children }) {
     reducedMotion,
     started,
     activeStep,
-    unified,
     isStepActive,
     isStepDone,
     isConnectorLit,
