@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BadgeCheck, ChevronLeft, ChevronRight } from 'lucide-react';
+import { asset } from '../utils/asset';
 
 // TODO: swap in real co-founder/director names, roles, quotes, and photos.
 const leadership = [
   {
-    photo: '/zaid.jpg',
+    photo: asset('/zaid.jpg'),
     quote:
       'I started FerroBid because I watched too many honest traders lose money to middlemen and guesswork. Today, every lot on our platform is verified and every bid is transparent.',
     name: 'Zaid Ahmed',

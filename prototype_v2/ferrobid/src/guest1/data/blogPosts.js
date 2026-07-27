@@ -3,6 +3,8 @@
 // not a placeholder. Body blocks are a tiny structured format the BlogPost
 // renderer understands: { type: 'h2' | 'p' | 'ul' | 'quote' | 'stat' }.
 
+import { asset } from '../utils/asset';
+
 export const CATEGORIES = ['All', 'Market Trends', 'Guides', 'Product', 'Compliance', 'Logistics'];
 
 export const AUTHORS = {
@@ -22,7 +24,7 @@ export const POSTS = [
     date: 'Jul 18, 2026',
     dateISO: '2026-07-18',
     read: '6 min',
-    img: '/images/auctions/hms_scrap.png',
+    img: asset('/images/auctions/hms_scrap.png'),
     author: 'rao',
     featured: true,
     tags: ['Price discovery', 'Ferrous', 'Formalisation'],
@@ -53,7 +55,7 @@ export const POSTS = [
     date: 'Jul 14, 2026',
     dateISO: '2026-07-14',
     read: '4 min',
-    img: '/images/auctions/hms_scrap.png',
+    img: asset('/images/auctions/hms_scrap.png'),
     author: 'rao',
     tags: ['HMS', 'Ferrous', 'Outlook'],
     body: [
@@ -76,7 +78,7 @@ export const POSTS = [
     date: 'Jul 10, 2026',
     dateISO: '2026-07-10',
     read: '5 min',
-    img: '/images/auctions/cr_coil.png',
+    img: asset('/images/auctions/cr_coil.png'),
     author: 'mehta',
     tags: ['EMD', 'Settlement', 'Escrow'],
     body: [
@@ -106,7 +108,7 @@ export const POSTS = [
     date: 'Jul 6, 2026',
     dateISO: '2026-07-06',
     read: '3 min',
-    img: '/images/auctions/copper_wire.png',
+    img: asset('/images/auctions/copper_wire.png'),
     author: 'mehta',
     tags: ['Product', 'Trust', 'AI'],
     body: [
@@ -131,7 +133,7 @@ export const POSTS = [
     date: 'Jun 28, 2026',
     dateISO: '2026-06-28',
     read: '4 min',
-    img: '/images/auctions/zinc_dross.png',
+    img: asset('/images/auctions/zinc_dross.png'),
     author: 'fatima',
     tags: ['KYC', 'Compliance', 'Sellers'],
     body: [
@@ -157,7 +159,7 @@ export const POSTS = [
     date: 'Jun 22, 2026',
     dateISO: '2026-06-22',
     read: '5 min',
-    img: '/images/auctions/copper_wire.png',
+    img: asset('/images/auctions/copper_wire.png'),
     author: 'rao',
     tags: ['Copper', 'Non-ferrous', 'Demand'],
     body: [
@@ -180,7 +182,7 @@ export const POSTS = [
     date: 'Jun 18, 2026',
     dateISO: '2026-06-18',
     read: '6 min',
-    img: '/images/auctions/aluminium_scrap.png',
+    img: asset('/images/auctions/aluminium_scrap.png'),
     author: 'nair',
     tags: ['Sellers', 'Listing', 'Best practice'],
     body: [

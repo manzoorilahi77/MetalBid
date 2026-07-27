@@ -28,6 +28,7 @@ import { WhatsAppCommunityModal } from './components/WhatsAppCommunityModal';
 import { HeroIllustration } from './components/hero/HeroIllustration';
 import { Auth } from './pages/Auth';
 import RoleSwitcher from './components/RoleSwitcher';
+import { asset } from './utils/asset';
 import './styles/auth.css';
 
 // Secondary footer pages are lazy-loaded to keep the main bundle lean.
@@ -158,7 +159,7 @@ export const Navbar = () => {
     <nav className="navbar">
       <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div className="nav-brand">
-          <Link to="/"><img src="/headericon.png" alt="FerroBid Logo" style={{ height: '42px', objectFit: 'contain' }} /></Link>
+          <Link to="/"><img src={asset('/headericon.png')} alt="FerroBid Logo" style={{ height: '42px', objectFit: 'contain' }} /></Link>
         </div>
         
         <div className="nav-links">
@@ -210,7 +211,7 @@ export const Footer = () => (
       <div className="footer-grid">
           <div className="footer-brand-col">
             <div className="footer-logo">
-                <img src="/footericon.png" alt="FerroBid Logo" loading="lazy" decoding="async" style={{ height: '40px', objectFit: 'contain', marginLeft: '-8px' }} />
+                <img src={asset('/footericon.png')} alt="FerroBid Logo" loading="lazy" decoding="async" style={{ height: '40px', objectFit: 'contain', marginLeft: '-8px' }} />
             </div>
             <p className="footer-desc" style={{fontSize: '11px', marginTop: '8px'}}>India's Trusted Digital Metal Auction Platform</p>
           </div>
@@ -258,10 +259,10 @@ export const Footer = () => (
             <h4>Download App</h4>
             <div className="app-buttons">
                 <div className="app-btn-img">
-                  <img src="/badges/google-play.svg" alt="Get it on Google Play" loading="lazy" decoding="async" />
+                  <img src={asset('/badges/google-play.svg')} alt="Get it on Google Play" loading="lazy" decoding="async" />
                 </div>
                 <div className="app-btn-img">
-                  <img src="/badges/app-store.svg" alt="Download on the App Store" loading="lazy" decoding="async" />
+                  <img src={asset('/badges/app-store.svg')} alt="Download on the App Store" loading="lazy" decoding="async" />
                 </div>
             </div>
           </div>
@@ -442,12 +443,12 @@ function Home() {
 
             <div className="auction-carousel" ref={carouselRef} onScroll={checkScroll}>
               {[
-                { company: 'Shree Balaji Metal Corp', loc: 'Mumbai, Maharashtra', cat: 'ALUMINIUM', date: '28 Jul 2026', emd: '₹25,000', img: '/aluminium_scrap.png' },
-                { company: 'Om Sai Recycling Pvt Ltd', loc: 'Chennai, TN', cat: 'RUBBER', date: '02 Aug 2026', emd: '₹18,500', img: '/rubber_scrap.png' },
-                { company: 'Bhilai Ispat Udyog', loc: 'Raipur, Chhattisgarh', cat: 'STEEL', date: '05 Aug 2026', emd: '₹65,000', img: '/images/auctions/hms_scrap.png' },
-                { company: 'Deccan Alloys & Steel', loc: 'Pune, Maharashtra', cat: 'STEEL', date: '09 Aug 2026', emd: '₹1,20,000', img: '/images/auctions/cr_coil.png' },
-                { company: 'Saraswati Non-Ferrous Ltd', loc: 'Ahmedabad, Gujarat', cat: 'COPPER', date: '12 Aug 2026', emd: '₹95,000', img: '/images/auctions/copper_wire.png' },
-                { company: 'Ganges Metal Traders', loc: 'Kolkata, WB', cat: 'ZINC', date: '15 Aug 2026', emd: '₹40,000', img: '/images/auctions/zinc_dross.png' }
+                { company: 'Shree Balaji Metal Corp', loc: 'Mumbai, Maharashtra', cat: 'ALUMINIUM', date: '28 Jul 2026', emd: '₹25,000', img: asset('/aluminium_scrap.png') },
+                { company: 'Om Sai Recycling Pvt Ltd', loc: 'Chennai, TN', cat: 'RUBBER', date: '02 Aug 2026', emd: '₹18,500', img: asset('/rubber_scrap.png') },
+                { company: 'Bhilai Ispat Udyog', loc: 'Raipur, Chhattisgarh', cat: 'STEEL', date: '05 Aug 2026', emd: '₹65,000', img: asset('/images/auctions/hms_scrap.png') },
+                { company: 'Deccan Alloys & Steel', loc: 'Pune, Maharashtra', cat: 'STEEL', date: '09 Aug 2026', emd: '₹1,20,000', img: asset('/images/auctions/cr_coil.png') },
+                { company: 'Saraswati Non-Ferrous Ltd', loc: 'Ahmedabad, Gujarat', cat: 'COPPER', date: '12 Aug 2026', emd: '₹95,000', img: asset('/images/auctions/copper_wire.png') },
+                { company: 'Ganges Metal Traders', loc: 'Kolkata, WB', cat: 'ZINC', date: '15 Aug 2026', emd: '₹40,000', img: asset('/images/auctions/zinc_dross.png') }
               ].map((item, i) => (
                 <UpcomingAuctionCard key={i} item={item} i={i} />
               ))}

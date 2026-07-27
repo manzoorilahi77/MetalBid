@@ -8,6 +8,7 @@ import {
   Award, Users, Zap
 } from 'lucide-react';
 import { useStore, ROLE_HOME } from '../../store/store';
+import { asset } from '../utils/asset';
 
 /* ─── helpers ─── */
 const validate = {
@@ -371,7 +372,7 @@ export const Auth = () => {
         <div className="auth-right-inner">
           {/* Logo */}
           <Link to="/" className="auth-logo-link">
-            <img src="/logo.png" alt="FerroBid Logo" className="auth-logo-img" />
+            <img src={asset('/logo.png')} alt="FerroBid Logo" className="auth-logo-img" />
           </Link>
 
           {/* Success Message */}
