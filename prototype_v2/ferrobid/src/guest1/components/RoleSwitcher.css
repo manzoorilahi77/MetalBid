@@ -70,3 +70,24 @@
   background: color-mix(in srgb, var(--primary) 8%, transparent);
   font-weight: 700;
 }
+
+/* Mobile mount. Under 1024px the navbar hides .nav-actions entirely, so the
+   switcher renders inside the hamburger dropdown instead — full width there,
+   matching the stacked CTA buttons it sits under. */
+.mobile-nav-roleswitch {
+  margin-top: 10px;
+}
+.mobile-nav-roleswitch .guest1-roleswitch {
+  display: flex;
+  width: 100%;
+}
+.mobile-nav-roleswitch .guest1-roleswitch-btn {
+  width: 100%;
+  height: 40px;
+  justify-content: center;
+}
+.mobile-nav-roleswitch .guest1-roleswitch-menu {
+  left: 0;
+  right: 0;
+  width: auto;
+}

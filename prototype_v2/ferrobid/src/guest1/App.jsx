@@ -181,7 +181,9 @@ export const Navbar = () => {
           </Link>
           <Link to="/marketplace" className="btn btn-outline nav-guest-btn" style={{ textDecoration: 'none' }}>Browse as Guest</Link>
           <Link to="/auth" className="btn btn-primary nav-login-btn" style={{ textDecoration: 'none' }}>Login / Register</Link>
-          {import.meta.env.DEV && <RoleSwitcher />}
+          {/* Demo control — kept in the production build too, since the deployed
+              Pages site is how reviewers walk through the other roles. */}
+          <RoleSwitcher />
         </div>
 
         <button className="mobile-menu-btn" aria-label="Toggle Menu" onClick={() => setIsMenuOpen(!isMenuOpen)}>
@@ -198,6 +200,11 @@ export const Navbar = () => {
           <div className="mobile-nav-actions">
             <Link to="/marketplace" className="btn btn-outline" style={{width: '100%', marginBottom: '10px', textDecoration: 'none'}} onClick={() => setIsMenuOpen(false)}>Browse as Guest</Link>
             <Link to="/auth" className="btn btn-primary" style={{width: '100%', textDecoration: 'none'}} onClick={() => setIsMenuOpen(false)}>Login / Register</Link>
+            {/* .nav-actions is display:none under 992px, so the switcher needs
+                its own mount here or it is unreachable on mobile. */}
+            <div className="mobile-nav-roleswitch">
+              <RoleSwitcher />
+            </div>
           </div>
         </div>
       )}
