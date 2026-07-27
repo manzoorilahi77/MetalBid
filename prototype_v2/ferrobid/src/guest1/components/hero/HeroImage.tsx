@@ -54,7 +54,10 @@ function HeroImageComponent({ animated }: HeroImageProps) {
         >
           <div className="relative">
             <img
-              src="/hero.jpg"
+              /* Vite rewrites asset URLs in index.html but not string literals
+                 in JS, so public/ assets must go through BASE_URL or they 404
+                 when the site is served from a sub-path (GitHub Pages). */
+              src={`${import.meta.env.BASE_URL}hero.jpg`}
               alt="Steel coils, copper wire, steel pipes, a shipping container and an excavator staged for auction"
               width={1483}
               height={933}
