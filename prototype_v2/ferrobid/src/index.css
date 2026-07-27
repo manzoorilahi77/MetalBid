@@ -107,7 +107,30 @@
   --animate-urgent-pulse: urgent-pulse 1s ease-in-out infinite;
   --animate-bid-in: bid-in 0.35s cubic-bezier(0.21, 1.02, 0.73, 1);
   --animate-toast-in: toast-in 0.3s cubic-bezier(0.21, 1.02, 0.73, 1);
-  --animate-fade-up: fade-up 0.4s ease both;
+  /* ── Enterprise physics ──────────────────────────────────────────────────
+     One shared easing language so every movement decelerates and *settles*
+     with believable weight — nothing snaps, nothing bounces (no overshoot =
+     enterprise, not playful). Exposed as vars so JS/inline transitions match. */
+  --ease-settle: cubic-bezier(0.16, 1, 0.3, 1);   /* heavy object arriving & settling (entrances) */
+  --ease-soft:   cubic-bezier(0.33, 1, 0.68, 1);  /* light decelerate (small moves, hovers) */
+  --ease-glass:  cubic-bezier(0.4, 0, 0.2, 1);    /* light sweeping across a surface */
+
+  /* backwards fill (not `both`) → hidden during its stagger delay, but releases
+     transform/opacity once done so :hover micro-interactions still work. */
+  --animate-fade-up: fade-up 0.55s cubic-bezier(0.33, 1, 0.68, 1) backwards;
+
+  /* ── Motion language ─────────────────────────────────────────────────────
+     Distinct entrances so each chapter owns its rhythm instead of reusing
+     fade-up. All GPU-friendly (transform / opacity / clip-path / filter) and
+     all on the settle curve so they read as one physical system. `backwards`
+     fill keeps hover interactions alive after the entrance completes. */
+  --animate-reveal-blur: reveal-blur 0.7s cubic-bezier(0.16, 1, 0.3, 1) backwards;   /* focus-in (ecosystem, editorial) */
+  --animate-reveal-clip: reveal-clip 0.55s cubic-bezier(0.16, 1, 0.3, 1) backwards;  /* wipe-up (auctions entering market), short so the cascade reads card-by-card */
+  --animate-reveal-rise: reveal-rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) backwards;   /* pillars rising (trust) */
+  --animate-sheen: sheen 1.2s cubic-bezier(0.4, 0, 0.2, 1) backwards;                /* glass light sweep */
+  --animate-breathe: breathe 11s ease-in-out infinite;                         /* ambient light breathing (never stops) */
+  --animate-float-soft: float-soft 8.5s ease-in-out infinite;                  /* floating enterprise panels */
+  --animate-dash-flow: dash-flow 2.8s linear infinite;                         /* material travelling a pipeline */
 }
 
 @keyframes live-pulse {
@@ -129,6 +152,70 @@
 @keyframes fade-up {
   from { opacity: 0; transform: translateY(14px); }
   to { opacity: 1; transform: translateY(0); }
+}
+@keyframes reveal-blur {
+  from { opacity: 0; transform: translateY(16px) scale(0.985); filter: blur(9px); }
+  to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+@keyframes reveal-clip {
+  from { opacity: 0; clip-path: inset(100% 0 0 0); transform: translateY(10px); }
+  to { opacity: 1; clip-path: inset(0 0 0 0); transform: translateY(0); }
+}
+@keyframes reveal-rise {
+  from { opacity: 0; transform: translateY(26px) scale(0.955); }
+  60% { opacity: 1; }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes sheen {
+  0% { transform: translateX(-160%) skewX(-14deg); opacity: 0; }
+  12% { opacity: 0.5; }
+  100% { transform: translateX(220%) skewX(-14deg); opacity: 0; }
+}
+@keyframes breathe {
+  0%, 100% { opacity: 0.62; transform: scale(1); }
+  50% { opacity: 0.92; transform: scale(1.07); }
+}
+@keyframes float-soft {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -6px, 0); }
+}
+@keyframes dash-flow {
+  to { stroke-dashoffset: -14; }
+}
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-ticker {
+  display: flex;
+  width: max-content;
+  animation: ticker 35s linear infinite;
+}
+.animate-ticker:hover {
+  animation-play-state: paused;
+}
+
+/* Motion accessibility: JS reveals already opt out via matchMedia, but the
+   continuously-running CSS animations must be neutralised here so the page is
+   calm and static for users who ask for reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-ticker,
+  .animate-breathe,
+  .animate-float-soft,
+  .animate-live-pulse,
+  .animate-urgent-pulse,
+  .animate-dash-flow {
+    animation: none !important;
+  }
+  [class*="animate-reveal-"],
+  .animate-sheen,
+  .animate-fade-up {
+    animation: none !important;
+    opacity: 1 !important;
+    clip-path: none !important;
+    filter: none !important;
+    transform: none !important;
+  }
 }
 
 @layer base {
@@ -157,8 +244,9 @@
   .card {
     @apply bg-surface border border-line rounded-2xl;
   }
+  /* Hover settles with weight (soft decelerate) rather than a linear snap. */
   .card-hover {
-    @apply transition-all duration-200 hover:-translate-y-0.5 hover:border-line-strong hover:shadow-[0_10px_30px_-18px_rgb(0_0_0/0.35)];
+    @apply transition-all duration-300 ease-[cubic-bezier(0.33,1,0.68,1)] hover:-translate-y-0.5 hover:border-line-strong hover:shadow-[0_10px_30px_-18px_rgb(0_0_0/0.35)];
   }
   /* tabular mono numerals for rates / EMD / countdowns */
   .num {
