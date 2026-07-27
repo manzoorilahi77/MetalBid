@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react'
 import { HashRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom'
 import Chrome, { NAV_BY_ROLE, Page, SubNav } from './layout/Chrome'
+import ScrollToTop from './layout/ScrollToTop'
 import type { Role } from './types'
 import { ToastHost } from './components/ui'
 import { useTick } from './lib/useTick'
@@ -132,10 +133,15 @@ function SellerLayout() {
  *  WhatsApp community invite (so it can fire from any Guest 2 page, once). */
 function Guest2Layout() {
   return (
-    <Suspense fallback={<Page className="py-24 text-center text-ink-faint">Loading…</Page>}>
-      <Outlet />
-      <Guest2ExitIntent />
-    </Suspense>
+    <>
+      {/* Outside Suspense: it must run on every route change, including the
+          first paint of a lazy page that is still loading. */}
+      <ScrollToTop />
+      <Suspense fallback={<Page className="py-24 text-center text-ink-faint">Loading…</Page>}>
+        <Outlet />
+        <Guest2ExitIntent />
+      </Suspense>
+    </>
   )
 }
 
