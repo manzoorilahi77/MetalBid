@@ -1,586 +1,1816 @@
 /* ═══════════════════════════════════════════════
-   COMPACT, RICH, AND POLISHED ABOUT US
+   ABOUT US
+   Enterprise/B2B surface: the axis is credibility and structure, not
+   ornament. Hairlines and typographic weight do the work that shadows,
+   glass, and gradients were doing before.
    ═══════════════════════════════════════════════ */
 
 .story-page {
   background: var(--bg-white, #ffffff);
-  color: #1c1917;
+  color: var(--dark);
   font-family: var(--font-body);
   overflow-x: hidden;
   position: relative;
 }
 
-/* ─── Global Animation Keyframes ─── */
-@keyframes scanline {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(100%); }
-}
+/* ─── Section headings ───
+   This page used to carry its own heading scale (a 27–40px display face and
+   an 18px lead). It now uses the site-wide header — .sec-head / .sec-eyebrow
+   / .sec-title / .sec-lead in styles/index.css — so an About section reads
+   exactly like a homepage section. Nothing to define here beyond the two
+   per-section margin overrides below. */
 
-/* ─── 1. Unified Compact Hero & KPIs ─── */
-.unified-hero {
+/* ═══ HERO ═══════════════════════════════════════════════════════════════
+   A single dark opening. The photograph runs full bleed; a scrim pins the
+   type to near-solid ink on the left so legibility never depends on how the
+   image happens to crop. The stat band is part of this unit, not a second
+   slab underneath it. */
+.ab-hero {
   position: relative;
-  padding: 100px 24px 60px;
-  background: radial-gradient(circle at 50% 10%, rgba(228, 87, 46, 0.05) 0%, transparent 80%);
   display: flex;
   flex-direction: column;
-  align-items: center;
+  /* Same warm-to-white opening every other sub-page hero uses (.res-hero,
+     .doc-hero, .faq-hero), so About stops being the one dark page. */
+  background:
+    radial-gradient(110% 130% at 88% -25%, rgb(228 87 46 / 0.11) 0%, transparent 58%),
+    linear-gradient(180deg, var(--bg-alt) 0%, var(--bg-white) 100%);
+  border-bottom: 1px solid var(--border);
 }
 
-.hero-blueprint {
-  position: absolute;
-  inset: 0;
-  background-image: 
-    linear-gradient(rgba(228, 87, 46, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(228, 87, 46, 0.05) 1px, transparent 1px);
-  background-size: 40px 40px;
-  z-index: 0;
-}
-
-.unified-hero-container {
+.ab-hero-body {
   position: relative;
-  z-index: 10;
-  max-width: 1280px;
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 40px;
-}
-
-.unified-hero-text {
-  text-align: center;
-  max-width: 800px;
-}
-
-.story-hero-title {
-  font-size: clamp(32px, 4vw, 48px);
-  font-weight: 800;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  color: #1c1917;
-  margin-bottom: 16px;
-}
-
-.story-hero-title .gold-accent {
-  background: linear-gradient(135deg, var(--primary), #c8441f);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  display: inline-block;
-}
-
-.hero-subtitle {
-  font-size: 16px;
-  color: #6b6560;
-  line-height: 1.6;
-  max-width: 600px;
+  max-width: 1180px;
   margin: 0 auto;
+  padding: clamp(32px, 4vw, 48px) 24px clamp(24px, 2.6vw, 32px);
 }
 
-/* Compact KPI Grid within Hero */
-.hero-kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-  width: 100%;
-  max-width: 900px;
-}
+.ab-hero-copy { max-width: 680px; }
 
-.hero-kpi-card {
-  background: var(--bg-white);
-  border: 1px solid rgba(0,0,0,0.05);
-  border-radius: 16px;
-  padding: 20px;
-  text-align: center;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.02);
-  transition: transform 0.3s ease;
-}
-
-.hero-kpi-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 15px 40px rgba(228, 87, 46, 0.08);
-  border-color: rgba(228, 87, 46, 0.2);
-}
-
-.kpi-val {
-  font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
-  font-size: 28px;
-  font-weight: 800;
-  color: #1c1917;
-  margin-bottom: 4px;
-}
-
-.kpi-lab {
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--primary);
+.ab-hero-title {
+  font-family: var(--font-heading);
+  font-size: clamp(30px, 4vw, 46px);
   font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  color: var(--dark);
+  margin: 0 0 14px;
+  text-wrap: balance;
 }
 
-/* ─── 3. 3D Transaction Pipeline (Ultra Compact) ─── */
-.workflow-section {
-  padding: 40px 24px;
-  background: var(--bg-white);
-  perspective: 1000px;
+/* Ember on ink, one phrase only — the rest of the line carries by weight. */
+.ab-hero-title .accent { color: var(--primary); }
+
+.ab-hero-lead {
+  font-size: clamp(15px, 1.05vw, 16.5px);
+  line-height: 1.65;
+  color: var(--text-muted);
+  max-width: 62ch;
+  margin: 0 0 24px;
 }
 
-.workflow-container {
-  max-width: 1280px;
-  margin: 0 auto;
-}
-
-.wf-pipeline {
+.ab-hero-actions {
   display: flex;
-  justify-content: space-between;
-  align-items: stretch;
+  flex-wrap: wrap;
   gap: 12px;
-  position: relative;
-  margin-top: 20px;
 }
 
-/* Horizontal connecting line */
-.wf-pipeline::before {
-  content: '';
-  position: absolute;
-  top: 50%; left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, rgba(228, 87, 46, 0.1), rgba(228, 87, 46, 0.6), rgba(228, 87, 46, 0.1));
-  z-index: 0;
-}
-
-.wf-item {
-  flex: 1;
-  background: white;
-  border: 1px solid rgba(0,0,0,0.05);
-  border-radius: 12px;
-  padding: 24px 16px;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.02);
-  position: relative;
-  z-index: 10;
-  text-align: center;
-  transform-style: preserve-3d;
-  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-.wf-item:hover {
-  transform: translateY(-10px) rotateX(10deg) rotateY(-5deg);
-  box-shadow: -10px 20px 30px rgba(228, 87, 46, 0.1), 0 0 15px rgba(0,0,0,0.05);
-  border-color: var(--primary);
-  z-index: 20;
-}
-
-.wf-number {
-  width: 32px;
-  height: 32px;
-  background: rgba(228, 87, 46, 0.1);
-  color: var(--primary);
-  border-radius: 50%;
+.ab-hero-btn {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  margin-bottom: 12px;
-  font-size: 14px;
-  transform: translateZ(20px);
+  gap: 9px;
+  padding: 12px 24px;
+  border-radius: var(--radius-full);
+  font-size: 14.5px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out),
+              background var(--dur-base) var(--ease-out);
 }
 
-.wf-content h4 {
-  font-size: 15px;
-  font-weight: 800;
-  color: #1c1917;
-  margin-bottom: 8px;
-  transform: translateZ(30px);
+.ab-hero-btn.primary {
+  color: #fff;
+  background:
+    radial-gradient(120% 180% at 85% 20%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0) 55%),
+    linear-gradient(115deg, #e4572e 0%, #d54e26 55%, #c8441f 100%);
+  box-shadow: 0 14px 30px -12px rgba(200, 68, 31, 0.95);
 }
 
-.wf-content p {
+.ab-hero-btn.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 36px -12px rgba(200, 68, 31, 1);
+}
+
+.ab-hero-btn.ghost {
+  border: 1px solid var(--color-line-strong);
+  background: var(--bg-white);
+  color: var(--dark);
+}
+
+.ab-hero-btn.ghost:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-2px);
+}
+
+.ab-hero-btn svg { transition: transform var(--dur-base) var(--ease-out); }
+.ab-hero-btn:hover svg { transform: translateX(3px); }
+
+.ab-hero-btn:focus-visible {
+  outline: 2px solid var(--color-ember);
+  outline-offset: 3px;
+}
+
+/* ─── Stat band, seated on the hero's base ─── */
+.ab-hero-stats {
+  position: relative;
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: clamp(16px, 1.8vw, 20px) 24px clamp(18px, 2.2vw, 24px);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  border-top: 1px solid var(--color-line);
+}
+
+.ab-hero-stats > div + div {
+  padding-left: clamp(16px, 2.4vw, 34px);
+  border-left: 1px solid var(--color-line);
+}
+
+.ab-hero-stats dd {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(19px, 1.9vw, 24px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--dark);
+  margin: 0 0 4px;
+}
+
+.ab-hero-stats dt {
   font-size: 12px;
-  color: #6b6560;
-  margin: 0;
-  line-height: 1.5;
-  transform: translateZ(10px);
+  line-height: 1.4;
+  color: var(--text-muted);
 }
 
 @media (max-width: 900px) {
-  .wf-pipeline {
-    flex-direction: column;
-    gap: 16px;
-  }
-  .wf-pipeline::before {
-    top: 0; bottom: 0; left: 30px; right: auto; width: 2px; height: auto;
-  }
-  .wf-item {
-    text-align: left;
-    display: flex;
-    align-items: center;
-    padding: 16px;
-  }
-  .wf-number {
-    margin-bottom: 0; margin-right: 16px;
-    min-width: 32px;
-  }
+  .ab-hero-body { padding: clamp(28px, 5vw, 36px) 24px clamp(20px, 3vw, 26px); }
+  .ab-hero-lead { max-width: none; }
 }
 
-/* ─── 4. Light Theme Orbital Ecosystem ─── */
-.ecosystem-section {
-  padding: 120px 24px;
-  background: var(--bg-white, #ffffff);
-  position: relative;
-  overflow: hidden;
-}
-
-.eco-wrapper {
-  max-width: 1280px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 800px;
-}
-
-.orbit-container {
-  position: relative;
-  width: 600px;
-  height: 600px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-@media (max-width: 768px) {
-  .orbit-container {
-    width: 320px;
-    height: 320px;
-  }
-}
-
-/* The radial orbit layout needs real estate the ring math can't recover on
-   phone widths, so below 640px we swap it for a flat grid of the same roles. */
-.eco-mobile-grid {
-  display: none;
-}
-
-@media (max-width: 640px) {
-  .eco-wrapper {
-    min-height: 0;
-  }
-  .orbit-container {
-    display: none;
-  }
-  .eco-mobile-grid {
-    display: grid;
+@media (max-width: 760px) {
+  .ab-hero-stats {
     grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    width: 100%;
-    max-width: 420px;
+    gap: 18px;
   }
-  .eco-mobile-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: white;
-    border: 1px solid rgba(0,0,0,0.06);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-    border-radius: 12px;
-    padding: 12px 14px;
-    font-weight: 700;
-    font-size: 13px;
-    color: #1c1917;
-  }
-  .eco-mobile-icon {
-    flex-shrink: 0;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, rgba(228, 87, 46, 0.15), rgba(228, 87, 46, 0.03));
-    color: var(--primary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .ab-hero-stats > div:nth-child(odd) {
+    padding-left: 0;
+    border-left: none;
   }
 }
 
-/* ─── The Core ─── */
-.orbit-core {
-  position: absolute;
-  z-index: 50;
-  background: linear-gradient(135deg, var(--primary), #c8441f);
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
+@media (max-width: 420px) {
+  .ab-hero-stats { grid-template-columns: 1fr; }
+  .ab-hero-stats > div + div { padding-left: 0; border-left: none; }
+}
+
+/* ─── Governance map ─── */
+/* Warm, so the page keeps a strict warm/white/warm/white/warm alternation from
+   the hero down — two white sections running together read as one long slab. */
+.ecosystem-section {
+  padding: clamp(34px, 3vw, 44px) 24px;
+  background: var(--bg-alt);
+  border-block: 1px solid var(--border);
+}
+
+.ecosystem-container {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+/* Stacked like every other header on the site. This used to run the lead in a
+   second column beside the heading to save vertical space; it bought ~90px and
+   cost the section its family resemblance to the rest of the page — two
+   columns read as two unrelated blocks rather than one header. */
+.gov-head {
+  margin-bottom: 22px;
+}
+
+/* One framed instrument: chrome bar on top, rail and panel below. The frame is
+   deliberately heavier than anything else on the page — this section is the
+   highlight, so it earns the strongest border and the only real elevation. */
+.gov-map {
+  border: 1px solid var(--color-line-strong, #d6cec2);
+  border-radius: 20px;
+  background: var(--bg-white);
+  overflow: hidden;
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.9) inset,
+    0 2px 6px -2px rgb(28 25 23 / 0.06),
+    0 30px 60px -34px rgb(28 25 23 / 0.42);
+  /* The accent transition is the shared element between rail and panel. */
+  transition: box-shadow var(--dur-slow) var(--ease-out);
+}
+
+/* Fixed height: the console must not resize as you click through roles, or the
+   page jumps under the reader's cursor. The rail is a constant, so this is set
+   to clear the tallest panel (Super Admin / CEO, six mandate rows) and every
+   shorter role simply leaves air above the pinned footnote. */
+.gov-body {
+  display: grid;
+  grid-template-columns: minmax(230px, 280px) 1fr;
+  min-height: 512px;
+}
+
+/* ─── Console chrome ─── */
+.gov-chrome {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
-  color: white;
-  box-shadow: 0 10px 30px rgba(228, 87, 46, 0.3), inset 0 4px 10px rgba(255,255,255,0.4);
-  text-align: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--color-line-strong, #d6cec2);
+  background: var(--bg-alt);
 }
 
-.orbit-core span {
-  font-weight: 800;
-  font-size: 16px;
-  margin-top: 4px;
+.gov-chrome-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0;
 }
 
-/* ─── Rings ─── */
-.orbit-ring {
-  position: absolute;
-  border: 1px dashed rgba(0,0,0,0.1);
+/* A live indicator in the role's own colour: the chrome answers "what is
+   selected" before you read a word of the panel. */
+.gov-chrome-title::before {
+  content: '';
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  animation: spin linear infinite;
+  background: var(--role-accent, var(--primary));
+  box-shadow: 0 0 0 3px var(--role-accent-soft, rgb(228 87 46 / 0.1));
+  transition: background var(--dur-slow) var(--ease-out),
+              box-shadow var(--dur-slow) var(--ease-out);
 }
 
-.orbit-ring-1 {
-  width: 340px;
-  height: 340px;
-  animation-duration: 40s;
+.gov-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 16px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
-.orbit-ring-2 {
-  width: 580px;
-  height: 580px;
-  animation-duration: 60s;
-  animation-direction: reverse;
+.gov-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
 }
 
-@media (max-width: 768px) {
-  .orbit-ring-1 { width: 220px; height: 220px; }
-  .orbit-ring-2 { width: 340px; height: 340px; }
+.gov-legend-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
 }
 
-@keyframes spin {
-  100% { transform: rotate(360deg); }
+/* ─── The rail ───
+   The rail mixes two kinds of text: group headings that only label, and roles
+   that open the panel. Previously both were plain rows on the same tint and a
+   role only revealed itself as a control on hover, which left the reader
+   guessing which line was clickable. Now every selectable role is a raised
+   card — its own surface, a tinted icon chip and a permanent chevron — while
+   headings and tier labels stay flat, unbordered, and un-chipped. The
+   difference is legible before you touch anything. */
+.gov-rail {
+  border-right: 1px solid var(--border);
+  background: var(--bg-alt);
+  padding: 0 0 14px;
+  min-width: 0;
 }
 
-/* ─── Nodes on Rings ─── */
-.orbit-node {
-  position: absolute;
-  top: 50%; left: 50%;
-  background: white;
-  border: 1px solid rgba(0,0,0,0.05);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-  padding: 12px 20px;
-  border-radius: 999px;
+/* Says outright what the cards below are for, rather than relying on the
+   reader trying one. */
+.gov-rail-hint {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  padding: 11px 16px 10px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.gov-rail-hint svg { flex: none; }
+
+/* ─── Rail sections: your side, then ours ─── */
+.gov-section-head {
+  padding: 13px 16px 8px;
+}
+
+.gov-section + .gov-section .gov-section-head {
+  border-top: 1px solid var(--color-line-strong, #d6cec2);
+  margin-top: 10px;
+}
+
+.gov-section-title {
+  font-family: var(--font-heading);
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--dark);
+  margin: 0 0 3px;
+}
+
+.gov-section-sub {
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* The visitor's own two roles read as the primary choice on the rail. */
+.gov-section-you .gov-section-title { color: var(--primary-hover); }
+
+/* A label with a rule running off it: unmistakably a divider, not a row you
+   could click. */
+.gov-tier-label {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #1c1917;
+  font-size: 9.5px;
   font-weight: 700;
-  font-size: 14px;
-  white-space: nowrap;
-  
-  /* The counter-rotation keeps the text upright while the ring spins */
-  animation: counter-spin linear infinite;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-ink-faint, #9c948c);
+  margin: 12px 0 2px;
+  padding: 0 14px;
 }
 
-.orbit-ring-1 .orbit-node {
-  animation-duration: 40s;
-}
-.orbit-ring-2 .orbit-node {
-  animation-duration: 60s;
-  animation-direction: reverse;
-}
-
-@keyframes counter-spin {
-  100% { transform: translate(-50%, -50%) rotate(-360deg); }
-}
-.orbit-node {
-  transform: translate(-50%, -50%) rotate(0deg); /* Initial state */
-}
-
-/* Positioning Nodes using Math (Translating out to the ring radius) */
-.orbit-ring-1 .orbit-node:nth-child(1) { margin-top: -170px; }
-.orbit-ring-1 .orbit-node:nth-child(2) { margin-left: 170px; }
-.orbit-ring-1 .orbit-node:nth-child(3) { margin-top: 170px; }
-.orbit-ring-1 .orbit-node:nth-child(4) { margin-left: -170px; }
-
-.orbit-ring-2 .orbit-node:nth-child(1) { margin-top: -290px; }
-.orbit-ring-2 .orbit-node:nth-child(2) { margin-top: -205px; margin-left: 205px; }
-.orbit-ring-2 .orbit-node:nth-child(3) { margin-left: 290px; }
-.orbit-ring-2 .orbit-node:nth-child(4) { margin-top: 205px; margin-left: 205px; }
-.orbit-ring-2 .orbit-node:nth-child(5) { margin-top: 290px; }
-.orbit-ring-2 .orbit-node:nth-child(6) { margin-top: 205px; margin-left: -205px; }
-.orbit-ring-2 .orbit-node:nth-child(7) { margin-left: -290px; }
-.orbit-ring-2 .orbit-node:nth-child(8) { margin-top: -205px; margin-left: -205px; }
-
-@media (max-width: 768px) {
-  .orbit-ring-1 .orbit-node:nth-child(1) { margin-top: -110px; }
-  .orbit-ring-1 .orbit-node:nth-child(2) { margin-left: 110px; }
-  .orbit-ring-1 .orbit-node:nth-child(3) { margin-top: 110px; }
-  .orbit-ring-1 .orbit-node:nth-child(4) { margin-left: -110px; }
-
-  .orbit-ring-2 .orbit-node:nth-child(1) { margin-top: -170px; }
-  .orbit-ring-2 .orbit-node:nth-child(2) { margin-top: -120px; margin-left: 120px; }
-  .orbit-ring-2 .orbit-node:nth-child(3) { margin-left: 170px; }
-  .orbit-ring-2 .orbit-node:nth-child(4) { margin-top: 120px; margin-left: 120px; }
-  .orbit-ring-2 .orbit-node:nth-child(5) { margin-top: 170px; }
-  .orbit-ring-2 .orbit-node:nth-child(6) { margin-top: 120px; margin-left: -120px; }
-  .orbit-ring-2 .orbit-node:nth-child(7) { margin-left: -170px; }
-  .orbit-ring-2 .orbit-node:nth-child(8) { margin-top: -120px; margin-left: -120px; }
-}
-
-/* Detail Panel */
-.eco-detail-panel {
+.gov-tier-label::after {
+  content: '';
   flex: 1;
-  position: sticky;
-  top: 120px;
-  background: var(--bg-white);
-  color: #1c1917;
-  padding: 40px;
-  border-radius: 24px;
-  border: 1px solid rgba(0,0,0,0.05);
-  box-shadow: 0 20px 60px rgba(0,0,0,0.05);
-  min-height: 400px;
+  height: 1px;
+  background: var(--border);
 }
 
-.eco-detail-role {
-  font-size: 28px;
-  font-weight: 800;
-  margin-bottom: 24px;
-  color: var(--primary);
+.gov-role {
+  position: relative;
   display: flex;
   align-items: center;
+  gap: 9px;
+  width: calc(100% - 20px);
+  margin: 6px 10px 0;
+  padding: 7px 8px 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-white);
+  box-shadow: 0 1px 2px -1px rgb(28 25 23 / 0.08);
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--dark);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--dur-base) var(--ease-out),
+              background var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out),
+              transform var(--dur-base) var(--ease-out);
+}
+
+/* The accent bar grows on hover and stays on the selected card — the same
+   tab-into-the-panel signal the old bridged border carried, but visible in
+   the resting state too. */
+.gov-role::before {
+  content: '';
+  position: absolute;
+  left: -1px;
+  top: 50%;
+  width: 3px;
+  height: 64%;
+  border-radius: 0 3px 3px 0;
+  background: var(--row-accent, var(--primary));
+  /* Scaled rather than grown: animating height would ask the browser for a
+     layout pass on every frame of a hover. */
+  transform: translateY(-50%) scaleY(0);
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.gov-role:hover {
+  border-color: var(--row-accent-line, var(--row-accent, var(--primary)));
+  box-shadow: 0 4px 10px -6px rgb(28 25 23 / 0.34);
+  transform: translateX(2px);
+}
+
+.gov-role:hover::before { transform: translateY(-50%) scaleY(0.66); }
+
+.gov-role:focus-visible {
+  outline: 2px solid var(--row-accent, var(--primary));
+  outline-offset: 2px;
+}
+
+.gov-role.is-active {
+  background: var(--row-accent-soft, rgb(228 87 46 / 0.1));
+  border-color: var(--row-accent, var(--primary));
+  box-shadow: 0 4px 12px -7px var(--row-accent, rgb(28 25 23 / 0.4));
+  font-weight: 700;
+}
+
+.gov-role.is-active::before { transform: translateY(-50%) scaleY(1); }
+
+.gov-role-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: var(--row-accent-soft, rgb(28 25 23 / 0.06));
+  color: var(--row-accent, var(--primary));
+  transition: background var(--dur-base) var(--ease-out),
+              color var(--dur-base) var(--ease-out);
+}
+
+.gov-role.is-active .gov-role-icon {
+  background: var(--row-accent, var(--primary));
+  color: #fff;
+}
+
+.gov-role-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Always present, at half strength — the row advertises that it opens
+   something without waiting to be hovered. */
+.gov-role-chevron {
+  flex-shrink: 0;
+  color: var(--text-muted);
+  opacity: 0.55;
+  transition: opacity var(--dur-base) var(--ease-out),
+              transform var(--dur-base) var(--ease-out),
+              color var(--dur-base) var(--ease-out);
+}
+
+.gov-role:hover .gov-role-chevron {
+  opacity: 1;
+  color: var(--row-accent, var(--primary));
+  transform: translateX(2px);
+}
+
+.gov-role.is-active .gov-role-chevron {
+  opacity: 1;
+  color: var(--row-accent, var(--primary));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gov-role:hover { transform: none; }
+}
+
+/* ─── Detail panel ─── */
+.gov-detail {
+  display: flex;
+  flex-direction: column;
+  padding: clamp(18px, 2vw, 26px);
+  min-width: 0;
+}
+
+.gov-detail > article { flex: 1; }
+
+/* The head carries the role's tier colour as a wash. Recolouring it is the
+   most legible signal that the whole panel changed. */
+.gov-detail-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin: calc(clamp(18px, 2vw, 26px) * -1) calc(clamp(18px, 2vw, 26px) * -1) 0;
+  padding: clamp(16px, 1.8vw, 22px) clamp(18px, 2vw, 26px);
+  background: var(--role-accent-soft, transparent);
+  border-bottom: 1px solid var(--role-accent-line, var(--border));
+  transition: background var(--dur-slow) var(--ease-out),
+              border-color var(--dur-slow) var(--ease-out);
+}
+
+.gov-detail-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--role-accent, var(--primary));
+  color: #fff;
+  box-shadow: 0 8px 18px -8px var(--role-accent, var(--primary));
+  transition: background var(--dur-slow) var(--ease-out);
+}
+
+.gov-detail-heading { min-width: 0; }
+
+.gov-detail-titlerow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.gov-detail-head h3 {
+  font-family: var(--font-heading);
+  font-size: clamp(20px, 2.1vw, 25px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--dark);
+  margin: 0;
+}
+
+.gov-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.gov-badge.is-you {
+  border-color: rgb(228 87 46 / 0.35);
+  background: rgb(228 87 46 / 0.08);
+  color: var(--primary-hover);
+}
+
+.gov-detail-head p {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--text-muted);
+  margin: 0;
+  max-width: 52ch;
+}
+
+/* ─── Stage track: where this role acts in the five-stage chain ─── */
+.gov-stages {
+  margin: 18px 0;
+  padding: 16px 18px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background:
+    linear-gradient(180deg, var(--role-accent-soft, transparent) 0%, transparent 78%),
+    var(--bg-white);
+  transition: background var(--dur-slow) var(--ease-out);
+}
+
+.gov-stages-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.gov-stages-head .gov-block-label { margin: 0; }
+
+.gov-stage-track {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.gov-stage-track li {
+  position: relative;
+  padding-top: 26px;
+  min-width: 0;
+  /* Each stage lands in sequence when the role changes, so the track reads
+     left to right like the chain it describes. */
+  animation: govStageIn 0.42s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  animation-delay: calc(var(--i) * 55ms + 90ms);
+}
+
+@keyframes govStageIn {
+  from { opacity: 0; transform: translateY(7px); }
+}
+
+/* The chain, drawn as a segment between consecutive pips — so it stops at the
+   last one instead of running on to the frame edge. A segment between two
+   stages the role owns is drawn in the accent, so the span of their reach is
+   legible at a glance. */
+.gov-stage-track li:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 15px;
+  right: -12px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--color-line-strong, #d6cec2);
+  transition: background var(--dur-slow) var(--ease-out);
+}
+
+.gov-stage-track li.link-on::after {
+  background: var(--role-accent, var(--primary));
+  opacity: 0.5;
+}
+
+.gov-stage-pip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--bg-white);
+  border: 2px solid var(--color-line-strong, #d6cec2);
+  transition: background var(--dur-slow) var(--ease-out),
+              border-color var(--dur-slow) var(--ease-out),
+              box-shadow var(--dur-slow) var(--ease-out),
+              transform var(--dur-slow) var(--ease-out);
+}
+
+.gov-stage-track li.is-on .gov-stage-pip {
+  background: var(--role-accent, var(--primary));
+  border-color: var(--role-accent, var(--primary));
+  box-shadow: 0 0 0 5px var(--role-accent-soft, rgb(228 87 46 / 0.1));
+  transform: scale(1.06);
+}
+
+/* Stages the role does not touch recede rather than compete. */
+.gov-stage-track li:not(.is-on) { opacity: 0.55; }
+
+.gov-stage-num {
+  display: block;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+  transition: color var(--dur-slow) var(--ease-out);
+}
+
+.gov-stage-track li.is-on .gov-stage-num { color: var(--role-accent, var(--primary)); }
+
+.gov-stage-name {
+  display: block;
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: var(--text-muted);
+  transition: color var(--dur-slow) var(--ease-out);
+}
+
+.gov-stage-track li.is-on .gov-stage-name {
+  color: var(--dark);
+  font-weight: 600;
+}
+
+.gov-stage-none {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+@media (max-width: 620px) {
+  .gov-stage-track { grid-template-columns: repeat(2, 1fr); gap: 16px 12px; }
+  .gov-stage-track li { padding-top: 0; padding-left: 20px; }
+  .gov-stage-track li:not(:last-child)::after { display: none; }
+  .gov-stage-pip { top: 3px; }
+}
+
+.gov-detail-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(20px, 2.6vw, 34px);
+  padding-top: 0;
+}
+
+.gov-block { min-width: 0; }
+
+/* Labels carry the role's accent as a lead rule, so each block is anchored by
+   colour instead of floating as grey small-caps. */
+.gov-block-label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dark);
+  margin: 0 0 11px;
+}
+
+.gov-block-label::before {
+  content: '';
+  width: 14px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--role-accent, var(--primary));
+  transition: background var(--dur-slow) var(--ease-out);
+}
+
+.gov-count {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 2px 7px;
+  border-radius: 5px;
+  background: var(--role-accent-soft, rgb(228 87 46 / 0.1));
+  color: var(--role-accent, var(--primary));
+  transition: background var(--dur-slow) var(--ease-out),
+              color var(--dur-slow) var(--ease-out);
+}
+
+/* Constraints get a band of their own across the panel: on this platform the
+   thing a role *cannot* do is the reassurance, so it must not be a footnote
+   in the second column. */
+.gov-limits {
+  margin-top: 16px;
+  padding: 13px 16px;
+  border-radius: 12px;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+}
+
+.gov-limits-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-danger, #c73030);
+  margin: 0 0 9px;
+}
+
+.gov-limits-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+}
+
+.gov-limits-list li {
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--dark);
+}
+
+.gov-mandate {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.gov-mandate li {
+  position: relative;
+  padding-left: 20px;
+  font-size: 14.5px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--dark);
+}
+
+/* An accent tick per row rather than a grey dash — the list picks up the
+   role's colour the moment you switch. */
+.gov-mandate li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.48em;
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  background: var(--role-accent, var(--primary));
+  opacity: 0.42;
+  transition: background var(--dur-slow) var(--ease-out);
+}
+
+.gov-rules {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 9px;
+}
+
+.gov-rules li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14.5px;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--dark);
+}
+
+/* The check sits in its own badge: a bare tick next to plain text was the
+   flattest thing in the panel. */
+.gov-yes {
+  flex-shrink: 0;
+  box-sizing: content-box;
+  width: 14px;
+  height: 14px;
+  padding: 3px;
+  border-radius: 50%;
+  background: rgb(30 127 79 / 0.13);
+  color: var(--color-success, #1e7f4f);
+}
+
+/* Same ember treatment as the homepage "Ready to strike" banner — layered
+   gradient, warm underglow, diagonal hairline texture. Reusing the system's
+   own signature rather than inventing a second CTA look. */
+.gov-cta {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 16px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  color: #fff;
+  text-decoration: none;
+  background:
+    radial-gradient(120% 180% at 85% 20%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0) 55%),
+    radial-gradient(90% 160% at 10% 110%, rgba(123, 45, 32, 0.5) 0%, rgba(123, 45, 32, 0) 60%),
+    linear-gradient(115deg, #e4572e 0%, #d54e26 55%, #c8441f 100%);
+  box-shadow: 0 -8px 30px -14px rgba(200, 68, 31, 0.35),
+              0 12px 28px -16px rgba(28, 25, 23, 0.3);
+  transition: transform var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out);
+}
+
+.gov-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.04) 0 1px, transparent 1px 12px);
+  pointer-events: none;
+}
+
+.gov-cta > * { position: relative; }
+
+.gov-cta strong {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: 3px;
+}
+
+/* Tinted from the surface hue, never grey — this sits on ember. */
+.gov-cta span {
+  font-size: 13px;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.gov-cta svg {
+  flex-shrink: 0;
+  color: #fff;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.gov-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 -8px 30px -14px rgba(200, 68, 31, 0.45),
+              0 18px 34px -16px rgba(28, 25, 23, 0.36);
+}
+
+.gov-cta:hover svg { transform: translateX(4px); }
+
+.gov-cta:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.gov-footnote {
+  margin: 18px 0 0;
+  padding-top: 13px;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  max-width: 66ch;
+}
+
+@media (max-width: 900px) {
+  .gov-body { grid-template-columns: 1fr; }
+  /* Wrap rather than scroll horizontally: a side-scrolling rail hides five of
+     the nine roles behind a swipe with no affordance. All of them stay on
+     screen, still grouped by tier. */
+  .gov-rail {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding: 0 16px 18px;
+  }
+  .gov-section-head { padding: 16px 0 12px; }
+  .gov-section + .gov-section .gov-section-head { margin-top: 4px; }
+  .gov-tier {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+  .gov-tier + .gov-tier {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+  .gov-tier-label {
+    flex: 0 0 100%;
+    padding: 0;
+    margin: 0 0 2px;
+  }
+  /* Pills rather than rows: at this width a pill already reads as a control,
+     so the left accent bar and the chevron both come off — they would only
+     crowd it. The icon chip and the raised surface carry the affordance. */
+  .gov-role {
+    width: auto;
+    margin: 0;
+    padding: 6px 13px 6px 7px;
+    border-radius: var(--radius-full);
+  }
+  .gov-role::before { display: none; }
+  .gov-role:hover { transform: none; }
+  .gov-role-name { white-space: normal; overflow: visible; }
+  .gov-role.is-active {
+    background: var(--row-accent, var(--dark));
+    border-color: var(--row-accent, var(--dark));
+    color: #fff;
+  }
+  .gov-role.is-active .gov-role-icon {
+    background: rgb(255 255 255 / 0.22);
+    color: #fff;
+  }
+  .gov-role-chevron { display: none; }
+  .gov-detail-body { grid-template-columns: 1fr; }
+}
+
+/* ═══ WHAT TRADES HERE ═══════════════════════════════════════════════════
+   Photograph-led. The material is the argument; the copy annotates it from
+   inside the frame so each card costs one block of height, not two. */
+.trade-section {
+  padding: var(--space-section) 24px;
+  background: var(--bg-alt);
+  border-block: 1px solid var(--border);
+}
+
+.trade-container {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+/* Heading left, provenance right — horizontal space instead of vertical. */
+.trade-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 480px);
+  gap: clamp(24px, 4vw, 56px);
+  align-items: start;
+  margin-bottom: var(--space-8);
+}
+
+.trade-head .sec-head { margin: 0; }
+
+.trade-meta {
+  display: grid;
+  gap: 16px;
+  padding-left: clamp(0px, 2vw, 28px);
+  border-left: 1px solid var(--border);
+}
+
+.trade-fact-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0 0 9px;
+}
+
+.trade-chips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.trade-chips li {
+  padding: 5px 11px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-line-strong, #d6cec2);
+  background: var(--bg-white);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--dark);
+  white-space: nowrap;
+}
+
+.trade-chips.is-quiet li {
+  border-color: var(--border);
+  background: transparent;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+@media (max-width: 940px) {
+  .trade-head { grid-template-columns: 1fr; }
+  .trade-meta {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding-left: 0;
+    padding-top: 18px;
+    border-left: none;
+    border-top: 1px solid var(--border);
+  }
+}
+
+@media (max-width: 560px) {
+  .trade-meta { grid-template-columns: 1fr; }
+}
+
+/* ─── Category cards ─── */
+.about-cat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 16px;
 }
 
-.eco-detail-section {
-  margin-bottom: 24px;
+.cat-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: var(--bg-white);
+  transition: transform var(--dur-slow) var(--ease-out),
+              border-color var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-slow) var(--ease-out);
 }
 
-.eco-detail-section h4 {
-  font-size: 14px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: #9c948c;
-  margin-bottom: 8px;
+.cat-card:hover {
+  transform: translateY(-4px);
+  border-color: rgb(228 87 46 / 0.32);
+  box-shadow: 0 22px 40px -26px rgb(28 25 23 / 0.45);
 }
 
-.eco-detail-section p, .eco-detail-section ul {
-  font-size: 15px;
-  line-height: 1.6;
-  color: #6b6560;
+.cat-media {
+  position: relative;
+  aspect-ratio: 5 / 6;
+  overflow: hidden;
+}
+
+.cat-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.7s var(--ease-out);
+}
+
+.cat-card:hover .cat-media img { transform: scale(1.05); }
+
+/* Deep enough that the blurb clears 4.5:1 over any part of the photograph. */
+.cat-media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg,
+    rgba(20, 17, 15, 0) 26%,
+    rgba(20, 17, 15, 0.72) 60%,
+    rgba(20, 17, 15, 0.94) 100%);
+  pointer-events: none;
+}
+
+.cat-overlay {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 14px;
+  z-index: 1;
+}
+
+.cat-overlay h3 {
+  font-family: var(--font-heading);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: #fff;
+  margin: 0 0 6px;
+}
+
+.cat-overlay p {
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: #ded7ce;
   margin: 0;
 }
 
-.eco-detail-section ul {
-  padding-left: 20px;
+/* Top-aligned under the image: the categories carry 1–4 chips, and pushing
+   them to the card base opened a hole in the middle of the short ones. */
+.cat-examples {
+  list-style: none;
+  margin: 0;
+  padding: 13px 16px 15px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
-.eco-detail-section li {
-  margin-bottom: 4px;
+.cat-examples li {
+  padding: 5px 9px;
+  border-radius: 6px;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  font-size: 11px;
+  line-height: 1.3;
+  color: var(--dark);
+  font-weight: 600;
 }
 
-/* ─── 5. Operational Infrastructure (Bento Grid) ─── */
-.bento-section {
-  padding: 80px 24px;
-  background: var(--bg-light);
+@media (max-width: 1024px) {
+  .about-cat-grid { grid-template-columns: repeat(2, 1fr); }
+  .cat-media { aspect-ratio: 16 / 10; }
 }
 
-.bento-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-auto-rows: 250px;
-  gap: 24px;
-  max-width: 1280px;
+@media (max-width: 560px) {
+  .about-cat-grid { grid-template-columns: 1fr; }
+}
+
+/* ═══ FIVE STAGES ════════════════════════════════════════════════════════
+   A drawn chain down the full measure: a node, the stage card beside it, and
+   a rail carrying you to the next node. The rail fills to scroll position and
+   each node lights as the fill reaches it, so the hand-off from one signature
+   to the next is something you watch rather than read.
+
+   Every scroll-driven property here is decoration on top of a complete
+   resting state — an unfilled rail is still a visible hairline and an unlit
+   node is still a legible numeral. Nothing on this page is gated behind an
+   animation running. */
+.stages-section {
+  padding: var(--space-section) 24px;
+  background: var(--bg-white);
+}
+
+.stages-inner {
+  max-width: 1180px;
   margin: 0 auto;
 }
 
-.bento-card {
-  background: var(--bg-white);
-  border: 1px solid rgba(0,0,0,0.05);
-  border-radius: 24px;
-  padding: 32px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.02);
-  display: flex;
-  flex-direction: column;
+.stage-chain {
   position: relative;
+}
+
+.stage-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.stage-row {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr);
+  gap: clamp(14px, 2vw, 24px);
+  align-items: start;
+  padding-bottom: clamp(12px, 1.6vw, 18px);
+}
+
+/* The marker column owns both the node and the rail that leaves it. */
+.stage-marker {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-self: stretch;
+  min-height: 46px;
+}
+
+.stage-node {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--bg-white);
+  border: 1.5px solid var(--color-line-strong, #d6cec2);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  transition: background var(--dur-slow) var(--ease-out),
+              border-color var(--dur-slow) var(--ease-out),
+              color var(--dur-slow) var(--ease-out),
+              box-shadow var(--dur-slow) var(--ease-out);
+}
+
+/* A halo that only exists once the chain has reached this node — the arrival
+   needs a beat of its own or the fill just slides past. */
+.stage-node-ring {
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  border: 1px solid rgb(228 87 46 / 0.34);
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity var(--dur-slow) var(--ease-out),
+              transform var(--dur-slow) var(--ease-out);
+}
+
+.stage-row.is-passed .stage-node {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+  box-shadow: 0 6px 16px -8px rgb(228 87 46 / 0.85);
+}
+
+.stage-row.is-passed .stage-node-ring {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Track and fill are separate layers: the track is the resting hairline, the
+   fill is the ember that scroll drives across it. */
+.stage-link {
+  position: absolute;
+  top: 52px;
+  bottom: calc(clamp(12px, 1.6vw, 18px) * -1 - 6px);
+  left: 50%;
+  width: 2px;
+  margin-left: -1px;
+  border-radius: 1px;
+  background: var(--border);
   overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.bento-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 40px rgba(228, 87, 46, 0.1);
-  border-color: rgba(228, 87, 46, 0.3);
+.stage-link-fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 1px;
+  transform-origin: top center;
+  background: linear-gradient(180deg,
+    var(--primary) 0%,
+    rgb(228 87 46 / 0.45) 100%);
 }
 
-.bento-icon {
-  width: 48px;
-  height: 48px;
-  background: rgba(228, 87, 46, 0.1);
+/* ─── The stage card ─── */
+.stage-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.92fr);
+  gap: clamp(16px, 2.4vw, 34px);
+  align-items: start;
+  padding: 15px 18px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--bg-alt);
+  transition: background var(--dur-base) var(--ease-out),
+              border-color var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out),
+              transform var(--dur-base) var(--ease-out);
+}
+
+.stage-row:hover .stage-card {
+  background: var(--bg-white);
+  border-color: rgb(228 87 46 / 0.32);
+  box-shadow: 0 18px 34px -26px rgb(28 25 23 / 0.55);
+  transform: translateY(-2px);
+}
+
+.stage-row:hover .stage-node {
+  border-color: var(--primary);
   color: var(--primary);
-  border-radius: 12px;
+}
+
+.stage-row.is-passed:hover .stage-node { color: #fff; }
+
+.stage-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 7px;
+}
+
+.stage-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgb(228 87 46 / 0.1);
+  color: var(--primary);
+  transition: background var(--dur-base) var(--ease-out),
+              color var(--dur-base) var(--ease-out);
+}
+
+.stage-row:hover .stage-icon {
+  background: var(--primary);
+  color: #fff;
+}
+
+.stage-head h3 {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-heading);
+  font-size: clamp(16px, 1.6vw, 18px);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--dark);
+  margin: 0;
+}
+
+/* How long the stage takes, in the same mono voice the console chrome uses. */
+.stage-sla {
+  flex: none;
+  padding: 3px 9px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-white);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+  transition: border-color var(--dur-base) var(--ease-out),
+              color var(--dur-base) var(--ease-out);
+}
+
+.stage-row:hover .stage-sla {
+  border-color: rgb(228 87 46 / 0.34);
+  color: var(--primary-hover);
+}
+
+.stage-desc {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--text-muted);
+  margin: 0 0 12px;
+  max-width: 46ch;
+}
+
+/* The named signature. Dashed until you reach for it, which reads as a
+   pending endorsement rather than another button. */
+.stage-sign {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 9px 5px 8px;
+  border: 1px dashed var(--color-line-strong, #d6cec2);
+  border-radius: 999px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: border-color var(--dur-base) var(--ease-out),
+              background var(--dur-base) var(--ease-out),
+              color var(--dur-base) var(--ease-out);
+}
+
+.stage-sign strong {
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.stage-sign > svg:first-child {
+  flex: none;
+  color: var(--primary);
+}
+
+.stage-sign > svg:last-child {
+  flex: none;
+  opacity: 0.5;
+  transition: transform var(--dur-base) var(--ease-out),
+              opacity var(--dur-base) var(--ease-out);
+}
+
+.stage-sign:hover {
+  border-style: solid;
+  border-color: var(--primary);
+  background: rgb(228 87 46 / 0.07);
+  color: var(--dark);
+}
+
+.stage-sign:hover > svg:last-child {
+  opacity: 1;
+  transform: translateX(3px);
+}
+
+.stage-sign:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* The concrete deliverable, in its own panel on the right of the card. The
+   ember "PRODUCES" label already marks this as the output; a coloured bar down
+   its left edge would be decoration saying the same thing twice. */
+.stage-output {
+  margin: 0;
+  padding: 12px 15px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-white);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--dark);
+  transition: background var(--dur-base) var(--ease-out),
+              border-color var(--dur-base) var(--ease-out);
+}
+
+.stage-row:hover .stage-output {
+  background: var(--bg-alt);
+  border-color: rgb(228 87 46 / 0.28);
+}
+
+.stage-output span {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 4px;
+}
+
+@media (max-width: 900px) {
+  .stage-card {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+}
+
+@media (max-width: 860px) {
+  .stage-row {
+    grid-template-columns: 38px minmax(0, 1fr);
+    gap: 12px;
+  }
+  .stage-marker { min-height: 38px; }
+  .stage-node { width: 38px; height: 38px; font-size: 12.5px; }
+  .stage-link { top: 44px; }
+  .stage-card { padding: 14px; }
+  .stage-desc { max-width: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage-row:hover .stage-card { transform: none; }
+}
+
+/* ═══ RISK LEDGER ════════════════════════════════════════════════════════
+   The page's dark band. Trust is the argument here, so it gets the tonal
+   inversion and reads as a different kind of page altogether. */
+.risk-section {
+  position: relative;
+  padding: var(--space-section) 24px;
+  background: var(--bg-white);
+  overflow: hidden;
+}
+
+.risk-container {
+  position: relative;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.risk-head {
+  position: relative;
+}
+
+.risk-list { border-top: 1px solid var(--color-line-strong); }
+
+.risk-row {
+  display: grid;
+  grid-template-columns: minmax(240px, 380px) 1fr;
+  gap: clamp(24px, 5vw, 64px);
+  padding: clamp(18px, 2.2vw, 24px) 0;
+  border-bottom: 1px solid var(--color-line);
+  transition: background var(--dur-base) var(--ease-out);
+}
+
+.risk-row:hover { background: rgb(28 25 23 / 0.022); }
+
+.risk-q {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  align-items: start;
+  gap: 12px;
+}
+
+.risk-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--primary);
+  padding-top: 6px;
+}
+
+.risk-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 24px;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--color-line-strong);
+  color: var(--text-muted);
+  transition: color var(--dur-base) var(--ease-out),
+              border-color var(--dur-base) var(--ease-out),
+              background var(--dur-base) var(--ease-out);
 }
 
-.bento-card h4 {
-  font-size: 20px;
-  font-weight: 800;
-  color: #1c1917;
-  margin-bottom: 12px;
+.risk-row:hover .risk-icon {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
 }
 
-.bento-card p {
-  font-size: 14px;
-  color: #6b6560;
-  line-height: 1.6;
-  margin-bottom: 16px;
+.risk-q p {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: var(--dark);
+  margin: 3px 0 0;
 }
 
-.bento-list {
-  list-style: none;
-  padding: 0;
+.risk-a p {
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--text-muted);
   margin: 0;
-  margin-top: auto; /* push to bottom */
+  max-width: 64ch;
 }
 
-.bento-list li {
-  font-size: 13px;
-  color: #6b6560;
-  margin-bottom: 6px;
+.risk-recourse {
+  margin-top: 12px !important;
+  padding-left: 15px;
+  border-left: 1px solid var(--primary);
+  font-size: 13px !important;
+  color: var(--dark) !important;
+  font-weight: 500;
+}
+
+@media (max-width: 860px) {
+  .risk-row { grid-template-columns: 1fr; gap: 14px; }
+}
+
+/* ═══ START HERE ═════════════════════════════════════════════════════════ */
+.paths-section {
+  padding: var(--space-section) 24px calc(var(--space-section) + 12px);
+  background: var(--bg-alt);
+}
+
+.paths-container {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+/* Centred here alone (via `.sec-head.is-center`) — the page has ranged left
+   throughout, so closing on a centred head reads as an ending rather than
+   another band. */
+.paths-head {
+  max-width: 640px;
+}
+
+.paths-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.path-card {
+  display: flex;
+  flex-direction: column;
+  padding: clamp(22px, 2.4vw, 30px);
+  border-radius: 18px;
+  border: 1px solid var(--color-line-strong, #d6cec2);
+  background: var(--bg-white);
+  box-shadow: 0 24px 44px -34px rgb(28 25 23 / 0.4);
+}
+
+.path-buy {
+  border-color: rgb(228 87 46 / 0.34);
+  background:
+    linear-gradient(180deg, rgb(228 87 46 / 0.055) 0%, transparent 40%),
+    var(--bg-white);
+}
+
+.path-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.path-icon {
   display: flex;
   align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--dark);
+  color: #fff;
+}
+
+.path-buy .path-icon {
+  background: var(--primary);
+  box-shadow: 0 8px 18px -8px rgba(228, 87, 46, 0.9);
+}
+
+.path-head h3 {
+  font-family: var(--font-heading);
+  font-size: clamp(18px, 2vw, 22px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--dark);
+  margin: 0 0 4px;
+}
+
+.path-head p {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.path-steps {
+  list-style: none;
+  counter-reset: pathstep;
+  margin: 0;
+  padding: 18px 0 20px;
+  display: grid;
+  gap: 11px;
+}
+
+.path-steps li {
+  counter-increment: pathstep;
+  position: relative;
+  padding-left: 32px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--dark);
+  font-weight: 500;
+}
+
+.path-steps li::before {
+  content: counter(pathstep);
+  position: absolute;
+  left: 0;
+  top: -1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 21px;
+  height: 21px;
+  border-radius: 50%;
+  background: var(--bg-alt);
+  border: 1px solid var(--color-line-strong, #d6cec2);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.path-buy .path-steps li::before {
+  background: rgb(228 87 46 / 0.1);
+  border-color: rgb(228 87 46 / 0.3);
+  color: var(--primary-hover);
+}
+
+.path-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+
+.path-btn {
+  display: inline-flex;
+  align-items: center;
   gap: 8px;
-}
-.bento-list li::before {
-  content: '→';
-  color: var(--primary);
-  font-weight: bold;
-}
-
-/* Bento Spanning Rules */
-.span-col-2 { grid-column: span 2; }
-.span-col-3 { grid-column: span 3; }
-.span-row-2 { grid-row: span 2; }
-
-@media (max-width: 1024px) {
-  .bento-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .span-col-3 { grid-column: span 2; }
+  padding: 12px 22px;
+  border-radius: var(--radius-full);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform var(--dur-base) var(--ease-out),
+              background var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out);
 }
 
-@media (max-width: 768px) {
-  .bento-grid {
-    grid-template-columns: 1fr;
-    grid-auto-rows: auto;
-  }
-  .bento-card {
-    min-height: 250px;
-  }
-  .span-col-2, .span-col-3, .span-row-2 {
-    grid-column: span 1;
-    grid-row: span 1;
-  }
+.path-btn.primary {
+  color: #fff;
+  background:
+    radial-gradient(120% 180% at 85% 20%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0) 55%),
+    linear-gradient(115deg, #e4572e 0%, #d54e26 55%, #c8441f 100%);
+  box-shadow: 0 10px 22px -12px rgba(200, 68, 31, 0.85);
 }
 
-/* ─── Final CTA ─── */
-.ent-cta {
-  padding: 80px 24px;
-  background: var(--bg-light);
+.path-sell .path-btn.primary {
+  background: var(--dark);
+  box-shadow: 0 10px 22px -12px rgb(28 25 23 / 0.7);
+}
+
+.path-btn.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 28px -12px rgba(200, 68, 31, 0.9);
+}
+
+.path-sell .path-btn.primary:hover {
+  box-shadow: 0 16px 28px -12px rgb(28 25 23 / 0.8);
+}
+
+.path-btn.ghost {
+  border: 1px solid var(--color-line-strong, #d6cec2);
+  color: var(--dark);
+}
+
+.path-btn.ghost:hover { background: var(--bg-alt); transform: translateY(-2px); }
+
+.path-btn svg { transition: transform var(--dur-base) var(--ease-out); }
+.path-btn:hover svg { transform: translateX(3px); }
+.path-btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
+
+.paths-note {
+  margin: 22px 0 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-muted);
   text-align: center;
-  border-top: 1px solid rgba(0,0,0,0.05);
+}
+
+.paths-note a {
+  color: var(--primary-hover);
+  font-weight: 700;
+  text-underline-offset: 3px;
+}
+
+@media (max-width: 860px) { .paths-grid { grid-template-columns: 1fr; } }
+
+/* ─── Motion preferences ─── */
+@media (prefers-reduced-motion: reduce) {
+  .cat-card:hover .cat-media img { transform: none; }
+  .gov-stage-track li { animation: none; }
 }

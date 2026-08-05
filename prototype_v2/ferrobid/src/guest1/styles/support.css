@@ -1,0 +1,1563 @@
+/* ==========================================================================
+   SUPPORT SURFACES — Help & FAQs, Terms, Privacy, Grievance Redressal
+
+   These four pages are the ones a customer opens when something is at stake:
+   they are checking what they agreed to, what happens to their data, or how to
+   get a problem fixed. So the design goal is retrieval, not persuasion —
+   navigation that holds position, clauses that can be linked to, tables where
+   a table is the honest shape, and plain-language summaries above the legal
+   text rather than instead of it.
+
+   Adds no new colour: everything below resolves to the existing tokens.
+   ========================================================================== */
+
+/* ── Reading progress ─────────────────────────────────────────────────────
+   Sits above the sticky navbar (z 1000). A document this long needs a sense
+   of remaining distance; the bar is the cheapest way to give it. */
+.doc-progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 3px;
+  z-index: 1001;
+  transform-origin: left center;
+  background: linear-gradient(90deg, var(--primary), var(--color-ember-light));
+}
+
+.doc-page {
+  --doc-stick: 84px;
+  background: var(--bg-white);
+}
+
+/* ── Hero ────────────────────────────────────────────────────────────────── */
+.doc-hero {
+  position: relative;
+  padding: 22px 0 34px;
+  background:
+    radial-gradient(110% 130% at 88% -25%, rgb(228 87 46 / 0.11) 0%, transparent 58%),
+    linear-gradient(180deg, var(--bg-alt) 0%, var(--bg-white) 100%);
+  border-bottom: 1px solid var(--border);
+}
+
+.doc-hero-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 780px;
+}
+
+.doc-hero-title {
+  font-family: var(--font-heading);
+  font-size: clamp(28px, 3.6vw, 40px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  color: var(--dark);
+  margin: 0 0 12px;
+  text-wrap: balance;
+}
+
+.doc-hero-lead {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--text-muted);
+  margin: 0;
+  max-width: 62ch;
+}
+
+/* Version, dates and length as a data strip — the first things anyone checks
+   on a policy, and normally buried in a footnote. */
+.doc-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 22px 0 0;
+}
+
+.doc-meta > div {
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-white);
+  box-shadow: 0 1px 2px -1px rgb(28 25 23 / 0.07);
+}
+
+.doc-meta dt {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 3px;
+}
+
+.doc-meta dt svg { color: var(--primary); }
+
+.doc-meta dd {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--dark);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Shell: contents rail + document ─────────────────────────────────────── */
+.doc-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 250px) minmax(0, 1fr);
+  gap: clamp(24px, 4vw, 56px);
+  align-items: start;
+  padding: clamp(28px, 4vw, 44px) 0 clamp(48px, 6vw, 76px);
+}
+
+/* `align-items: start` on the shell would collapse this column to its content
+   height, leaving the sticky child no distance to travel. Stretching it to the
+   full row height is what actually makes the rail hold position. */
+.doc-rail {
+  align-self: stretch;
+  min-width: 0;
+}
+
+.doc-rail-inner {
+  position: sticky;
+  top: var(--doc-stick);
+  max-height: calc(100vh - var(--doc-stick) - 24px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 4px;
+}
+
+.doc-rail-title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0 0 10px;
+  padding-left: 12px;
+}
+
+.doc-rail-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.doc-rail-link {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px 8px 12px;
+  border: 0;
+  border-radius: 9px;
+  background: none;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--text-muted);
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--dur-base) var(--ease-out),
+              color var(--dur-base) var(--ease-out);
+}
+
+.doc-rail-link:hover {
+  background: rgb(28 25 23 / 0.04);
+  color: var(--dark);
+}
+
+.doc-rail-link:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+}
+
+.doc-rail-link.is-active {
+  background: rgb(228 87 46 / 0.08);
+  color: var(--dark);
+  font-weight: 700;
+}
+
+/* One marker that slides between entries (framer layoutId), rather than five
+   that fade in and out of place. */
+.doc-rail-marker {
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--primary);
+}
+
+.doc-rail-num {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.doc-rail-link:not(.is-active) .doc-rail-num { color: var(--color-ink-faint, #9c948c); }
+
+.doc-rail-label { min-width: 0; }
+
+.doc-rail-related {
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+
+.doc-rail-related-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 12px;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: background var(--dur-base) var(--ease-out),
+              color var(--dur-base) var(--ease-out);
+}
+
+.doc-rail-related-link svg { flex: none; opacity: 0.55; }
+
+.doc-rail-related-link:hover {
+  background: rgb(28 25 23 / 0.04);
+  color: var(--primary);
+}
+
+/* ── A clause ────────────────────────────────────────────────────────────── */
+.doc-body {
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+}
+
+.doc-clause {
+  scroll-margin-top: calc(var(--doc-stick) + 12px);
+  padding: clamp(20px, 2.4vw, 28px);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--bg-white);
+  box-shadow: 0 1px 2px -1px rgb(28 25 23 / 0.06);
+  transition: border-color var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out);
+}
+
+.doc-clause:hover {
+  border-color: var(--color-line-strong, #d6cec2);
+  box-shadow: 0 14px 30px -26px rgb(28 25 23 / 0.5);
+}
+
+.doc-clause-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.doc-clause-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgb(228 87 46 / 0.1);
+  color: var(--primary);
+  transition: background var(--dur-base) var(--ease-out),
+              color var(--dur-base) var(--ease-out);
+}
+
+.doc-clause:hover .doc-clause-icon {
+  background: var(--primary);
+  color: #fff;
+}
+
+.doc-clause-heading { flex: 1; min-width: 0; }
+
+.doc-clause-num {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0 0 3px;
+}
+
+.doc-clause-heading h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(17px, 1.8vw, 20px);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+  color: var(--dark);
+  margin: 0;
+}
+
+/* Every clause is addressable. Support desks quote clause numbers; a reader
+   should be able to send the exact paragraph rather than "see the terms". */
+.doc-anchor {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: none;
+  padding: 5px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-white);
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: border-color var(--dur-base) var(--ease-out),
+              color var(--dur-base) var(--ease-out),
+              background var(--dur-base) var(--ease-out);
+}
+
+.doc-anchor:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: rgb(228 87 46 / 0.06);
+}
+
+.doc-anchor.is-copied {
+  border-color: var(--color-success, #1e7f4f);
+  color: var(--color-success, #1e7f4f);
+  background: rgb(30 127 79 / 0.08);
+}
+
+.doc-anchor:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* The summary that makes the clause skimmable. Above the legal text, never
+   instead of it — the operative wording still follows in full. */
+.doc-plain {
+  padding: 12px 15px;
+  border-radius: 12px;
+  background: rgb(228 87 46 / 0.06);
+  margin-bottom: 16px;
+}
+
+.doc-plain-label {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin: 0 0 4px;
+}
+
+.doc-plain-text {
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.55;
+  color: var(--dark);
+  margin: 0;
+}
+
+.doc-clause-body { display: grid; gap: 14px; }
+
+.doc-p {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.doc-p strong { color: var(--dark); font-weight: 700; }
+
+.doc-p a,
+.doc-list a,
+.doc-kv a,
+.doc-table a {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid rgb(228 87 46 / 0.35);
+  transition: border-color var(--dur-base) var(--ease-out);
+}
+
+.doc-p a:hover,
+.doc-list a:hover,
+.doc-kv a:hover,
+.doc-table a:hover { border-bottom-color: var(--primary); }
+
+.doc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 9px;
+}
+
+.doc-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.doc-list li svg {
+  flex: none;
+  margin-top: 4px;
+  color: var(--primary);
+}
+
+.doc-list li strong { color: var(--dark); font-weight: 700; }
+
+.doc-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.doc-steps li {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.doc-step-n {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  background: rgb(228 87 46 / 0.1);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+/* Definition rows. Six definitions in one paragraph is a paragraph nobody
+   reads; as pairs they are scannable. */
+.doc-kv {
+  display: grid;
+  gap: 1px;
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--border);
+  overflow: hidden;
+}
+
+.doc-kv-row {
+  display: grid;
+  grid-template-columns: minmax(0, 200px) minmax(0, 1fr);
+  gap: 14px;
+  padding: 11px 14px;
+  background: var(--bg-white);
+  transition: background var(--dur-base) var(--ease-out);
+}
+
+.doc-kv-row:hover { background: var(--bg-alt); }
+
+.doc-kv dt {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.doc-kv dd {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+/* ── Tables ──────────────────────────────────────────────────────────────── */
+.doc-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.doc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  min-width: 520px;
+}
+
+.doc-table thead th {
+  padding: 10px 14px;
+  background: var(--bg-alt);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.doc-table tbody tr { transition: background var(--dur-base) var(--ease-out); }
+.doc-table tbody tr:hover { background: var(--bg-alt); }
+.doc-table tbody tr + tr th,
+.doc-table tbody tr + tr td { border-top: 1px solid var(--border); }
+
+.doc-table tbody th {
+  padding: 11px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--dark);
+  text-align: left;
+  vertical-align: top;
+}
+
+.doc-table td {
+  padding: 11px 14px;
+  line-height: 1.55;
+  color: var(--text-muted);
+  vertical-align: top;
+}
+
+/* ── Callouts ──────────────────────────────────────────────────────────────
+   Tinted surface plus an icon chip rather than a coloured edge stripe. */
+.doc-callout {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 13px 15px;
+  border-radius: 12px;
+  background: var(--bg-alt);
+}
+
+.doc-callout-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: var(--bg-white);
+  color: var(--text-muted);
+}
+
+.doc-callout.is-info { background: rgb(43 76 126 / 0.07); }
+.doc-callout.is-info .doc-callout-icon { color: var(--color-steel, #2b4c7e); }
+.doc-callout.is-warn { background: rgb(180 83 9 / 0.09); }
+.doc-callout.is-warn .doc-callout-icon { color: var(--color-warning, #b45309); }
+.doc-callout.is-good { background: rgb(30 127 79 / 0.08); }
+.doc-callout.is-good .doc-callout-icon { color: var(--color-success, #1e7f4f); }
+
+.doc-callout-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--dark);
+  margin: 0 0 3px;
+}
+
+.doc-callout-text {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.doc-callout-text strong { color: var(--dark); font-weight: 700; }
+
+/* ── Back to top ─────────────────────────────────────────────────────────── */
+.doc-totop {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 900;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--bg-white);
+  color: var(--dark);
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(10px) scale(0.9);
+  pointer-events: none;
+  box-shadow: 0 10px 24px -12px rgb(28 25 23 / 0.45);
+  transition: opacity var(--dur-base) var(--ease-out),
+              transform var(--dur-base) var(--ease-out),
+              border-color var(--dur-base) var(--ease-out),
+              color var(--dur-base) var(--ease-out);
+}
+
+.doc-totop.is-on {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.doc-totop:hover { border-color: var(--primary); color: var(--primary); }
+
+@media (max-width: 980px) {
+  .doc-shell { grid-template-columns: minmax(0, 1fr); }
+  /* The rail stops being a rail and becomes a jump-list above the document —
+     a 250px column of links squeezed beside body text helps nobody. */
+  .doc-rail-inner {
+    position: static;
+    max-height: none;
+    overflow: visible;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--bg-alt);
+  }
+  .doc-rail-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .doc-rail-marker { display: none; }
+}
+
+@media (max-width: 620px) {
+  .doc-rail-list { grid-template-columns: minmax(0, 1fr); }
+  .doc-kv-row { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .doc-meta { gap: 8px; }
+  .doc-meta > div { flex: 1 1 calc(50% - 4px); }
+  .doc-clause-head { flex-wrap: wrap; }
+  .doc-anchor { order: 3; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .doc-progress { display: none; }
+}
+
+/* ==========================================================================
+   HELP & FAQs
+   ========================================================================== */
+.faq-hero {
+  position: relative;
+  padding: 22px 0 32px;
+  background:
+    radial-gradient(110% 130% at 88% -25%, rgb(228 87 46 / 0.11) 0%, transparent 58%),
+    linear-gradient(180deg, var(--bg-alt) 0%, var(--bg-white) 100%);
+  border-bottom: 1px solid var(--border);
+}
+
+.faq-hero-inner { max-width: 720px; }
+
+/* Search is the whole page: an eleven-answer accordion is browsable, a
+   forty-answer one is not. */
+.faq-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 22px;
+  padding: 4px 6px 4px 16px;
+  border: 1px solid var(--color-line-strong, #d6cec2);
+  border-radius: 999px;
+  background: var(--bg-white);
+  box-shadow: 0 2px 6px -3px rgb(28 25 23 / 0.16);
+  transition: border-color var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out);
+}
+
+.faq-search:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 4px 16px -8px rgb(228 87 46 / 0.6);
+}
+
+.faq-search > svg { flex: none; color: var(--text-muted); }
+
+.faq-search input {
+  flex: 1;
+  min-width: 0;
+  padding: 11px 0;
+  border: 0;
+  background: none;
+  font-family: inherit;
+  font-size: 14.5px;
+  color: var(--dark);
+}
+
+.faq-search input:focus { outline: none; }
+.faq-search input::placeholder { color: var(--color-ink-faint, #9c948c); }
+
+.faq-search-clear {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background var(--dur-base) var(--ease-out),
+              color var(--dur-base) var(--ease-out);
+}
+
+.faq-search-clear:hover { background: var(--bg-alt); color: var(--dark); }
+
+/* Suggested terms: the vocabulary of this domain (EMD, lifting, auto-extension)
+   is not obvious to a first-time buyer, so the page offers it. */
+.faq-suggest {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 14px;
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.faq-suggest button {
+  padding: 3px 10px;
+  border: 1px dashed var(--color-line-strong, #d6cec2);
+  border-radius: 999px;
+  background: none;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: border-color var(--dur-base) var(--ease-out),
+              color var(--dur-base) var(--ease-out),
+              background var(--dur-base) var(--ease-out);
+}
+
+.faq-suggest button:hover {
+  border-style: solid;
+  border-color: var(--primary);
+  background: rgb(228 87 46 / 0.07);
+  color: var(--primary);
+}
+
+.faq-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 232px) minmax(0, 1fr);
+  gap: clamp(20px, 3vw, 40px);
+  align-items: start;
+  padding: clamp(26px, 3.4vw, 40px) 0 clamp(40px, 5vw, 60px);
+}
+
+/* This one is the grid item itself rather than a child of it, so its
+   containing block is already the full-height grid area — it sticks without
+   the stretch the document rail needs. */
+.faq-cats {
+  position: sticky;
+  top: var(--doc-stick, 84px);
+  display: grid;
+  gap: 3px;
+}
+
+.faq-cats-title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0 0 8px;
+  padding-left: 12px;
+}
+
+.faq-cat {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px 8px 12px;
+  border: 0;
+  border-radius: 9px;
+  background: none;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--dur-base) var(--ease-out),
+              color var(--dur-base) var(--ease-out);
+}
+
+.faq-cat:hover { background: rgb(28 25 23 / 0.04); color: var(--dark); }
+
+.faq-cat.is-active {
+  background: rgb(228 87 46 / 0.08);
+  color: var(--dark);
+  font-weight: 700;
+}
+
+.faq-cat:focus-visible { outline: 2px solid var(--primary); outline-offset: 1px; }
+
+.faq-cat-marker {
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--primary);
+}
+
+.faq-cat-icon { display: flex; flex: none; color: var(--primary); opacity: 0.85; }
+.faq-cat-label { flex: 1; min-width: 0; }
+
+/* The count is the useful half of a filter: it says whether the filter is
+   worth clicking before you click it. */
+.faq-cat-count {
+  flex: none;
+  min-width: 22px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--bg-alt);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.faq-cat.is-active .faq-cat-count {
+  background: var(--primary);
+  color: #fff;
+}
+
+.faq-main { min-width: 0; }
+
+.faq-resultline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.faq-resultline strong { color: var(--dark); font-weight: 700; }
+
+.faq-reset {
+  padding: 4px 11px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: none;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: border-color var(--dur-base) var(--ease-out),
+              color var(--dur-base) var(--ease-out);
+}
+
+.faq-reset:hover { border-color: var(--primary); color: var(--primary); }
+
+.faq-list { display: grid; gap: 10px; }
+
+.faq-item {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--bg-white);
+  overflow: hidden;
+  transition: border-color var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out);
+}
+
+.faq-item:hover { border-color: var(--color-line-strong, #d6cec2); }
+
+.faq-item.is-open {
+  border-color: rgb(228 87 46 / 0.34);
+  box-shadow: 0 16px 32px -28px rgb(28 25 23 / 0.6);
+}
+
+.faq-q {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 16px;
+  border: 0;
+  background: none;
+  font-family: inherit;
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--dark);
+  text-align: left;
+  cursor: pointer;
+}
+
+.faq-q:focus-visible { outline: 2px solid var(--primary); outline-offset: -3px; }
+
+.faq-q-text { flex: 1; min-width: 0; }
+
+.faq-q mark {
+  padding: 0 2px;
+  border-radius: 3px;
+  background: rgb(228 87 46 / 0.2);
+  color: inherit;
+}
+
+.faq-chev {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: var(--bg-alt);
+  color: var(--text-muted);
+  transition: transform var(--dur-base) var(--ease-out),
+              background var(--dur-base) var(--ease-out),
+              color var(--dur-base) var(--ease-out);
+}
+
+.faq-item.is-open .faq-chev {
+  transform: rotate(180deg);
+  background: var(--primary);
+  color: #fff;
+}
+
+.faq-a-inner {
+  padding: 0 16px 16px 16px;
+}
+
+.faq-a-text {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.faq-a-text strong { color: var(--dark); font-weight: 700; }
+
+.faq-a-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border);
+}
+
+.faq-tag {
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--bg-alt);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.faq-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.faq-more svg { transition: transform var(--dur-base) var(--ease-out); }
+.faq-more:hover svg { transform: translateX(3px); }
+
+/* "Was this helpful" is the only signal a support team gets that an answer is
+   actually wrong. Worth the two buttons. */
+.faq-vote {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.faq-vote button {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: border-color var(--dur-base) var(--ease-out),
+              color var(--dur-base) var(--ease-out),
+              background var(--dur-base) var(--ease-out);
+}
+
+.faq-vote button:hover { border-color: var(--primary); color: var(--primary); }
+.faq-vote-done { color: var(--color-success, #1e7f4f); font-weight: 600; }
+
+.faq-empty {
+  padding: 34px 24px;
+  border: 1px dashed var(--color-line-strong, #d6cec2);
+  border-radius: 16px;
+  background: var(--bg-alt);
+  text-align: center;
+}
+
+.faq-empty h3 {
+  font-family: var(--font-heading);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--dark);
+  margin: 10px 0 6px;
+}
+
+.faq-empty p {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0 auto 16px;
+  max-width: 44ch;
+}
+
+.faq-empty-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--bg-white);
+  color: var(--primary);
+}
+
+/* Contact routes, so a page that failed to answer still ends somewhere. */
+.faq-help-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.faq-help-card {
+  display: block;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--bg-white);
+  text-decoration: none;
+  transition: border-color var(--dur-base) var(--ease-out),
+              transform var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out);
+}
+
+.faq-help-card:hover {
+  border-color: rgb(228 87 46 / 0.34);
+  transform: translateY(-3px);
+  box-shadow: 0 18px 34px -26px rgb(28 25 23 / 0.55);
+}
+
+.faq-help-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: rgb(228 87 46 / 0.1);
+  color: var(--primary);
+  margin-bottom: 12px;
+  transition: background var(--dur-base) var(--ease-out),
+              color var(--dur-base) var(--ease-out);
+}
+
+.faq-help-card:hover .faq-help-icon { background: var(--primary); color: #fff; }
+
+.faq-help-card h4 {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--dark);
+  margin: 0 0 5px;
+}
+
+.faq-help-card p {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-muted);
+  margin: 0 0 10px;
+}
+
+.faq-help-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+@media (max-width: 980px) {
+  .faq-layout { grid-template-columns: minmax(0, 1fr); }
+  .faq-cats {
+    position: static;
+    grid-auto-flow: column;
+    grid-auto-columns: max-content;
+    gap: 7px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    scrollbar-width: thin;
+  }
+  .faq-cats-title { display: none; }
+  .faq-cat {
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 7px 13px;
+    white-space: nowrap;
+  }
+  .faq-cat.is-active { border-color: var(--primary); }
+  .faq-cat-marker { display: none; }
+}
+
+@media (max-width: 760px) {
+  .faq-help-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ==========================================================================
+   GRIEVANCE REDRESSAL
+   ========================================================================== */
+.gr-hero {
+  position: relative;
+  padding: 22px 0 34px;
+  background:
+    radial-gradient(110% 130% at 88% -25%, rgb(228 87 46 / 0.11) 0%, transparent 58%),
+    linear-gradient(180deg, var(--bg-alt) 0%, var(--bg-white) 100%);
+  border-bottom: 1px solid var(--border);
+}
+
+.gr-hero-inner { max-width: 760px; }
+
+/* The two numbers that matter most to somebody with a problem, stated before
+   anything else on the page. */
+.gr-pledge {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gr-pledge-card {
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--bg-white);
+  box-shadow: 0 1px 2px -1px rgb(28 25 23 / 0.07);
+}
+
+.gr-pledge-val {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--primary);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.gr-pledge-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--dark);
+  margin: 6px 0 2px;
+}
+
+.gr-pledge-note {
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* ─── Four-step process, drawn as a chain ─── */
+.gr-steps {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.gr-step {
+  position: relative;
+  padding: 20px 18px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--bg-white);
+  transition: border-color var(--dur-base) var(--ease-out),
+              transform var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out);
+}
+
+.gr-step:hover {
+  border-color: rgb(228 87 46 / 0.34);
+  transform: translateY(-3px);
+  box-shadow: 0 20px 36px -28px rgb(28 25 23 / 0.55);
+}
+
+/* The connector between cards — drawn on the card, not the gap, so it never
+   collides with the grid gutter on a resize. */
+.gr-step::after {
+  content: '';
+  position: absolute;
+  top: 40px;
+  right: -16px;
+  width: 16px;
+  height: 1px;
+  background: var(--border);
+}
+
+.gr-step:last-child::after { display: none; }
+
+.gr-step-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.gr-step-n {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-line-strong, #d6cec2);
+  background: var(--bg-white);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  transition: background var(--dur-base) var(--ease-out),
+              border-color var(--dur-base) var(--ease-out),
+              color var(--dur-base) var(--ease-out);
+}
+
+.gr-step:hover .gr-step-n {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.gr-step-when {
+  padding: 3px 9px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.gr-step h3 {
+  font-family: var(--font-heading);
+  font-size: 15.5px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--dark);
+  margin: 0 0 6px;
+}
+
+.gr-step p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* ─── Escalation ladder ─── */
+.gr-ladder {
+  display: grid;
+  gap: 12px;
+}
+
+.gr-level {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 0.9fr);
+  gap: clamp(12px, 2vw, 24px);
+  align-items: center;
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--bg-white);
+  transition: border-color var(--dur-base) var(--ease-out),
+              background var(--dur-base) var(--ease-out);
+}
+
+.gr-level:hover { border-color: rgb(228 87 46 / 0.34); background: var(--bg-alt); }
+
+.gr-level-badge {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgb(228 87 46 / 0.1);
+  color: var(--primary);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.gr-level-name {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--dark);
+  margin: 0 0 3px;
+}
+
+.gr-level-role {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.gr-level-sla {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.gr-level-sla svg { color: var(--primary); flex: none; }
+
+.gr-level-contact {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--primary);
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.gr-level-contact:hover { text-decoration: underline; }
+
+/* ─── Evidence checklist ─── */
+.gr-check {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.gr-check li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-white);
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--text-muted);
+  transition: border-color var(--dur-base) var(--ease-out);
+}
+
+.gr-check li:hover { border-color: var(--color-line-strong, #d6cec2); }
+.gr-check li strong { display: block; color: var(--dark); font-weight: 700; margin-bottom: 2px; }
+
+.gr-check-mark {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  background: rgb(30 127 79 / 0.1);
+  color: var(--color-success, #1e7f4f);
+  margin-top: 1px;
+}
+
+/* ─── Rights band ─── */
+/* Same warm alternating band as .res-band on the resource pages. */
+.gr-rights {
+  padding: clamp(40px, 4vw, 56px) 0;
+  background: var(--bg-alt);
+  border-top: 1px solid var(--color-line);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.gr-rights-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.gr-right {
+  padding: 20px;
+  border: 1px solid var(--color-line);
+  border-radius: 14px;
+  background: var(--bg-white);
+  transition: border-color var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out);
+}
+
+.gr-right:hover {
+  border-color: rgb(228 87 46 / 0.35);
+  box-shadow: var(--shadow-md);
+}
+
+.gr-right-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: rgb(228 87 46 / 0.1);
+  color: var(--primary);
+  margin-bottom: 12px;
+}
+
+.gr-right h3 {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--dark);
+  margin: 0 0 6px;
+}
+
+.gr-right p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.gr-rights-note {
+  margin: 20px 0 0;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+/* ─── Ticket lookup ─── */
+.gr-track {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 6px 6px 6px 16px;
+  border: 1px solid var(--color-line-strong, #d6cec2);
+  border-radius: 999px;
+  background: var(--bg-white);
+  max-width: 460px;
+}
+
+.gr-track > svg { flex: none; color: var(--text-muted); }
+
+.gr-track input {
+  flex: 1;
+  min-width: 120px;
+  padding: 10px 0;
+  border: 0;
+  background: none;
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+  letter-spacing: 0.04em;
+  color: var(--dark);
+}
+
+.gr-track input:focus { outline: none; }
+.gr-track input::placeholder { font-family: var(--font-body); letter-spacing: 0; color: var(--color-ink-faint, #9c948c); }
+
+.gr-track button {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  white-space: nowrap;
+  padding: 9px 18px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--primary);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  transition: background var(--dur-base) var(--ease-out);
+}
+
+.gr-track button:hover { background: var(--primary-hover); }
+
+.gr-track-result {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--bg-alt);
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  max-width: 560px;
+}
+
+.gr-track-result svg { flex: none; margin-top: 2px; color: var(--color-steel, #2b4c7e); }
+.gr-track-result strong { color: var(--dark); font-weight: 700; }
+
+@media (max-width: 1000px) {
+  .gr-pledge { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gr-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gr-step:nth-child(2)::after { display: none; }
+  .gr-rights-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gr-level {
+    grid-template-columns: 44px minmax(0, 1fr);
+    row-gap: 10px;
+  }
+  .gr-level-sla,
+  .gr-level-contact { grid-column: 2; }
+}
+
+@media (max-width: 680px) {
+  .gr-steps { grid-template-columns: minmax(0, 1fr); }
+  .gr-step::after { display: none; }
+  .gr-check { grid-template-columns: minmax(0, 1fr); }
+  .gr-rights-grid { grid-template-columns: minmax(0, 1fr); }
+  .gr-pledge { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gr-step:hover,
+  .faq-help-card:hover { transform: none; }
+}

@@ -1,66 +1,300 @@
-import React, { useEffect } from 'react';
-import { ArrowLeft } from 'lucide-react';
+/* ---------------------------------------------------------------------------
+   Privacy Policy
+
+   The previous version was nine one-line paragraphs — true, but useless to
+   anyone actually trying to answer "what do they hold on me, for how long, and
+   how do I get it deleted?". This version answers those in the shape they are
+   asked: tables for the data inventory, retention schedule and recipients; a
+   rights section that says how to exercise each right and how long we take.
+
+   The SMS / mobile-information wording is reproduced verbatim from the prior
+   version. It is written to satisfy messaging-carrier programme review, so it
+   is quoted, not paraphrased.
+--------------------------------------------------------------------------- */
+import React from 'react';
+import {
+  ShieldCheck, Database, Target, MessageSquare, Share2,
+  Archive, Lock, UserCheck, Cookie, Globe, Mail
+} from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { LegalDoc } from '../components/LegalDoc';
 
-const PrivacyPolicy = () => {
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+const SECTIONS = [
+  {
+    id: 'scope',
+    title: 'Who we are and what this covers',
+    icon: ShieldCheck,
+    plain: 'This policy covers the FerroBid auction platform. It tells you what we collect, why, who sees it, and what you can ask us to do about it.',
+    blocks: [
+      { type: 'p', text: <>This Privacy Policy explains how FerroBid (“FerroBid”, “we”, “us”) collects, uses, shares and protects personal information when you visit our website, register an account, complete KYC verification, participate in auctions, or contact our support and grievance desks.</> },
+      { type: 'p', text: <>It applies to buyers, sellers, and the authorised representatives of both. It does not cover third-party websites we link to, or the internal policies of logistics, inspection and payment partners you may separately engage.</> },
+      {
+        type: 'kv',
+        items: [
+          { k: 'Data fiduciary', v: 'FerroBid — operator of the FerroBid auction platform.' },
+          { k: 'Grievance Officer', v: <>Ms. A. Iyer, Bengaluru — <a href="mailto:grievance@ferrobid.in">grievance@ferrobid.in</a></> },
+          { k: 'Privacy queries', v: <a href="mailto:privacy@ferrobid.in">privacy@ferrobid.in</a> },
+          { k: 'Scope', v: 'ferrobid.in, the FerroBid bidding application, and our support channels.' }
+        ]
+      },
+      {
+        type: 'callout',
+        tone: 'info',
+        title: 'Read this alongside the Terms',
+        text: <>Auction conduct, EMD handling, payment windows and settlement are governed by the <Link to="/terms">Terms &amp; Conditions</Link>. This policy covers only the handling of personal information.</>
+      }
+    ]
+  },
 
-  return (
-    <div className="container" style={{ padding: '40px 32px', maxWidth: '800px', margin: '0 auto' }}>
-      <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: 600, marginBottom: '32px', textDecoration: 'none' }}>
-        <ArrowLeft size={16} /> Back to Home
-      </Link>
-      <h1 style={{ fontSize: '32px', fontWeight: 800, marginBottom: '24px', color: 'var(--dark)' }}>Privacy Policy</h1>
-      
-      <div style={{ lineHeight: '1.7', color: '#6b6560', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-        <p>Your privacy is important to us. This privacy policy explains how we collect, use, and protect your personal information.</p>
+  {
+    id: 'data-we-collect',
+    title: 'The information we collect',
+    icon: Database,
+    plain: 'Mostly what you give us to trade: company identity documents for KYC, contact details, and a record of your bidding and payments. We also log technical data to keep the auction floor secure.',
+    blocks: [
+      { type: 'p', text: <>We collect only what an enterprise auction actually requires. Because both sides of a trade must be verifiable, the identity set is larger than a consumer site would need — and correspondingly, most of it is company information rather than personal.</> },
+      {
+        type: 'table',
+        head: ['Category', 'What it includes', 'Why we need it', 'Source'],
+        rows: [
+          ['Account & contact', 'Name, designation, work email, mobile number, company name, office address', 'To create your account, authenticate you, and send transactional notices', 'You'],
+          ['Enterprise KYC', 'GST registration, PAN, certificate of incorporation, authorised-signatory identity proof, bank account details for settlement', 'To verify that the entity bidding or selling is real, solvent and authorised', 'You'],
+          ['Auction activity', 'Lots viewed and watched, bids placed, EMD paid, lots won, auto-extension events', 'To run the auction, settle it, and produce an audit trail for both sides', 'Generated by use'],
+          ['Transactions', 'Invoices, sale confirmation letters, payment references, refunds, commission records', 'To settle trades and meet tax and accounting obligations', 'Generated by use'],
+          ['Support & grievance', 'Tickets, correspondence, call notes, evidence you attach to a complaint', 'To investigate and resolve the issue you raised', 'You'],
+          ['Technical & security', 'IP address, device and browser type, session timestamps, login events', 'To secure accounts, detect bid manipulation, and diagnose faults', 'Automatic']
+        ]
+      },
+      {
+        type: 'callout',
+        tone: 'good',
+        title: 'What we do not collect',
+        text: 'We do not ask for, and do not want, government identity numbers beyond those required for enterprise KYC, biometric data, precise device location, or any special-category personal data. Site inspection GPS tags relate to the material and the yard, not to you.'
+      }
+    ]
+  },
 
-        <div>
-          <h2 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--dark)', marginBottom: '8px' }}>Information We Collect</h2>
-          <p>We collect information that you provide directly to us, such as when you create an account, subscribe to our newsletter, or contact us. This information may include your name, email address, and any other details you provide.</p>
-        </div>
+  {
+    id: 'how-we-use',
+    title: 'How we use your information',
+    icon: Target,
+    plain: 'To run the platform, verify who is trading, settle money, meet our legal obligations, and keep the auction fair. Not to build advertising profiles.',
+    blocks: [
+      {
+        type: 'list',
+        items: [
+          <><strong>Operating the platform</strong> — creating and securing your account, showing you relevant lots, accepting bids, and closing auctions.</>,
+          <><strong>Verification</strong> — checking KYC submissions so that every counterparty on the floor has cleared the same bar. Most submissions are reviewed within 24–48 business hours.</>,
+          <><strong>Settlement</strong> — clearing EMD, issuing invoices and sale confirmation letters, reconciling payments, and processing refunds.</>,
+          <><strong>Communication</strong> — sending transactional notices about bids, auction lifecycle events, payments and account security.</>,
+          <><strong>Integrity and safety</strong> — detecting collusive bidding, account takeover, and misuse of the platform.</>,
+          <><strong>Legal and tax compliance</strong> — retaining invoices and transaction records, and responding to lawful requests from authorities.</>,
+          <><strong>Improving the service</strong> — understanding, in aggregate, which categories and features are used, so that we build the right things.</>
+        ]
+      },
+      {
+        type: 'callout',
+        tone: 'good',
+        title: 'We do not sell your data',
+        text: 'We do not sell, rent, or trade personal information. We do not run third-party advertising on the platform, and we do not share your contact details with other bidders — counterparty identity is disclosed only after a lot is settled, and only to the extent needed to complete it.'
+      }
+    ]
+  },
 
-        <div>
-          <h2 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--dark)', marginBottom: '8px' }}>How We Use Your Information</h2>
-          <p>We use the information we collect to provide, maintain, and improve our services, to communicate with you, and to protect our users.</p>
-        </div>
+  {
+    id: 'sms',
+    title: 'SMS and mobile information',
+    icon: MessageSquare,
+    plain: 'Your mobile number is used for transactional alerts and login codes only. It is never used for marketing and never shared for marketing.',
+    blocks: [
+      { type: 'p', text: <>If you provide a mobile phone number and consent to receive SMS messages, we use that number solely to send transactional notifications related to your account and activity on the FerroBid platform — including bid alerts, auction lifecycle updates, winning bid confirmations, payment notifications, and one-time verification codes for login and security purposes. We do not use your mobile number for marketing.</> },
+      { type: 'p', text: <>Mobile information will not be shared with third parties or affiliates for marketing or promotional purposes. Information shared with subprocessors solely to deliver the SMS messages you have consented to receive is not subject to this restriction.</> },
+      { type: 'p', text: <>For SMS program details — including message frequency, opt-out instructions, and carrier disclaimers — see our <Link to="/terms">Terms &amp; Conditions</Link>.</> },
+      {
+        type: 'callout',
+        tone: 'info',
+        title: 'Stopping SMS',
+        text: 'Reply STOP to any message to unsubscribe from all transactional SMS, or remove your number in account settings. Opting out of SMS does not opt you out of email notices, which may still carry payment deadlines.'
+      }
+    ]
+  },
 
-        <div>
-          <h2 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--dark)', marginBottom: '8px' }}>SMS / Text Message Communications</h2>
-          <p>If you provide a mobile phone number and consent to receive SMS messages, we use that number solely to send transactional notifications related to your account and activity on the FerroBid platform — including bid alerts, auction lifecycle updates, winning bid confirmations, payment notifications, and one-time verification codes for login and security purposes. We do not use your mobile number for marketing.</p>
-          <p style={{ marginTop: '12px' }}>Mobile information will not be shared with third parties or affiliates for marketing or promotional purposes. Information shared with subprocessors solely to deliver the SMS messages you have consented to receive is not subject to this restriction.</p>
-          <p style={{ marginTop: '12px' }}>For SMS program details — including message frequency, opt-out instructions, and carrier disclaimers — see our Terms & Conditions.</p>
-        </div>
+  {
+    id: 'sharing',
+    title: 'Who we share information with',
+    icon: Share2,
+    plain: 'Only the parties needed to complete a trade — payment, logistics, inspection and verification partners — plus authorities where the law requires it. Each is bound to use it only for that purpose.',
+    blocks: [
+      {
+        type: 'table',
+        head: ['Recipient', 'What they receive', 'Why', 'Safeguard'],
+        rows: [
+          ['Payment and escrow partners', 'Name, company, bank/UPI reference, transaction amount', 'To collect EMD, hold escrow on high-value lots, and settle payouts', 'Contractual; regulated payment intermediaries'],
+          ['Logistics partners', 'Delivery contact, lifting address, lot details', 'Only when you choose FerroBid-arranged transport', 'Shared per shipment, not in bulk'],
+          ['Inspection and verification agencies', 'Seller and site details for the lot under inspection', 'To carry out physical verification before a lot is listed', 'Bound to purpose limitation'],
+          ['Counterparty in a settled trade', 'Company name and the contact needed to complete handover', 'To lift material and raise correct tax documents', 'Disclosed only after settlement'],
+          ['SMS and email providers', 'Mobile number or email, message content', 'To deliver the notifications you consented to', 'Subprocessors; no marketing use'],
+          ['Professional advisers and auditors', 'Records under review', 'Audit, accounting and legal advice', 'Confidentiality obligations'],
+          ['Government and law enforcement', 'Records specified in the request', 'Where disclosure is required by law or valid legal process', 'Only on lawful, documented request']
+        ]
+      },
+      { type: 'p', text: <>If FerroBid is involved in a merger, acquisition or transfer of assets, personal information may transfer as part of that transaction. We will notify affected users before their information becomes subject to a materially different policy.</> }
+    ]
+  },
 
-        <div>
-          <h2 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--dark)', marginBottom: '8px' }}>Sharing Your Information</h2>
-          <p>We do not share your personal information with third parties except as necessary to provide our services or comply with the law.</p>
-        </div>
+  {
+    id: 'retention',
+    title: 'How long we keep it',
+    icon: Archive,
+    plain: 'Financial and KYC records are kept for the statutory period because tax and audit law requires it. Everything else is kept only while it is useful, then deleted.',
+    blocks: [
+      { type: 'p', text: <>Deleting your account does not delete records we are legally obliged to retain. Where a retention period is fixed by law, we keep the record for that period and no longer, and we restrict access to it in the meantime.</> },
+      {
+        type: 'table',
+        head: ['Record', 'Retained for', 'Reason'],
+        rows: [
+          ['Invoices, sale orders and settlement records', '8 years from the end of the financial year', 'Tax and company-law record-keeping obligations'],
+          ['Enterprise KYC documents', 'Account lifetime + 5 years', 'To evidence that verification was carried out at the time of trade'],
+          ['Auction and bid logs', '5 years', 'Audit trail for the conduct of each auction'],
+          ['Grievance and support records', '3 years from closure', 'To evidence redressal and handle any escalation'],
+          ['Marketing consent records', 'Until withdrawn + 2 years', 'To evidence that consent existed when a message was sent'],
+          ['Technical and security logs', '12 months', 'Incident investigation'],
+          ['Closed account profile data', 'Deleted within 90 days of closure', 'No longer required once obligations above are separated out']
+        ]
+      }
+    ]
+  },
 
-        <div>
-          <h2 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--dark)', marginBottom: '8px' }}>Security</h2>
-          <p>We take reasonable measures to protect your personal information from unauthorized access, use, or disclosure.</p>
-        </div>
+  {
+    id: 'security',
+    title: 'How we protect it',
+    icon: Lock,
+    plain: 'Encryption in transit and at rest, least-privilege access, and separation of duties — no single role can both approve a lot and settle the money for it.',
+    blocks: [
+      {
+        type: 'list',
+        items: [
+          <><strong>Encryption</strong> — traffic is served over TLS, and KYC documents and settlement records are encrypted at rest.</>,
+          <><strong>Least privilege</strong> — access is granted by role. A Site Officer sees inspection records; a Finance Officer sees ledgers; neither sees the other's.</>,
+          <><strong>Separation of duties</strong> — the role that approves a lot for publication is not the role that settles payment on it. This is the same control described in our governance model.</>,
+          <><strong>Audit logging</strong> — administrative access to customer records is logged and reviewable.</>,
+          <><strong>Payment isolation</strong> — we do not store full card numbers. High-value settlement runs through escrow, never seller-to-buyer directly.</>
+        ]
+      },
+      {
+        type: 'callout',
+        tone: 'warn',
+        title: 'No system is perfect',
+        text: <>These measures reduce risk; they cannot eliminate it. If we become aware of a breach affecting your personal information, we will notify you and the relevant authority without undue delay. Report a suspected compromise to <a href="mailto:security@ferrobid.in">security@ferrobid.in</a>.</>
+      }
+    ]
+  },
 
-        <div>
-          <h2 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--dark)', marginBottom: '8px' }}>Your Choices</h2>
-          <p>You may update or delete your account information at any time by contacting us. You may also opt out of receiving promotional communications from us.</p>
-        </div>
+  {
+    id: 'your-rights',
+    title: 'Your rights and how to use them',
+    icon: UserCheck,
+    plain: 'You can ask what we hold, correct it, have it erased, withdraw consent, nominate someone to act for you, and complain. Write to the privacy desk and we respond within 30 days.',
+    blocks: [
+      { type: 'p', text: <>These rights reflect India's Digital Personal Data Protection Act, 2023 and the information-security rules made under the Information Technology Act, 2000. Where a right conflicts with a statutory retention duty, we will tell you which record we must keep and why.</> },
+      {
+        type: 'table',
+        head: ['Right', 'What you can ask for', 'How to exercise it'],
+        rows: [
+          ['Access', 'A summary of the personal data we hold about you and who we shared it with', 'Email the privacy desk from your registered address'],
+          ['Correction', 'Correction of inaccurate data, or completion of incomplete data', 'Update in account settings, or email for KYC-linked fields'],
+          ['Erasure', 'Deletion of data we no longer need for a stated purpose', 'Email the privacy desk; we confirm what must be retained'],
+          ['Withdraw consent', 'To stop processing that relies on your consent, such as SMS', 'Reply STOP, change notification settings, or email us'],
+          ['Nomination', 'To nominate a person to exercise your rights if you cannot', 'Email the privacy desk with the nominee’s details'],
+          ['Grievance', 'Escalation if you are not satisfied with our response', <>Use <Link to="/grievance">Grievance Redressal</Link></>]
+        ]
+      },
+      {
+        type: 'callout',
+        tone: 'good',
+        title: 'Our response commitment',
+        text: <>We acknowledge a rights request within <strong>72 hours</strong> and respond substantively within <strong>30 days</strong>. Requests are free; we may ask you to verify your identity before acting, and we may decline manifestly excessive or repetitive requests, with reasons.</>
+      }
+    ]
+  },
 
-        <div>
-          <h2 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--dark)', marginBottom: '8px' }}>Changes to This Policy</h2>
-          <p>We may update this privacy policy from time to time. We will notify you of any changes by posting the new policy on our website.</p>
-        </div>
+  {
+    id: 'cookies',
+    title: 'Cookies and tracking',
+    icon: Cookie,
+    plain: 'We use the cookies needed to keep you logged in and the site working, plus basic analytics. No advertising trackers.',
+    blocks: [
+      {
+        type: 'table',
+        head: ['Type', 'Purpose', 'Can you turn it off?'],
+        rows: [
+          ['Strictly necessary', 'Session and authentication, security, load balancing, remembering your consent choices', 'No — the platform cannot function without these'],
+          ['Preference', 'Remembering filters, watchlists and display settings', 'Yes, via your browser'],
+          ['Analytics', 'Aggregate page and feature usage so we know what to improve', 'Yes, via your browser or Do Not Track'],
+          ['Advertising', 'Not used', 'Not applicable — we run none']
+        ]
+      },
+      { type: 'p', text: <>Most browsers let you refuse or delete cookies. Blocking strictly necessary cookies will prevent you from logging in or bidding.</> }
+    ]
+  },
 
-        <div>
-          <h2 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--dark)', marginBottom: '8px' }}>Contact Us</h2>
-          <p>If you have any questions about this privacy policy, please contact us.</p>
-        </div>
-      </div>
-    </div>
-  );
-};
+  {
+    id: 'transfers-children-changes',
+    title: 'Transfers, eligibility and changes',
+    icon: Globe,
+    plain: 'The platform is for registered businesses in India. Data is processed in India; if a provider processes it elsewhere, it stays under equivalent protection. We tell you before material policy changes take effect.',
+    blocks: [
+      { type: 'p', text: <><strong>Where data is processed.</strong> Personal information is processed and stored in India. Where a subprocessor operates outside India — for example a messaging gateway — we transfer only what that service needs, under contractual terms requiring equivalent protection, and only to jurisdictions not restricted by the Central Government.</> },
+      { type: 'p', text: <><strong>Eligibility.</strong> FerroBid is a business-to-business platform. Accounts are held by registered entities and operated by authorised representatives aged 18 or over. We do not knowingly collect information from children. If you believe a child's information has reached us, write to the privacy desk and we will delete it.</> },
+      { type: 'p', text: <><strong>Changes to this policy.</strong> We may update this policy. The version number and effective date at the top of this page always reflect the current text. For material changes we give notice by email or in-platform at least <strong>14 days</strong> before they take effect, so you can review them or close your account.</> },
+      {
+        type: 'callout',
+        tone: 'info',
+        title: 'Version history',
+        text: 'Superseded versions are retained and available on request from the privacy desk — useful if you need to know which terms applied to a trade completed in the past.'
+      }
+    ]
+  },
+
+  {
+    id: 'contact',
+    title: 'Contact us',
+    icon: Mail,
+    plain: 'Privacy questions go to the privacy desk. If we do not resolve it, the Grievance Officer is your next step.',
+    blocks: [
+      {
+        type: 'kv',
+        items: [
+          { k: 'Privacy queries & rights requests', v: <a href="mailto:privacy@ferrobid.in">privacy@ferrobid.in</a> },
+          { k: 'Security incidents', v: <a href="mailto:security@ferrobid.in">security@ferrobid.in</a> },
+          { k: 'Grievance Officer', v: <>Ms. A. Iyer, FerroBid, Bengaluru — <a href="mailto:grievance@ferrobid.in">grievance@ferrobid.in</a></> },
+          { k: 'General support', v: <>Mon–Sat, 9 AM–8 PM IST — <a href="mailto:support@ferrobid.in">support@ferrobid.in</a></> }
+        ]
+      },
+      { type: 'p', text: <>Include your registered email and, where relevant, the lot or transaction ID so we can locate the records quickly. If you are dissatisfied with our handling of a privacy matter, you may escalate through <Link to="/grievance">Grievance Redressal</Link> or to the relevant data protection authority.</> }
+    ]
+  }
+];
+
+const PrivacyPolicy = () => (
+  <LegalDoc
+    eyebrow="Privacy Policy"
+    eyebrowIcon={ShieldCheck}
+    title="What we hold, why we hold it, and how to get it back."
+    lead="FerroBid runs on verified identity — which means we hold real documents about real businesses. This policy sets out exactly what those are, who else ever sees them, how long we keep them, and the requests you can make of us."
+    meta={{
+      version: 'v2.0',
+      effective: '1 August 2026',
+      updated: '1 August 2026',
+      readingTime: '9 min'
+    }}
+    sections={SECTIONS}
+    related={[
+      { to: '/terms', label: 'Terms & Conditions' },
+      { to: '/grievance', label: 'Grievance Redressal' },
+      { to: '/faqs', label: 'Help & FAQs' }
+    ]}
+  />
+);
 
 export default PrivacyPolicy;

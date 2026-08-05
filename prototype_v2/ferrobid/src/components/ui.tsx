@@ -3,6 +3,7 @@
    cohesive. Flat surfaces, hairline borders, 16px radius, mono numerals.
 --------------------------------------------------------------------------- */
 import { useEffect, useMemo, useRef, useState, type ReactNode, type ButtonHTMLAttributes, type InputHTMLAttributes, type SelectHTMLAttributes, type TextareaHTMLAttributes } from 'react'
+import { Link } from 'react-router-dom'
 import { X, Loader2, Lock, Inbox, CheckCircle2, Minus, Plus } from 'lucide-react'
 import { useStore } from '../store/store'
 import { countdown } from '../lib/format'
@@ -202,18 +203,23 @@ export function AmountStepper({ minNext, increment, value, onChange, size = 'md'
 }
 
 /* --------------------------------- Stat ----------------------------------- */
-export function Stat({ label, value, sub, tone, className }: {
+export function Stat({ label, value, sub, tone, className, to }: {
   label: ReactNode; value: ReactNode; sub?: ReactNode
   tone?: 'ember' | 'steel' | 'success' | 'warning' | 'danger'; className?: string
+  /** When set, the whole tile becomes a link to this route. */
+  to?: string
 }) {
   const toneCls = tone ? { ember: 'text-ember', steel: 'text-steel', success: 'text-success', warning: 'text-warning', danger: 'text-danger' }[tone] : 'text-ink'
-  return (
-    <div className={cx('card p-4', className)}>
+  const inner = (
+    <>
       <div className="text-xs font-semibold uppercase tracking-wider text-ink-faint">{label}</div>
       <div className={cx('num text-2xl font-bold mt-1', toneCls)}>{value}</div>
       {sub && <div className="text-xs text-ink-muted mt-1">{sub}</div>}
-    </div>
+    </>
   )
+  return to
+    ? <Link to={to} className={cx('card card-hover p-4 block', className)}>{inner}</Link>
+    : <div className={cx('card p-4', className)}>{inner}</div>
 }
 
 /* -------------------------------- Fields ---------------------------------- */

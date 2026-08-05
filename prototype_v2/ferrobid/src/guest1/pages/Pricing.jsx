@@ -228,7 +228,10 @@ const Pricing = () => {
       {/* Add-ons Section */}
       <section className="addons-section">
         <div className="container">
-          <h2 className="addons-title">Improve your plan with add-ons</h2>
+          <div className="sec-head is-center">
+            <p className="sec-eyebrow">Add-ons</p>
+            <h2 className="sec-title">Improve your plan with add-ons</h2>
+          </div>
           
           <div className="addons-grid">
             <div className="addon-card">
@@ -334,7 +337,7 @@ const Pricing = () => {
             <button className="btn btn-primary" style={{borderRadius: '24px', padding: '12px 32px'}}>
               Get A Free Demo <ArrowRight size={16} className="ml-2" />
             </button>
-            <button className="btn btn-outline" style={{borderRadius: '24px', padding: '12px 32px', background: 'transparent', borderColor: 'rgba(255,255,255,0.3)', color: 'white'}}>
+            <button className="btn btn-outline" style={{borderRadius: '24px', padding: '12px 32px'}}>
               Talk to Sales
             </button>
           </div>

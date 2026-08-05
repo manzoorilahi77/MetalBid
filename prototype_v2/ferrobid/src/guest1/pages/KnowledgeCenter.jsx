@@ -1,150 +1,524 @@
+/* ---------------------------------------------------------------------------
+   Knowledge Center
+
+   The previous version was a shell: four "documentation" cards, four guides,
+   four dead downloads and three video tutorials — and every single link went
+   to /faqs. Nothing on it could be read.
+
+   The rebuild gives the page the one job nothing else on the site does:
+   reference material. The grade table is the centrepiece, because "HMS 80:20"
+   and "millberry" are the vocabulary of every lot on the marketplace and a
+   first-time buyer has no way to decode them. Grades, categories and examples
+   are taken from the live marketplace inventory, so what a reader learns here
+   is what they will actually meet on the floor.
+--------------------------------------------------------------------------- */
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion, useReducedMotion } from 'framer-motion';
 import {
-  BookOpen, Search, FileText, GraduationCap, Download, PlayCircle,
-  Gavel, ShieldCheck, Wallet, Truck, ArrowRight, Star,
+  BookOpen, Search, X, ChevronRight, SearchX, Layers, ClipboardList,
+  Gavel, ScrollText, FileCheck, Truck, BadgeCheck, ShieldAlert,
+  Scale, FlaskConical, Ruler, HelpCircle
 } from 'lucide-react';
-import { PageHero, SectionHead, RevealGrid, Reveal, CTABand } from '../components/PageShell';
+import '../styles/enterprise.css';
+import '../styles/resources.css';
 
-const DOCS = [
-  { icon: Gavel, title: 'Auction Rules & Formats', desc: 'Forward, reverse and sealed-bid auction mechanics explained.' },
-  { icon: ShieldCheck, title: 'KYC & Onboarding', desc: 'Document checklists and verification workflows for buyers and sellers.' },
-  { icon: Wallet, title: 'Payments & Settlement', desc: 'EMD, escrow, invoicing and refund policies in detail.' },
-  { icon: Truck, title: 'Logistics & Lifting', desc: 'Delivery options, timelines and pan-India logistics support.' },
+/* ─── Grade reference ──────────────────────────────────────────────────────
+   Categories match the marketplace's own taxonomy. "Check before you bid" is
+   the column that earns the table its place: it turns a definition into
+   something a buyer can act on at inspection. */
+const GRADE_CATS = [
+  { id: 'all', label: 'All grades' },
+  { id: 'ferrous', label: 'Ferrous' },
+  { id: 'nonferrous', label: 'Non-ferrous' },
+  { id: 'stainless', label: 'Stainless' },
+  { id: 'minor', label: 'Minor metals' }
 ];
 
-const GUIDES = [
-  { title: 'Getting started as a buyer', tag: 'Buyer', read: '8 min' },
-  { title: 'Listing your first lot as a seller', tag: 'Seller', read: '10 min' },
-  { title: 'Winning strategies for live auctions', tag: 'Buyer', read: '6 min' },
-  { title: 'Preparing inspection-ready documentation', tag: 'Seller', read: '7 min' },
+const GRADES = [
+  {
+    cat: 'ferrous', name: 'HMS 1', full: 'Heavy Melting Steel, Grade 1',
+    what: 'Clean wrought iron and steel scrap, generally 6 mm and thicker, cut to charging size. Free of alloy steel, galvanised and coated material.',
+    check: 'Section thickness, absence of coated or alloy pieces, and that dimensions suit your furnace charge.'
+  },
+  {
+    cat: 'ferrous', name: 'HMS 80:20', full: 'Blended melting charge',
+    what: 'A blend of 80% HMS 1 to 20% HMS 2 — the standard melting mix, and the most widely quoted ferrous grade in the Indian market.',
+    check: 'The declared blend ratio, and whether the lot has been prepared or is unsorted as-received.'
+  },
+  {
+    cat: 'ferrous', name: 'CR coil secondary', full: 'Cold-rolled coil, secondary stock',
+    what: 'Cold-rolled coil that did not meet prime specification — off-gauge, edge damage, or surface defects. Usually sold coil-by-coil rather than by lot weight.',
+    check: 'Coil-wise weight list, mill test certificate where available, and the specific defect called out in the inspection report.'
+  },
+  {
+    cat: 'ferrous', name: 'MS plate offcuts', full: 'Mild steel plate remnants',
+    what: 'Plate remnants from cutting and fabrication. Known chemistry, low contamination and high melting yield, which is why it prices above unsorted scrap.',
+    check: 'Whether pieces are fresh (unrusted) and the size distribution — very small offcuts handle differently.'
+  },
+  {
+    cat: 'nonferrous', name: 'Mixed aluminium extrusion', full: '6xxx series profile scrap',
+    what: 'Extruded aluminium profile, typically 6xxx series, from fabrication and window/door manufacture.',
+    check: 'How much paint, anodising, thermal break or rubber gasket remains attached — each reduces recovered metal.'
+  },
+  {
+    cat: 'nonferrous', name: 'Copper millberry', full: 'Bare bright copper wire',
+    what: 'Bare, uncoated, unalloyed copper wire of 99.9% purity — the highest-value copper scrap grade.',
+    check: 'That the wire is genuinely bare and bright, with no tinning, no insulation residue and no burnt material.'
+  },
+  {
+    cat: 'nonferrous', name: 'Aluminium ingot ADC-12', full: 'Aluminium die-casting alloy',
+    what: 'A remelted die-casting alloy (aluminium–silicon–copper), not scrap. Supplied as ingot with a declared chemistry.',
+    check: 'The accompanying chemistry report — ADC-12 is bought on specification, not on appearance.'
+  },
+  {
+    cat: 'nonferrous', name: 'Brass borings & turnings', full: 'Brass machining swarf',
+    what: 'Swarf generated by machining brass components. Fine, dense and prone to carrying process fluids.',
+    check: 'Free oil and moisture content, and ferrous contamination from tooling — both are deducted at settlement.'
+  },
+  {
+    cat: 'stainless', name: 'SS 304 scrap', full: 'Austenitic stainless steel, 18/8',
+    what: 'The most common austenitic stainless grade — nominally 18% chromium, 8% nickel. Nickel content is what drives its value.',
+    check: 'A spectro reading. Visual grading cannot separate 304 from 202 or 201, and the price difference is substantial.'
+  },
+  {
+    cat: 'minor', name: 'Zinc top dross', full: 'Galvanising kettle skimmings',
+    what: 'Skimmings taken from the surface of a galvanising kettle, typically above 90% zinc.',
+    check: 'Declared zinc assay and how much entrained iron the dross carries.'
+  },
+  {
+    cat: 'minor', name: 'Lead battery scrap (RSDL)', full: 'Rails, spent, drained lead-acid batteries',
+    what: 'Used lead-acid batteries, drained of electrolyte. Recovered lead is the value; the plastic casing and residues are not.',
+    check: 'That you hold a valid recycler authorisation — this is regulated hazardous waste and cannot be lifted without one.'
+  }
 ];
 
-const DOWNLOADS = [
-  { title: 'Buyer onboarding checklist (PDF)', size: '240 KB' },
-  { title: 'Seller lot submission template (XLSX)', size: '85 KB' },
-  { title: 'EMD & settlement policy (PDF)', size: '310 KB' },
-  { title: 'Platform terms summary (PDF)', size: '190 KB' },
+/* ─── Document checklists ─────────────────────────────────────────────────── */
+const CHECKLISTS = [
+  {
+    id: 'buyer', icon: BadgeCheck, title: 'Buyer registration',
+    when: 'Before your first bid · cleared in 24–48 business hours',
+    items: [
+      'GST registration certificate',
+      'PAN of the entity',
+      'Certificate of incorporation or equivalent constitution document',
+      'Authorised-signatory identity proof',
+      'Bank account details for EMD refunds'
+    ]
+  },
+  {
+    id: 'seller', icon: FileCheck, title: 'Seller onboarding',
+    when: 'Before an auction request is accepted',
+    items: [
+      'Everything in the buyer list, plus:',
+      'Proof of title or ownership of the material',
+      'Yard address and site contact for the inspection visit',
+      'Any applicable pollution-control or hazardous-material authorisation',
+      'Bank account for settlement — payouts go only to the verified account'
+    ]
+  },
+  {
+    id: 'lifting', icon: Truck, title: 'Lifting day',
+    when: 'Carry these to the seller’s gate',
+    items: [
+      'Delivery order — issued only after your payment is reconciled',
+      'E-way bill, where the consignment value requires one',
+      'Transporter and driver documentation',
+      'Authorisation letter if a third party is lifting on your behalf',
+      'Your own weighbridge slip copy, for the return leg'
+    ]
+  }
 ];
 
-const TUTORIALS = [
-  { title: 'Placing your first bid', len: '3:20' },
-  { title: 'Completing KYC verification', len: '4:45' },
-  { title: 'Tracking a won lot to delivery', len: '5:10' },
+/* ─── Auction formats ─────────────────────────────────────────────────────── */
+const FORMATS = [
+  {
+    icon: Gavel, name: 'Forward auction',
+    line: 'Price ascends. Highest bid wins.',
+    body: 'The default format when a seller is disposing of material. Bidders compete upward and the leading bid at close takes the lot, provided reserve is met.',
+    when: 'Used for almost every scrap and asset lot on the platform.'
+  },
+  {
+    icon: Scale, name: 'Reverse auction',
+    line: 'Price descends. Lowest bid wins.',
+    body: 'Used when the buyer is procuring rather than disposing — suppliers compete downward to win the supply contract.',
+    when: 'Used for procurement mandates, not for scrap disposal.'
+  },
+  {
+    icon: ScrollText, name: 'Sealed bid',
+    line: 'One bid each. Opened together.',
+    body: 'Each bidder submits a single confidential offer. Nothing is visible during the window; all bids are opened at close and the best one wins.',
+    when: 'Used where the seller does not want live price discovery visible to the market.'
+  }
+];
+
+/* ─── Glossary ────────────────────────────────────────────────────────────── */
+const GLOSSARY = [
+  { t: 'EMD', abbr: 'Earnest Money Deposit', d: 'A refundable per-lot deposit that unlocks bidding. Adjusted against the price if you win, refunded automatically if you do not.' },
+  { t: 'Reserve price', d: 'The minimum the seller will accept. The figure stays confidential; the lot only indicates whether it has been met.' },
+  { t: 'Auto-extension', d: 'A late bid pushes the closing time out, repeatedly if bids keep arriving. It stops last-second sniping so lots close on price.' },
+  { t: 'Lifting', d: 'Physical collection of won material from the seller’s yard, inside the window on your sale confirmation letter.' },
+  { t: 'Delivery order', abbr: 'DO', d: 'The document that authorises the seller to release material to you. Issued only after payment is reconciled.' },
+  { t: 'Demurrage', d: 'A charge levied by the seller when material is left beyond the agreed lifting window and occupies yard space.' },
+  { t: 'Tare weight', d: 'The empty weight of the vehicle. Net material weight is gross weight minus tare, taken at the nominated weighbridge.' },
+  { t: 'Yield', d: 'The proportion of a lot that survives melting as usable metal. Contamination, coatings and moisture all reduce it.' },
+  { t: 'Swarf', d: 'Fine metal waste from machining — borings, turnings and millings. Dense, and prone to carrying oil and moisture.' },
+  { t: 'Dross', d: 'Oxide and impurity skimmings from the surface of a molten metal bath. Sold on assay rather than appearance.' },
+  { t: 'Millberry', d: 'Trade name for bare bright copper wire of 99.9% purity — the top copper scrap grade.' },
+  { t: 'HMS', abbr: 'Heavy Melting Steel', d: 'The standard ferrous melting grades. HMS 1 is the cleaner, thicker cut; HMS 2 admits thinner and lightly coated material.' },
+  { t: 'RSDL', abbr: 'Rails, Spent, Drained Lead', d: 'Drained lead-acid battery scrap. Regulated hazardous waste — an authorised recycler registration is required to lift it.' },
+  { t: 'Spectro', d: 'Spectrometric analysis used to confirm alloy composition. The only reliable way to separate stainless grades.' },
+  { t: 'E-way bill', d: 'The electronic transport document required under GST for consignments above the prescribed value threshold.' },
+  { t: 'ITC', abbr: 'Input Tax Credit', d: 'Credit for GST paid on a purchase, set off against your output liability. Depends on your own registration and use of the material.' },
+  { t: 'TCS', abbr: 'Tax Collected at Source', d: 'Tax collected by the seller at the point of sale in prescribed cases. Reflected in your settlement working where it applies.' },
+  { t: 'LME', abbr: 'London Metal Exchange', d: 'The global benchmark exchange for non-ferrous metals. Indian secondary pricing tracks it with a local premium or discount.' }
 ];
 
 export const KnowledgeCenter = () => {
+  const reduceMotion = useReducedMotion();
   const [query, setQuery] = useState('');
-  const docs = useMemo(
-    () => (query.trim() ? DOCS.filter((d) => (d.title + d.desc).toLowerCase().includes(query.toLowerCase())) : DOCS),
-    [query]
-  );
+  const [cat, setCat] = useState('all');
+
+  const needle = query.trim().toLowerCase();
+
+  const grades = useMemo(() => GRADES.filter(g => {
+    if (cat !== 'all' && g.cat !== cat) return false;
+    if (!needle) return true;
+    return `${g.name} ${g.full} ${g.what} ${g.check}`.toLowerCase().includes(needle);
+  }), [cat, needle]);
+
+  const glossary = useMemo(() => (
+    needle
+      ? GLOSSARY.filter(g => `${g.t} ${g.abbr || ''} ${g.d}`.toLowerCase().includes(needle))
+      : GLOSSARY
+  ), [needle]);
+
+  const counts = useMemo(() => {
+    const map = { all: GRADES.length };
+    for (const g of GRADES) map[g.cat] = (map[g.cat] || 0) + 1;
+    return map;
+  }, []);
+
+  const reveal = reduceMotion ? {} : {
+    initial: { y: 18 },
+    whileInView: { y: 0 },
+    viewport: { once: true, amount: 0.1 },
+    transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] }
+  };
+
+  const stagger = i => (reduceMotion ? {} : {
+    initial: { y: 20 },
+    whileInView: { y: 0 },
+    viewport: { once: true, amount: 0.15 },
+    transition: { duration: 0.5, delay: Math.min(i, 4) * 0.07, ease: [0.16, 1, 0.3, 1] }
+  });
 
   return (
-    <div className="ent-page">
-      <PageHero
-        eyebrow="Knowledge Center"
-        eyebrowIcon={BookOpen}
-        title={<>Everything you need to <span className="accent">trade with confidence</span></>}
-        subtitle="Documentation, step-by-step guides, downloadable templates and video tutorials for buyers and sellers."
-        breadcrumb={[{ label: 'Resources' }, { label: 'Knowledge Center' }]}
-      />
-
-      {/* Search + documentation */}
-      <section className="ent-section">
+    <div className="ent-page res-page">
+      {/* ─── Hero ─── */}
+      <header className="res-hero">
         <div className="container">
-          <div className="ent-search" style={{ margin: '0 auto 34px' }}>
-            <Search size={18} />
-            <input type="text" placeholder="Search documentation, guides and downloads…" value={query} onChange={(e) => setQuery(e.target.value)} aria-label="Search the knowledge center" />
-          </div>
+          <nav className="ent-breadcrumb" aria-label="Breadcrumb">
+            <Link to="/">Home</Link>
+            <ChevronRight size={13} aria-hidden="true" />
+            <span>Resources</span>
+            <ChevronRight size={13} aria-hidden="true" />
+            <span className="crumb-current" aria-current="page">Knowledge Center</span>
+          </nav>
 
-          <SectionHead eyebrow="Documentation" title="Browse the docs" />
-          <RevealGrid className="ent-grid cols-4">
-            {docs.map((d) => {
-              const Icon = d.icon;
-              return (
-                <Reveal key={d.title}>
-                  <Link to="/faqs" className="ent-card" style={{ display: 'block', textDecoration: 'none' }}>
-                    <div className="ent-card-icon"><Icon size={22} /></div>
-                    <h3>{d.title}</h3>
-                    <p>{d.desc}</p>
-                  </Link>
-                </Reveal>
-              );
-            })}
-          </RevealGrid>
-        </div>
-      </section>
+          <div className="res-hero-inner">
+            <p className="ent-hero-eyebrow"><BookOpen size={13} aria-hidden="true" /> Knowledge Center</p>
+            <h1 className="res-hero-title">Learn the material before you bid on it.</h1>
+            <p className="res-hero-lead">
+              Every lot on the marketplace is described in trade vocabulary — HMS 80:20, millberry,
+              ADC-12, RSDL. This is the reference that decodes it: what each grade actually is, what
+              to check at inspection, and which documents you need at each stage.
+            </p>
 
-      {/* Guides + downloads */}
-      <section className="ent-section alt">
-        <div className="container">
-          <div className="ent-split">
-            <div>
-              <SectionHead eyebrow="Guides" title="Step-by-step guides" />
-              <div className="ent-steps">
-                {GUIDES.map((g) => (
-                  <Link key={g.title} to="/faqs" className="ent-job" style={{ textDecoration: 'none' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                      <div className="ent-card-icon" style={{ margin: 0, width: '38px', height: '38px' }}><GraduationCap size={16} /></div>
-                      <div>
-                        <h4 style={{ margin: 0 }}>{g.title}</h4>
-                        <div className="ent-job-meta" style={{ marginTop: '4px' }}><span className="ent-tag">{g.tag}</span><span>{g.read} read</span></div>
-                      </div>
-                    </div>
-                    <ArrowRight size={16} style={{ color: 'var(--primary)' }} />
-                  </Link>
-                ))}
-              </div>
+            <div className="res-search">
+              <Search size={18} aria-hidden="true" />
+              <input
+                type="search"
+                value={query}
+                onChange={e => setQuery(e.target.value)}
+                placeholder="Search grades and terms — try “copper”, “dross”, “e-way”…"
+                aria-label="Search the knowledge center"
+              />
+              {query && (
+                <button type="button" className="res-search-clear" onClick={() => setQuery('')} aria-label="Clear search">
+                  <X size={16} strokeWidth={2.25} />
+                </button>
+              )}
             </div>
 
-            <aside className="ent-aside-sticky">
-              <div className="ent-card">
-                <div className="ent-card-icon"><Download size={22} /></div>
-                <h3>Downloads</h3>
-                <div style={{ display: 'grid', gap: '10px', marginTop: '10px' }}>
-                  {DOWNLOADS.map((d) => (
-                    <a key={d.title} href="#" onClick={(e) => e.preventDefault()} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', fontSize: '13px', color: 'var(--dark)', textDecoration: 'none', padding: '8px 0', borderBottom: '1px solid var(--border)' }}>
-                      <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><FileText size={14} style={{ color: 'var(--primary)' }} /> {d.title}</span>
-                      <span style={{ color: 'var(--text-muted)', fontSize: '11px', whiteSpace: 'nowrap' }}>{d.size}</span>
-                    </a>
+            <ul className="res-facts">
+              <li>
+                <p className="res-fact-label"><Layers size={12} aria-hidden="true" />Grades</p>
+                <p className="res-fact-value">{GRADES.length} referenced</p>
+              </li>
+              <li>
+                <p className="res-fact-label"><ClipboardList size={12} aria-hidden="true" />Checklists</p>
+                <p className="res-fact-value">{CHECKLISTS.length} stages</p>
+              </li>
+              <li>
+                <p className="res-fact-label"><Gavel size={12} aria-hidden="true" />Auction formats</p>
+                <p className="res-fact-value">{FORMATS.length} explained</p>
+              </li>
+              <li>
+                <p className="res-fact-label"><HelpCircle size={12} aria-hidden="true" />Glossary</p>
+                <p className="res-fact-value">{GLOSSARY.length} terms</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </header>
+
+      {/* ─── Grade reference ─── */}
+      <section className="ent-section">
+        <div className="container">
+          <motion.div className="sec-head" {...reveal}>
+            <p className="sec-eyebrow">Grade reference</p>
+            <h2 className="sec-title">What the grade names on a lot actually mean.</h2>
+            <p className="sec-lead">
+              These are the streams live on the platform right now. The last column is the one that
+              matters at inspection — what separates a good lot in this grade from a poor one.
+            </p>
+          </motion.div>
+
+          <div className="res-pills">
+            {GRADE_CATS.map(c => (
+              <button
+                key={c.id}
+                type="button"
+                className={`res-pill${cat === c.id ? ' is-active' : ''}`}
+                onClick={() => setCat(c.id)}
+                aria-pressed={cat === c.id}
+              >
+                {c.label}
+                <span className="res-pill-count">{counts[c.id] || 0}</span>
+              </button>
+            ))}
+          </div>
+
+          {grades.length > 0 ? (
+            <motion.div className="res-table-wrap" {...reveal}>
+              <table className="res-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Grade</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">What it is</th>
+                    <th scope="col">Check before you bid</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {grades.map(g => (
+                    <tr key={g.name}>
+                      <th scope="row">
+                        {g.name}
+                        <span style={{ display: 'block', fontWeight: 500, fontSize: '11.5px', color: 'var(--text-muted)', whiteSpace: 'normal', marginTop: '3px' }}>
+                          {g.full}
+                        </span>
+                      </th>
+                      <td>
+                        <span className={`res-chip is-${g.cat === 'nonferrous' ? 'nonferrous' : g.cat}`}>
+                          {GRADE_CATS.find(c => c.id === g.cat)?.label}
+                        </span>
+                      </td>
+                      <td>{g.what}</td>
+                      <td>{g.check}</td>
+                    </tr>
                   ))}
-                </div>
-              </div>
-            </aside>
+                </tbody>
+              </table>
+            </motion.div>
+          ) : (
+            <div className="res-empty">
+              <span className="res-empty-icon"><SearchX size={20} strokeWidth={1.9} /></span>
+              <h3>No grade matches “{query.trim()}”</h3>
+              <p>Try a broader term, or clear the filters to see all {GRADES.length} grades.</p>
+            </div>
+          )}
+
+          <div className="res-note">
+            <span className="res-note-icon"><FlaskConical size={15} strokeWidth={2} aria-hidden="true" /></span>
+            <p>
+              <strong>Descriptions are guidance, not specification.</strong> The operative description
+              of any lot is its own inspection report and listing. Where composition determines value —
+              stainless grades above all — insist on a spectro reading rather than a visual call.
+            </p>
           </div>
         </div>
       </section>
 
-      {/* Tutorials */}
-      <section className="ent-section">
+      {/* ─── Document checklists ─── */}
+      <section className="ent-section alt">
         <div className="container">
-          <SectionHead eyebrow="Video tutorials" title="Watch and learn" />
-          <RevealGrid className="ent-grid cols-3">
-            {TUTORIALS.map((t) => (
-              <Reveal key={t.title}>
-                <div className="ent-article-card">
-                  <div className="ent-article-thumb" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <PlayCircle size={48} style={{ color: 'var(--primary)' }} />
-                    <span className="ent-article-tag">{t.len}</span>
-                  </div>
-                  <div className="ent-article-body">
-                    <h3>{t.title}</h3>
-                    <span className="ent-article-link">Watch tutorial <ArrowRight size={14} /></span>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </RevealGrid>
+          <motion.div className="sec-head" {...reveal}>
+            <p className="sec-eyebrow">Documentation</p>
+            <h2 className="sec-title">What to have ready, and when.</h2>
+            <p className="sec-lead">
+              Onboarding stalls on missing paperwork more than anything else. These are the three
+              points where documents are actually required.
+            </p>
+          </motion.div>
+
+          <div className="res-grid cols-3">
+            {CHECKLISTS.map((list, i) => {
+              const Icon = list.icon;
+              return (
+                <motion.article className="res-card" key={list.id} {...stagger(i)}>
+                  <span className="res-card-icon"><Icon size={17} strokeWidth={1.9} /></span>
+                  <h3>{list.title}</h3>
+                  <p style={{ fontSize: '12px', color: 'var(--primary)', fontWeight: 600, marginBottom: '10px' }}>
+                    {list.when}
+                  </p>
+                  <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: '7px' }}>
+                    {list.items.map(item => (
+                      <li key={item} style={{ display: 'flex', gap: '8px', fontSize: '13px', lineHeight: 1.55, color: 'var(--text-muted)' }}>
+                        <FileCheck size={13} strokeWidth={2} style={{ flexShrink: 0, marginTop: '3px', color: 'var(--primary)' }} aria-hidden="true" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </motion.article>
+              );
+            })}
+          </div>
         </div>
       </section>
 
-      <CTABand
-        title="Need something more specific?"
-        text="Our support team can point you to the right resource or walk you through any process."
-        primary={{ label: 'Contact support', to: '/contact' }}
-        secondary={{ label: 'Browse FAQs', to: '/faqs' }}
-      />
+      {/* ─── Auction formats ─── */}
+      <section className="ent-section">
+        <div className="container">
+          <motion.div className="sec-head" {...reveal}>
+            <p className="sec-eyebrow">Auction formats</p>
+            <h2 className="sec-title">Three ways a lot can be sold.</h2>
+            <p className="sec-lead">
+              The format is stated on every lot. It changes what your bid means, so it is worth
+              knowing which one you are in before you place it.
+            </p>
+          </motion.div>
+
+          <div className="res-grid cols-3">
+            {FORMATS.map((f, i) => {
+              const Icon = f.icon;
+              return (
+                <motion.article className="res-card" key={f.name} {...stagger(i)}>
+                  <span className="res-card-icon"><Icon size={17} strokeWidth={1.9} /></span>
+                  <h3>{f.name}</h3>
+                  <p style={{ fontFamily: 'var(--font-mono)', fontSize: '11.5px', fontWeight: 700, color: 'var(--primary)', marginBottom: '8px' }}>
+                    {f.line}
+                  </p>
+                  <p>{f.body}</p>
+                  <p style={{ marginTop: '10px', fontSize: '12.5px', color: 'var(--dark)', fontWeight: 600 }}>{f.when}</p>
+                </motion.article>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Glossary ─── */}
+      <section className="ent-section alt">
+        <div className="container">
+          <motion.div className="sec-head" {...reveal}>
+            <p className="sec-eyebrow">Glossary</p>
+            <h2 className="sec-title">The vocabulary, in one place.</h2>
+            <p className="sec-lead">
+              Terms that appear on lots, invoices and sale confirmation letters — the ones that are
+              assumed knowledge everywhere else.
+            </p>
+          </motion.div>
+
+          {glossary.length > 0 ? (
+            <motion.dl className="res-glossary" {...reveal}>
+              {glossary.map(g => (
+                <div className="res-gloss-row" key={g.t}>
+                  <dt>
+                    {g.t}
+                    {g.abbr && <span className="res-gloss-abbr">{g.abbr}</span>}
+                  </dt>
+                  <dd>{g.d}</dd>
+                </div>
+              ))}
+            </motion.dl>
+          ) : (
+            <div className="res-empty">
+              <span className="res-empty-icon"><SearchX size={20} strokeWidth={1.9} /></span>
+              <h3>No term matches “{query.trim()}”</h3>
+              <p>Clear the search to see all {GLOSSARY.length} definitions.</p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ─── Disputes band ─── */}
+      <section className="res-band">
+        <div className="container">
+          <motion.div className="sec-head" {...reveal}>
+            <p className="sec-eyebrow">When grade is disputed</p>
+            <h2 className="sec-title">How a quality claim is actually decided.</h2>
+            <p className="sec-lead">
+              Grade disputes are the most common serious complaint in scrap trading. These are the
+              three things that decide them — all of which have to exist before the vehicle leaves.
+            </p>
+          </motion.div>
+
+          <div className="res-grid cols-3">
+            {[
+              { icon: Ruler, title: 'The inspection report', text: 'The GPS-tagged report published with the lot is the reference description. A claim is measured against what it said, not against what you hoped for.' },
+              { icon: FlaskConical, title: 'Analysis, not opinion', text: 'For composition claims, a spectro or assay result settles it. A visual assessment after lifting carries very little weight.' },
+              { icon: ShieldAlert, title: 'Raised before you lift', text: 'Quantity and condition disputes must be raised at the gate. Material you intend to dispute should not be lifted, processed or melted.' }
+            ].map((item, i) => {
+              const Icon = item.icon;
+              return (
+                <motion.article className="res-band-card" key={item.title} {...stagger(i)}>
+                  <span className="res-band-icon"><Icon size={17} strokeWidth={1.9} /></span>
+                  <h3>{item.title}</h3>
+                  <p>{item.text}</p>
+                </motion.article>
+              );
+            })}
+          </div>
+
+          <p className="res-band-note">
+            Genuine discrepancies go to Grievance Redressal within the window stated on your sale
+            confirmation letter, with a 24-hour acknowledgement and a published escalation ladder.
+          </p>
+        </div>
+      </section>
+
+      {/* ─── Where next ─── */}
+      <section className="ent-section">
+        <div className="container">
+          <motion.div className="sec-head" {...reveal}>
+            <p className="sec-eyebrow">Keep going</p>
+            <h2 className="sec-title">Where to go from here.</h2>
+          </motion.div>
+
+          <div className="res-grid cols-3">
+            <Link to="/faqs" className="res-card">
+              <span className="res-card-icon"><HelpCircle size={17} strokeWidth={1.9} /></span>
+              <h3>Help &amp; FAQs</h3>
+              <p>Forty-one answers covering bidding mechanics, EMD, lifting windows, weighment and tax.</p>
+              <span className="res-card-foot">Read the answers <ChevronRight size={13} strokeWidth={2.5} /></span>
+            </Link>
+            <Link to="/marketplace" className="res-card">
+              <span className="res-card-icon"><Layers size={17} strokeWidth={1.9} /></span>
+              <h3>See the grades live</h3>
+              <p>Every grade above appears on real lots with inspection reports, photographs and quantities.</p>
+              <span className="res-card-foot">Browse the marketplace <ChevronRight size={13} strokeWidth={2.5} /></span>
+            </Link>
+            <Link to="/market-reports" className="res-card">
+              <span className="res-card-icon"><Scale size={17} strokeWidth={1.9} /></span>
+              <h3>What they are worth</h3>
+              <p>Indicative pricing across the same grades, with the spread and the method behind it.</p>
+              <span className="res-card-foot">Market reports <ChevronRight size={13} strokeWidth={2.5} /></span>
+            </Link>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };

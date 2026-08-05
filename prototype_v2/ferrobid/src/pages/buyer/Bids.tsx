@@ -1,6 +1,5 @@
 /* My Bids & Results — active positions, wins, losses/STA and full history. */
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { ArrowRight, Gavel, Trophy, UserRound } from 'lucide-react'
 import { Page } from '../../layout/Chrome'
 import { Button, Chip, Countdown, EmptyState, PageHeader, PhotoThumb, Tabs, cx } from '../../components/ui'
@@ -8,6 +7,9 @@ import { myLotResult, useStore } from '../../store/store'
 import { fmtDateTime, inr, inrCompact, num } from '../../lib/format'
 
 type TabKey = 'active' | 'won' | 'results' | 'all'
+
+const TAB_KEYS: TabKey[] = ['active', 'won', 'results', 'all']
+const isTabKey = (v: string | null): v is TabKey => !!v && (TAB_KEYS as string[]).includes(v)
 
 const OUTCOME_CHIP: Record<'won' | 'lost' | 'sta' | 'unsold', { tone: 'success' | 'neutral' | 'warning'; label: string }> = {
   won: { tone: 'success', label: 'Won' },
@@ -21,7 +23,12 @@ export default function Bids() {
   const lots = useStore((s) => s.lots)
   const catalogues = useStore((s) => s.catalogues)
   const bids = useStore((s) => s.bids)
-  const [tab, setTab] = useState<TabKey>('active')
+  // Tab lives in the URL so other pages can deep-link into one — e.g. the buyer
+  // dashboard's "Active Auctions" tile. Active is the default, so it stays bare.
+  const [params, setParams] = useSearchParams()
+  const urlTab = params.get('tab')
+  const tab: TabKey = isTabKey(urlTab) ? urlTab : 'active'
+  const selectTab = (key: TabKey) => setParams(key === 'active' ? {} : { tab: key }, { replace: true })
 
   if (!me) {
     return (
@@ -88,7 +95,7 @@ export default function Bids() {
           { key: 'all', label: 'All history', count: allMine.length },
         ]}
         value={tab}
-        onChange={setTab}
+        onChange={selectTab}
         className="mb-5"
       />
 
