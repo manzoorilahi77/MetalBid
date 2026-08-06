@@ -6,7 +6,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode, type ButtonHTMLAt
 import { Link } from 'react-router-dom'
 import { X, Loader2, Lock, Inbox, CheckCircle2, Minus, Plus } from 'lucide-react'
 import { useStore } from '../store/store'
-import { countdown } from '../lib/format'
+import { countdown, inr, inrWords } from '../lib/format'
 import { useNow } from '../lib/useTick'
 import type { CatalogueStatus, LotStatus, MetalCategory } from '../types'
 import { categoryImageUrl } from '../data/categoryImages'
@@ -132,15 +132,19 @@ export function Tabs<T extends string>({ tabs, value, onChange, className }: {
   )
 }
 
-export function Segmented<T extends string>({ options, value, onChange, className }: {
+/** `stretch` fills the parent with equal-width segments — for sidebar/panel widths
+    where a content-sized control would float awkwardly in the column. */
+export function Segmented<T extends string>({ options, value, onChange, className, stretch }: {
   options: { key: T; label: ReactNode }[]
-  value: T; onChange: (v: T) => void; className?: string
+  value: T; onChange: (v: T) => void; className?: string; stretch?: boolean
 }) {
   return (
-    <div className={cx('inline-flex p-1 rounded-xl bg-surface-2 border border-line gap-0.5', className)}>
+    <div className={cx('p-1 rounded-xl bg-surface-2 border border-line gap-0.5',
+      stretch ? 'flex w-full' : 'inline-flex', className)}>
       {options.map((o) => (
         <button key={o.key} onClick={() => onChange(o.key)}
-          className={cx('h-8 px-3.5 rounded-lg text-[13px] font-semibold transition-colors whitespace-nowrap',
+          className={cx('h-8 rounded-lg text-[13px] font-semibold transition-colors whitespace-nowrap',
+            stretch ? 'flex-1 px-2' : 'px-3.5',
             value === o.key ? 'bg-surface text-ink shadow-sm border border-line' : 'text-ink-muted hover:text-ink')}>
           {o.label}
         </button>
@@ -161,41 +165,46 @@ export function stepOptionsFor(rate: number, increment: number): number[] {
 
 const stepLabel = (n: number) => (n >= 1000 && n % 1000 === 0 ? `₹${n / 1000}k` : `₹${n}`)
 
-/** −/+ bid builder with a selectable step-size ladder (₹200…₹10k, scaled to the lot). */
+/** −/+ bid builder with a selectable step-size ladder (₹200…₹10k, scaled to the lot).
+    `md+` keeps `md`'s compact box and only grows the numerals — the rungs and the
+    amount were the unreadable part, not the controls. */
+const STEPPER_SIZES = {
+  md: { chip: 'h-6 px-2.5 text-[11px]', arrow: 'w-9', icon: 14, input: 'h-9 w-24 text-sm' },
+  'md+': { chip: 'h-7 px-3 text-[13px]', arrow: 'w-10', icon: 16, input: 'h-10 w-28 text-lg' },
+  lg: { chip: 'h-7 px-3 text-xs', arrow: 'w-12', icon: 18, input: 'h-12 w-32 text-xl' },
+}
+
 export function AmountStepper({ minNext, increment, value, onChange, size = 'md', className }: {
   minNext: number; increment: number; value: number; onChange: (v: number) => void
-  size?: 'md' | 'lg'; className?: string
+  size?: 'md' | 'md+' | 'lg'; className?: string
 }) {
   const steps = useMemo(() => stepOptionsFor(minNext, increment), [minNext, increment])
   const [step, setStep] = useState(steps[0])
   const activeStep = steps.includes(step) ? step : steps[0]
-  const lg = size === 'lg'
+  const s = STEPPER_SIZES[size]
   return (
     <div className={cx('inline-flex flex-col gap-2', className)}>
       <div className="flex flex-wrap gap-1.5" role="radiogroup" aria-label="Bid step size">
-        {steps.map((s) => (
-          <button key={s} type="button" role="radio" aria-checked={s === activeStep} onClick={() => setStep(s)}
-            className={cx('num rounded-full border font-bold transition-colors',
-              lg ? 'h-7 px-3 text-xs' : 'h-6 px-2.5 text-[11px]',
-              s === activeStep ? 'bg-ember text-white border-ember' : 'bg-surface-2 text-ink-muted border-line hover:border-line-strong')}>
-            +{stepLabel(s)}
+        {steps.map((n) => (
+          <button key={n} type="button" role="radio" aria-checked={n === activeStep} onClick={() => setStep(n)}
+            className={cx('num rounded-full border font-bold transition-colors', s.chip,
+              n === activeStep ? 'bg-ember text-white border-ember' : 'bg-surface-2 text-ink-muted border-line hover:border-line-strong')}>
+            +{stepLabel(n)}
           </button>
         ))}
       </div>
       <div className="inline-flex items-stretch rounded-xl border border-line-strong bg-surface overflow-hidden w-fit">
         <button type="button" aria-label="Decrease bid" disabled={value <= minNext}
           onClick={() => onChange(Math.max(minNext, value - activeStep))}
-          className={cx('grid place-items-center shrink-0 text-ink-muted hover:bg-surface-2 hover:text-ink disabled:opacity-30 disabled:pointer-events-none',
-            lg ? 'w-12' : 'w-9')}>
-          <Minus size={lg ? 18 : 14} />
+          className={cx('grid place-items-center shrink-0 text-ink-muted hover:bg-surface-2 hover:text-ink disabled:opacity-30 disabled:pointer-events-none', s.arrow)}>
+          <Minus size={s.icon} />
         </button>
         <input inputMode="numeric" aria-label="Bid amount" value={value.toLocaleString('en-IN')}
           onChange={(e) => { const n = Number(e.target.value.replace(/[^\d]/g, '')); onChange(n) }}
-          className={cx('num font-bold text-center bg-transparent focus:outline-none border-x border-line',
-            lg ? 'h-12 w-32 text-xl' : 'h-9 w-24 text-sm')} />
+          className={cx('num font-bold text-center bg-transparent focus:outline-none border-x border-line', s.input)} />
         <button type="button" aria-label="Increase bid" onClick={() => onChange(value + activeStep)}
-          className={cx('grid place-items-center shrink-0 text-ink-muted hover:bg-surface-2 hover:text-ink', lg ? 'w-12' : 'w-9')}>
-          <Plus size={lg ? 18 : 14} />
+          className={cx('grid place-items-center shrink-0 text-ink-muted hover:bg-surface-2 hover:text-ink', s.arrow)}>
+          <Plus size={s.icon} />
         </button>
       </div>
     </div>
@@ -361,9 +370,10 @@ export function ToastHost() {
 /* ------------------------- Mock payment modal ------------------------------ */
 /** Fake UPI / NetBanking / RTGS picker with a processing delay, then succeeds. */
 export function MockPayModal({ open, onClose, amount, title, onSuccess }: {
-  open: boolean; onClose: () => void; amount: string; title: string
+  open: boolean; onClose: () => void; amount: number; title: string
   onSuccess: (method: string) => void
 }) {
+  const amountText = inr(amount)
   const [method, setMethod] = useState<'UPI' | 'NetBanking' | 'RTGS/NEFT'>('UPI')
   const [phase, setPhase] = useState<'pick' | 'processing' | 'done'>('pick')
   const timer = useRef<ReturnType<typeof setTimeout>>(null)
@@ -382,9 +392,16 @@ export function MockPayModal({ open, onClose, amount, title, onSuccess }: {
     <Modal open={open} onClose={phase === 'pick' ? onClose : () => {}} title={title}>
       {phase === 'pick' && (
         <div className="space-y-4">
-          <div className="card bg-surface-2 p-4 flex items-baseline justify-between">
-            <span className="text-sm text-ink-muted">Amount payable</span>
-            <span className="num text-2xl font-bold">{amount}</span>
+          {/* figure + words, the way a cheque or DD states an amount — leaves no
+              ambiguity about what is being authorised */}
+          <div className="card bg-surface-2 p-4">
+            <div className="flex items-baseline justify-between gap-3">
+              <span className="text-sm text-ink-muted">Amount payable</span>
+              <span className="num text-2xl font-bold">{amountText}</span>
+            </div>
+            <div className="text-xs text-ink-muted mt-1.5 pt-1.5 border-t border-line text-right italic">
+              {inrWords(amount)}
+            </div>
           </div>
           <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label="Payment method">
             {(['UPI', 'NetBanking', 'RTGS/NEFT'] as const).map((m) => (
@@ -398,7 +415,7 @@ export function MockPayModal({ open, onClose, amount, title, onSuccess }: {
           {method === 'UPI' && <Input placeholder="yourname@upi" defaultValue="arvind@okhdfcbank" aria-label="UPI ID" />}
           {method === 'NetBanking' && <Select defaultValue="HDFC"><option>HDFC Bank</option><option>ICICI Bank</option><option>SBI</option><option>Axis Bank</option></Select>}
           {method === 'RTGS/NEFT' && <div className="text-xs text-ink-muted card bg-surface-2 p-3">Beneficiary: ferroBid Escrow A/c · 50200077881234 · IFSC HDFC0000060. Demo — payment simulates instantly.</div>}
-          <Button className="w-full" size="lg" onClick={pay}>Pay {amount}</Button>
+          <Button className="w-full" size="lg" onClick={pay}>Pay {amountText}</Button>
         </div>
       )}
       {phase === 'processing' && (

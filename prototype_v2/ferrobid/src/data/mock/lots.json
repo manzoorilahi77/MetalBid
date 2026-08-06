@@ -43,7 +43,7 @@
     "currentRate": 29600,
     "leadingBidderId": "u-buyer-1",
     "bidCount": 2,
-    "endsAt": "2026-07-16T07:12:00.000Z",
+    "endsAt": "2026-07-16T06:33:00.000Z",
     "extensions": 0,
     "resultH1Rate": null
   },
@@ -81,7 +81,7 @@
     "currentRate": 26550,
     "leadingBidderId": "u-buyer-6",
     "bidCount": 4,
-    "endsAt": "2026-07-16T07:12:00.000Z",
+    "endsAt": "2026-07-16T06:34:00.000Z",
     "extensions": 0,
     "resultH1Rate": null
   },
@@ -243,7 +243,7 @@
     "currentRate": null,
     "leadingBidderId": null,
     "bidCount": 0,
-    "endsAt": "2026-07-16T07:12:00.000Z",
+    "endsAt": "2026-07-16T06:33:00.000Z",
     "extensions": 0,
     "resultH1Rate": null
   },
@@ -281,7 +281,7 @@
     "currentRate": null,
     "leadingBidderId": null,
     "bidCount": 0,
-    "endsAt": "2026-07-16T07:12:00.000Z",
+    "endsAt": "2026-07-16T06:34:00.000Z",
     "extensions": 0,
     "resultH1Rate": null
   },

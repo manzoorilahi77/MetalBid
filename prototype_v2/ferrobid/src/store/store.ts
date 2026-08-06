@@ -1081,13 +1081,16 @@ export function rankBidders(bids: Bid[], lotId: string, meId?: string): LadderRo
     .map((b, i) => ({ rank: i + 1, bidderId: b.bidderId, rate: b.rate, at: b.at, type: b.type, isMe: b.bidderId === meId }))
 }
 
-/** Bid ladder standings for a lot. Returns the top 3 plus the current user's
- *  own row (only when they're not already inside the top 3). */
+/** How many ranks the bid ladder shows before falling back to "your position". */
+export const LADDER_DEPTH = 5
+
+/** Bid ladder standings for a lot. Returns the top {@link LADDER_DEPTH} plus the
+ *  current user's own row (only when they're not already inside that band). */
 export function ladderStandings(bids: Bid[], lotId: string, meId: string | undefined) {
   const ranked = rankBidders(bids, lotId, meId)
-  const top3 = ranked.slice(0, 3)
-  const myRow = meId ? ranked.find((r) => r.bidderId === meId && r.rank > 3) ?? null : null
-  return { top3, myRow }
+  const top = ranked.slice(0, LADDER_DEPTH)
+  const myRow = meId ? ranked.find((r) => r.bidderId === meId && r.rank > LADDER_DEPTH) ?? null : null
+  return { top, myRow }
 }
 
 export interface MyBidTrailRow {

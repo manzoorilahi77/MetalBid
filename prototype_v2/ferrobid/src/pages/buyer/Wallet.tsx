@@ -592,7 +592,7 @@ export default function Wallet() {
         open={payOpen}
         onClose={() => setPayOpen(false)}
         title="Wallet top-up"
-        amount={inr(amount)}
+        amount={amount}
         onSuccess={(method) => {
           topUpWallet(amount, method)
           pushToast({ kind: 'success', title: 'Wallet top-up successful', body: `${inr(amount)} added via ${method}.` })

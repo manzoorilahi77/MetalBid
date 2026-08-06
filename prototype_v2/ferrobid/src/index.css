@@ -38,6 +38,8 @@
   --warning-soft: #faf0dc;
   --danger: #c73030;
   --danger-soft: #fbe7e5;
+  /* ownership marker — "this one is mine" on shared lists */
+  --gold: #b8860b;
 }
 
 .dark {
@@ -67,6 +69,7 @@
   --warning-soft: #332916;
   --danger: #e56358;
   --danger-soft: #38201d;
+  --gold: #e3b341;
 }
 
 @theme inline {
@@ -96,6 +99,7 @@
   --color-warning-soft: var(--warning-soft);
   --color-danger: var(--danger);
   --color-danger-soft: var(--danger-soft);
+  --color-gold: var(--gold);
 
   --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;

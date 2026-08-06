@@ -206,7 +206,7 @@ export default function Shortlist() {
         open={!!payCatId && !!paySummary && paySummary.shortfall > 0}
         onClose={() => setPayCatId(null)}
         title={`Fund pre-bid EMD — ${payCat?.code ?? ''}`}
-        amount={inr(paySummary?.shortfall ?? 0)}
+        amount={paySummary?.shortfall ?? 0}
         onSuccess={(method) => {
           if (!payCatId || !paySummary) return
           const ok = fundEmd(payCatId, paySummary.unfundedLotIds, method)
