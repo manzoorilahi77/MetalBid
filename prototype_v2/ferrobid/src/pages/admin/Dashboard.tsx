@@ -4,6 +4,7 @@ import { Activity, Zap } from 'lucide-react'
 import { Page } from '../../layout/Chrome'
 import { Chip, PageHeader, ProgressBar, Stat } from '../../components/ui'
 import { CATEGORY_META } from '../../components/domain'
+import { MarketInsights } from '../../components/MarketInsights'
 import { useStore } from '../../store/store'
 import { inrCompact, num } from '../../lib/format'
 import { useNow } from '../../lib/useTick'
@@ -161,6 +162,12 @@ export default function AdminDashboard() {
             {buyerTotals.length === 0 && <p className="text-sm text-ink-faint py-3">No sold lots yet.</p>}
           </div>
         </div>
+      </div>
+
+      {/* Market context behind the KPIs above — benchmark prices, the clearing
+          index, where demand sits geographically, and auction momentum. */}
+      <div className="mt-6">
+        <MarketInsights sellThrough={sellThrough} />
       </div>
     </Page>
   )

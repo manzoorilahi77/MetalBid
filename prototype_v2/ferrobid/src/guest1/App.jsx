@@ -10,8 +10,6 @@ import {
 } from 'lucide-react';
 import indiaMapData from '@svg-maps/india';
 import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
-import PrivacyPolicy from './pages/PrivacyPolicy';
-import TermsAndConditions from './pages/TermsAndConditions';
 import Roles from './pages/Roles';
 import Pricing from './pages/Pricing';
 import AuctionCalendar from './pages/AuctionCalendar';
@@ -21,7 +19,6 @@ import { AboutUs } from './pages/AboutUs';
 import { HowItWorksSection } from './components/HowItWorksSection';
 import { WhyChooseSection } from './components/WhyChooseSection';
 import { IndustryInsightsSection } from './components/IndustryInsightsSection';
-import { MarketInsightsSection } from './components/MarketInsightsSection';
 import { TestimonialsSection } from './components/TestimonialsSection';
 import { AnnouncementsSection } from './components/AnnouncementsSection';
 import { WhatsAppCommunityModal } from './components/WhatsAppCommunityModal';
@@ -33,7 +30,6 @@ import './styles/auth.css';
 
 // Secondary footer pages are lazy-loaded to keep the main bundle lean.
 const ContactUs = lazy(() => import('./pages/ContactUs'));
-const Careers = lazy(() => import('./pages/Careers'));
 const FAQs = lazy(() => import('./pages/FAQs'));
 const HelpCenter = lazy(() => import('./pages/HelpCenter'));
 const Grievance = lazy(() => import('./pages/Grievance'));
@@ -41,6 +37,10 @@ const Blog = lazy(() => import('./pages/Blog'));
 const BlogPost = lazy(() => import('./pages/BlogPost'));
 const KnowledgeCenter = lazy(() => import('./pages/KnowledgeCenter'));
 const MarketReports = lazy(() => import('./pages/MarketReports'));
+// The two legal documents carry a lot of content and their own stylesheet;
+// they are lazy for the same reason the pages above are.
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
+const TermsAndConditions = lazy(() => import('./pages/TermsAndConditions'));
 
 const AnimatedNumber = ({ end, prefix = '', suffix = '', duration = 2000 }) => {
   const [count, setCount] = useState(0);
@@ -218,17 +218,31 @@ export const Footer = () => (
       <div className="footer-grid">
           <div className="footer-brand-col">
             <div className="footer-logo">
-                <img src={asset('/footericon.png')} alt="FerroBid Logo" loading="lazy" decoding="async" style={{ height: '40px', objectFit: 'contain', marginLeft: '-8px' }} />
+                {/* headericon, not footericon: the footer lock-up was the
+                    light-on-dark variant and washes out now the footer is a
+                    plain surface. */}
+                <img src={asset('/headericon.png')} alt="FerroBid Logo" loading="lazy" decoding="async" style={{ height: '40px', objectFit: 'contain', marginLeft: '-8px' }} />
             </div>
-            <p className="footer-desc" style={{fontSize: '11px', marginTop: '8px'}}>India's Trusted Digital Metal Auction Platform</p>
+            <p className="footer-desc" style={{fontSize: '11px', marginTop: '8px', fontWeight: 600}}>India's Trusted Digital Metal Auction Platform</p>
+            {/* Legal pair closes out the brand column rather than taking a row
+                of its own below the grid. */}
+            <div className="footer-legal-links">
+              <Link to="/privacy">Privacy Policy</Link>
+              <Link to="/terms">Terms and Conditions</Link>
+            </div>
           </div>
 
+          {/* Four columns of three. "All Categories" and "All Locations" both
+              resolved to /marketplace, so the same destination was listed three
+              times; Auction Calendar and Pricing had no footer link at all and
+              take their place. Terms and Privacy live under the brand tagline —
+              they were previously listed twice, a few pixels apart. */}
           <div className="footer-col">
             <h4>Marketplace</h4>
             <ul>
-                <li><Link to="/marketplace">Upcoming Auctions</Link></li>
-                <li><Link to="/marketplace">All Categories</Link></li>
-                <li><Link to="/marketplace">All Locations</Link></li>
+                <li><Link to="/marketplace">Browse All Lots</Link></li>
+                <li><Link to="/calendar">Auction Calendar</Link></li>
+                <li><Link to="/pricing">Pricing &amp; Plans</Link></li>
             </ul>
           </div>
 
@@ -237,7 +251,6 @@ export const Footer = () => (
             <ul>
                 <li><Link to="/about-us">About Us</Link></li>
                 <li><Link to="/how-it-works">How it works</Link></li>
-                <li><Link to="/careers">Careers</Link></li>
                 <li><Link to="/contact">Contact Us</Link></li>
             </ul>
           </div>
@@ -248,16 +261,14 @@ export const Footer = () => (
                 <li><Link to="/blog">Blog</Link></li>
                 <li><Link to="/knowledge-center">Knowledge Center</Link></li>
                 <li><Link to="/market-reports">Market Reports</Link></li>
-                <li><Link to="/help-center">Help Center</Link></li>
             </ul>
           </div>
 
           <div className="footer-col">
             <h4>Support</h4>
             <ul>
-                <li><Link to="/faqs">Help & FAQs</Link></li>
-                <li><Link to="/terms">Terms & Conditions</Link></li>
-                <li><Link to="/privacy">Privacy Policy</Link></li>
+                <li><Link to="/help-center">Help Center</Link></li>
+                <li><Link to="/faqs">Help &amp; FAQs</Link></li>
                 <li><Link to="/grievance">Grievance Redressal</Link></li>
             </ul>
           </div>
@@ -272,22 +283,23 @@ export const Footer = () => (
                   <img src={asset('/badges/app-store.svg')} alt="Download on the App Store" loading="lazy" decoding="async" />
                 </div>
             </div>
+            {/* Contact icons sit under the badges. The old "Connect with us:"
+                label went with them: it was set in white-on-white and had never
+                actually been visible. */}
+            <div className="social-links">
+              <a href="mailto:contact@ferrobid.in" aria-label="Email"><Mail size={16} /></a>
+              <a href="https://www.linkedin.com/company/ferrobid" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+              </a>
+            </div>
           </div>
       </div>
 
+      {/* The rule carries only the registered-entity line and the statutory
+          identifiers; everything else lives up in the grid. */}
       <div className="footer-bottom">
-          <div className="footer-legal-links">
-            <Link to="/privacy">Privacy Policy</Link>
-            <Link to="/terms">Terms and Conditions</Link>
-          </div>
-          <div className="footer-copyright">© 2026 FerroBid. All rights reserved.</div>
-          <div className="social-links" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{color: 'rgba(255,255,255,0.7)'}}>Connect with us:</span>
-            <a href="mailto:contact@ferrobid.in" aria-label="Email" style={{display: 'flex', alignItems: 'center'}}><Mail size={16} /></a>
-            <a href="https://www.linkedin.com/company/ferrobid" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" style={{display: 'flex', alignItems: 'center'}}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
-            </a>
-          </div>
+          <span>© 2026 ferroBid Technologies Pvt Ltd.</span>
+          <span>GSTIN 27AAICF9021P1ZX · CIN U74999MH2024PTC431180</span>
       </div>
     </div>
   </footer>
@@ -414,19 +426,42 @@ function Home() {
         </MotionDiv>
       </div>
 
-      {/* Ticker Section */}
-      <div className="ticker-wrapper">
-        <div className="ticker-content">
-          {[...tickerData, ...tickerData, ...tickerData, ...tickerData].map((item, i) => (
-            <div className="ticker-item" key={i}>
-              <div className={`ticker-dot ${item.type}`}></div>
-              <span className="ticker-name">{item.material}</span>
-              <span className="ticker-loc">{item.city}, {item.state}</span>
-              <span className="ticker-price">EMD {item.emd}</span>
+      {/* Ticker Section — a self-contained warm band: section header on the
+          .container grid, then the full-bleed strip of moving lots, with the
+          band's own colour closing underneath it. */}
+      <section className="ticker-band" aria-labelledby="upcoming-auctions-heading">
+        <div className="container ticker-head">
+          <div className="ticker-head-text">
+            <div className="ticker-eyebrow">
+              <Clock size={13} /> Upcoming
             </div>
-          ))}
+            <h2 className="ticker-heading" id="upcoming-auctions-heading">
+              Next on the Block
+              <span className="ticker-count">{tickerData.length} lots</span>
+            </h2>
+            <p className="ticker-desc">
+              Lots opening shortly across India. Pre-bid EMD is published up front, so you
+              can fund your shortlist and be ready before bidding starts.
+            </p>
+          </div>
+          <Link to="/calendar" className="ticker-head-link">
+            <CalendarDays size={13} /> Calendar <ArrowRight size={13} />
+          </Link>
         </div>
-      </div>
+
+        <div className="ticker-wrapper">
+          <div className="ticker-content">
+            {[...tickerData, ...tickerData, ...tickerData, ...tickerData].map((item, i) => (
+              <div className="ticker-item" key={i}>
+                <div className={`ticker-dot ${item.type}`}></div>
+                <span className="ticker-name">{item.material}</span>
+                <span className="ticker-loc">{item.city}, {item.state}</span>
+                <span className="ticker-price">EMD {item.emd}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Announcements */}
       <AnnouncementsSection />
@@ -435,10 +470,10 @@ function Home() {
       <section className="live-auctions" style={{ overflow: 'hidden' }}>
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '32px' }}>
-            <div>
-              <div className="section-eyebrow">Forthcoming Auctions</div>
-              <h2 style={{ margin: 0, fontFamily: 'var(--font-heading)', fontSize: 'var(--text-section-title)', fontWeight: 700, color: '#1c1917', letterSpacing: 'var(--track-heading)', lineHeight: 1.2 }}>Plan Ahead. Bid Smart.</h2>
-              <p style={{ margin: '8px 0 0', fontSize: '14px', color: '#6b6560', fontWeight: 500, lineHeight: 1.6, maxWidth: '56ch' }}>Upcoming lots across India. Register early and be ready to bid.</p>
+            <div className="sec-head" style={{ marginBottom: 0 }}>
+              <p className="sec-eyebrow">Forthcoming Auctions</p>
+              <h2 className="sec-title">Plan Ahead. Bid Smart.</h2>
+              <p className="sec-lead">Upcoming lots across India. Register early and be ready to bid.</p>
             </div>
             <Link to="/marketplace" className="view-all" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600, color: '#e4572e', textDecoration: 'none', background: 'rgba(228,87,46,0.08)', padding: '10px 18px', borderRadius: '24px' }}>
               View all auctions <ArrowRight size={16}/>
@@ -506,15 +541,13 @@ function Home() {
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div style={{ color: 'var(--primary)', fontSize: '11px', fontWeight: 800, letterSpacing: 'var(--track-eyebrow)', textTransform: 'uppercase', marginBottom: '8px' }}>
-              Platform Access
+            <div className="sec-head" style={{ marginBottom: '28px' }}>
+              <p className="sec-eyebrow">Platform Access</p>
+              <h2 className="sec-title">Clear, Predictable Pricing</h2>
+              <p className="sec-lead">
+                A transparent, value-driven pricing structure. Gain full access to enterprise auction tools with a simple subscription and fixed, transparent platform fees designed for scale.
+              </p>
             </div>
-            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'var(--text-section-title)', fontWeight: 700, color: '#1c1917', letterSpacing: 'var(--track-heading)', marginBottom: '10px', lineHeight: 1.2 }}>
-              Clear, Predictable<br/>Pricing
-            </h2>
-            <p style={{ color: '#6b6560', fontSize: '14px', lineHeight: 1.6, marginBottom: '28px', maxWidth: '52ch' }}>
-              A transparent, value-driven pricing structure. Gain full access to enterprise auction tools with a simple subscription and fixed, transparent platform fees designed for scale.
-            </p>
             <Link to="/pricing" style={{ textDecoration: 'none' }}>
               <MotionDiv whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} style={{ display: 'inline-block' }}>
                 <button className="btn" style={{
@@ -589,8 +622,12 @@ function Home() {
       {/* Trust Section */}
       <section className="trust-section">
         <div className="container">
-          <div className="section-eyebrow" style={{ textAlign: 'center', marginBottom: '8px' }}>Trusted By Thousands</div>
-          <h2 className="section-title justify-center" style={{fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: 'var(--text-section-title)', marginBottom: '8px'}}>Why thousands trust <span style={{color: 'var(--primary)', marginLeft: '6px'}}>FerroBid</span></h2>
+          <div className="sec-head is-center">
+            <p className="sec-eyebrow">Trusted By Thousands</p>
+            <h2 className="sec-title">
+              Why thousands trust <span style={{ color: 'var(--primary)' }}>FerroBid</span>
+            </h2>
+          </div>
 
           <MotionDiv
             initial={{ opacity: 0, y: 30 }}
@@ -626,9 +663,6 @@ function Home() {
 
       {/* Industry Insights */}
       <IndustryInsightsSection />
-
-      {/* Market Insights */}
-      <MarketInsightsSection />
 
       {/* Testimonials */}
       <TestimonialsSection />
@@ -693,7 +727,6 @@ const App = () => {
         <Route path="/calendar" element={<AuctionCalendar />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/contact" element={<ContactUs />} />
-        <Route path="/careers" element={<Careers />} />
         <Route path="/faqs" element={<FAQs />} />
         <Route path="/help-center" element={<HelpCenter />} />
         <Route path="/grievance" element={<Grievance />} />

@@ -1,8 +1,16 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { AuctionCard } from '../components/AuctionCard';
-import { Search, Filter, X, PackageSearch, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react';
-import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
+import {
+  Search, Filter, X, PackageSearch, RotateCcw, ChevronLeft, ChevronRight,
+  Layers, Radio, MapPin, Building2, Wallet, ClipboardCheck, Timer, BookOpen
+} from 'lucide-react';
+import { motion, AnimatePresence, LayoutGroup, useReducedMotion } from 'framer-motion';
+// kept from main: the AUCTIONS list below still routes every image through
+// asset(), which prefixes BASE_URL so the images resolve under /MetalBid/
 import { asset } from '../utils/asset';
+import '../styles/enterprise.css';
+import '../styles/resources.css';
 
 const PER_PAGE = 6;
 
@@ -25,6 +33,51 @@ const CATEGORIES = ['Ferrous', 'Non-Ferrous', 'Stainless Steel', 'Minor Metals']
 const SELLERS = [...new Set(AUCTIONS.map((a) => a.seller))];
 const STATES = ['All States', ...new Set(AUCTIONS.map((a) => a.state))];
 
+/* Counted off the inventory rather than written by hand — a hero that states
+   "12 lots" while the array holds nine is worse than saying nothing. */
+const STATS = {
+  total: AUCTIONS.length,
+  live: AUCTIONS.filter((a) => a.isLive).length,
+  sellers: SELLERS.length,
+  states: STATES.length - 1,
+  tonnage: AUCTIONS
+    .reduce((sum, a) => sum + (parseFloat(a.qty) || 0), 0)
+    .toLocaleString('en-IN'),
+};
+
+/* What a first-time bidder has to know before committing money. Each links to
+   the page that carries the detail rather than restating it here. */
+const PRE_BID = [
+  {
+    icon: ClipboardCheck,
+    title: 'Read the inspection report first',
+    text: 'Every lot was physically inspected before publication. The report — not the photograph — is the operative description of what you are buying.',
+    to: '/how-it-works',
+    cta: 'See the process',
+  },
+  {
+    icon: Wallet,
+    title: 'EMD is per lot, not per account',
+    text: 'A deposit unlocks bidding on one specific lot. Lose, and it refunds automatically; win, and it credits against the price.',
+    to: '/faqs',
+    cta: 'EMD questions',
+  },
+  {
+    icon: Timer,
+    title: 'A bid cannot be taken back',
+    text: 'Bids are irrevocable, and the clock auto-extends on late bids so a lot closes on price rather than on reflexes.',
+    to: '/terms',
+    cta: 'Bidding terms',
+  },
+  {
+    icon: BookOpen,
+    title: 'Know what the grade names mean',
+    text: 'HMS 80:20, millberry, ADC-12, RSDL — the grade reference explains each one and what to check at inspection.',
+    to: '/knowledge-center',
+    cta: 'Grade reference',
+  },
+];
+
 const VIEWS = [
   { key: 'all', label: 'All Lots' },
   { key: 'live', label: 'Live Now' },
@@ -32,6 +85,7 @@ const VIEWS = [
 ];
 
 export const Marketplace = () => {
+  const reduceMotion = useReducedMotion();
   const [search, setSearch] = useState('');
   const [categories, setCategories] = useState([]);
   const [sellers, setSellers] = useState([]);
@@ -100,16 +154,54 @@ export const Marketplace = () => {
   ];
 
   return (
-    <div className="marketplace-page">
-      <div className="container" style={{ paddingTop: '48px', paddingBottom: '80px' }}>
-        <div className="page-header-clean">
-          <span className="clean-badge">Live Inventory</span>
-          <h1 className="clean-title">Industrial Metal Marketplace</h1>
-          <p className="clean-subtitle">
-            Discover and bid on premium industrial metal scrap from trusted sellers across India.
-          </p>
-        </div>
+    <div className="marketplace-page res-page">
+      {/* Opens like every other secondary page — breadcrumb, eyebrow, title,
+          lead — with a facts strip counted off the live inventory rather than
+          written by hand, so it cannot drift out of date. */}
+      <header className="res-hero">
+        <div className="container">
+          <nav className="ent-breadcrumb" aria-label="Breadcrumb">
+            <Link to="/">Home</Link>
+            <ChevronRight size={13} aria-hidden="true" />
+            <span className="crumb-current" aria-current="page">Marketplace</span>
+          </nav>
 
+          <div className="res-hero-inner">
+            <p className="ent-hero-eyebrow"><Layers size={13} aria-hidden="true" /> Live inventory</p>
+            <h1 className="res-hero-title">Every lot here has already been inspected.</h1>
+            <p className="res-hero-lead">
+              Ferrous, non-ferrous, stainless and minor metals from verified corporate sellers.
+              Each lot carries a GPS-tagged inspection report — location, photographs, video,
+              quantity and condition — published before it reached this page.
+            </p>
+
+            <ul className="res-facts">
+              <li>
+                <p className="res-fact-label"><Layers size={12} aria-hidden="true" />Lots listed</p>
+                <p className="res-fact-value">{STATS.total}</p>
+              </li>
+              <li>
+                <p className="res-fact-label"><Radio size={12} aria-hidden="true" />Live now</p>
+                <p className="res-fact-value">{STATS.live}</p>
+              </li>
+              <li>
+                <p className="res-fact-label"><Building2 size={12} aria-hidden="true" />Sellers</p>
+                <p className="res-fact-value">{STATS.sellers}</p>
+              </li>
+              <li>
+                <p className="res-fact-label"><MapPin size={12} aria-hidden="true" />States</p>
+                <p className="res-fact-value">{STATS.states}</p>
+              </li>
+              <li>
+                <p className="res-fact-label"><PackageSearch size={12} aria-hidden="true" />Total tonnage</p>
+                <p className="res-fact-value">{STATS.tonnage} MT</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </header>
+
+      <div className="container" style={{ paddingTop: '36px', paddingBottom: '56px' }}>
         <div className="marketplace-layout">
           <div className="mobile-filter-toggle">
             <button className="btn btn-outline w-full" onClick={() => setIsFilterOpen((v) => !v)}>
@@ -308,6 +400,55 @@ export const Marketplace = () => {
           </main>
         </div>
       </div>
+
+      {/* ─── Before you bid ─── */}
+      <section className="res-band">
+        <div className="container">
+          <div className="sec-head">
+            <p className="sec-eyebrow">Before you bid</p>
+            <h2 className="sec-title">Four things that catch people out.</h2>
+            <p className="sec-lead">
+              The floor is open to browse without an account. Committing money is a different
+              step, and these are the parts first-time bidders most often learn the hard way.
+            </p>
+          </div>
+
+          <div className="res-grid cols-4">
+            {PRE_BID.map((item, i) => {
+              const Icon = item.icon;
+              return (
+                <motion.div
+                  key={item.title}
+                  {...(reduceMotion ? {} : {
+                    initial: { y: 20 },
+                    whileInView: { y: 0 },
+                    viewport: { once: true, amount: 0.2 },
+                    transition: { duration: 0.5, delay: Math.min(i, 4) * 0.07, ease: [0.16, 1, 0.3, 1] },
+                  })}
+                >
+                  <div className="res-band-card">
+                    <span className="res-band-icon"><Icon size={17} strokeWidth={1.9} /></span>
+                    <h3>{item.title}</h3>
+                    <p>{item.text}</p>
+                    <Link
+                      to={item.to}
+                      className="res-card-foot"
+                      style={{ textDecoration: 'none', color: 'var(--color-ember-light, #ef7a52)' }}
+                    >
+                      {item.cta} <ChevronRight size={13} strokeWidth={2.5} />
+                    </Link>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          <p className="res-band-note">
+            Quantities shown are inspection estimates unless the lot states that it settles on
+            delivered weighbridge weight. Prices exclude GST and applicable levies.
+          </p>
+        </div>
+      </section>
     </div>
   );
 };

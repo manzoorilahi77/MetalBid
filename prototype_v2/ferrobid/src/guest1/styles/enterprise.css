@@ -1,6 +1,6 @@
 /* ==========================================================================
    Enterprise page scaffolding — shared across all footer / secondary pages
-   (Careers, Contact, Blog, Knowledge Center, Market Reports, Help Center,
+   (Contact, Blog, Knowledge Center, Market Reports, Help Center,
    FAQs, Grievance). Reuses the homepage design tokens; adds no new colors.
    ========================================================================== */
 
@@ -9,38 +9,10 @@
   min-height: 100vh;
 }
 
-/* ── Hero + breadcrumb ─────────────────────────────────────────────────── */
-.ent-hero {
-  position: relative;
-  overflow: hidden;
-  background:
-    radial-gradient(120% 80% at 85% -10%, rgba(228, 87, 46, 0.10) 0%, transparent 55%),
-    radial-gradient(90% 70% at 5% 0%, rgba(43, 76, 126, 0.06) 0%, transparent 50%),
-    linear-gradient(180deg, var(--bg-alt) 0%, var(--bg-white) 100%);
-  border-bottom: 1px solid var(--border);
-  padding: 24px 0 40px;
-}
-/* Subtle blueprint dot-grid — signals an engineered, enterprise surface. */
-.ent-hero::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(rgba(28, 25, 23, 0.05) 1px, transparent 1px);
-  background-size: 22px 22px;
-  -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 85%);
-  mask-image: linear-gradient(180deg, #000 0%, transparent 85%);
-  pointer-events: none;
-}
-.ent-hero::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(228, 87, 46, 0.35), transparent);
-  pointer-events: none;
-}
+/* ── Breadcrumb + hero eyebrow ────────────────────────────────────────────
+   All that survives of the old .ent-hero: every secondary page now supplies
+   its own hero, so the .ent-hero shell (and its decorative dot-grid) went
+   with PageHero. These two are still rendered directly by the new pages. */
 .ent-breadcrumb {
   display: flex;
   align-items: center;
@@ -68,11 +40,6 @@
   opacity: 0.5;
   flex-shrink: 0;
 }
-.ent-hero-inner {
-  position: relative;
-  z-index: 1;
-  max-width: 780px;
-}
 .ent-hero-eyebrow {
   display: inline-flex;
   align-items: center;
@@ -89,33 +56,6 @@
   margin-bottom: 16px;
   box-shadow: 0 2px 10px -4px rgba(228, 87, 46, 0.3);
 }
-.ent-hero-title {
-  font-family: var(--font-heading);
-  font-size: clamp(25px, 3.2vw, 34px);
-  font-weight: 800;
-  line-height: 1.12;
-  letter-spacing: -0.5px;
-  color: var(--dark);
-  margin-bottom: 14px;
-}
-.ent-hero-title .accent {
-  background: linear-gradient(120deg, var(--primary), #f0894f);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-.ent-hero-subtitle {
-  font-size: 15px;
-  line-height: 1.65;
-  color: var(--text-muted);
-  max-width: 640px;
-}
-.ent-hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 22px;
-}
 
 /* ── Sections ──────────────────────────────────────────────────────────── */
 .ent-section {
@@ -124,9 +64,14 @@
 .ent-section.alt {
   background: var(--bg-alt);
 }
+/* The enterprise pages use the same header format as the homepage — eyebrow,
+   heading, lead, stacked and ranged left. These three classes are kept only
+   because eight pages already render them through <SectionHead>; the values
+   are the canonical ones from index.css (.sec-eyebrow / .sec-title /
+   .sec-lead) and must be changed there, not here. */
 .ent-section-head {
-  max-width: 680px;
-  margin-bottom: 24px;
+  max-width: 62ch;
+  margin-bottom: var(--space-8);
 }
 .ent-section-head.center {
   margin-left: auto;
@@ -134,41 +79,32 @@
   text-align: center;
 }
 .ent-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
   font-size: 11px;
   font-weight: 800;
-  letter-spacing: 2px;
+  letter-spacing: var(--track-eyebrow);
   text-transform: uppercase;
   color: var(--primary);
-  margin-bottom: 10px;
+  margin: 0 0 8px;
 }
-.ent-eyebrow::before {
-  content: '';
-  width: 20px;
-  height: 2px;
-  border-radius: 2px;
-  background: linear-gradient(90deg, var(--primary), transparent);
-}
-.ent-section-head.center .ent-eyebrow {
-  justify-content: center;
-}
-.ent-section-head.center .ent-eyebrow::before { display: none; }
 .ent-title {
   font-family: var(--font-heading);
-  font-size: clamp(21px, 2.4vw, 26px);
+  font-size: var(--text-section-title);
   font-weight: 700;
   line-height: 1.2;
-  letter-spacing: -0.3px;
+  letter-spacing: var(--track-heading);
   color: var(--dark);
-  margin-bottom: 12px;
+  margin: 0 0 10px;
+  text-wrap: balance;
 }
 .ent-subtitle {
-  font-size: 14.5px;
-  line-height: 1.65;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.6;
   color: var(--text-muted);
+  margin: 0;
+  max-width: 56ch;
 }
+.ent-section-head.center .ent-subtitle { margin-inline: auto; }
 
 /* ── Generic feature/value card grid ──────────────────────────────────── */
 .ent-grid {
@@ -189,26 +125,10 @@
   overflow: hidden;
   transition: box-shadow 0.3s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease;
 }
-/* A hairline accent bar that wipes in along the top edge on hover. */
-.ent-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--primary), #f0894f);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-}
 .ent-card:hover {
   box-shadow: 0 22px 44px -22px rgba(28, 25, 23, 0.28);
   transform: translateY(-5px);
   border-color: rgba(228, 87, 46, 0.28);
-}
-.ent-card:hover::before {
-  transform: scaleX(1);
 }
 .ent-card-icon {
   width: 44px;
@@ -257,17 +177,6 @@
 .ent-stat:hover {
   transform: translateY(-3px);
   box-shadow: var(--shadow-md);
-}
-.ent-stat-value {
-  font-family: var(--font-mono);
-  font-size: clamp(26px, 3.2vw, 36px);
-  font-weight: 800;
-  background: linear-gradient(120deg, var(--primary), #f0894f);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  line-height: 1;
-  margin-bottom: 10px;
 }
 .ent-stat-label {
   font-size: 12px;
@@ -421,76 +330,6 @@
   font-size: 13.5px;
   line-height: 1.65;
   color: var(--text-muted);
-}
-
-/* ── CTA band ──────────────────────────────────────────────────────────── */
-.ent-cta-band {
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(135deg, #201b18 0%, #2f2620 55%, #3d2a20 100%);
-  border: 1px solid rgba(228, 87, 46, 0.18);
-  border-radius: 22px;
-  padding: 40px 40px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 28px;
-  flex-wrap: wrap;
-  box-shadow: 0 26px 52px -30px rgba(28, 25, 23, 0.5);
-}
-.ent-cta-band::before {
-  content: '';
-  position: absolute;
-  top: -40%;
-  right: -5%;
-  width: 48%;
-  height: 190%;
-  background: radial-gradient(circle, rgba(228, 87, 46, 0.3) 0%, transparent 68%);
-  pointer-events: none;
-}
-.ent-cta-band::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-  background-size: 24px 24px;
-  -webkit-mask-image: radial-gradient(80% 100% at 100% 0%, #000, transparent 70%);
-  mask-image: radial-gradient(80% 100% at 100% 0%, #000, transparent 70%);
-  pointer-events: none;
-}
-.ent-cta-text {
-  position: relative;
-  z-index: 1;
-  max-width: 560px;
-}
-.ent-cta-text h2 {
-  font-family: var(--font-heading);
-  font-size: clamp(22px, 2.6vw, 28px);
-  font-weight: 800;
-  color: #fff;
-  line-height: 1.2;
-  margin-bottom: 10px;
-}
-.ent-cta-text p {
-  font-size: 14.5px;
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.72);
-}
-.ent-cta-actions {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-.ent-cta-actions .btn-outline {
-  border-color: rgba(255, 255, 255, 0.3);
-  color: #fff;
-  background: transparent;
-}
-.ent-cta-actions .btn-outline:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: #fff;
 }
 
 /* ── Search bar ────────────────────────────────────────────────────────── */
@@ -774,7 +613,7 @@
   background: rgba(228, 87, 46, 0.03);
 }
 
-/* ── Job listing rows (careers) ────────────────────────────────────────── */
+/* ── Listing rows: guides, popular articles, published reports ───────── */
 .ent-job {
   display: flex;
   align-items: center;
@@ -871,7 +710,6 @@
   .ent-grid.cols-4 { grid-template-columns: 1fr; }
   .ent-stat-grid { grid-template-columns: repeat(2, 1fr); }
   .ent-form-row { grid-template-columns: 1fr; }
-  .ent-cta-band { padding: 32px 24px; flex-direction: column; align-items: flex-start; }
   .ent-timeline-item { grid-template-columns: 64px 1fr; gap: 14px; }
   .ent-timeline-year { font-size: 13px; }
 }

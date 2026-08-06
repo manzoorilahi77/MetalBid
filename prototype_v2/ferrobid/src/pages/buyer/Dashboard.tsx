@@ -74,7 +74,8 @@ export default function Dashboard() {
         <Stat label="Wallet balance" value={inr(wallet?.balance ?? 0)} sub={<Link to="/buyer/wallet" className="text-steel hover:underline">View ledger →</Link>} />
         <Stat label="EMD locked" value={inr(wallet?.emdLocked ?? 0)} tone="steel" sub="Auto-released if you don't win" />
         <Stat
-          label="Active bids"
+          label="Active Auctions"
+          to="/buyer/bids?tab=active"
           value={activeLots.length}
           tone={outbidLots.length > 0 ? 'warning' : 'ember'}
           sub={activeLots.length > 0 ? `${leadingCount} leading · ${outbidLots.length} outbid` : 'No live bids yet'}

@@ -1,0 +1,1226 @@
+/* ==========================================================================
+   RESOURCE SURFACES — Knowledge Center, Help Center, Market Reports,
+   Contact, How it works
+
+   These pages previously pointed almost every link at /faqs and filled the
+   gaps with counts nobody could act on ("12 articles"). The rebuild gives
+   each one a job the others do not do: the Knowledge Center holds reference
+   data (grades, checklists, glossary), the Help Center routes you by what you
+   are trying to do, Market Reports carries prices and the method behind them,
+   and Contact states who answers and how fast.
+
+   Reuses the tokens and the .sec-head header system; adds no new colour.
+   ========================================================================== */
+
+.res-page { --res-stick: 84px; background: var(--bg-white); }
+
+/* ── Shared hero ──────────────────────────────────────────────────────────
+   Same construction as the support pages so the whole secondary-page family
+   opens the same way. */
+.res-hero {
+  position: relative;
+  padding: 22px 0 34px;
+  background:
+    radial-gradient(110% 130% at 88% -25%, rgb(228 87 46 / 0.11) 0%, transparent 58%),
+    linear-gradient(180deg, var(--bg-alt) 0%, var(--bg-white) 100%);
+  border-bottom: 1px solid var(--border);
+}
+
+.res-hero-inner { max-width: 780px; }
+
+.res-hero-title {
+  font-family: var(--font-heading);
+  font-size: clamp(28px, 3.6vw, 40px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  color: var(--dark);
+  margin: 0 0 12px;
+  text-wrap: balance;
+}
+
+.res-hero-lead {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--text-muted);
+  margin: 0;
+  max-width: 62ch;
+}
+
+/* Facts strip: what this page actually contains, counted. */
+.res-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.res-facts li {
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-white);
+  box-shadow: 0 1px 2px -1px rgb(28 25 23 / 0.07);
+}
+
+.res-fact-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0 0 3px;
+}
+
+.res-fact-label svg { color: var(--primary); flex: none; }
+
+.res-fact-value {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--dark);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Search ──────────────────────────────────────────────────────────────── */
+.res-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 22px;
+  max-width: 620px;
+  padding: 4px 6px 4px 16px;
+  border: 1px solid var(--color-line-strong, #d6cec2);
+  border-radius: 999px;
+  background: var(--bg-white);
+  box-shadow: 0 2px 6px -3px rgb(28 25 23 / 0.16);
+  transition: border-color var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out);
+}
+
+.res-search:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 4px 16px -8px rgb(228 87 46 / 0.6);
+}
+
+.res-search > svg { flex: none; color: var(--text-muted); }
+
+.res-search input {
+  flex: 1;
+  min-width: 0;
+  padding: 11px 0;
+  border: 0;
+  background: none;
+  font-family: inherit;
+  font-size: 14.5px;
+  color: var(--dark);
+}
+
+.res-search input:focus { outline: none; }
+.res-search input::placeholder { color: var(--color-ink-faint, #9c948c); }
+
+.res-search-clear {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out);
+}
+
+.res-search-clear:hover { background: var(--bg-alt); color: var(--dark); }
+
+/* ── Filter pills ────────────────────────────────────────────────────────── */
+.res-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 18px;
+}
+
+.res-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 13px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-white);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: border-color var(--dur-base) var(--ease-out),
+              color var(--dur-base) var(--ease-out),
+              background var(--dur-base) var(--ease-out);
+}
+
+.res-pill:hover { border-color: var(--color-line-strong, #d6cec2); color: var(--dark); }
+
+.res-pill.is-active {
+  border-color: var(--primary);
+  background: rgb(228 87 46 / 0.08);
+  color: var(--primary-hover);
+}
+
+.res-pill:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+.res-pill-count {
+  min-width: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--bg-alt);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.res-pill.is-active .res-pill-count { background: var(--primary); color: #fff; }
+
+/* ── Reference table (grades, fees, response times) ─────────────────────── */
+.res-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--bg-white);
+}
+
+.res-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  min-width: 640px;
+}
+
+.res-table thead th {
+  position: sticky;
+  top: 0;
+  padding: 11px 14px;
+  background: var(--bg-alt);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.res-table tbody tr { transition: background var(--dur-base) var(--ease-out); }
+.res-table tbody tr:hover { background: var(--bg-alt); }
+.res-table tbody tr + tr th,
+.res-table tbody tr + tr td { border-top: 1px solid var(--border); }
+
+.res-table tbody th {
+  padding: 12px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--dark);
+  text-align: left;
+  vertical-align: top;
+  white-space: nowrap;
+}
+
+.res-table td {
+  padding: 12px 14px;
+  line-height: 1.55;
+  color: var(--text-muted);
+  vertical-align: top;
+}
+
+.res-table .num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--dark);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.res-chip {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--bg-alt);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.res-chip.is-ferrous { background: rgb(43 76 126 / 0.1); color: var(--color-steel, #2b4c7e); }
+.res-chip.is-nonferrous { background: rgb(228 87 46 / 0.1); color: var(--primary-hover); }
+.res-chip.is-stainless { background: rgb(28 25 23 / 0.07); color: var(--dark); }
+.res-chip.is-minor { background: rgb(180 83 9 / 0.1); color: var(--color-warning, #b45309); }
+
+/* ── Generic card grid ───────────────────────────────────────────────────── */
+.res-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.res-grid.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.res-grid.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.res-grid.cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+.res-card {
+  display: block;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--bg-white);
+  text-decoration: none;
+  transition: border-color var(--dur-base) var(--ease-out),
+              transform var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out);
+}
+
+.res-card:hover {
+  border-color: rgb(228 87 46 / 0.34);
+  transform: translateY(-3px);
+  box-shadow: 0 20px 36px -28px rgb(28 25 23 / 0.55);
+}
+
+.res-card-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgb(228 87 46 / 0.1);
+  color: var(--primary);
+  margin-bottom: 12px;
+  transition: background var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out);
+}
+
+.res-card:hover .res-card-icon { background: var(--primary); color: #fff; }
+
+.res-card h3 {
+  font-family: var(--font-heading);
+  font-size: 15.5px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--dark);
+  margin: 0 0 6px;
+}
+
+.res-card p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.res-card-foot {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.res-card-foot svg { transition: transform var(--dur-base) var(--ease-out); }
+.res-card:hover .res-card-foot svg { transform: translateX(3px); }
+
+/* ── Row list (guides, downloads, reports) ───────────────────────────────── */
+.res-rows { display: grid; gap: 9px; }
+
+.res-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-white);
+  text-decoration: none;
+  transition: border-color var(--dur-base) var(--ease-out),
+              background var(--dur-base) var(--ease-out),
+              transform var(--dur-base) var(--ease-out);
+}
+
+.res-row:hover {
+  border-color: rgb(228 87 46 / 0.34);
+  background: var(--bg-alt);
+  transform: translateX(3px);
+}
+
+.res-row-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: rgb(228 87 46 / 0.1);
+  color: var(--primary);
+  transition: background var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out);
+}
+
+.res-row:hover .res-row-icon { background: var(--primary); color: #fff; }
+
+.res-row-body { flex: 1; min-width: 0; }
+
+.res-row-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--dark);
+  margin: 0 0 3px;
+  line-height: 1.4;
+}
+
+.res-row-desc {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.res-row-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.res-row-go {
+  flex: none;
+  color: var(--text-muted);
+  opacity: 0.6;
+  transition: opacity var(--dur-base) var(--ease-out),
+              transform var(--dur-base) var(--ease-out),
+              color var(--dur-base) var(--ease-out);
+}
+
+.res-row:hover .res-row-go { opacity: 1; color: var(--primary); transform: translateX(2px); }
+
+/* ── Glossary ────────────────────────────────────────────────────────────── */
+.res-glossary {
+  display: grid;
+  gap: 1px;
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--border);
+  overflow: hidden;
+}
+
+.res-gloss-row {
+  display: grid;
+  grid-template-columns: minmax(0, 210px) minmax(0, 1fr);
+  gap: 16px;
+  padding: 13px 16px;
+  background: var(--bg-white);
+  transition: background var(--dur-base) var(--ease-out);
+}
+
+.res-gloss-row:hover { background: var(--bg-alt); }
+
+.res-gloss-row dt {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.res-gloss-abbr {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.res-gloss-row dd {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+/* ── Empty state ─────────────────────────────────────────────────────────── */
+.res-empty {
+  padding: 32px 24px;
+  border: 1px dashed var(--color-line-strong, #d6cec2);
+  border-radius: 16px;
+  background: var(--bg-alt);
+  text-align: center;
+}
+
+.res-empty-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--bg-white);
+  color: var(--primary);
+}
+
+.res-empty h3 {
+  font-family: var(--font-heading);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--dark);
+  margin: 10px 0 6px;
+}
+
+.res-empty p {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0 auto;
+  max-width: 46ch;
+}
+
+/* ── Feature band ────────────────────────────────────────────────────────── */
+/* The warm alternating band the homepage uses between its white sections, so a
+   sub-page reads as more of the same page rather than as a tonal detour. */
+.res-band {
+  padding: clamp(40px, 4vw, 56px) 0;
+  background: var(--bg-alt);
+  border-top: 1px solid var(--color-line);
+  border-bottom: 1px solid var(--color-line);
+}
+
+/* Contact and the Knowledge Center place the band straight after a warm
+   `.ent-section.alt`; two warm bands running together read as one long slab, so
+   the band takes the white turn there. Its cards pick up the warm surface to
+   stay legible as cards once the ground under them is white. */
+.ent-section.alt + .res-band {
+  background: var(--bg-white);
+}
+
+.ent-section.alt + .res-band .res-band-card {
+  background: var(--color-surface-2);
+}
+
+.res-band-card {
+  padding: 20px;
+  border: 1px solid var(--color-line);
+  border-radius: 14px;
+  background: var(--bg-white);
+  transition: border-color var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out);
+}
+
+.res-band-card:hover {
+  border-color: rgb(228 87 46 / 0.35);
+  box-shadow: var(--shadow-md);
+}
+
+.res-band-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: rgb(228 87 46 / 0.1);
+  color: var(--primary);
+  margin-bottom: 12px;
+}
+
+.res-band-card h3 {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--dark);
+  margin: 0 0 6px;
+}
+
+.res-band-card p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.res-band-note {
+  margin: 20px 0 0;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+/* ── Callout ─────────────────────────────────────────────────────────────── */
+.res-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--bg-alt);
+  margin-top: 16px;
+}
+
+.res-note-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: var(--bg-white);
+  color: var(--color-steel, #2b4c7e);
+}
+
+.res-note p {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.res-note strong { color: var(--dark); font-weight: 700; }
+
+@media (max-width: 1000px) {
+  .res-grid.cols-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .res-grid.cols-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 700px) {
+  .res-grid.cols-2,
+  .res-grid.cols-3,
+  .res-grid.cols-4 { grid-template-columns: minmax(0, 1fr); }
+  .res-gloss-row { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .res-facts li { flex: 1 1 calc(50% - 5px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .res-card:hover,
+  .res-row:hover { transform: none; }
+}
+
+/* ==========================================================================
+   HOW IT WORKS — the buyer and seller journeys
+
+   The About page already shows the internal chain of authority (which
+   FerroBid role signs off on what). This page answers the other question:
+   what do *I* do, in what order, and how long does each part take. The
+   audience switch is the whole page — a buyer and a seller share a platform
+   but almost no steps.
+   ========================================================================== */
+.jrn-switch {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-alt);
+  margin-bottom: 26px;
+}
+
+.jrn-switch-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color var(--dur-base) var(--ease-out);
+}
+
+.jrn-switch-btn:hover { color: var(--dark); }
+.jrn-switch-btn.is-active { color: #fff; }
+.jrn-switch-btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+/* The pill slides between the two options rather than each fading — one
+   object moving reads as a switch, two fading reads as a glitch. */
+.jrn-switch-pill {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: 999px;
+  background: var(--primary);
+}
+
+.jrn-switch-btn > svg,
+.jrn-switch-label { position: relative; z-index: 1; }
+
+/* ── The journey chain ───────────────────────────────────────────────────── */
+.jrn-chain { position: relative; }
+
+.jrn-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.jrn-step {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr);
+  gap: clamp(14px, 2vw, 24px);
+  align-items: start;
+  padding-bottom: clamp(12px, 1.6vw, 18px);
+}
+
+.jrn-marker {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-self: stretch;
+  min-height: 46px;
+}
+
+.jrn-node {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--bg-white);
+  border: 1.5px solid var(--color-line-strong, #d6cec2);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-muted);
+  transition: background var(--dur-slow) var(--ease-out),
+              border-color var(--dur-slow) var(--ease-out),
+              color var(--dur-slow) var(--ease-out),
+              box-shadow var(--dur-slow) var(--ease-out);
+}
+
+.jrn-step.is-passed .jrn-node {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+  box-shadow: 0 6px 16px -8px rgb(228 87 46 / 0.85);
+}
+
+/* Static hairline track with a scroll-driven ember fill over it — the resting
+   state is already visible, so nothing here is gated behind the animation. */
+.jrn-link {
+  position: absolute;
+  top: 52px;
+  bottom: calc(clamp(12px, 1.6vw, 18px) * -1 - 6px);
+  left: 50%;
+  width: 2px;
+  margin-left: -1px;
+  border-radius: 1px;
+  background: var(--border);
+  overflow: hidden;
+}
+
+.jrn-link-fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 1px;
+  transform-origin: top center;
+  background: linear-gradient(180deg, var(--primary) 0%, rgb(228 87 46 / 0.45) 100%);
+}
+
+.jrn-card {
+  padding: 18px 20px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--bg-white);
+  transition: border-color var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out),
+              transform var(--dur-base) var(--ease-out);
+}
+
+.jrn-step:hover .jrn-card {
+  border-color: rgb(228 87 46 / 0.32);
+  box-shadow: 0 18px 34px -26px rgb(28 25 23 / 0.55);
+  transform: translateY(-2px);
+}
+
+.jrn-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.jrn-card-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: rgb(228 87 46 / 0.1);
+  color: var(--primary);
+  transition: background var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out);
+}
+
+.jrn-step:hover .jrn-card-icon { background: var(--primary); color: #fff; }
+
+.jrn-card-head h3 {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-heading);
+  font-size: clamp(16px, 1.6vw, 18px);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--dark);
+  margin: 0;
+}
+
+.jrn-when {
+  flex: none;
+  padding: 3px 9px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-alt);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* Two columns: what the reader does, and what happens on our side. The split
+   is the point — most confusion is about who is waiting on whom. */
+.jrn-split {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.jrn-col-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  margin: 0 0 6px;
+}
+
+.jrn-col-you .jrn-col-label { color: var(--primary); }
+.jrn-col-us .jrn-col-label { color: var(--color-steel, #2b4c7e); }
+
+.jrn-col p {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.jrn-ready {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin-top: 13px;
+  padding: 11px 13px;
+  border-radius: 10px;
+  background: var(--bg-alt);
+}
+
+.jrn-ready-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  background: var(--bg-white);
+  color: var(--color-warning, #b45309);
+}
+
+.jrn-ready p {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.jrn-ready strong { color: var(--dark); font-weight: 700; }
+
+@media (max-width: 760px) {
+  .jrn-split { grid-template-columns: minmax(0, 1fr); }
+  .jrn-step { grid-template-columns: 38px minmax(0, 1fr); gap: 12px; }
+  .jrn-marker { min-height: 38px; }
+  .jrn-node { width: 38px; height: 38px; font-size: 12.5px; }
+  .jrn-link { top: 44px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jrn-step:hover .jrn-card { transform: none; }
+}
+
+/* ==========================================================================
+   BLOG — article cards
+
+   The editorial content here was already real (full article bodies, named
+   authors, working categories), so this is a re-skin rather than a rebuild:
+   the cards adopt the same surface, hover and motion language as the rest of
+   the secondary pages so the Resources section reads as one thing.
+   ========================================================================== */
+.blg-featured {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--bg-white);
+  overflow: hidden;
+  text-decoration: none;
+  transition: border-color var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out);
+}
+
+.blg-featured:hover {
+  border-color: rgb(228 87 46 / 0.34);
+  box-shadow: 0 26px 46px -34px rgb(28 25 23 / 0.6);
+}
+
+.blg-featured-media {
+  position: relative;
+  min-height: 300px;
+  overflow: hidden;
+  background: var(--bg-alt);
+}
+
+.blg-featured-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s var(--ease-out);
+}
+
+.blg-featured:hover .blg-featured-media img { transform: scale(1.04); }
+
+.blg-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: rgb(28 25 23 / 0.82);
+  backdrop-filter: blur(6px);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #faf8f5;
+}
+
+.blg-featured-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(22px, 2.6vw, 34px);
+}
+
+.blg-featured-body h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(20px, 2.2vw, 26px);
+  font-weight: 700;
+  line-height: 1.22;
+  letter-spacing: -0.02em;
+  color: var(--dark);
+  margin: 10px 0;
+  text-wrap: balance;
+}
+
+.blg-featured-body > p {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--text-muted);
+  margin: 0 0 16px;
+}
+
+.blg-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.blg-meta-dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--color-ink-faint, #9c948c);
+}
+
+/* ── Grid cards ─────────────────────────────────────────────────────────── */
+.blg-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--bg-white);
+  overflow: hidden;
+  text-decoration: none;
+  height: 100%;
+  transition: border-color var(--dur-base) var(--ease-out),
+              transform var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out);
+}
+
+.blg-card:hover {
+  border-color: rgb(228 87 46 / 0.34);
+  transform: translateY(-3px);
+  box-shadow: 0 22px 38px -30px rgb(28 25 23 / 0.6);
+}
+
+.blg-card-media {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--bg-alt);
+}
+
+.blg-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s var(--ease-out);
+}
+
+.blg-card:hover .blg-card-media img { transform: scale(1.05); }
+
+.blg-card-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 16px 18px 18px;
+}
+
+.blg-card-body h3 {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.32;
+  letter-spacing: -0.015em;
+  color: var(--dark);
+  margin: 9px 0 7px;
+}
+
+.blg-card-body > p {
+  flex: 1;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0 0 14px;
+}
+
+.blg-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.blg-author {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+
+.blg-avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgb(228 87 46 / 0.1);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.blg-author-name {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--dark);
+  line-height: 1.3;
+}
+
+.blg-author-role {
+  display: block;
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.3;
+}
+
+.blg-go {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: none;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.blg-go svg { transition: transform var(--dur-base) var(--ease-out); }
+.blg-card:hover .blg-go svg,
+.blg-featured:hover .blg-go svg { transform: translateX(3px); }
+
+/* ── Most-read rail ─────────────────────────────────────────────────────── */
+.blg-popular {
+  display: grid;
+  gap: 2px;
+}
+
+.blg-popular-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: background var(--dur-base) var(--ease-out);
+}
+
+.blg-popular-item:hover { background: var(--bg-alt); }
+
+.blg-popular-n {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--primary);
+  padding-top: 1px;
+}
+
+.blg-popular-title {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--dark);
+}
+
+.blg-popular-meta {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ── Newsletter ─────────────────────────────────────────────────────────── */
+.blg-news {
+  padding: clamp(26px, 3vw, 40px);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background:
+    radial-gradient(90% 120% at 92% 0%, rgb(228 87 46 / 0.09) 0%, transparent 60%),
+    var(--bg-white);
+  text-align: center;
+}
+
+.blg-news-form {
+  display: flex;
+  gap: 8px;
+  max-width: 440px;
+  margin: 0 auto;
+  padding: 4px 4px 4px 16px;
+  border: 1px solid var(--color-line-strong, #d6cec2);
+  border-radius: 999px;
+  background: var(--bg-white);
+  transition: border-color var(--dur-base) var(--ease-out);
+}
+
+.blg-news-form:focus-within { border-color: var(--primary); }
+
+.blg-news-form input {
+  flex: 1;
+  min-width: 0;
+  padding: 11px 0;
+  border: 0;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--dark);
+}
+
+.blg-news-form input:focus { outline: none; }
+
+.blg-news-form button {
+  flex: none;
+  padding: 9px 20px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--primary);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--dur-base) var(--ease-out);
+}
+
+.blg-news-form button:hover { background: var(--primary-hover); }
+
+.blg-news-done {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 20px;
+  border-radius: 999px;
+  background: rgb(30 127 79 / 0.1);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--color-success, #1e7f4f);
+}
+
+@media (max-width: 900px) {
+  .blg-featured { grid-template-columns: minmax(0, 1fr); }
+  .blg-featured-media { min-height: 220px; aspect-ratio: 16 / 9; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blg-card:hover { transform: none; }
+  .blg-card:hover .blg-card-media img,
+  .blg-featured:hover .blg-featured-media img { transform: none; }
+}

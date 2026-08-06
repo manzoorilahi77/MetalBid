@@ -12,7 +12,9 @@
     "emdFundedLotIds": [
       "lot-001",
       "lot-002",
-      "lot-003"
+      "lot-003",
+      "lot-004",
+      "lot-005"
     ]
   },
   {
@@ -26,7 +28,9 @@
     ],
     "emdFundedLotIds": [
       "lot-019",
-      "lot-020"
+      "lot-020",
+      "lot-021",
+      "lot-022"
     ]
   }
 ]

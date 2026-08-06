@@ -172,8 +172,14 @@
   }
 }
 
+/* `clip`, not `hidden`. Both stop sideways scroll, but `overflow-x: hidden`
+   turns the root into a scroll container, and every `position: sticky`
+   descendant then resolves against that container instead of the viewport —
+   which silently kills sticky page-wide (the support pages' contents rails
+   were the first to need it). `clip` suppresses the overflow without creating
+   a scrollport, so sticky keeps working. */
 html, body {
-  overflow-x: hidden;
+  overflow-x: clip;
   width: 100%;
 }
 
@@ -184,7 +190,7 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   padding: 0;
-  overflow-x: hidden;
+  overflow-x: clip;
   width: 100%;
 }
 
@@ -310,8 +316,7 @@ ul {
 }
 .btn-outline:active { transform: translateY(0) scale(0.98); transition-duration: 0.08s; }
 .carousel-nav-btn:active:not(.disabled) { transform: translateY(-50%) scale(0.94); transition-duration: 0.08s; }
-.announcements-nav-btn:active:not(.disabled),
-.testimonial-nav:active { transform: scale(0.94); transition-duration: 0.08s; }
+.announcements-nav-btn:active:not(.disabled) { transform: scale(0.94); transition-duration: 0.08s; }
 
 /* Arrow micro-move: link arrows slide 3px on hover */
 .view-all svg, .hiw-learn-more svg, .market-dashboard-link svg,
@@ -766,36 +771,160 @@ ul {
   background: color-mix(in srgb, var(--primary) 12%, var(--color-surface-2));
 }
 
-/* Scrolling Ticker */
+/* Scrolling Ticker — a full band in its own right, built on the same header
+   skeleton as Announcements (eyebrow → heading → lead, control ranged right),
+   so it sits in the page's section rhythm instead of reading as a stray strip
+   bolted under the hero. The feed itself runs as a white tape through the warm
+   band — the inverse of the surrounding surfaces, which is what makes the
+   moving lots register as live data rather than as more page. */
+.ticker-band {
+  width: 100%;
+  background: var(--bg-alt);
+  /* The hero's stat card sits hard against the band's top edge otherwise —
+     the gap lets the card finish on the page ground before the colour opens. */
+  margin-top: 44px;
+  /* Padded on both sides of the strip, so the band closes in its own colour
+     rather than ending on the strip's bottom hairline. */
+  padding: var(--space-section-sm) 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.ticker-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 28px;
+}
+.ticker-head-text {
+  max-width: 640px;
+  min-width: 0;
+}
+/* Same eyebrow vocabulary as the Announcements section: 11px/800 uppercase in
+   ember with a 13px lucide glyph, so both bands read as one family. */
+.ticker-eyebrow,
+.ticker-head-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: var(--track-eyebrow);
+  color: var(--primary);
+  white-space: nowrap;
+}
+.ticker-eyebrow {
+  margin-bottom: 8px;
+}
+.ticker-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-family: var(--font-heading);
+  font-size: var(--text-section-title);
+  font-weight: 700;
+  letter-spacing: var(--track-heading);
+  line-height: 1.2;
+  color: var(--dark);
+  margin: 0 0 8px;
+}
+/* The lot count rides the heading the way the unread badge rides the
+   Announcements one — same pill, same ember, same place. */
+.ticker-count {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary) 22%, transparent);
+  padding: 3px 9px;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+.ticker-desc {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0;
+}
+/* The one control in this row, so it takes the same ember pill the page uses
+   for "View all auctions" — scaled to the header's size. Without the fill and
+   the arrow it read as a third label rather than as somewhere you can go. */
+.ticker-head-link {
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  background: rgba(228, 87, 46, 0.08);
+  border: 1px solid rgba(228, 87, 46, 0.16);
+  transition: background var(--dur-base) var(--ease-out),
+              border-color var(--dur-base) var(--ease-out);
+}
+.ticker-head-link:hover {
+  background: rgba(228, 87, 46, 0.16);
+  border-color: rgba(228, 87, 46, 0.32);
+}
+.ticker-head-link svg:last-child {
+  transition: transform var(--dur-base) var(--ease-out);
+}
+.ticker-head-link:hover svg:last-child {
+  transform: translateX(3px);
+}
+.ticker-head-link:focus-visible {
+  outline: 2px solid var(--color-ember);
+  outline-offset: 2px;
+}
+
+/* The band's own colour, exactly — header and strip are one continuous
+   surface, and the two ember hairlines are what mark the feed off from the
+   copy above it. Deliberately not a second tint: a near-match would read as a
+   printing error rather than as one band. */
 .ticker-wrapper {
   width: 100%;
   overflow: hidden;
-  background: var(--color-surface-2);
-  border-top: 1px solid rgba(228, 87, 46, 0.2);
-  border-bottom: 1px solid rgba(228, 87, 46, 0.2);
-  padding: 20px 0;
+  padding: 18px 0;
   display: flex;
-  margin-top: 40px;
   position: relative;
+  z-index: 1;
+  /* The same ember → gold → steel ring the hero's stat card carries, run flat
+     as the strip's two rules — drawn as background layers rather than borders
+     so the gradient can travel the full width instead of restarting per side. */
+  background-color: var(--bg-alt);
+  background-image:
+    linear-gradient(90deg, var(--color-ember) 0%, #d4af37 50%, var(--color-steel) 100%),
+    linear-gradient(90deg, var(--color-ember) 0%, #d4af37 50%, var(--color-steel) 100%);
+  background-repeat: no-repeat;
+  background-size: 100% 1.5px;
+  background-position: 0 0, 0 100%;
 }
 /* Fade edges for smooth entry/exit */
 .ticker-wrapper::before,
 .ticker-wrapper::after {
   content: "";
   position: absolute;
-  top: 0;
+  /* Inset off the two gradient rules — the fade is there to dissolve the
+     moving lots, not the strip's edges, which have to run unbroken. */
+  top: 1.5px;
+  height: calc(100% - 3px);
   width: 100px;
-  height: 100%;
   z-index: 2;
   pointer-events: none;
 }
 .ticker-wrapper::before {
   left: 0;
-  background: linear-gradient(to right, var(--color-surface-2), transparent);
+  background: linear-gradient(to right, var(--bg-alt), transparent);
 }
 .ticker-wrapper::after {
   right: 0;
-  background: linear-gradient(to left, var(--color-surface-2), transparent);
+  background: linear-gradient(to left, var(--bg-alt), transparent);
 }
 .ticker-content {
   display: flex;
@@ -813,12 +942,14 @@ ul {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); } /* Content will be duplicated to make it seamless */
 }
+/* Stepped down from 19px once the band gained a title — at near-parity the
+   moving lots competed with the heading instead of reading as its feed. */
 .ticker-item {
   display: flex;
   align-items: center;
   gap: 16px;
   padding: 0 40px;
-  font-size: 19px;
+  font-size: 17px;
   transition: opacity var(--dur-base) var(--ease-out);
   cursor: pointer;
 }
@@ -840,7 +971,7 @@ ul {
 }
 .ticker-loc {
   color: var(--text-muted);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
   position: relative;
   padding-left: 16px;
@@ -869,6 +1000,36 @@ ul {
   color: var(--text-muted);
   font-weight: 500;
 }
+/* The calendar button runs out of room beside the lead first, so the header
+   stacks and the button drops under the copy rather than squeezing it. */
+@media (max-width: 760px) {
+  .ticker-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+    padding-bottom: 24px;
+  }
+}
+@media (max-width: 640px) {
+  .ticker-head {
+    padding-bottom: 20px;
+  }
+  .ticker-wrapper {
+    padding: 14px 0;
+  }
+  .ticker-wrapper::before,
+  .ticker-wrapper::after {
+    width: 48px;
+  }
+  .ticker-item {
+    font-size: 15px;
+    gap: 12px;
+    padding: 0 24px;
+  }
+  .ticker-loc {
+    font-size: 13px;
+  }
+}
 .pulse-item {
   display: flex;
   align-items: center;
@@ -887,15 +1048,14 @@ ul {
 .pulse-change.negative { color: #c73030; }
 
 /* Warm bands get top/bottom hairlines so white↔beige transitions read as
-   deliberate edges instead of a soft smudge. (Ticker keeps its own ember
-   hairlines — excluded.) */
+   deliberate edges instead of a soft smudge. */
 .live-auctions,
 .trust-section,
-.market-insights-section,
 .testimonials-section,
 .announcements-section,
 .why-choose-section,
 .industry-insights-section,
+.ticker-band,
 .band-alt {
   box-shadow: inset 0 1px 0 rgb(28 25 23 / 0.045),
               inset 0 -1px 0 rgb(28 25 23 / 0.045);
@@ -908,19 +1068,70 @@ ul {
   justify-content: space-between;
   margin-bottom: var(--space-8);
 }
+
+/* ── Canonical section header ────────────────────────────────────────────
+   ONE header format for every guest surface, taken from the homepage:
+   an uppercase ember eyebrow, the heading directly under it, then the lead
+   directly under that. Always stacked — a lead parked in a second column
+   beside the heading reads as two unrelated blocks and breaks the rhythm the
+   rest of the site keeps. Ranged left by default; `.is-center` centres the
+   column, `.on-dark` inverts it for the dark bands.
+
+   Every page-level header class below (.about-sec-*, .ent-*, and the
+   per-section homepage heads) resolves to these same values, so the whole
+   guest site reads as one system rather than three. */
+.sec-head {
+  max-width: 62ch;
+  margin: 0 0 var(--space-8);
+}
+.sec-head.is-center {
+  margin-inline: auto;
+  text-align: center;
+}
+.sec-head.is-center .sec-lead { margin-inline: auto; }
+
 /* Shared section eyebrow: small uppercase colored kicker above a black
    heading — applied evenly across every homepage section. */
+.sec-eyebrow,
 .section-eyebrow {
   font-size: 11px;
   font-weight: 800;
   letter-spacing: var(--track-eyebrow);
   text-transform: uppercase;
   color: var(--primary);
-  margin-bottom: 8px;
+  margin: 0 0 8px;
 }
-.section-title {
+.sec-title {
+  font-family: var(--font-heading);
   font-size: var(--text-section-title);
-  font-weight: 800;
+  font-weight: 700;
+  letter-spacing: var(--track-heading);
+  line-height: 1.2;
+  color: var(--dark);
+  margin: 0 0 10px;
+  text-wrap: balance;
+}
+.sec-lead {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0;
+  max-width: 56ch;
+}
+.sec-title:last-child,
+.sec-lead:last-child { margin-bottom: 0; }
+
+/* Dark bands (risk ledger, dark How-it-works) keep the identical structure —
+   only the three ink values change. */
+.sec-head.on-dark .sec-eyebrow { color: var(--color-ember-light); }
+.sec-head.on-dark .sec-title { color: #faf8f5; }
+.sec-head.on-dark .sec-lead { color: #b3aca4; }
+
+.section-title {
+  font-family: var(--font-heading);
+  font-size: var(--text-section-title);
+  font-weight: 700;
   letter-spacing: var(--track-heading);
   line-height: 1.2;
   color: var(--dark);
@@ -1748,15 +1959,27 @@ ul {
 }
 
 /* Main Footer */
+/* Plain surface with a hairline top rule, matching the manager app's footer
+   (Chrome.tsx: border-t border-line bg-surface) so both shells close the same
+   way. Every colour below is stated against a light ground — nothing here may
+   assume white-on-dark. */
 .footer {
-  background: var(--dark);
-  color: white;
+  background: var(--bg-white);
+  color: var(--text-main);
+  border-top: 1px solid var(--border);
   padding: 32px 0 24px 0;
 }
+/* Brand, four equal link columns, app badges. The link columns are
+   `minmax(0, 1fr)` rather than `1fr` so a long label ("Grievance Redressal")
+   is allowed to wrap inside its track instead of forcing the track wider and
+   knocking the whole row out of alignment. `align-items: start` keeps every
+   column's heading on the same baseline regardless of its content height. */
 .footer-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1.5fr;
-  gap: 24px;
+  grid-template-columns: 1.9fr repeat(4, minmax(0, 1fr)) 1.4fr;
+  align-items: start;
+  column-gap: 24px;
+  row-gap: 32px;
   margin-bottom: 32px;
 }
 .footer-logo {
@@ -1768,12 +1991,13 @@ ul {
   margin-bottom: 8px;
 }
 .footer-desc {
-  color: rgba(255,255,255,0.6);
+  color: var(--text-muted);
   font-size: 11px;
 }
 .footer-col h4 {
   font-size: 12px;
   font-weight: 600;
+  color: var(--dark);
   margin-bottom: 16px;
 }
 .footer-col ul {
@@ -1783,19 +2007,24 @@ ul {
 }
 .footer-col a {
   display: inline-block;
-  color: rgba(255,255,255,0.6);
+  color: var(--text-muted);
   font-size: 11px;
   transition: color var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out);
 }
 .footer-col a:hover {
-  color: white;
+  color: var(--dark);
   transform: translateX(2px);
 }
 .app-buttons {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
 }
+/* `flex: none` matters: as flex items these badges were shrinking below their
+   own image width in the narrow footer column, which clipped the wordmark to
+   "Google Pla". They now hold their size and wrap to a second line instead. */
 .app-btn-img {
+  flex: none;
   background: black;
   border: 1px solid #333;
   border-radius: 6px;
@@ -1811,43 +2040,49 @@ ul {
 .app-btn-img img {
   height: 24px;
 }
+/* The rule carries the entity line and the statutory identifiers, and nothing
+   else — the legal links and socials ride along in the grid columns above. */
 .footer-bottom {
-  border-top: 1px solid rgba(255,255,255,0.1);
-  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  margin-top: 20px;
+  padding-top: 16px;
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  color: rgba(255,255,255,0.5);
+  gap: 8px;
+  color: var(--text-muted);
   font-size: 11px;
-  position: relative;
 }
+/* Closes out the brand column, directly under the tagline. */
 .footer-legal-links {
   display: flex;
+  flex-wrap: wrap;
   gap: 16px;
+  margin-top: 12px;
+  font-size: 11px;
 }
 .footer-legal-links a {
-  color: rgba(255,255,255,0.5);
+  color: var(--text-muted);
   transition: color var(--dur-base) var(--ease-out);
   text-decoration: none;
 }
 .footer-legal-links a:hover {
-  color: white;
+  color: var(--dark);
 }
-.footer-copyright {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-}
+/* Sits under the store badges in the Download App column. */
 .social-links {
   display: flex;
+  align-items: center;
   gap: 16px;
+  margin-top: 12px;
 }
 .social-links a {
-  color: rgba(255,255,255,0.5);
+  color: var(--text-muted);
   transition: color var(--dur-base) var(--ease-out);
 }
 .social-links a:hover {
-  color: white;
+  color: var(--primary);
 }
 
 .hiw-cards-container {
@@ -2058,10 +2293,7 @@ ul {
   .footer-grid { grid-template-columns: repeat(2, 1fr) !important; text-align: left; row-gap: 32px !important; }
   .footer-brand-col { grid-column: 1 / -1; text-align: center; }
   .footer-col { display: flex; flex-direction: column; align-items: flex-start; }
-  .footer-bottom { flex-direction: column; align-items: center !important; gap: 16px; text-align: center; }
-  .footer-legal-links { flex-direction: column; align-items: center !important; gap: 12px !important; }
-  .footer-copyright { position: relative !important; left: auto !important; transform: none !important; }
-  .social-links { justify-content: center; }
+  .footer-bottom { flex-direction: column; align-items: center !important; gap: 8px; text-align: center; }
 }
 
 /* Specific Component Utilities */
@@ -2554,10 +2786,11 @@ ul {
 }
 
 .hiw-dark-title {
-  font-size: clamp(1.3rem, 1.9vw, 1.75rem);
+  font-size: var(--text-section-title);
   font-weight: 700;
+  letter-spacing: var(--track-heading);
   line-height: 1.2;
-  color: #ffffff;
+  color: #faf8f5;
   font-family: var(--font-heading);
 }
 
@@ -2836,7 +3069,7 @@ ul {
 }
 .market-intel-heading {
   font-family: var(--font-heading);
-  font-size: clamp(21px, 2.4vw, 26px);
+  font-size: var(--text-section-title);
   font-weight: 700;
   letter-spacing: var(--track-heading);
   line-height: 1.2;
@@ -3667,228 +3900,7 @@ ul {
   }
 }
 
-/* ==========================================================================
-   Market Insights (compact widgets)
-   ========================================================================== */
-.market-insights-section {
-  background: var(--bg-orange-alt);
-  padding: var(--space-section) 0;
-}
-.market-insights-eyebrow {
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: var(--track-eyebrow);
-  text-transform: uppercase;
-  color: var(--primary);
-  margin-bottom: 8px;
-}
-.market-insights-heading {
-  font-family: var(--font-heading);
-  font-size: var(--text-section-title);
-  font-weight: 700;
-  letter-spacing: var(--track-heading);
-  line-height: 1.2;
-  color: var(--dark);
-  margin-bottom: 32px;
-}
-.market-insights-grid {
-  display: grid;
-  grid-template-columns: 1fr 1.32fr 0.9fr 1.06fr;
-  gap: 20px;
-  align-items: stretch;
-}
-.insight-card {
-  background: var(--bg-white);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  padding: 16px;
-  box-shadow: var(--shadow-md);
-  display: flex;
-  flex-direction: column;
-}
-.insight-card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
-  gap: 8px;
-}
-.insight-card-header h4 {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--dark);
-}
-.insight-card-footnote-top {
-  font-size: 10.5px;
-  color: var(--text-muted);
-  margin-top: -6px;
-  margin-bottom: 10px;
-}
-.range-toggle {
-  display: flex;
-  gap: 2px;
-  background: var(--color-surface-2);
-  border-radius: 999px;
-  padding: 2px;
-  flex-shrink: 0;
-}
-.range-toggle button {
-  border: none;
-  background: transparent;
-  font-size: 10px;
-  font-weight: 700;
-  padding: 4px 8px;
-  border-radius: 999px;
-  cursor: pointer;
-  color: var(--text-muted);
-}
-.range-toggle button.active {
-  background: var(--color-ember);
-  color: white;
-}
-.insight-card-value {
-  font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
-  font-size: 24px;
-  font-weight: 800;
-  color: var(--dark);
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  margin-bottom: 6px;
-}
-.insight-card-change {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 2px;
-}
-.insight-card-change.up {
-  color: var(--color-success);
-}
-.insight-card-change.down {
-  color: var(--color-danger);
-}
-.trend-card-unit {
-  font-size: 10px;
-  color: var(--text-muted);
-  font-weight: 600;
-}
-.trend-card .insight-card-header {
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
-}
-.trend-card .range-toggle {
-  align-self: flex-start;
-}
-.trend-chart-wrap {
-  position: relative;
-  cursor: crosshair;
-}
-.trend-chart {
-  width: 100%;
-  height: 92px;
-  overflow: visible;
-  display: block;
-}
-.chart-hover-tooltip {
-  position: absolute;
-  transform: translate(-50%, -125%);
-  background: var(--dark);
-  color: #fff;
-  padding: 6px 10px;
-  border-radius: 8px;
-  font-size: 11px;
-  pointer-events: none;
-  white-space: nowrap;
-  z-index: 10;
-  box-shadow: var(--shadow-md);
-}
-.chart-hover-label {
-  font-size: 10px;
-  color: rgba(255, 255, 255, 0.6);
-  font-weight: 600;
-}
-.chart-hover-value {
-  font-family: var(--font-mono);
-  font-weight: 700;
-}
-.trend-chart-labels {
-  display: flex;
-  justify-content: space-between;
-  font-size: 10px;
-  color: var(--text-muted);
-  margin-top: 4px;
-}
-.mini-world-map {
-  position: relative;
-  height: 118px;
-  border-radius: 12px;
-  background: linear-gradient(180deg, #f4faf6, #e7f4ec);
-  flex-grow: 1;
-}
-.mini-map-legend {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 10px;
-  font-size: 10px;
-  color: var(--text-muted);
-}
-.mini-map-legend .legend-gradient-bar {
-  flex: 1;
-  height: 6px;
-  border-radius: 3px;
-  max-width: none;
-}
-/* Regional demand — India choropleth */
-.india-demand-map {
-  position: relative;
-  height: 172px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-  background: linear-gradient(180deg, #fbf5ef, #f7ebe0);
-  flex-grow: 1;
-  overflow: hidden;
-  padding: 6px;
-}
-.india-demand-svg {
-  height: 100%;
-  width: auto;
-  max-width: 100%;
-}
-.india-demand-svg path {
-  transition: stroke var(--dur-quick) var(--ease-out), stroke-width var(--dur-quick) var(--ease-out);
-  cursor: pointer;
-}
-.india-demand-svg path:hover {
-  stroke: var(--dark);
-  stroke-width: 1.8;
-}
-/* "Live" pill for the price-watch header */
-.price-watch-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.live-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 9.5px;
-  font-weight: 800;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-  color: var(--color-ember);
-  background: color-mix(in srgb, var(--color-ember) 10%, transparent);
-  border-radius: 999px;
-  padding: 3px 8px;
-}
+/* Live status dot — the small pulsing ember bead used by auction cards. */
 .live-dot {
   width: 5px;
   height: 5px;
@@ -3901,534 +3913,422 @@ ul {
     animation: none;
   }
 }
-.asset-snapshot-card {
-  justify-content: space-between;
-}
-.asset-snapshot-row {
-  position: relative;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 9px 11px;
-  border-radius: 8px;
-  background: rgba(228, 87, 46, 0.06);
-  margin-bottom: 7px;
-  font-size: 11.5px;
-  cursor: default;
-  transition: background var(--dur-quick) var(--ease-out);
-}
-.asset-snapshot-row:hover {
-  background: rgba(228, 87, 46, 0.13);
-}
-.asset-snapshot-name {
-  font-weight: 600;
-  color: var(--dark);
-  white-space: nowrap;
-  flex: 1 1 auto;
-  min-width: 0;
-}
-.asset-snapshot-meta {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 9px;
-  flex-shrink: 0;
-}
-.asset-snapshot-price {
-  font-family: var(--font-mono);
-  color: var(--text-muted);
-  font-size: 10.5px;
-  white-space: nowrap;
-}
-.asset-snapshot-change {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: 10.5px;
-  white-space: nowrap;
-}
-.asset-snapshot-change.up {
-  color: var(--color-success);
-}
-.asset-snapshot-change.down {
-  color: var(--color-danger);
-}
-.pulse-title {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  min-width: 0;
-}
-.pulse-title-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 7px;
-  color: var(--color-ember);
-  background: color-mix(in srgb, var(--color-ember) 14%, transparent);
-  flex-shrink: 0;
-}
-.pulse-window-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  flex-shrink: 0;
-  font-size: 9.5px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--color-ember);
-  background: color-mix(in srgb, var(--color-ember) 12%, transparent);
-  border: 1px solid color-mix(in srgb, var(--color-ember) 24%, transparent);
-  padding: 3px 8px 3px 6px;
-  border-radius: 999px;
-}
-.pulse-window-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--color-ember);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-ember) 16%, transparent);
-}
-.pulse-hero {
-  position: relative;
-  overflow: hidden;
-  border-radius: 12px;
-  padding: 14px 16px;
-  margin-bottom: 10px;
-  border: 1px solid color-mix(in srgb, var(--color-success) 16%, transparent);
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--color-success) 11%, var(--bg-white)),
-    color-mix(in srgb, var(--color-success) 3%, var(--bg-white))
-  );
-}
-.pulse-hero::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    130px 130px at 82% 50%,
-    color-mix(in srgb, var(--color-success) 13%, transparent),
-    transparent 70%
-  );
-  pointer-events: none;
-}
-.pulse-hero-content {
-  position: relative;
-  z-index: 1;
-}
-.pulse-value {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
-  font-size: 30px;
-  line-height: 1;
-  font-weight: 800;
-  color: var(--color-success);
-  white-space: nowrap;
-}
-.pulse-value-num {
-  background: linear-gradient(
-    135deg,
-    var(--color-success),
-    color-mix(in srgb, var(--color-success) 58%, #ffffff)
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-}
-.pulse-value-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 8px;
-  background: color-mix(in srgb, var(--color-success) 16%, transparent);
-  color: var(--color-success);
-  flex-shrink: 0;
-}
-.pulse-value-note {
-  font-size: 11px;
-  color: var(--text-muted);
-  margin-top: 7px;
-}
-.pulse-stat-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-  flex-grow: 1;
-}
-.pulse-stat {
-  --tone: var(--color-steel);
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 9px 11px;
-  border-radius: 10px;
-  background: var(--color-surface-2);
-  border: 1px solid var(--border);
-  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
-}
-.pulse-stat::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 9px;
-  bottom: 9px;
-  width: 2.5px;
-  border-radius: 999px;
-  background: var(--tone);
-  opacity: 0.5;
-  transition: opacity 0.18s ease;
-}
-.pulse-stat:hover {
-  transform: translateY(-2px);
-  border-color: color-mix(in srgb, var(--tone) 40%, var(--border));
-  box-shadow: 0 7px 16px -8px color-mix(in srgb, var(--tone) 50%, transparent);
-}
-.pulse-stat:hover::before {
-  opacity: 1;
-}
-.pulse-stat.tone-success { --tone: var(--color-ember); }
-.pulse-stat.tone-warn { --tone: var(--color-warning); }
-.pulse-stat.tone-steel { --tone: var(--color-ember); }
-.pulse-stat-icon {
-  position: absolute;
-  top: 8px;
-  right: 9px;
-  display: inline-flex;
-  color: var(--tone);
-  opacity: 0.65;
-  transition: opacity 0.18s ease, transform 0.18s ease;
-}
-.pulse-stat:hover .pulse-stat-icon {
-  opacity: 1;
-  transform: scale(1.08);
-}
-.pulse-stat-label {
-  font-size: 10px;
-  color: var(--text-muted);
-  white-space: nowrap;
-  padding-right: 18px;
-}
-.pulse-stat-value {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--dark);
-  white-space: nowrap;
-}
-.pulse-stat-value.pulse-positive {
-  color: var(--color-ember);
-}
-.pulse-stat-value.pulse-warn {
-  color: var(--color-warning);
-}
-.pulse-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-.pulse-dot.success {
-  background: var(--color-ember);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-ember) 18%, transparent);
-}
-.pulse-dot.warn {
-  background: var(--color-warning);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-warning) 18%, transparent);
-}
-.pulse-bar {
-  height: 4px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--text-muted) 16%, transparent);
-  overflow: hidden;
-}
-.pulse-bar-fill {
-  height: 100%;
-  border-radius: 999px;
-  background: var(--color-ember);
-}
-.pulse-bar-fill.neutral {
-  background: var(--color-ember);
-}
-@media (max-width: 1100px) {
-  .market-insights-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-@media (max-width: 640px) {
-  .market-insights-grid {
-    grid-template-columns: 1fr;
-  }
-}
 
 /* ==========================================================================
-   Testimonials — Founder's Message
+   Testimonials — the statement
+   Every other band on this page is a multi-item layout, and Industry Insights
+   directly above is already a ruled index beside an expanded story. So this
+   one deliberately carries a SINGLE thing at full width: one quote at display
+   scale, settled underneath by a ruled record line with dot leaders the way a
+   printed auction result sheet carries a closed trade. The pattern break is
+   the point — after eight dense sections, one statement breathing across the
+   full measure is what makes the band read.
    ========================================================================== */
 .testimonials-section {
-  background: var(--bg-white);
-  padding: var(--space-section) 0;
-  position: relative;
-  overflow: hidden;
+  background: var(--bg-alt);
+  padding: var(--space-section-sm) 0;
 }
-.testimonials-glow {
-  position: absolute;
-  top: -20%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 70%;
-  height: 140%;
-  background: radial-gradient(circle, rgba(228, 87, 46, 0.07) 0%, transparent 70%);
-  pointer-events: none;
+
+/* Header on the Announcements skeleton: copy ranged left, the carousel's own
+   controls ranged right and bottom-aligned with it. */
+.tst-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 18px;
 }
-.testimonials-heading {
+.tst-head-text {
+  max-width: 660px;
+  min-width: 0;
+}
+/* Same eyebrow vocabulary as Announcements and the ticker band. */
+.tst-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: var(--track-eyebrow);
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 8px;
+}
+.tst-title {
   font-family: var(--font-heading);
   font-size: var(--text-section-title);
   font-weight: 700;
   letter-spacing: var(--track-heading);
-  line-height: 1.2;
+  line-height: 1.15;
   color: var(--dark);
-  margin-bottom: 32px;
-  position: relative;
+  margin: 0 0 8px;
+  text-wrap: balance;
 }
-.testimonials-stage {
-  position: relative;
+.tst-lead {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0;
 }
-.testimonials-viewport {
-  position: relative;
-  width: 100%;
-  min-height: 280px;
-  perspective: 1600px;
-}
-.testimonial-card {
-  position: absolute;
-  inset: 0;
+
+/* Identical vocabulary to the Announcements carousel arrows, so the two
+   carousels on this page are driven by the same-looking control. */
+.tst-nav {
   display: flex;
   align-items: center;
-  gap: 48px;
-  background: #fffefb;
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-card);
-  padding: 44px 56px;
-  box-shadow: var(--shadow-float);
-  overflow: hidden;
-  cursor: grab;
-  touch-action: pan-y;
-}
-.testimonial-card:active {
-  cursor: grabbing;
-}
-.testimonial-photo-col {
-  position: relative;
+  gap: 10px;
   flex-shrink: 0;
 }
-.testimonial-photo-frame {
-  position: relative;
-  width: 172px;
-  height: 196px;
-  border-radius: 14px;
-  padding: 5px;
-  background: #fff;
-  border: 1px solid rgba(28, 25, 23, 0.08);
-  box-shadow: 0 16px 32px -16px rgba(28, 25, 23, 0.28);
+/* Position, now that the named strip is gone. Mono because it is a count. */
+.tst-count {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--dark);
+  margin-right: 4px;
+  white-space: nowrap;
 }
-.testimonial-photo-frame::after {
-  content: '';
-  position: absolute;
-  inset: 5px;
-  border-radius: 13px;
-  pointer-events: none;
-  box-shadow: inset 0 0 0 1px rgb(28 25 23 / 0.10);
+.tst-count-sep {
+  color: var(--color-line-strong);
+  margin: 0 1px;
 }
-.testimonial-photo {
-  width: 100%;
-  height: 100%;
-  border-radius: 13px;
-  object-fit: cover;
-  display: block;
-  background: var(--color-surface-2);
-  -webkit-user-drag: none;
-  user-select: none;
-}
-.testimonial-photo-fallback {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-heading);
-  font-size: 60px;
-  font-weight: 700;
-  color: var(--primary);
-  background: linear-gradient(155deg, #fdf1ea, #f4c9a8);
-}
-.testimonial-photo-badge {
-  position: absolute;
-  bottom: -8px;
-  right: -8px;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: var(--primary);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 3px solid #fff;
-  box-shadow: var(--shadow-md);
-}
-.testimonial-nav {
-  position: absolute;
-  top: calc(50% - 24px);
-  width: 48px;
-  height: 48px;
+
+.tst-nav-btn {
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   border: 1px solid var(--border);
-  background: #fff;
+  background: var(--bg-white);
   color: var(--dark);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 6;
-  box-shadow: var(--shadow-lg);
-  transition: all var(--dur-base) var(--ease-out);
+  box-shadow: var(--shadow-sm);
+  transition: background var(--dur-base) var(--ease-out),
+              color var(--dur-base) var(--ease-out),
+              border-color var(--dur-base) var(--ease-out),
+              transform var(--dur-base) var(--ease-out);
 }
-.testimonial-nav:hover {
+.tst-nav-btn:hover {
   background: var(--primary);
   color: #fff;
   border-color: var(--primary);
 }
-.testimonial-nav.left {
-  left: -16px;
+.tst-nav-btn:active {
+  transform: scale(0.94);
+  transition-duration: 0.08s;
 }
-.testimonial-nav.right {
-  right: -16px;
+.tst-nav-btn:focus-visible {
+  outline: 2px solid var(--color-ember);
+  outline-offset: 3px;
 }
-.testimonial-body {
+
+/* --------------------------------- The card ------------------------------- */
+/* One cell holding two layers: the invisible sizer that fixes the height, and
+   the live slide riding on top of it. Both take grid-area 1/1, so the card
+   cannot change height as entries swap and the page never jumps. */
+.tst-card {
+  display: grid;
   position: relative;
   z-index: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-}
-.testimonial-quote {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-style: normal;
-  font-size: 21px;
-  line-height: 1.65;
-  color: #2b2620;
-  font-weight: 500;
-  margin-bottom: 26px;
-  letter-spacing: 0.1px;
-  flex-grow: 1;
-  display: -webkit-box;
-  -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical;
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  padding: clamp(20px, 2vw, 28px) clamp(20px, 2.2vw, 32px);
   overflow: hidden;
 }
-.testimonial-signature {
+.tst-sizer,
+.tst-slide {
+  grid-area: 1 / 1;
+  min-width: 0;
+}
+.tst-sizer {
+  display: grid;
+  visibility: hidden;
+  pointer-events: none;
+}
+.tst-sizer-entry {
+  grid-area: 1 / 1;
+}
+/* 1fr over auto pins the record line to the card's bottom edge, so the rule
+   holds one position across all five entries instead of riding up under every
+   shorter quote. Short quotes get the air above them, not a moving divider. */
+.tst-slide {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  /* The default arrow, not grab: the open-hand cursor is a thin light outline
+     that all but disappears against the white card. The arrow carries its own
+     dark fill and white keyline, so it stays readable on any surface — and it
+     leaves the wheel free to scroll the page rather than reading as a handle. */
+  cursor: default;
+  /* Which side of the trade this trader sits on, carried as one variable to
+     the seal and the chip. Steel and green are existing tokens — the same
+     colour-coding Announcements gives its categories and the ticker gives its
+     metal grades. This section was the only taxonomy on the page left grey. */
+  --tst-tone: var(--color-steel);
+}
+.tst-slide.is-seller {
+  --tst-tone: var(--color-success);
+}
+/* Feedback only once a drag is genuinely under way. */
+.tst-slide:active {
+  cursor: grabbing;
+}
+/* pan-y keeps a vertical swipe scrolling the page; only horizontal travel is
+   claimed by the carousel. */
+.tst-slide {
+  touch-action: pan-y;
+}
+.tst-slide .tst-body {
+  align-self: start;
+}
+
+/* The figure sits in the gutter, the quote takes the rest. Fixed gutter so the
+   quote's left edge never moves as +12% swaps in for 40+. */
+.tst-body {
+  display: grid;
+  /* Wide enough for the longest qualifier ("no refund disputes") to hold one
+     line — wrapping it made the slip taller than the quote and inflated the
+     card for all five entries, not just that one. Width here is free; height
+     is not. */
+  grid-template-columns: 154px minmax(0, 1fr);
+  gap: 30px;
+  align-items: start;
+}
+
+/* ------------------------------ The result slip --------------------------- */
+/* A quiet tinted panel, nothing ruled inside it. The content sits at the top
+   so the figure reads against the quote's first line rather than floating at
+   the panel's midpoint, and it is centred on its own axis because a bordered
+   box has no margin edge left to range against. */
+.tst-fig {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  align-self: stretch;
+  gap: 5px;
+  padding: 15px 14px;
+  min-width: 0;
+  background: color-mix(in srgb, var(--color-ember) 7%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-ember) 20%, transparent);
+  border-radius: var(--radius-lg);
+}
+.tst-fig-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(26px, 2.5vw, 36px);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1;
+  color: var(--color-ember-hover);
+}
+.tst-fig-label {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  line-height: 1.4;
+  color: var(--dark);
+}
+.tst-fig-note {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+/* Display scale: this is the only place on the homepage where type itself is
+   the artwork, so it runs wide rather than sitting in a column beside a card. */
+.tst-quote {
+  position: relative;
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 500;
+  letter-spacing: var(--track-heading);
+  color: var(--dark);
+  font-size: clamp(18px, 1.8vw, 24px);
+  line-height: 1.35;
+  /* Full column, not a narrowed measure: the same words over a wider line run
+     to three lines instead of four, which is where most of the section's
+     height was going. */
+  max-width: none;
+  text-wrap: pretty;
+}
+/* Hung out of the flow rather than pulled back with a negative text-indent:
+   the indent inherits into every inline-block word below and drags each one
+   left over the space before it. Out of flow, the first word starts on the
+   same optical edge as every line under it. */
+/* Serif, oversized and ember-tinted — the same treatment the Industry Insights
+   pull-quote gives its own mark, so the two quotes on the page speak once. */
+.tst-quote-mark {
+  position: absolute;
+  left: -0.52em;
+  top: -0.06em;
+  font-family: Georgia, 'Times New Roman', 'Noto Serif', serif;
+  font-size: 1.6em;
+  line-height: 1;
+  color: color-mix(in srgb, var(--color-ember) 32%, transparent);
+}
+/* pre keeps the trailing space inside each inline-block word, so the quote
+   still wraps naturally while every word animates on its own. */
+.tst-word {
+  display: inline-block;
+  white-space: pre;
+}
+
+/* ----------------------------- The record line ---------------------------- */
+/* No rule above it and no leader through it — the separation is space, and the
+   right-hand group is pushed out by the who-block growing rather than by a
+   dotted line spanning the gap. */
+.tst-record {
+  display: grid;
+  grid-template-columns: 154px minmax(0, 1fr);
+  gap: 30px;
+  align-items: center;
+  margin-top: 26px;
+}
+/* Ranged to the column's right edge, not centred in it: centring left the seal
+   marooned ~90px from the name it belongs to. Here its right edge lines up with
+   the slip's above, and it sits one gap from the name. */
+.tst-seal {
+  display: grid;
+  place-items: center;
+  justify-self: end;
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-lg);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--tst-tone);
+  background: color-mix(in srgb, var(--tst-tone) 11%, transparent);
+  border: 1px solid color-mix(in srgb, var(--tst-tone) 24%, transparent);
+}
+.tst-rec-main {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding-top: 18px;
-  border-top: 1px solid rgba(28, 25, 23, 0.08);
+  min-width: 0;
 }
-.testimonial-signature-line {
-  width: 3px;
-  height: 34px;
-  border-radius: 2px;
-  background: linear-gradient(180deg, var(--primary), var(--color-steel));
-  flex-shrink: 0;
-}
-.testimonial-author {
-  font-weight: 700;
-  font-size: 16px;
-  color: var(--dark);
-  font-family: var(--font-heading);
-  letter-spacing: 0.2px;
-}
-.testimonial-role {
-  font-size: 11px;
-  color: var(--text-muted);
-  margin-top: 3px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-}
-.testimonials-dots {
+.tst-rec-who {
   display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 28px;
-  position: relative;
-  z-index: 1;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1 1 auto;
+  min-width: 0;
 }
-.testimonials-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--color-line-strong);
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  transition: background-color var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
+.tst-rec-name {
+  font-family: var(--font-heading);
+  font-size: 14.5px;
+  font-weight: 700;
+  letter-spacing: var(--track-heading);
+  line-height: 1.3;
+  color: var(--dark);
 }
-.testimonials-dot:hover:not(.active) {
-  background: var(--color-steel);
+.tst-rec-role {
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: var(--text-muted);
+  min-width: 0;
 }
-.testimonials-dot.active {
-  background: var(--primary);
-  width: 26px;
-  border-radius: 4px;
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 18%, transparent);
+.tst-rec-place {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
 }
-@media (max-width: 720px) {
-  .testimonials-viewport {
-    min-height: 440px;
+/* Tinted in the side's own colour on the same formula the Insights tags use. */
+.tst-rec-side {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--tst-tone);
+  background: color-mix(in srgb, var(--tst-tone) 10%, transparent);
+  padding: 4px 9px;
+  border: 1px solid color-mix(in srgb, var(--tst-tone) 24%, transparent);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+/* ------------------------------- Responsive ------------------------------- */
+@media (max-width: 980px) {
+  /* Body and record narrow together — they share a column track, and that
+     shared track is the whole reason the name lines up under the quote. */
+  .tst-body,
+  .tst-record {
+    grid-template-columns: 108px minmax(0, 1fr);
+    gap: 26px;
   }
-  .testimonial-card {
+}
+@media (max-width: 700px) {
+  /* The arrows drop under the copy rather than squeezing the lead. Swipe is
+     the primary gesture at this width anyway. */
+  .tst-head {
     flex-direction: column;
-    text-align: center;
-    padding: 32px 24px;
-    gap: 20px;
+    align-items: flex-start;
+    gap: 18px;
   }
-  .testimonial-photo-frame {
-    width: 130px;
-    height: 148px;
+  /* No gutter left to annotate into: the slip keeps its tint and its border,
+     it just lies down — figure, label and qualifier across the card's top. */
+  .tst-body {
+    grid-template-columns: 1fr;
+    gap: 15px;
   }
-  .testimonial-quote {
-    font-size: 16px;
-    -webkit-line-clamp: 7;
+  .tst-fig {
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: flex-start;
+    text-align: left;
+    gap: 9px;
+    align-self: auto;
+    padding: 12px 14px;
   }
-  .testimonial-signature {
-    flex-direction: column;
-    gap: 8px;
+  .tst-fig-note {
+    margin-left: auto;
   }
-  .testimonial-signature-line {
-    width: 32px;
-    height: 3px;
+  /* The seal comes back to the text it belongs to rather than sitting in a
+     gutter that no longer exists. Top-aligned, because centring it against a
+     role that wraps to three lines drops it to mid-height, away from the name
+     it marks. */
+  .tst-record {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 12px;
+    align-items: start;
+    margin-top: 20px;
   }
-  .testimonial-nav.left {
-    left: 6px;
+  .tst-seal {
+    justify-self: start;
   }
-  .testimonial-nav.right {
-    right: 6px;
+}
+@media (max-width: 560px) {
+  .tst-record {
+    margin-top: 16px;
+  }
+  /* The city and the chip take their own row so the role keeps the full card
+     width instead of breaking to three words a line. */
+  .tst-rec-main {
+    flex-wrap: wrap;
+    gap: 8px 12px;
+  }
+  .tst-rec-who {
+    flex: 1 0 100%;
+  }
+  .tst-rec-side {
+    margin-left: auto;
   }
 }
 

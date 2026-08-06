@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, ChevronDown } from 'lucide-react';
 import '../styles/enterprise.css';
 
-// Shared fade-up used across every enterprise page for consistency.
+// Shared fade-up, still used by Reveal / RevealGrid on the article page.
 export const fadeUp = {
   hidden: { opacity: 0, y: 24 },
   show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
@@ -33,33 +33,11 @@ export const Breadcrumb = ({ items = [] }) => (
   </nav>
 );
 
-export const PageHero = ({ eyebrow, eyebrowIcon: Icon, title, subtitle, breadcrumb = [], actions }) => (
-  <header className="ent-hero">
-    <div className="container">
-      <Breadcrumb items={breadcrumb} />
-      <motion.div className="ent-hero-inner" variants={stagger} initial="hidden" animate="show">
-        {eyebrow && (
-          <motion.div className="ent-hero-eyebrow" variants={fadeUp}>
-            {Icon && <Icon size={13} />} {eyebrow}
-          </motion.div>
-        )}
-        <motion.h1 className="ent-hero-title" variants={fadeUp}>
-          {title}
-        </motion.h1>
-        {subtitle && (
-          <motion.p className="ent-hero-subtitle" variants={fadeUp}>
-            {subtitle}
-          </motion.p>
-        )}
-        {actions && (
-          <motion.div className="ent-hero-actions" variants={fadeUp}>
-            {actions}
-          </motion.div>
-        )}
-      </motion.div>
-    </div>
-  </header>
-);
+/* `PageHero` used to live here. Every secondary page now opens with its own
+   hero (.res-hero / .doc-hero / .faq-hero / .gr-hero), so it had no callers
+   left — and neither did `CTABand`. Both are removed rather than kept as dead
+   exports; the `.ent-hero*` rules they carried are gone from enterprise.css
+   for the same reason. */
 
 export const SectionHead = ({ eyebrow, title, subtitle, center = false }) => (
   <motion.div
@@ -73,37 +51,6 @@ export const SectionHead = ({ eyebrow, title, subtitle, center = false }) => (
     {title && <h2 className="ent-title">{title}</h2>}
     {subtitle && <p className="ent-subtitle">{subtitle}</p>}
   </motion.div>
-);
-
-export const CTABand = ({ title, text, primary, secondary }) => (
-  <section className="ent-section">
-    <div className="container">
-      <motion.div
-        className="ent-cta-band"
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-60px' }}
-        transition={{ duration: 0.5 }}
-      >
-        <div className="ent-cta-text">
-          <h2>{title}</h2>
-          {text && <p>{text}</p>}
-        </div>
-        <div className="ent-cta-actions">
-          {primary && (
-            <Link to={primary.to} className="btn btn-primary" style={{ textDecoration: 'none' }}>
-              {primary.label}
-            </Link>
-          )}
-          {secondary && (
-            <Link to={secondary.to} className="btn btn-outline" style={{ textDecoration: 'none' }}>
-              {secondary.label}
-            </Link>
-          )}
-        </div>
-      </motion.div>
-    </div>
-  </section>
 );
 
 export const Accordion = ({ items = [], defaultOpen = 0 }) => {

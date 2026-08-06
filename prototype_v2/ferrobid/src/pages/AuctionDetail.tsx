@@ -6,7 +6,7 @@
 import { useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
-  AlertTriangle, CalendarDays, Check, Download, FileText, Gavel, MapPin,
+  AlertTriangle, CalendarDays, Check, Download, FileText, Gavel, Lock, MapPin,
   Phone, QrCode, ScrollText, Search, Star, X,
 } from 'lucide-react'
 import { Page } from '../layout/Chrome'
@@ -15,7 +15,7 @@ import {
   Select, StatusChip, Tabs, Toggle, cx,
 } from '../components/ui'
 import { catalogueUiStatus, selectionSummary, useStore } from '../store/store'
-import { fmtDate, fmtDateTime, inr, inrCompact, num } from '../lib/format'
+import { fmtDate, fmtDateTime, inr, inrCompact, inrWords, num } from '../lib/format'
 import { useNow } from '../lib/useTick'
 import type { Lot } from '../types'
 
@@ -321,7 +321,7 @@ export default function AuctionDetail() {
                         </div>
                       </div>
                       {/* numbers */}
-                      <div className="grid grid-cols-3 sm:grid-cols-5 gap-x-5 gap-y-2 lg:text-right shrink-0">
+                      <div className="grid grid-cols-3 sm:grid-cols-4 gap-x-5 gap-y-2 lg:text-right shrink-0">
                         <div>
                           <div className="text-[10px] font-bold uppercase tracking-wider text-ink-faint">Indicative qty</div>
                           <div className="num text-sm font-bold">{num(lot.indicativeQty)} {lot.uom}</div>
@@ -330,16 +330,15 @@ export default function AuctionDetail() {
                           <div className="text-[10px] font-bold uppercase tracking-wider text-ink-faint">Start rate</div>
                           <div className="num text-sm font-bold">{inr(lot.startRate)}<span className="text-ink-faint font-medium">/{lot.uom}</span></div>
                         </div>
-                        <div>
-                          <div className="text-[10px] font-bold uppercase tracking-wider text-ink-faint">Increment</div>
-                          <div className="num text-sm font-bold">{inr(lot.increment)}</div>
-                        </div>
-                        <div>
-                          <div className="text-[10px] font-bold uppercase tracking-wider text-ink-faint">{lot.status === 'live' ? 'Current rate' : 'Result (H1)'}</div>
-                          <div className={cx('num text-sm font-bold', lot.currentRate ? 'text-ember-strong' : 'text-ink-faint')}>
-                            {lot.currentRate ? inr(lot.currentRate) : '—'}
+                        {/* live rate + increment stay inside the bidding room — showing them here lets buyers self-select out before entering */}
+                        {lot.status !== 'live' && (
+                          <div>
+                            <div className="text-[10px] font-bold uppercase tracking-wider text-ink-faint">Result (H1)</div>
+                            <div className={cx('num text-sm font-bold', lot.currentRate ? 'text-ember-strong' : 'text-ink-faint')}>
+                              {lot.currentRate ? inr(lot.currentRate) : '—'}
+                            </div>
                           </div>
-                        </div>
+                        )}
                         <div>
                           <div className="text-[10px] font-bold uppercase tracking-wider text-ink-faint">Pre-bid EMD</div>
                           <div className="num text-sm font-bold">{inr(lot.preBidEmd)}</div>
@@ -494,21 +493,23 @@ export default function AuctionDetail() {
               <span className="text-ink-faint"> · </span>Funded <b className="text-success">{inr(summary.funded)}</b>
               <span className="text-ink-faint"> · </span>Shortfall <b className={summary.shortfall > 0 ? 'text-ember-strong' : 'text-success'}>{inr(summary.shortfall)}</b>
             </div>
+            {/* one path in: accept T&C → fund every shortlisted lot → enter */}
             <div className="ml-auto flex items-center gap-2 flex-wrap">
-              {summary.shortfall > 0 && (
+              {summary.shortfall > 0 ? (
                 <Button variant="steel" onClick={() => {
                   if (!accepted) { setTermsOpen(true); return }
                   setPayOpen(true)
                 }}>
-                  Fund EMD for selected lots
+                  <Lock size={15} /> Fund {inr(summary.shortfall)} EMD to enter
+                </Button>
+              ) : (
+                <Button onClick={() => {
+                  if (!accepted) { setTermsOpen(true); return }
+                  nav(`/bidding/${cat.id}`)
+                }}>
+                  <Gavel size={15} /> Enter bidding room
                 </Button>
               )}
-              <Button onClick={() => {
-                if (!accepted) { setTermsOpen(true); return }
-                nav(`/bidding/${cat.id}`)
-              }}>
-                <Gavel size={15} /> Enter bidding room
-              </Button>
             </div>
           </div>
         </div>
@@ -589,9 +590,12 @@ function FundEmdModal({ open, onClose, lotIds, amount, onDone, catalogueId }: {
                 <span className="num font-semibold">{inr(l.preBidEmd)}</span>
               </div>
             ))}
-            <div className="flex items-center justify-between px-4 py-3">
-              <span className="font-bold">EMD to lock now</span>
-              <span className="num text-lg font-bold text-ember-strong">{inr(amount)}</span>
+            <div className="px-4 py-3">
+              <div className="flex items-center justify-between gap-3">
+                <span className="font-bold">EMD to lock now</span>
+                <span className="num text-lg font-bold text-ember-strong">{inr(amount)}</span>
+              </div>
+              <div className="text-xs text-ink-muted mt-1 text-right italic">{inrWords(amount)}</div>
             </div>
           </div>
           <p className="text-xs text-ink-muted">

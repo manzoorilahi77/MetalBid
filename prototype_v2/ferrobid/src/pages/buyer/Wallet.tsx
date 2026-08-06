@@ -169,7 +169,7 @@ export default function Wallet() {
           { key: 'deposits', label: 'Deposits', count: myDeposits.length },
           { key: 'withdrawals', label: 'Withdrawals', count: myWithdrawals.length },
           { key: 'bank', label: 'Bank accounts', count: myBankAccounts.length },
-          { key: 'refunds', label: 'Refunds', count: myRefunds.length },
+          { key: 'refunds', label: 'EMD Refunds', count: myRefunds.length },
           { key: 'reports', label: 'Reports' },
         ]}
         value={tab}
@@ -592,7 +592,7 @@ export default function Wallet() {
         open={payOpen}
         onClose={() => setPayOpen(false)}
         title="Wallet top-up"
-        amount={inr(amount)}
+        amount={amount}
         onSuccess={(method) => {
           topUpWallet(amount, method)
           pushToast({ kind: 'success', title: 'Wallet top-up successful', body: `${inr(amount)} added via ${method}.` })

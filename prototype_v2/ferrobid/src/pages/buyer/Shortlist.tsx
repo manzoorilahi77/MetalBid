@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import { Gavel, Trash2, UserRound, Wallet } from 'lucide-react'
 import { Page } from '../../layout/Chrome'
 import {
-  Button, Chip, Countdown, EmptyState, MockPayModal, PageHeader, PhotoThumb, StatusChip,
+  Button, Chip, Countdown, EmptyState, MockPayModal, PageHeader, PhotoThumb, Segmented, StatusChip,
 } from '../../components/ui'
 import { useStore, selectionSummary, catalogueUiStatus } from '../../store/store'
 import { inr, num, relTime } from '../../lib/format'
@@ -22,6 +22,7 @@ export default function Shortlist() {
   const pushToast = useStore((s) => s.pushToast)
   const now = useNow()
   const [payCatId, setPayCatId] = useState<string | null>(null)
+  const [view, setView] = useState<'live' | 'upcoming'>('live')
 
   if (!me) {
     return (
@@ -38,6 +39,12 @@ export default function Shortlist() {
 
   const mySelections = selections.filter((x) => x.buyerId === me.id && x.lotIds.length > 0)
   const wallet = wallets.find((w) => w.userId === me.id)
+
+  /* Live = EMD-funded, i.e. biddable now · Upcoming = EMD still pending. */
+  const inView = (sel: { lotIds: string[]; emdFundedLotIds: string[] }, v: 'live' | 'upcoming') =>
+    sel.lotIds.filter((id) => sel.emdFundedLotIds.includes(id) === (v === 'live'))
+  const viewCount = (v: 'live' | 'upcoming') => mySelections.reduce((n, s) => n + inView(s, v).length, 0)
+  const shownCount = viewCount(view)
 
   const payCat = catalogues.find((c) => c.id === payCatId)
   const paySummary = payCatId ? selectionSummary({ selections, lots }, me.id, payCatId) : null
@@ -64,12 +71,35 @@ export default function Shortlist() {
         />
       ) : (
         <div className="space-y-8">
+          <Segmented
+            options={[
+              { key: 'live', label: <>Live <span className="num opacity-70">{viewCount('live')}</span></> },
+              { key: 'upcoming', label: <>Upcoming <span className="num opacity-70">{viewCount('upcoming')}</span></> },
+            ]}
+            value={view}
+            onChange={setView}
+          />
+
+          {shownCount === 0 && (
+            <EmptyState
+              title={view === 'live' ? 'No EMD-funded lots yet' : 'Nothing waiting on EMD'}
+              body={view === 'live'
+                ? 'Lots appear here once their pre-bid EMD is funded — switch to Upcoming to fund the ones still pending.'
+                : 'Every shortlisted lot has its pre-bid EMD funded. Switch to Live to bid on them.'}
+              action={<Button variant="secondary" onClick={() => setView(view === 'live' ? 'upcoming' : 'live')}>
+                Show {view === 'live' ? 'upcoming' : 'live'} lots
+              </Button>}
+            />
+          )}
+
           {mySelections.map((sel) => {
             const cat = catalogues.find((c) => c.id === sel.catalogueId)
             if (!cat) return null
             const ui = catalogueUiStatus(cat, now, lots.filter((l) => l.catalogueId === cat.id))
             const summary = selectionSummary({ selections, lots }, me.id, cat.id)
-            const selLots = lots.filter((l) => sel.lotIds.includes(l.id))
+            const visibleIds = inView(sel, view)
+            if (visibleIds.length === 0) return null
+            const selLots = lots.filter((l) => visibleIds.includes(l.id))
             return (
               <section key={cat.id} className="card overflow-hidden">
                 {/* --------------------- catalogue header --------------------- */}
@@ -125,12 +155,9 @@ export default function Shortlist() {
                           </div>
                         </div>
                         <div className="text-right">
-                          <div className="text-[11px] uppercase tracking-wider text-ink-faint">Start / current</div>
+                          <div className="text-[11px] uppercase tracking-wider text-ink-faint">Start rate</div>
                           <div className="num text-sm font-semibold">
-                            {inr(lot.startRate)} <span className="text-ink-faint">/</span>{' '}
-                            <span className={lot.currentRate ? 'text-ember' : 'text-ink-faint'}>
-                              {lot.currentRate ? inr(lot.currentRate) : '—'}
-                            </span>
+                            {inr(lot.startRate)}
                             <span className="text-ink-faint text-xs"> /{lot.uom}</span>
                           </div>
                         </div>
@@ -179,7 +206,7 @@ export default function Shortlist() {
         open={!!payCatId && !!paySummary && paySummary.shortfall > 0}
         onClose={() => setPayCatId(null)}
         title={`Fund pre-bid EMD — ${payCat?.code ?? ''}`}
-        amount={inr(paySummary?.shortfall ?? 0)}
+        amount={paySummary?.shortfall ?? 0}
         onSuccess={(method) => {
           if (!payCatId || !paySummary) return
           const ok = fundEmd(payCatId, paySummary.unfundedLotIds, method)
