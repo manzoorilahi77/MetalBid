@@ -43,9 +43,14 @@
     "currentRate": 29600,
     "leadingBidderId": "u-buyer-1",
     "bidCount": 2,
-    "endsAt": "2026-07-16T06:33:00.000Z",
+    "endsAt": "2026-07-16T07:12:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-002",
@@ -78,12 +83,17 @@
     ],
     "inspectionReportId": "ir-002",
     "status": "live",
-    "currentRate": 26550,
+    "currentRate": 26400,
     "leadingBidderId": "u-buyer-6",
-    "bidCount": 4,
-    "endsAt": "2026-07-16T06:34:00.000Z",
+    "bidCount": 3,
+    "endsAt": "2026-07-16T07:12:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-003",
@@ -116,12 +126,17 @@
     ],
     "inspectionReportId": "ir-003",
     "status": "live",
-    "currentRate": null,
-    "leadingBidderId": null,
-    "bidCount": 0,
+    "currentRate": 23500,
+    "leadingBidderId": "u-buyer-5",
+    "bidCount": 3,
     "endsAt": "2026-07-16T07:12:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-004",
@@ -159,12 +174,17 @@
     ],
     "inspectionReportId": "ir-004",
     "status": "live",
-    "currentRate": 29750,
-    "leadingBidderId": "u-buyer-1",
-    "bidCount": 2,
+    "currentRate": 29300,
+    "leadingBidderId": "u-buyer-5",
+    "bidCount": 1,
     "endsAt": "2026-07-16T07:12:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-005",
@@ -197,12 +217,17 @@
     ],
     "inspectionReportId": "ir-005",
     "status": "live",
-    "currentRate": 24400,
-    "leadingBidderId": "u-buyer-7",
-    "bidCount": 2,
+    "currentRate": 24300,
+    "leadingBidderId": "u-buyer-1",
+    "bidCount": 1,
     "endsAt": "2026-07-16T07:12:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-006",
@@ -240,12 +265,17 @@
     ],
     "inspectionReportId": "ir-006",
     "status": "live",
-    "currentRate": null,
-    "leadingBidderId": null,
-    "bidCount": 0,
-    "endsAt": "2026-07-16T06:33:00.000Z",
+    "currentRate": 36200,
+    "leadingBidderId": "u-buyer-6",
+    "bidCount": 2,
+    "endsAt": "2026-07-16T07:12:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-007",
@@ -278,12 +308,17 @@
     ],
     "inspectionReportId": "ir-007",
     "status": "live",
-    "currentRate": null,
-    "leadingBidderId": null,
-    "bidCount": 0,
-    "endsAt": "2026-07-16T06:34:00.000Z",
+    "currentRate": 29050,
+    "leadingBidderId": "u-buyer-2",
+    "bidCount": 1,
+    "endsAt": "2026-07-16T07:12:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-008",
@@ -326,12 +361,17 @@
     ],
     "inspectionReportId": "ir-008",
     "status": "live",
-    "currentRate": 26900,
-    "leadingBidderId": "u-buyer-2",
-    "bidCount": 2,
+    "currentRate": 26750,
+    "leadingBidderId": "u-buyer-7",
+    "bidCount": 3,
     "endsAt": "2026-07-16T07:12:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-009",
@@ -369,12 +409,17 @@
     ],
     "inspectionReportId": "ir-009",
     "status": "live",
-    "currentRate": null,
-    "leadingBidderId": null,
-    "bidCount": 0,
+    "currentRate": 19800,
+    "leadingBidderId": "u-buyer-7",
+    "bidCount": 2,
     "endsAt": "2026-07-16T07:12:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-010",
@@ -417,12 +462,17 @@
     ],
     "inspectionReportId": "ir-010",
     "status": "live",
-    "currentRate": 30300,
-    "leadingBidderId": "u-buyer-5",
-    "bidCount": 3,
+    "currentRate": 29700,
+    "leadingBidderId": "u-buyer-2",
+    "bidCount": 1,
     "endsAt": "2026-07-16T07:12:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-011",
@@ -455,12 +505,17 @@
     ],
     "inspectionReportId": "ir-011",
     "status": "live",
-    "currentRate": null,
-    "leadingBidderId": null,
-    "bidCount": 0,
+    "currentRate": 24000,
+    "leadingBidderId": "u-buyer-1",
+    "bidCount": 2,
     "endsAt": "2026-07-16T07:12:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-012",
@@ -498,12 +553,17 @@
     ],
     "inspectionReportId": "ir-012",
     "status": "live",
-    "currentRate": 36800,
-    "leadingBidderId": "u-buyer-5",
-    "bidCount": 3,
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
     "endsAt": "2026-07-16T07:12:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-013",
@@ -546,12 +606,17 @@
     ],
     "inspectionReportId": "ir-013",
     "status": "live",
-    "currentRate": 28600,
+    "currentRate": 28750,
     "leadingBidderId": "u-buyer-1",
-    "bidCount": 1,
+    "bidCount": 2,
     "endsAt": "2026-07-16T07:12:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-014",
@@ -589,12 +654,17 @@
     ],
     "inspectionReportId": "ir-014",
     "status": "live",
-    "currentRate": 26000,
-    "leadingBidderId": "u-buyer-1",
+    "currentRate": 25850,
+    "leadingBidderId": "u-buyer-3",
     "bidCount": 3,
     "endsAt": "2026-07-16T07:12:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-015",
@@ -637,12 +707,17 @@
     ],
     "inspectionReportId": "ir-015",
     "status": "live",
-    "currentRate": null,
-    "leadingBidderId": null,
-    "bidCount": 0,
+    "currentRate": 22700,
+    "leadingBidderId": "u-buyer-3",
+    "bidCount": 1,
     "endsAt": "2026-07-16T07:12:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-016",
@@ -685,12 +760,17 @@
     ],
     "inspectionReportId": "ir-016",
     "status": "live",
-    "currentRate": null,
-    "leadingBidderId": null,
-    "bidCount": 0,
+    "currentRate": 30700,
+    "leadingBidderId": "u-buyer-3",
+    "bidCount": 1,
     "endsAt": "2026-07-16T07:12:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-017",
@@ -728,12 +808,17 @@
     ],
     "inspectionReportId": "ir-017",
     "status": "live",
-    "currentRate": 24100,
+    "currentRate": 24400,
     "leadingBidderId": "u-buyer-2",
-    "bidCount": 1,
+    "bidCount": 2,
     "endsAt": "2026-07-16T07:12:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-018",
@@ -766,12 +851,17 @@
     ],
     "inspectionReportId": "ir-018",
     "status": "live",
-    "currentRate": null,
-    "leadingBidderId": null,
-    "bidCount": 0,
+    "currentRate": 37100,
+    "leadingBidderId": "u-buyer-2",
+    "bidCount": 2,
     "endsAt": "2026-07-16T07:12:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-019",
@@ -804,12 +894,17 @@
     ],
     "inspectionReportId": "ir-019",
     "status": "live",
-    "currentRate": 126,
-    "leadingBidderId": "u-buyer-3",
+    "currentRate": 124,
+    "leadingBidderId": "u-buyer-2",
     "bidCount": 2,
     "endsAt": "2026-07-16T09:55:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-020",
@@ -842,12 +937,17 @@
     ],
     "inspectionReportId": "ir-020",
     "status": "live",
-    "currentRate": null,
-    "leadingBidderId": null,
-    "bidCount": 0,
+    "currentRate": 199,
+    "leadingBidderId": "u-buyer-2",
+    "bidCount": 3,
     "endsAt": "2026-07-16T09:55:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-021",
@@ -881,11 +981,16 @@
     "inspectionReportId": "ir-021",
     "status": "live",
     "currentRate": 72,
-    "leadingBidderId": "u-buyer-6",
+    "leadingBidderId": "u-buyer-5",
     "bidCount": 1,
     "endsAt": "2026-07-16T09:55:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-022",
@@ -923,12 +1028,17 @@
     ],
     "inspectionReportId": "ir-022",
     "status": "live",
-    "currentRate": 103,
-    "leadingBidderId": "u-buyer-2",
+    "currentRate": 98,
+    "leadingBidderId": "u-buyer-7",
     "bidCount": 1,
     "endsAt": "2026-07-16T09:55:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-023",
@@ -966,12 +1076,17 @@
     ],
     "inspectionReportId": "ir-023",
     "status": "live",
-    "currentRate": null,
-    "leadingBidderId": null,
-    "bidCount": 0,
+    "currentRate": 40000,
+    "leadingBidderId": "u-buyer-7",
+    "bidCount": 1,
     "endsAt": "2026-07-16T09:55:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-024",
@@ -1009,12 +1124,17 @@
     ],
     "inspectionReportId": "ir-024",
     "status": "live",
-    "currentRate": 164,
-    "leadingBidderId": "u-buyer-7",
-    "bidCount": 2,
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
     "endsAt": "2026-07-16T09:55:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-025",
@@ -1052,12 +1172,17 @@
     ],
     "inspectionReportId": "ir-025",
     "status": "live",
-    "currentRate": 199,
-    "leadingBidderId": "u-buyer-7",
-    "bidCount": 3,
+    "currentRate": 201,
+    "leadingBidderId": "u-buyer-6",
+    "bidCount": 2,
     "endsAt": "2026-07-16T09:55:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-026",
@@ -1090,12 +1215,17 @@
     ],
     "inspectionReportId": "ir-026",
     "status": "live",
-    "currentRate": 87,
-    "leadingBidderId": "u-buyer-2",
-    "bidCount": 3,
+    "currentRate": 85,
+    "leadingBidderId": "u-buyer-3",
+    "bidCount": 2,
     "endsAt": "2026-07-16T09:55:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-027",
@@ -1128,12 +1258,17 @@
     ],
     "inspectionReportId": "ir-027",
     "status": "live",
-    "currentRate": 108,
-    "leadingBidderId": "u-buyer-6",
+    "currentRate": 106,
+    "leadingBidderId": "u-buyer-3",
     "bidCount": 3,
     "endsAt": "2026-07-16T09:55:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-028",
@@ -1171,12 +1306,17 @@
     ],
     "inspectionReportId": "ir-028",
     "status": "live",
-    "currentRate": 40600,
+    "currentRate": 41400,
     "leadingBidderId": "u-buyer-6",
-    "bidCount": 1,
+    "bidCount": 2,
     "endsAt": "2026-07-16T09:55:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-029",
@@ -1210,11 +1350,16 @@
     "inspectionReportId": "ir-029",
     "status": "live",
     "currentRate": 127,
-    "leadingBidderId": "u-buyer-3",
-    "bidCount": 2,
+    "leadingBidderId": "u-buyer-5",
+    "bidCount": 1,
     "endsAt": "2026-07-16T09:55:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-030",
@@ -1252,7 +1397,12 @@
     "bidCount": 0,
     "endsAt": "2026-07-16T09:55:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-031",
@@ -1290,12 +1440,17 @@
     ],
     "inspectionReportId": "ir-031",
     "status": "live",
-    "currentRate": null,
-    "leadingBidderId": null,
-    "bidCount": 0,
+    "currentRate": 74,
+    "leadingBidderId": "u-buyer-3",
+    "bidCount": 1,
     "endsAt": "2026-07-16T09:55:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-032",
@@ -1338,7 +1493,12 @@
     "bidCount": 0,
     "endsAt": "2026-07-16T09:55:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-033",
@@ -1371,12 +1531,17 @@
     ],
     "inspectionReportId": "ir-033",
     "status": "live",
-    "currentRate": null,
-    "leadingBidderId": null,
-    "bidCount": 0,
+    "currentRate": 31450,
+    "leadingBidderId": "u-buyer-6",
+    "bidCount": 2,
     "endsAt": "2026-07-16T06:51:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-034",
@@ -1419,12 +1584,17 @@
     ],
     "inspectionReportId": "ir-034",
     "status": "live",
-    "currentRate": null,
-    "leadingBidderId": null,
-    "bidCount": 0,
+    "currentRate": 26400,
+    "leadingBidderId": "u-buyer-6",
+    "bidCount": 1,
     "endsAt": "2026-07-16T06:51:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-035",
@@ -1467,12 +1637,17 @@
     ],
     "inspectionReportId": "ir-035",
     "status": "live",
-    "currentRate": 25600,
+    "currentRate": 25100,
     "leadingBidderId": "u-buyer-7",
-    "bidCount": 3,
+    "bidCount": 1,
     "endsAt": "2026-07-16T06:51:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-036",
@@ -1505,12 +1680,17 @@
     ],
     "inspectionReportId": "ir-036",
     "status": "live",
-    "currentRate": null,
-    "leadingBidderId": null,
-    "bidCount": 0,
+    "currentRate": 13000,
+    "leadingBidderId": "u-buyer-3",
+    "bidCount": 2,
     "endsAt": "2026-07-16T06:51:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-037",
@@ -1548,12 +1728,17 @@
     ],
     "inspectionReportId": "ir-037",
     "status": "live",
-    "currentRate": 673,
-    "leadingBidderId": "u-buyer-2",
+    "currentRate": 668,
+    "leadingBidderId": "u-buyer-7",
     "bidCount": 2,
     "endsAt": "2026-07-16T06:51:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-038",
@@ -1596,12 +1781,17 @@
     ],
     "inspectionReportId": "ir-038",
     "status": "live",
-    "currentRate": 31750,
-    "leadingBidderId": "u-buyer-5",
-    "bidCount": 1,
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
     "endsAt": "2026-07-16T06:51:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-039",
@@ -1639,12 +1829,17 @@
     ],
     "inspectionReportId": "ir-039",
     "status": "live",
-    "currentRate": 27550,
-    "leadingBidderId": "u-buyer-7",
-    "bidCount": 1,
+    "currentRate": 28150,
+    "leadingBidderId": "u-buyer-2",
+    "bidCount": 2,
     "endsAt": "2026-07-16T06:51:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-040",
@@ -1677,12 +1872,17 @@
     ],
     "inspectionReportId": "ir-040",
     "status": "live",
-    "currentRate": 23500,
-    "leadingBidderId": "u-buyer-7",
-    "bidCount": 1,
+    "currentRate": 23700,
+    "leadingBidderId": "u-buyer-3",
+    "bidCount": 3,
     "endsAt": "2026-07-16T06:51:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-041",
@@ -1725,12 +1925,17 @@
     ],
     "inspectionReportId": "ir-041",
     "status": "live",
-    "currentRate": null,
-    "leadingBidderId": null,
-    "bidCount": 0,
+    "currentRate": 15800,
+    "leadingBidderId": "u-buyer-6",
+    "bidCount": 3,
     "endsAt": "2026-07-16T06:51:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-042",
@@ -1763,12 +1968,17 @@
     ],
     "inspectionReportId": "ir-042",
     "status": "live",
-    "currentRate": 648,
-    "leadingBidderId": "u-buyer-6",
-    "bidCount": 2,
+    "currentRate": 628,
+    "leadingBidderId": "u-buyer-7",
+    "bidCount": 1,
     "endsAt": "2026-07-16T06:51:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-043",
@@ -1801,12 +2011,17 @@
     ],
     "inspectionReportId": "ir-043",
     "status": "live",
-    "currentRate": 31600,
-    "leadingBidderId": "u-buyer-3",
-    "bidCount": 2,
+    "currentRate": 31000,
+    "leadingBidderId": "u-buyer-7",
+    "bidCount": 1,
     "endsAt": "2026-07-16T06:51:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-044",
@@ -1849,12 +2064,17 @@
     ],
     "inspectionReportId": "ir-044",
     "status": "live",
-    "currentRate": 26750,
-    "leadingBidderId": "u-buyer-3",
-    "bidCount": 3,
+    "currentRate": 26300,
+    "leadingBidderId": "u-buyer-7",
+    "bidCount": 1,
     "endsAt": "2026-07-16T06:51:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-045",
@@ -1892,7 +2112,12 @@
     "bidCount": 0,
     "endsAt": "2026-07-17T13:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-046",
@@ -1930,7 +2155,12 @@
     "bidCount": 0,
     "endsAt": "2026-07-17T13:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-047",
@@ -1968,7 +2198,12 @@
     "bidCount": 0,
     "endsAt": "2026-07-17T13:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-048",
@@ -2016,7 +2251,12 @@
     "bidCount": 0,
     "endsAt": "2026-07-17T13:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-049",
@@ -2059,7 +2299,12 @@
     "bidCount": 0,
     "endsAt": "2026-07-17T13:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-050",
@@ -2097,7 +2342,12 @@
     "bidCount": 0,
     "endsAt": "2026-07-17T13:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-051",
@@ -2140,7 +2390,12 @@
     "bidCount": 0,
     "endsAt": "2026-07-17T13:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-052",
@@ -2178,7 +2433,12 @@
     "bidCount": 0,
     "endsAt": "2026-07-17T13:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-053",
@@ -2216,7 +2476,12 @@
     "bidCount": 0,
     "endsAt": "2026-07-17T13:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-054",
@@ -2259,7 +2524,12 @@
     "bidCount": 0,
     "endsAt": "2026-07-17T13:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-055",
@@ -2302,7 +2572,12 @@
     "bidCount": 0,
     "endsAt": "2026-07-17T13:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-056",
@@ -2350,7 +2625,12 @@
     "bidCount": 0,
     "endsAt": "2026-07-17T13:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-057",
@@ -2398,7 +2678,12 @@
     "bidCount": 0,
     "endsAt": "2026-07-17T13:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-058",
@@ -2446,7 +2731,12 @@
     "bidCount": 0,
     "endsAt": "2026-07-17T13:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-059",
@@ -2484,7 +2774,12 @@
     "bidCount": 0,
     "endsAt": "2026-07-17T13:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-060",
@@ -2527,7 +2822,12 @@
     "bidCount": 0,
     "endsAt": "2026-07-17T13:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-061",
@@ -2575,7 +2875,12 @@
     "bidCount": 0,
     "endsAt": "2026-07-19T11:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-062",
@@ -2613,7 +2918,12 @@
     "bidCount": 0,
     "endsAt": "2026-07-19T11:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-063",
@@ -2661,7 +2971,12 @@
     "bidCount": 0,
     "endsAt": "2026-07-19T11:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-064",
@@ -2704,7 +3019,12 @@
     "bidCount": 0,
     "endsAt": "2026-07-19T11:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-065",
@@ -2752,7 +3072,12 @@
     "bidCount": 0,
     "endsAt": "2026-07-19T11:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-066",
@@ -2795,7 +3120,12 @@
     "bidCount": 0,
     "endsAt": "2026-07-19T11:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-067",
@@ -2838,7 +3168,12 @@
     "bidCount": 0,
     "endsAt": "2026-07-19T11:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-068",
@@ -2876,7 +3211,12 @@
     "bidCount": 0,
     "endsAt": "2026-07-19T11:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-069",
@@ -2924,7 +3264,12 @@
     "bidCount": 0,
     "endsAt": "2026-07-19T11:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-070",
@@ -2972,7 +3317,12 @@
     "bidCount": 0,
     "endsAt": "2026-07-19T11:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-071",
@@ -3010,7 +3360,12 @@
     "bidCount": 7,
     "endsAt": "2026-07-14T06:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": 561
+    "resultH1Rate": 561,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-072",
@@ -3053,12 +3408,17 @@
     ],
     "inspectionReportId": "ir-072",
     "status": "sold",
-    "currentRate": 513,
+    "currentRate": 507,
     "leadingBidderId": "u-buyer-1",
-    "bidCount": 9,
+    "bidCount": 6,
     "endsAt": "2026-07-14T06:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": 513
+    "resultH1Rate": 507,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-073",
@@ -3090,13 +3450,18 @@
       }
     ],
     "inspectionReportId": "ir-073",
-    "status": "sta",
-    "currentRate": 434,
-    "leadingBidderId": "u-buyer-5",
-    "bidCount": 4,
+    "status": "sold",
+    "currentRate": 450,
+    "leadingBidderId": "u-buyer-7",
+    "bidCount": 6,
     "endsAt": "2026-07-14T06:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": 434
+    "resultH1Rate": 450,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-074",
@@ -3129,12 +3494,17 @@
     ],
     "inspectionReportId": "ir-074",
     "status": "sold",
-    "currentRate": 151,
-    "leadingBidderId": "u-buyer-1",
+    "currentRate": 147,
+    "leadingBidderId": "u-buyer-5",
     "bidCount": 7,
     "endsAt": "2026-07-14T06:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": 151
+    "resultH1Rate": 147,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-075",
@@ -3172,12 +3542,17 @@
     ],
     "inspectionReportId": "ir-075",
     "status": "sold",
-    "currentRate": 502,
-    "leadingBidderId": "u-buyer-5",
+    "currentRate": 500,
+    "leadingBidderId": "u-buyer-7",
     "bidCount": 5,
     "endsAt": "2026-07-14T06:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": 502
+    "resultH1Rate": 500,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-076",
@@ -3220,12 +3595,17 @@
     ],
     "inspectionReportId": "ir-076",
     "status": "sta",
-    "currentRate": 538,
+    "currentRate": 541,
     "leadingBidderId": "u-buyer-2",
-    "bidCount": 3,
+    "bidCount": 5,
     "endsAt": "2026-07-14T06:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": 538
+    "resultH1Rate": 541,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-077",
@@ -3258,12 +3638,17 @@
     ],
     "inspectionReportId": "ir-077",
     "status": "sold",
-    "currentRate": 451,
-    "leadingBidderId": "u-buyer-7",
-    "bidCount": 4,
+    "currentRate": 461,
+    "leadingBidderId": "u-buyer-3",
+    "bidCount": 6,
     "endsAt": "2026-07-14T06:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": 451
+    "resultH1Rate": 461,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-078",
@@ -3306,12 +3691,17 @@
     ],
     "inspectionReportId": "ir-078",
     "status": "sold",
-    "currentRate": 169,
-    "leadingBidderId": "u-buyer-5",
+    "currentRate": 174,
+    "leadingBidderId": "u-buyer-1",
     "bidCount": 3,
     "endsAt": "2026-07-14T06:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": 169
+    "resultH1Rate": 174,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-079",
@@ -3349,12 +3739,17 @@
     ],
     "inspectionReportId": "ir-079",
     "status": "sta",
-    "currentRate": 524,
-    "leadingBidderId": "u-buyer-6",
-    "bidCount": 7,
+    "currentRate": 515,
+    "leadingBidderId": "u-buyer-5",
+    "bidCount": 3,
     "endsAt": "2026-07-14T06:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": 524
+    "resultH1Rate": 515,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-080",
@@ -3387,12 +3782,17 @@
     ],
     "inspectionReportId": "ir-080",
     "status": "sta",
-    "currentRate": 549,
-    "leadingBidderId": "u-buyer-1",
-    "bidCount": 7,
+    "currentRate": 547,
+    "leadingBidderId": "u-buyer-7",
+    "bidCount": 5,
     "endsAt": "2026-07-14T06:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": 549
+    "resultH1Rate": 547,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-081",
@@ -3425,12 +3825,17 @@
     ],
     "inspectionReportId": "ir-081",
     "status": "sold",
-    "currentRate": 479,
-    "leadingBidderId": "u-buyer-7",
-    "bidCount": 7,
+    "currentRate": 439,
+    "leadingBidderId": "u-buyer-3",
+    "bidCount": 5,
     "endsAt": "2026-07-14T06:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": 479
+    "resultH1Rate": 439,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-082",
@@ -3463,12 +3868,17 @@
     ],
     "inspectionReportId": "ir-082",
     "status": "sold",
-    "currentRate": 176,
-    "leadingBidderId": "u-buyer-6",
-    "bidCount": 3,
+    "currentRate": 201,
+    "leadingBidderId": "u-buyer-2",
+    "bidCount": 6,
     "endsAt": "2026-07-14T06:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": 176
+    "resultH1Rate": 201,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-083",
@@ -3511,12 +3921,17 @@
     ],
     "inspectionReportId": "ir-083",
     "status": "sta",
-    "currentRate": 269500,
-    "leadingBidderId": "u-buyer-6",
-    "bidCount": 3,
+    "currentRate": 283800,
+    "leadingBidderId": "u-buyer-3",
+    "bidCount": 7,
     "endsAt": "2026-07-10T06:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": 269500
+    "resultH1Rate": 283800,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-084",
@@ -3558,13 +3973,18 @@
       }
     ],
     "inspectionReportId": "ir-084",
-    "status": "sold",
-    "currentRate": 806100,
-    "leadingBidderId": "u-buyer-3",
-    "bidCount": 7,
+    "status": "sta",
+    "currentRate": 776100,
+    "leadingBidderId": "u-buyer-7",
+    "bidCount": 3,
     "endsAt": "2026-07-10T06:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": 806100
+    "resultH1Rate": 776100,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-085",
@@ -3596,13 +4016,18 @@
       }
     ],
     "inspectionReportId": "ir-085",
-    "status": "sold",
-    "currentRate": 305300,
-    "leadingBidderId": "u-buyer-2",
-    "bidCount": 8,
+    "status": "sta",
+    "currentRate": 296900,
+    "leadingBidderId": "u-buyer-5",
+    "bidCount": 5,
     "endsAt": "2026-07-10T06:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": 305300
+    "resultH1Rate": 296900,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-086",
@@ -3635,12 +4060,17 @@
     ],
     "inspectionReportId": "ir-086",
     "status": "sta",
-    "currentRate": 29150,
-    "leadingBidderId": "u-buyer-2",
-    "bidCount": 6,
+    "currentRate": 29000,
+    "leadingBidderId": "u-buyer-7",
+    "bidCount": 7,
     "endsAt": "2026-07-10T06:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": 29150
+    "resultH1Rate": 29000,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-087",
@@ -3679,11 +4109,16 @@
     "inspectionReportId": "ir-087",
     "status": "sta",
     "currentRate": 197500,
-    "leadingBidderId": "u-buyer-3",
+    "leadingBidderId": "u-buyer-5",
     "bidCount": 7,
     "endsAt": "2026-07-10T06:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": 197500
+    "resultH1Rate": 197500,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-088",
@@ -3721,12 +4156,17 @@
     ],
     "inspectionReportId": "ir-088",
     "status": "sta",
-    "currentRate": 174800,
-    "leadingBidderId": "u-buyer-7",
+    "currentRate": 173100,
+    "leadingBidderId": "u-buyer-5",
     "bidCount": 3,
     "endsAt": "2026-07-10T06:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": 174800
+    "resultH1Rate": 173100,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-089",
@@ -3768,13 +4208,18 @@
       }
     ],
     "inspectionReportId": "ir-089",
-    "status": "sta",
-    "currentRate": 522900,
-    "leadingBidderId": "u-buyer-5",
+    "status": "sold",
+    "currentRate": 532900,
+    "leadingBidderId": "u-buyer-3",
     "bidCount": 5,
     "endsAt": "2026-07-10T06:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": 522900
+    "resultH1Rate": 532900,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-090",
@@ -3812,12 +4257,17 @@
     ],
     "inspectionReportId": "ir-090",
     "status": "sta",
-    "currentRate": 225300,
-    "leadingBidderId": "u-buyer-7",
-    "bidCount": 7,
+    "currentRate": 229500,
+    "leadingBidderId": "u-buyer-6",
+    "bidCount": 8,
     "endsAt": "2026-07-10T06:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": 225300
+    "resultH1Rate": 229500,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-091",
@@ -3859,13 +4309,18 @@
       }
     ],
     "inspectionReportId": "ir-091",
-    "status": "sold",
-    "currentRate": 29450,
-    "leadingBidderId": "u-buyer-5",
+    "status": "sta",
+    "currentRate": 28700,
+    "leadingBidderId": "u-buyer-3",
     "bidCount": 7,
     "endsAt": "2026-07-10T06:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": 29450
+    "resultH1Rate": 28700,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-092",
@@ -3903,16 +4358,256 @@
     ],
     "inspectionReportId": "ir-092",
     "status": "sta",
-    "currentRate": 124800,
+    "currentRate": 127800,
     "leadingBidderId": "u-buyer-5",
-    "bidCount": 3,
+    "bidCount": 7,
     "endsAt": "2026-07-10T06:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": 124800
+    "resultH1Rate": 127800,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-093",
-    "lotNo": "UNL-93",
+    "lotNo": "LOT-01",
+    "catalogueId": "cat-8",
+    "metal": "MS",
+    "category": "scrap",
+    "grade": "HMS 1",
+    "indicativeQty": 96,
+    "uom": "MT",
+    "yard": "BSP Scrap Yard 3",
+    "description": "Heavy melting scrap — plate cuttings, structural offcuts, thickness ≥ 6 mm",
+    "startRate": 31500,
+    "increment": 150,
+    "reserveRate": 34450,
+    "preBidEmd": 150000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-093-p0",
+        "label": "Overview",
+        "hue": 12
+      },
+      {
+        "id": "lot-093-p1",
+        "label": "Close-up",
+        "hue": 31
+      },
+      {
+        "id": "lot-093-p2",
+        "label": "Stack view",
+        "hue": 37
+      },
+      {
+        "id": "lot-093-p3",
+        "label": "Weighbridge",
+        "hue": 34
+      }
+    ],
+    "inspectionReportId": null,
+    "status": "pending_inspection",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-22T11:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null,
+    "knownSeller": true,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
+  },
+  {
+    "id": "lot-094",
+    "lotNo": "LOT-02",
+    "catalogueId": "cat-8",
+    "metal": "MS",
+    "category": "scrap",
+    "grade": "HMS 2",
+    "indicativeQty": 43,
+    "uom": "MT",
+    "yard": "BSP Scrap Yard 3",
+    "description": "Mixed heavy melting scrap incl. sheet, pipe and light structural, some rust",
+    "startRate": 26500,
+    "increment": 150,
+    "reserveRate": 28300,
+    "preBidEmd": 55000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-094-p0",
+        "label": "Overview",
+        "hue": 17
+      },
+      {
+        "id": "lot-094-p1",
+        "label": "Close-up",
+        "hue": 46
+      }
+    ],
+    "inspectionReportId": null,
+    "status": "pending_inspection",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-22T11:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null,
+    "knownSeller": true,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
+  },
+  {
+    "id": "lot-095",
+    "lotNo": "LOT-03",
+    "catalogueId": "cat-8",
+    "metal": "MS",
+    "category": "melting-products",
+    "grade": "Turnings",
+    "indicativeQty": 32,
+    "uom": "MT",
+    "yard": "BSP Scrap Yard 3",
+    "description": "MS turnings and borings from machine shop, loose, oil traces present",
+    "startRate": 20100,
+    "increment": 100,
+    "reserveRate": 21700,
+    "preBidEmd": 30000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": true,
+    "photos": [
+      {
+        "id": "lot-095-p0",
+        "label": "Overview",
+        "hue": 38
+      },
+      {
+        "id": "lot-095-p1",
+        "label": "Close-up",
+        "hue": 42
+      },
+      {
+        "id": "lot-095-p2",
+        "label": "Stack view",
+        "hue": 54
+      },
+      {
+        "id": "lot-095-p3",
+        "label": "Weighbridge",
+        "hue": 59
+      }
+    ],
+    "inspectionReportId": null,
+    "status": "pending_inspection",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-22T11:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
+  },
+  {
+    "id": "lot-096",
+    "lotNo": "LOT-04",
+    "catalogueId": "cat-8",
+    "metal": "MS",
+    "category": "scrap",
+    "grade": "Plate Cuttings",
+    "indicativeQty": 27,
+    "uom": "MT",
+    "yard": "BSP Scrap Yard 3",
+    "description": "Prime plate end-cuttings, 8–40 mm, sizes suitable for re-rolling",
+    "startRate": 32300,
+    "increment": 150,
+    "reserveRate": 33700,
+    "preBidEmd": 45000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-096-p0",
+        "label": "Overview",
+        "hue": 30
+      },
+      {
+        "id": "lot-096-p1",
+        "label": "Close-up",
+        "hue": 21
+      }
+    ],
+    "inspectionReportId": null,
+    "status": "pending_inspection",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-22T11:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
+  },
+  {
+    "id": "lot-097",
+    "lotNo": "LOT-05",
+    "catalogueId": "cat-8",
+    "metal": "CI",
+    "category": "melting-products",
+    "grade": "Borings",
+    "indicativeQty": 47,
+    "uom": "MT",
+    "yard": "BSP Scrap Yard 3",
+    "description": "Cast iron borings, dry, free from foreign material as inspected",
+    "startRate": 21700,
+    "increment": 100,
+    "reserveRate": 23650,
+    "preBidEmd": 50000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-097-p0",
+        "label": "Overview",
+        "hue": 35
+      },
+      {
+        "id": "lot-097-p1",
+        "label": "Close-up",
+        "hue": 47
+      }
+    ],
+    "inspectionReportId": null,
+    "status": "pending_inspection",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-22T11:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
+  },
+  {
+    "id": "lot-098",
+    "lotNo": "UNL-98",
     "catalogueId": null,
     "metal": "MS",
     "category": "scrap",
@@ -3925,221 +4620,6 @@
     "increment": 150,
     "reserveRate": 28360,
     "preBidEmd": 60000,
-    "saleBasis": "as-is-where-is",
-    "hazardous": false,
-    "photos": [
-      {
-        "id": "lot-093-p0",
-        "label": "Overview",
-        "hue": 20
-      },
-      {
-        "id": "lot-093-p1",
-        "label": "Close-up",
-        "hue": 30
-      },
-      {
-        "id": "lot-093-p2",
-        "label": "Stack view",
-        "hue": 40
-      }
-    ],
-    "inspectionReportId": null,
-    "status": "pending_inspection",
-    "currentRate": null,
-    "leadingBidderId": null,
-    "bidCount": 0,
-    "endsAt": "2026-08-15T06:30:00.000Z",
-    "extensions": 0,
-    "resultH1Rate": null
-  },
-  {
-    "id": "lot-094",
-    "lotNo": "UNL-94",
-    "catalogueId": null,
-    "metal": "Aluminium",
-    "category": "scrap",
-    "grade": "Al Extrusion 6063",
-    "indicativeQty": 5200,
-    "uom": "KG",
-    "yard": "VJNR Yard B",
-    "description": "Aluminium extrusion offcuts 6063, mill finish, bundled",
-    "startRate": 156,
-    "increment": 2,
-    "reserveRate": 170,
-    "preBidEmd": 40000,
-    "saleBasis": "as-is-where-is",
-    "hazardous": false,
-    "photos": [
-      {
-        "id": "lot-094-p0",
-        "label": "Overview",
-        "hue": 20
-      },
-      {
-        "id": "lot-094-p1",
-        "label": "Close-up",
-        "hue": 30
-      },
-      {
-        "id": "lot-094-p2",
-        "label": "Stack view",
-        "hue": 40
-      }
-    ],
-    "inspectionReportId": null,
-    "status": "pending_inspection",
-    "currentRate": null,
-    "leadingBidderId": null,
-    "bidCount": 0,
-    "endsAt": "2026-08-15T06:30:00.000Z",
-    "extensions": 0,
-    "resultH1Rate": null
-  },
-  {
-    "id": "lot-095",
-    "lotNo": "UNL-95",
-    "catalogueId": null,
-    "metal": "MS",
-    "category": "melting-products",
-    "grade": "Mill Scale",
-    "indicativeQty": 220,
-    "uom": "MT",
-    "yard": "BSP Scrap Yard 3",
-    "description": "Mill scale, Fe ≥ 68 %, ex-rolling mill, loose",
-    "startRate": 9800,
-    "increment": 50,
-    "reserveRate": 10490,
-    "preBidEmd": 110000,
-    "saleBasis": "as-is-where-is",
-    "hazardous": false,
-    "photos": [
-      {
-        "id": "lot-095-p0",
-        "label": "Overview",
-        "hue": 20
-      },
-      {
-        "id": "lot-095-p1",
-        "label": "Close-up",
-        "hue": 30
-      },
-      {
-        "id": "lot-095-p2",
-        "label": "Stack view",
-        "hue": 40
-      }
-    ],
-    "inspectionReportId": null,
-    "status": "pending_inspection",
-    "currentRate": null,
-    "leadingBidderId": null,
-    "bidCount": 0,
-    "endsAt": "2026-08-15T06:30:00.000Z",
-    "extensions": 0,
-    "resultH1Rate": null
-  },
-  {
-    "id": "lot-096",
-    "lotNo": "UNL-96",
-    "catalogueId": null,
-    "metal": "MS",
-    "category": "scrap",
-    "grade": "Point & Crossing Scrap",
-    "indicativeQty": 65,
-    "uom": "MT",
-    "yard": "Mancheswar Depot",
-    "description": "Released points and crossings, manganese steel portions included",
-    "startRate": 28800,
-    "increment": 150,
-    "reserveRate": 30820,
-    "preBidEmd": 95000,
-    "saleBasis": "as-is-where-is",
-    "hazardous": false,
-    "photos": [
-      {
-        "id": "lot-096-p0",
-        "label": "Overview",
-        "hue": 20
-      },
-      {
-        "id": "lot-096-p1",
-        "label": "Close-up",
-        "hue": 30
-      },
-      {
-        "id": "lot-096-p2",
-        "label": "Stack view",
-        "hue": 40
-      }
-    ],
-    "inspectionReportId": "ir-096",
-    "status": "inspected",
-    "currentRate": null,
-    "leadingBidderId": null,
-    "bidCount": 0,
-    "endsAt": "2026-08-15T06:30:00.000Z",
-    "extensions": 0,
-    "resultH1Rate": null
-  },
-  {
-    "id": "lot-097",
-    "lotNo": "UNL-97",
-    "catalogueId": null,
-    "metal": "Copper",
-    "category": "scrap",
-    "grade": "Cu Radiators",
-    "indicativeQty": 2600,
-    "uom": "KG",
-    "yard": "MSTC Paradip Yard",
-    "description": "Copper-brass radiators, drained, no iron attachments",
-    "startRate": 445,
-    "increment": 2,
-    "reserveRate": 480,
-    "preBidEmd": 60000,
-    "saleBasis": "as-is-where-is",
-    "hazardous": false,
-    "photos": [
-      {
-        "id": "lot-097-p0",
-        "label": "Overview",
-        "hue": 20
-      },
-      {
-        "id": "lot-097-p1",
-        "label": "Close-up",
-        "hue": 30
-      },
-      {
-        "id": "lot-097-p2",
-        "label": "Stack view",
-        "hue": 40
-      }
-    ],
-    "inspectionReportId": "ir-097",
-    "status": "inspected",
-    "currentRate": null,
-    "leadingBidderId": null,
-    "bidCount": 0,
-    "endsAt": "2026-08-15T06:30:00.000Z",
-    "extensions": 0,
-    "resultH1Rate": null
-  },
-  {
-    "id": "lot-098",
-    "lotNo": "UNL-98",
-    "catalogueId": null,
-    "metal": "SS 304",
-    "category": "scrap",
-    "grade": "304 Skeleton Scrap",
-    "indicativeQty": 8400,
-    "uom": "KG",
-    "yard": "Burma Mines Yard",
-    "description": "SS 304 punching skeletons, coiled, baled at source",
-    "startRate": 96,
-    "increment": 2,
-    "reserveRate": 100,
-    "preBidEmd": 40000,
     "saleBasis": "as-is-where-is",
     "hazardous": false,
     "photos": [
@@ -4159,30 +4639,35 @@
         "hue": 40
       }
     ],
-    "inspectionReportId": "ir-098",
-    "status": "inspected",
+    "inspectionReportId": null,
+    "status": "pending_inspection",
     "currentRate": null,
     "leadingBidderId": null,
     "bidCount": 0,
     "endsAt": "2026-08-15T06:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": true,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-099",
     "lotNo": "UNL-99",
     "catalogueId": null,
-    "metal": "Ferro Alloys",
-    "category": "ferro-alloys",
-    "grade": "FeMn Slag",
-    "indicativeQty": 180,
-    "uom": "MT",
+    "metal": "Aluminium",
+    "category": "scrap",
+    "grade": "Al Extrusion 6063",
+    "indicativeQty": 5200,
+    "uom": "KG",
     "yard": "VJNR Yard B",
-    "description": "Ferro manganese slag, metal recovery grade, ex-dump",
-    "startRate": 14500,
-    "increment": 50,
-    "reserveRate": 15520,
-    "preBidEmd": 130000,
+    "description": "Aluminium extrusion offcuts 6063, mill finish, bundled",
+    "startRate": 156,
+    "increment": 2,
+    "reserveRate": 170,
+    "preBidEmd": 40000,
     "saleBasis": "as-is-where-is",
     "hazardous": false,
     "photos": [
@@ -4202,30 +4687,35 @@
         "hue": 40
       }
     ],
-    "inspectionReportId": "ir-099",
-    "status": "approved",
+    "inspectionReportId": null,
+    "status": "pending_inspection",
     "currentRate": null,
     "leadingBidderId": null,
     "bidCount": 0,
     "endsAt": "2026-08-15T06:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-100",
     "lotNo": "UNL-100",
     "catalogueId": null,
-    "metal": "CI",
+    "metal": "MS",
     "category": "melting-products",
-    "grade": "CI Moulds",
-    "indicativeQty": 95,
+    "grade": "Mill Scale",
+    "indicativeQty": 220,
     "uom": "MT",
     "yard": "BSP Scrap Yard 3",
-    "description": "Rejected CI ingot moulds, cracked, avg 4 MT per piece",
-    "startRate": 23800,
-    "increment": 100,
-    "reserveRate": 25470,
-    "preBidEmd": 115000,
+    "description": "Mill scale, Fe ≥ 68 %, ex-rolling mill, loose",
+    "startRate": 9800,
+    "increment": 50,
+    "reserveRate": 10490,
+    "preBidEmd": 110000,
     "saleBasis": "as-is-where-is",
     "hazardous": false,
     "photos": [
@@ -4245,30 +4735,35 @@
         "hue": 40
       }
     ],
-    "inspectionReportId": "ir-100",
-    "status": "approved",
+    "inspectionReportId": null,
+    "status": "pending_inspection",
     "currentRate": null,
     "leadingBidderId": null,
     "bidCount": 0,
     "endsAt": "2026-08-15T06:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-101",
     "lotNo": "UNL-101",
     "catalogueId": null,
-    "metal": "Minerals",
-    "category": "minerals",
-    "grade": "Bottom Ash",
-    "indicativeQty": 3200,
+    "metal": "MS",
+    "category": "scrap",
+    "grade": "Point & Crossing Scrap",
+    "indicativeQty": 65,
     "uom": "MT",
-    "yard": "RSTPS Ash Yard",
-    "description": "Bottom ash ex-dyke, self-loading, moisture ≤ 20 %",
-    "startRate": 310,
-    "increment": 50,
-    "reserveRate": 330,
-    "preBidEmd": 50000,
+    "yard": "Mancheswar Depot",
+    "description": "Released points and crossings, manganese steel portions included",
+    "startRate": 28800,
+    "increment": 150,
+    "reserveRate": 30820,
+    "preBidEmd": 95000,
     "saleBasis": "as-is-where-is",
     "hazardous": false,
     "photos": [
@@ -4289,29 +4784,34 @@
       }
     ],
     "inspectionReportId": "ir-101",
-    "status": "approved",
+    "status": "inspected",
     "currentRate": null,
     "leadingBidderId": null,
     "bidCount": 0,
     "endsAt": "2026-08-15T06:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-102",
     "lotNo": "UNL-102",
     "catalogueId": null,
-    "metal": "Assets",
-    "category": "assets",
-    "grade": "Condemned Cranes",
-    "indicativeQty": 3,
-    "uom": "PCS",
-    "yard": "Mancheswar Depot",
-    "description": "Condemned yard cranes — ownership document mismatch, on hold",
-    "startRate": 240000,
-    "increment": 1200,
-    "reserveRate": 256800,
-    "preBidEmd": 35000,
+    "metal": "Copper",
+    "category": "scrap",
+    "grade": "Cu Radiators",
+    "indicativeQty": 2600,
+    "uom": "KG",
+    "yard": "MSTC Paradip Yard",
+    "description": "Copper-brass radiators, drained, no iron attachments",
+    "startRate": 445,
+    "increment": 2,
+    "reserveRate": 480,
+    "preBidEmd": 60000,
     "saleBasis": "as-is-where-is",
     "hazardous": false,
     "photos": [
@@ -4332,29 +4832,34 @@
       }
     ],
     "inspectionReportId": "ir-102",
-    "status": "flagged",
+    "status": "inspected",
     "currentRate": null,
     "leadingBidderId": null,
     "bidCount": 0,
     "endsAt": "2026-08-15T06:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   },
   {
     "id": "lot-103",
     "lotNo": "UNL-103",
     "catalogueId": null,
-    "metal": "Brass",
+    "metal": "SS 304",
     "category": "scrap",
-    "grade": "Mixed Brass",
-    "indicativeQty": 1800,
+    "grade": "304 Skeleton Scrap",
+    "indicativeQty": 8400,
     "uom": "KG",
-    "yard": "MSTC Paradip Yard",
-    "description": "Mixed brass scrap — rejected: radioactive source scan pending",
-    "startRate": 372,
+    "yard": "Burma Mines Yard",
+    "description": "SS 304 punching skeletons, coiled, baled at source",
+    "startRate": 96,
     "increment": 2,
-    "reserveRate": 400,
-    "preBidEmd": 35000,
+    "reserveRate": 100,
+    "preBidEmd": 40000,
     "saleBasis": "as-is-where-is",
     "hazardous": false,
     "photos": [
@@ -4375,12 +4880,257 @@
       }
     ],
     "inspectionReportId": "ir-103",
+    "status": "inspected",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-08-15T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
+  },
+  {
+    "id": "lot-104",
+    "lotNo": "UNL-104",
+    "catalogueId": null,
+    "metal": "Ferro Alloys",
+    "category": "ferro-alloys",
+    "grade": "FeMn Slag",
+    "indicativeQty": 180,
+    "uom": "MT",
+    "yard": "VJNR Yard B",
+    "description": "Ferro manganese slag, metal recovery grade, ex-dump",
+    "startRate": 14500,
+    "increment": 50,
+    "reserveRate": 15520,
+    "preBidEmd": 130000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-104-p0",
+        "label": "Overview",
+        "hue": 20
+      },
+      {
+        "id": "lot-104-p1",
+        "label": "Close-up",
+        "hue": 30
+      },
+      {
+        "id": "lot-104-p2",
+        "label": "Stack view",
+        "hue": 40
+      }
+    ],
+    "inspectionReportId": "ir-104",
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-08-15T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
+  },
+  {
+    "id": "lot-105",
+    "lotNo": "UNL-105",
+    "catalogueId": null,
+    "metal": "CI",
+    "category": "melting-products",
+    "grade": "CI Moulds",
+    "indicativeQty": 95,
+    "uom": "MT",
+    "yard": "BSP Scrap Yard 3",
+    "description": "Rejected CI ingot moulds, cracked, avg 4 MT per piece",
+    "startRate": 23800,
+    "increment": 100,
+    "reserveRate": 25470,
+    "preBidEmd": 115000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-105-p0",
+        "label": "Overview",
+        "hue": 20
+      },
+      {
+        "id": "lot-105-p1",
+        "label": "Close-up",
+        "hue": 30
+      },
+      {
+        "id": "lot-105-p2",
+        "label": "Stack view",
+        "hue": 40
+      }
+    ],
+    "inspectionReportId": "ir-105",
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-08-15T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
+  },
+  {
+    "id": "lot-106",
+    "lotNo": "UNL-106",
+    "catalogueId": null,
+    "metal": "Minerals",
+    "category": "minerals",
+    "grade": "Bottom Ash",
+    "indicativeQty": 3200,
+    "uom": "MT",
+    "yard": "RSTPS Ash Yard",
+    "description": "Bottom ash ex-dyke, self-loading, moisture ≤ 20 %",
+    "startRate": 310,
+    "increment": 50,
+    "reserveRate": 330,
+    "preBidEmd": 50000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-106-p0",
+        "label": "Overview",
+        "hue": 20
+      },
+      {
+        "id": "lot-106-p1",
+        "label": "Close-up",
+        "hue": 30
+      },
+      {
+        "id": "lot-106-p2",
+        "label": "Stack view",
+        "hue": 40
+      }
+    ],
+    "inspectionReportId": "ir-106",
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-08-15T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
+  },
+  {
+    "id": "lot-107",
+    "lotNo": "UNL-107",
+    "catalogueId": null,
+    "metal": "Assets",
+    "category": "assets",
+    "grade": "Condemned Cranes",
+    "indicativeQty": 3,
+    "uom": "PCS",
+    "yard": "Mancheswar Depot",
+    "description": "Condemned yard cranes — ownership document mismatch, on hold",
+    "startRate": 240000,
+    "increment": 1200,
+    "reserveRate": 256800,
+    "preBidEmd": 35000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-107-p0",
+        "label": "Overview",
+        "hue": 20
+      },
+      {
+        "id": "lot-107-p1",
+        "label": "Close-up",
+        "hue": 30
+      },
+      {
+        "id": "lot-107-p2",
+        "label": "Stack view",
+        "hue": 40
+      }
+    ],
+    "inspectionReportId": "ir-107",
+    "status": "flagged",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-08-15T06:30:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
+  },
+  {
+    "id": "lot-108",
+    "lotNo": "UNL-108",
+    "catalogueId": null,
+    "metal": "Brass",
+    "category": "scrap",
+    "grade": "Mixed Brass",
+    "indicativeQty": 1800,
+    "uom": "KG",
+    "yard": "MSTC Paradip Yard",
+    "description": "Mixed brass scrap — rejected: radioactive source scan pending",
+    "startRate": 372,
+    "increment": 2,
+    "reserveRate": 400,
+    "preBidEmd": 35000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-108-p0",
+        "label": "Overview",
+        "hue": 20
+      },
+      {
+        "id": "lot-108-p1",
+        "label": "Close-up",
+        "hue": 30
+      },
+      {
+        "id": "lot-108-p2",
+        "label": "Stack view",
+        "hue": 40
+      }
+    ],
+    "inspectionReportId": "ir-108",
     "status": "rejected",
     "currentRate": null,
     "leadingBidderId": null,
     "bidCount": 0,
     "endsAt": "2026-08-15T06:30:00.000Z",
     "extensions": 0,
-    "resultH1Rate": null
+    "resultH1Rate": null,
+    "knownSeller": false,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   }
 ]

@@ -1,29 +1,9 @@
 [
   {
     "userId": "u-buyer-1",
-    "balance": 750000,
-    "emdLocked": 435000,
+    "balance": 850000,
+    "emdLocked": 335000,
     "ledger": [
-      {
-        "id": "led-seed-2",
-        "at": "2026-07-15T08:05:00.000Z",
-        "type": "emd_lock",
-        "amount": -35000,
-        "ref": "EMD-2412-05",
-        "lotId": "lot-005",
-        "catalogueId": "cat-1",
-        "note": "Pre-bid EMD locked — LOT-05 (AUC-2412)"
-      },
-      {
-        "id": "led-seed-1",
-        "at": "2026-07-15T08:05:00.000Z",
-        "type": "emd_lock",
-        "amount": -65000,
-        "ref": "EMD-2412-04",
-        "lotId": "lot-004",
-        "catalogueId": "cat-1",
-        "note": "Pre-bid EMD locked — LOT-04 (AUC-2412)"
-      },
       {
         "id": "led-001",
         "at": "2026-07-04T06:30:00.000Z",
@@ -104,29 +84,9 @@
   },
   {
     "userId": "u-buyer-2",
-    "balance": 535000,
-    "emdLocked": 285000,
+    "balance": 640000,
+    "emdLocked": 180000,
     "ledger": [
-      {
-        "id": "led-seed-4",
-        "at": "2026-07-15T08:05:00.000Z",
-        "type": "emd_lock",
-        "amount": -80000,
-        "ref": "EMD-2415-04",
-        "lotId": "lot-022",
-        "catalogueId": "cat-2",
-        "note": "Pre-bid EMD locked — LOT-04 (AUC-2415)"
-      },
-      {
-        "id": "led-seed-3",
-        "at": "2026-07-15T08:05:00.000Z",
-        "type": "emd_lock",
-        "amount": -25000,
-        "ref": "EMD-2415-03",
-        "lotId": "lot-021",
-        "catalogueId": "cat-2",
-        "note": "Pre-bid EMD locked — LOT-03 (AUC-2415)"
-      },
       {
         "id": "led-b2-1",
         "at": "2026-07-08T06:30:00.000Z",

@@ -6,6 +6,7 @@
     "sellerId": "u-seller-1",
     "type": "forward",
     "status": "live",
+    "assignedFieldExecId": null,
     "startsAt": "2026-07-13T06:30:00.000Z",
     "endsAt": "2026-07-16T07:12:00.000Z",
     "inspectionFrom": "2026-07-10T06:30:00.000Z",
@@ -71,6 +72,7 @@
     "sellerId": "u-seller-2",
     "type": "forward",
     "status": "live",
+    "assignedFieldExecId": null,
     "startsAt": "2026-07-14T06:30:00.000Z",
     "endsAt": "2026-07-16T09:55:00.000Z",
     "inspectionFrom": "2026-07-11T06:30:00.000Z",
@@ -138,6 +140,7 @@
     "sellerId": "u-seller-3",
     "type": "forward",
     "status": "live",
+    "assignedFieldExecId": null,
     "startsAt": "2026-07-15T06:30:00.000Z",
     "endsAt": "2026-07-16T06:51:00.000Z",
     "inspectionFrom": "2026-07-12T06:30:00.000Z",
@@ -197,6 +200,7 @@
     "sellerId": "u-seller-4",
     "type": "forward",
     "status": "upcoming",
+    "assignedFieldExecId": null,
     "startsAt": "2026-07-17T08:30:00.000Z",
     "endsAt": "2026-07-17T13:30:00.000Z",
     "inspectionFrom": "2026-07-16T16:30:00.000Z",
@@ -260,6 +264,7 @@
     "sellerId": "u-seller-5",
     "type": "forward",
     "status": "upcoming",
+    "assignedFieldExecId": null,
     "startsAt": "2026-07-19T06:30:00.000Z",
     "endsAt": "2026-07-19T11:30:00.000Z",
     "inspectionFrom": "2026-07-17T06:30:00.000Z",
@@ -323,6 +328,7 @@
     "sellerId": "u-seller-6",
     "type": "forward",
     "status": "closed",
+    "assignedFieldExecId": null,
     "startsAt": "2026-07-13T06:30:00.000Z",
     "endsAt": "2026-07-14T06:30:00.000Z",
     "inspectionFrom": "2026-07-10T06:30:00.000Z",
@@ -382,6 +388,7 @@
     "sellerId": "u-seller-7",
     "type": "forward",
     "status": "closed",
+    "assignedFieldExecId": null,
     "startsAt": "2026-07-09T06:30:00.000Z",
     "endsAt": "2026-07-10T06:30:00.000Z",
     "inspectionFrom": "2026-07-06T06:30:00.000Z",
@@ -431,5 +438,58 @@
     ],
     "termsSetId": "ts-standard",
     "description": "E-auction of Plant & Machinery, Condemned Assets on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Quantity indicative — final on weighment."
+  },
+  {
+    "id": "cat-8",
+    "code": "AUC-2430",
+    "title": "Bhilai Yard — Mixed Ferrous Scrap for Field Inspection",
+    "sellerId": "u-seller-1",
+    "type": "forward",
+    "status": "draft",
+    "assignedFieldExecId": "u-field-1",
+    "startsAt": "2026-07-22T06:30:00.000Z",
+    "endsAt": "2026-07-22T11:30:00.000Z",
+    "inspectionFrom": "2026-07-16T08:30:00.000Z",
+    "inspectionTo": "2026-07-20T06:30:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "S. K. Sahu",
+      "phone": "+91 94252 10883",
+      "role": "Yard In-charge (Inspection & Lifting)"
+    },
+    "yardName": "BSP Scrap Yard 3",
+    "yardAddress": "Gate 7, SAIL Bhilai Steel Plant, Bhilai, Chhattisgarh 490001",
+    "region": "Bhilai, CG",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "lot-093",
+      "lot-094",
+      "lot-095",
+      "lot-096",
+      "lot-097"
+    ],
+    "documents": [
+      {
+        "id": "cat-8-doc-1",
+        "name": "AUC-2430 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.4 MB"
+      },
+      {
+        "id": "cat-8-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "810 KB"
+      },
+      {
+        "id": "cat-8-doc-3",
+        "name": "Payment Schedule & Bank Details.xlsx",
+        "type": "xlsx",
+        "size": "96 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of Mixed Ferrous Scrap for Field Inspection on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Quantity indicative — final on weighment."
   }
 ]

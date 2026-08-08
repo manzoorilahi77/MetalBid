@@ -110,6 +110,7 @@ const YARDS = {
   'cat-5': { name: 'RSTPS Ash Yard', addr: 'NTPC Ramagundam, Jyothinagar, Peddapalli, Telangana 505215', region: 'Ramagundam, TS' },
   'cat-6': { name: 'MSTC Paradip Yard', addr: 'MSTC Stockyard, Paradip Port Area, Jagatsinghpur, Odisha 754142', region: 'Paradip, OD' },
   'cat-7': { name: 'BHEL Unit II Yard', addr: 'BHEL Tiruchirappalli, Kailasapuram, Tamil Nadu 620014', region: 'Trichy, TN' },
+  'cat-8': { name: 'BSP Scrap Yard 3', addr: 'Gate 7, SAIL Bhilai Steel Plant, Bhilai, Chhattisgarh 490001', region: 'Bhilai, CG' },
 }
 
 /* ------------------------------ catalogues ------------------------------- */
@@ -121,6 +122,7 @@ const cataloguesDef = [
   { id: 'cat-5', code: 'AUC-2424', title: 'NTPC Ramagundam — Coal Rejects, Fly Ash & Used Oil', sellerId: 'u-seller-5', status: 'upcoming', start: 3 * DAY, end: 3 * DAY + 300, pool: 'coal', count: 10, insp: [1 * DAY, 2 * DAY + 720], contact: { name: 'G. Srinivas', phone: '+91 87903 55240', role: 'AGM (Fuel Handling)' }, antiSnipe: 5, validity: 10 },
   { id: 'cat-6', code: 'AUC-2406', title: 'MSTC Eastern Region — Copper, Brass & Cable Scrap', sellerId: 'u-seller-6', status: 'closed', start: -3 * DAY, end: -2 * DAY, pool: 'copperBrass', count: 12, insp: [-6 * DAY, -4 * DAY], contact: { name: 'T. Ghosh', phone: '+91 90070 18836', role: 'Yard Supervisor' }, antiSnipe: 3, validity: 7 },
   { id: 'cat-7', code: 'AUC-2402', title: 'BHEL Trichy — Plant & Machinery, Condemned Assets', sellerId: 'u-seller-7', status: 'closed', start: -7 * DAY, end: -6 * DAY, pool: 'assets', count: 10, insp: [-10 * DAY, -8 * DAY], contact: { name: 'R. Elango', phone: '+91 94430 20951', role: 'Sr. Engineer (Disposals)' }, antiSnipe: 5, validity: 15 },
+  { id: 'cat-8', code: 'AUC-2430', title: 'Bhilai Yard — Mixed Ferrous Scrap for Field Inspection', sellerId: 'u-seller-1', status: 'draft', assignedFieldExecId: 'u-field-1', start: 6 * DAY, end: 6 * DAY + 300, pool: 'msScrap', count: 5, insp: [2 * 60, 4 * DAY], contact: { name: 'S. K. Sahu', phone: '+91 94252 10883', role: 'Yard In-charge (Inspection & Lifting)' }, antiSnipe: 3, validity: 7 },
 ]
 
 const PHOTO_LABELS = ['Overview', 'Close-up', 'Stack view', 'Weighbridge', 'Condition detail']
@@ -145,38 +147,42 @@ for (const c of cataloguesDef) {
     const id = `lot-${String(lotSeq).padStart(3, '0')}`
     const hazardous = /oil|Chemicals/i.test(metal + desc) || category === 'chemicals'
     const nPhotos = 2 + Math.floor(rnd() * 3)
+    const isDraft = c.status === 'draft'
     const repId = `ir-${String(lotSeq).padStart(3, '0')}`
     const measured = Math.round(qty * between(0.93, 1.05) * 100) / 100
     const condition = pick(['good', 'good', 'fair', 'mixed'])
-    inspectionReports.push({
-      id: repId, lotId: id, inspectorId: pick(['u-field-1', 'u-field-2']),
-      date: iso(c.insp[0] + Math.floor(between(0, Math.max(60, c.insp[1] - c.insp[0])))),
-      measuredQty: measured, uom, condition,
-      notes: pick([
-        'Stack verified against yard register. Quantity indicative — final on weighment.',
-        'Material matches description. Minor surface rust observed, within norms.',
-        'Segregation acceptable. Access for 20 ft trucks confirmed at yard gate.',
-        'Photos captured from all sides. Weighbridge within 2 km of the yard.',
-      ]),
-      checklist: [
-        { item: 'Material matches declared grade', ok: true },
-        { item: 'Quantity verified (visual/weighment)', ok: true },
-        { item: 'No hazardous contamination', ok: !hazardous },
-        { item: 'Loading access available', ok: true },
-        { item: 'Photos captured', ok: true },
-      ],
-      photoCount: nPhotos, status: 'verified',
-    })
+    if (!isDraft) {
+      inspectionReports.push({
+        id: repId, lotId: id, inspectorId: pick(['u-field-1', 'u-field-2']),
+        date: iso(c.insp[0] + Math.floor(between(0, Math.max(60, c.insp[1] - c.insp[0])))),
+        measuredQty: measured, uom, condition,
+        notes: pick([
+          'Stack verified against yard register. Quantity indicative — final on weighment.',
+          'Material matches description. Minor surface rust observed, within norms.',
+          'Segregation acceptable. Access for 20 ft trucks confirmed at yard gate.',
+          'Photos captured from all sides. Weighbridge within 2 km of the yard.',
+        ]),
+        checklist: [
+          { item: 'Material matches declared grade', ok: true },
+          { item: 'Quantity verified (visual/weighment)', ok: true },
+          { item: 'No hazardous contamination', ok: !hazardous },
+          { item: 'Loading access available', ok: true },
+          { item: 'Photos captured', ok: true },
+        ],
+        photoCount: nPhotos, status: 'verified',
+      })
+    }
     lots.push({
       id, lotNo: `LOT-${String(i + 1).padStart(2, '0')}`, catalogueId: c.id,
       metal, category, grade, indicativeQty: qty, uom,
       yard: yard.name, description: desc, startRate, increment, reserveRate,
       preBidEmd, saleBasis: 'as-is-where-is', hazardous,
       photos: Array.from({ length: nPhotos }, (_, p) => ({ id: `${id}-p${p}`, label: PHOTO_LABELS[p], hue: Math.floor(between(10, 40) + p * 8) })),
-      inspectionReportId: repId,
-      status: c.status === 'closed' ? 'sold' : c.status === 'live' ? 'live' : 'approved',
+      inspectionReportId: isDraft ? null : repId,
+      status: c.status === 'closed' ? 'sold' : c.status === 'live' ? 'live' : isDraft ? 'pending_inspection' : 'approved',
       currentRate: null, leadingBidderId: null, bidCount: 0,
       endsAt: iso(c.end), extensions: 0, resultH1Rate: null,
+      knownSeller: false, inspectionWaived: false, waivedBy: null, waivedReason: null, waivedAt: null,
     })
   }
 }
@@ -227,7 +233,18 @@ for (const [status, sellerId, metal, category, grade, uom, rate, qty, desc] of p
     inspectionReportId: repId, status,
     currentRate: null, leadingBidderId: null, bidCount: 0,
     endsAt: iso(30 * DAY), extensions: 0, resultH1Rate: null,
+    knownSeller: false, inspectionWaived: false, waivedBy: null, waivedReason: null, waivedAt: null,
   })
+}
+
+// mark a few lots known-seller so the waiver path (§2.1 of the design spec)
+// is demoable: two lots inside the new draft catalogue, and the first
+// still-uncatalogued pending-inspection pipeline lot.
+const cat8LotIds = lots.filter((l) => l.catalogueId === 'cat-8').map((l) => l.id)
+const firstUncataloguedPending = lots.find((l) => l.catalogueId === null && l.status === 'pending_inspection')
+for (const id of [...cat8LotIds.slice(0, 2), firstUncataloguedPending?.id].filter(Boolean)) {
+  const lot = lots.find((l) => l.id === id)
+  if (lot) lot.knownSeller = true
 }
 
 /* -------------------------------- bids ----------------------------------- */
@@ -472,7 +489,7 @@ const inspectionSlots = [
 /* -------------------------------- write ---------------------------------- */
 const catalogues = cataloguesDef.map((c) => ({
   id: c.id, code: c.code, title: c.title, sellerId: c.sellerId, type: 'forward',
-  status: c.status, startsAt: iso(c.start), endsAt: iso(c.end),
+  status: c.status, assignedFieldExecId: c.assignedFieldExecId ?? null, startsAt: iso(c.start), endsAt: iso(c.end),
   inspectionFrom: iso(c.insp[0]), inspectionTo: iso(c.insp[1]),
   inspectionHours: '10:00–16:00 IST', inspectionContact: c.contact,
   yardName: YARDS[c.id].name, yardAddress: YARDS[c.id].addr, region: YARDS[c.id].region,

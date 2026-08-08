@@ -13,12 +13,7 @@
     "tcsAmount": 20757,
     "paidAmount": 2470083,
     "liftingBy": "2026-07-21T06:30:00.000Z",
-    "createdAt": "2026-07-14T11:30:00.000Z",
-    "liftingChecklist": [
-      { "key": "vehicle_at_weighbridge", "label": "Vehicle at weighbridge", "done": false },
-      { "key": "loading_complete", "label": "Loading complete", "done": false },
-      { "key": "gross_weighment", "label": "Gross weighment recorded", "done": false }
-    ]
+    "createdAt": "2026-07-14T11:30:00.000Z"
   },
   {
     "id": "do-002",
@@ -26,20 +21,15 @@
     "catalogueId": "cat-6",
     "buyerId": "u-buyer-1",
     "stage": "payment_pending",
-    "h1Rate": 513,
+    "h1Rate": 507,
     "awardedQty": 2100,
     "uom": "KG",
-    "materialValue": 1077300,
-    "gstAmount": 193914,
-    "tcsAmount": 10773,
-    "paidAmount": 320497,
+    "materialValue": 1064700,
+    "gstAmount": 191646,
+    "tcsAmount": 10647,
+    "paidAmount": 316748,
     "liftingBy": "2026-07-21T06:30:00.000Z",
-    "createdAt": "2026-07-14T11:30:00.000Z",
-    "liftingChecklist": [
-      { "key": "vehicle_at_weighbridge", "label": "Vehicle at weighbridge", "done": false },
-      { "key": "loading_complete", "label": "Loading complete", "done": false },
-      { "key": "gross_weighment", "label": "Gross weighment recorded", "done": false }
-    ]
+    "createdAt": "2026-07-14T11:30:00.000Z"
   },
   {
     "id": "do-003",
@@ -55,12 +45,6 @@
     "tcsAmount": 5820,
     "paidAmount": 692580,
     "liftingBy": "2026-07-15T06:30:00.000Z",
-    "createdAt": "2026-07-10T13:10:00.000Z",
-    "weighedQty": 1.99,
-    "liftingChecklist": [
-      { "key": "vehicle_at_weighbridge", "label": "Vehicle at weighbridge", "done": true, "at": "2026-07-15T05:40:00.000Z" },
-      { "key": "loading_complete", "label": "Loading complete", "done": true, "at": "2026-07-15T06:05:00.000Z" },
-      { "key": "gross_weighment", "label": "Gross weighment recorded", "done": true, "at": "2026-07-15T06:20:00.000Z" }
-    ]
+    "createdAt": "2026-07-10T13:10:00.000Z"
   }
 ]
