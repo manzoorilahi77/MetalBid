@@ -46,6 +46,7 @@ import SellerReports from './pages/seller/Reports'
 
 /* field executive */
 import FieldQueue from './pages/field/Queue'
+import FieldCatalogueDetail from './pages/field/CatalogueDetail'
 import InspectLot from './pages/field/InspectLot'
 
 /* executive manager */
@@ -206,6 +207,7 @@ export default function App() {
           </Route>
 
           <Route path="/field" element={<FieldQueue />} />
+          <Route path="/field/catalogue/:catalogueId" element={<FieldCatalogueDetail />} />
           <Route path="/field/inspect/:lotId" element={<InspectLot />} />
 
           <Route element={<ExecLayout />}>
