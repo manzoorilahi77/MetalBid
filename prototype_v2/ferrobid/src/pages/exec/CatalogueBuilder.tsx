@@ -41,6 +41,8 @@ export default function CatalogueBuilder() {
   const catalogues = useStore((s) => s.catalogues)
   const termsSets = useStore((s) => s.termsSets)
   const publishCatalogue = useStore((s) => s.publishCatalogue)
+  const waiveInspection = useStore((s) => s.waiveInspection)
+  const me = useStore((s) => s.currentUser)
   const pushToast = useStore((s) => s.pushToast)
 
   const sellers = users.filter((u) => u.role === 'seller')
@@ -82,7 +84,10 @@ export default function CatalogueBuilder() {
   const [region, setRegion] = useState('')
 
   /* ------------------------------ derived data ----------------------------- */
-  const pool = lots.filter((l) => l.status === 'approved' && !l.catalogueId)
+  // sourced from pending_inspection (cataloguing now happens before inspection);
+  // a waived lot flips to 'approved' but must stay visible here until it's
+  // actually placed into a catalogue.
+  const pool = lots.filter((l) => !l.catalogueId && (l.status === 'pending_inspection' || (l.inspectionWaived && l.status === 'approved')))
   const filtered = pool.filter((l) =>
     (!metalFilter || `${l.metal} ${l.grade}`.toLowerCase().includes(metalFilter.toLowerCase())) &&
     (!yardFilter || l.yard.toLowerCase().includes(yardFilter.toLowerCase())),
@@ -220,7 +225,7 @@ export default function CatalogueBuilder() {
             </div>
 
             {filtered.length === 0 ? (
-              <EmptyState title="No approved lots match" body="Approve lots from the lot approval desk, or loosen the filters above." />
+              <EmptyState title="No submitted lots match" body="Wait for sellers to submit lots for inspection, or loosen the filters above." />
             ) : (
               <div className="card divide-y divide-line overflow-hidden">
                 {filtered.map((l) => {
@@ -235,6 +240,23 @@ export default function CatalogueBuilder() {
                           <span className="num">{num(l.indicativeQty)} {l.uom}</span> · {l.yard} · start <span className="num">{inr(l.startRate)}/{l.uom}</span>
                         </div>
                       </div>
+                      {l.knownSeller && (
+                        l.inspectionWaived ? (
+                          <Chip tone="success">Waived</Chip>
+                        ) : (
+                          <Button
+                            type="button" size="sm" variant="secondary"
+                            onClick={(e) => {
+                              e.preventDefault()
+                              e.stopPropagation()
+                              waiveInspection(l.id, me?.id ?? 'u-exec-1', 'Known seller — trusted, skipping field inspection')
+                              pushToast({ kind: 'success', title: `${l.lotNo} waived`, body: 'Approved without field inspection — known seller.' })
+                            }}
+                          >
+                            Waive — known seller
+                          </Button>
+                        )
+                      )}
                       <span className="num text-xs text-ink-faint shrink-0">{l.lotNo}</span>
                     </label>
                   )
