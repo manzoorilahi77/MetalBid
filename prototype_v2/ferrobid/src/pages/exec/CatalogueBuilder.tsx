@@ -46,6 +46,7 @@ export default function CatalogueBuilder() {
   const pushToast = useStore((s) => s.pushToast)
 
   const sellers = users.filter((u) => u.role === 'seller')
+  const fieldExecs = users.filter((u) => u.role === 'field_exec')
 
   /* ------------------------------ wizard state ----------------------------- */
   const [step, setStep] = useState<Step>('s1')
@@ -78,10 +79,11 @@ export default function CatalogueBuilder() {
   // step 3 — documents
   const [attached, setAttached] = useState<CatalogueDocument[]>([])
 
-  // step 4 — yard details (editable)
+  // step 4 — yard details (editable) + assignment
   const [yardName, setYardName] = useState('')
   const [yardAddress, setYardAddress] = useState('')
   const [region, setRegion] = useState('')
+  const [fieldExecId, setFieldExecId] = useState('')
 
   /* ------------------------------ derived data ----------------------------- */
   // sourced from pending_inspection (cataloguing now happens before inspection);
@@ -140,11 +142,8 @@ export default function CatalogueBuilder() {
     pushToast({ kind: 'info', title: 'File attached', body: t.name })
   }
 
-  const publish = (mode: 'now' | 'schedule') => {
-    if (!firstLot) return
-    const nowMs = Date.now()
-    let endsAt = new Date(endLocal).getTime()
-    if (mode === 'now' && endsAt <= nowMs) endsAt = nowMs + 3 * 3600_000
+  const assign = () => {
+    if (!firstLot || !fieldExecId) return
     const yard = yardName || firstLot.yard
     const cat: Catalogue = {
       id: uid('cat'),
@@ -152,10 +151,10 @@ export default function CatalogueBuilder() {
       title: title.trim(),
       sellerId: sellerFilter || 'u-seller-1',
       type: 'forward',
-      status: mode === 'now' ? 'live' : 'upcoming',
-      assignedFieldExecId: null,
-      startsAt: new Date(mode === 'now' ? nowMs : new Date(startLocal).getTime()).toISOString(),
-      endsAt: new Date(endsAt).toISOString(),
+      status: 'draft',
+      assignedFieldExecId: fieldExecId,
+      startsAt: new Date(startLocal).toISOString(),
+      endsAt: new Date(endLocal).toISOString(),
       inspectionFrom: new Date(`${inspFrom}T10:00`).toISOString(),
       inspectionTo: new Date(`${inspTo}T16:00`).toISOString(),
       inspectionHours: inspHours,
@@ -174,14 +173,13 @@ export default function CatalogueBuilder() {
       description: `${selected.length} lot${selected.length > 1 ? 's' : ''} of ${[...new Set(selected.map((l) => l.metal))].join(', ')} offered as-is-where-is from ${yard}. E-auction on ferroBid; quantity indicative — final on weighment.`,
     }
     publishCatalogue(cat, selectedIds, overrides)
+    const exec = users.find((u) => u.id === fieldExecId)
     pushToast({
       kind: 'success',
-      title: mode === 'now' ? `${code} is live` : `${code} scheduled`,
-      body: mode === 'now'
-        ? `${selected.length} lots are open for bidding until ${fmtDateTime(cat.endsAt)}.`
-        : `Goes live ${fmtDateTime(cat.startsAt)} with ${selected.length} lots.`,
+      title: `${code} assigned`,
+      body: `${selected.length} lots routed to ${exec?.name ?? 'the field executive'} for inspection.`,
     })
-    navigate(`/catalogue/${cat.id}`)
+    navigate('/exec')
   }
 
   /* -------------------------------- render --------------------------------- */
@@ -198,7 +196,7 @@ export default function CatalogueBuilder() {
           { key: 's1', label: '1 · Select lots', count: selectedIds.length },
           { key: 's2', label: '2 · Details' },
           { key: 's3', label: '3 · Documents', count: attached.length + 1 },
-          { key: 's4', label: '4 · Preview & publish' },
+          { key: 's4', label: '4 · Preview & assign' },
         ]}
         value={step}
         onChange={gotoStep}
@@ -507,13 +505,18 @@ export default function CatalogueBuilder() {
           </div>
 
           <div className="card p-4 flex flex-wrap items-center justify-between gap-3">
-            <div className="text-sm text-ink-muted">
-              Publishing notifies all registered buyers and locks lot numbering <span className="num">LOT-01…LOT-{String(selected.length).padStart(2, '0')}</span>.
+            <div className="flex flex-wrap items-end gap-3">
+              <Field label="Assign to field executive" className="w-56">
+                <Select value={fieldExecId} onChange={(e) => setFieldExecId(e.target.value)}>
+                  <option value="">Select field executive…</option>
+                  {fieldExecs.map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}
+                </Select>
+              </Field>
+              <div className="text-sm text-ink-muted max-w-sm">
+                Assigning locks lot numbering <span className="num">LOT-01…LOT-{String(selected.length).padStart(2, '0')}</span> and routes this catalogue to the field executive's inspection queue. Bidding stays closed until you publish it later from the pipeline.
+              </div>
             </div>
-            <div className="flex gap-2">
-              <Button variant="steel" onClick={() => publish('schedule')} disabled={!step2Done}>Schedule for start time</Button>
-              <Button onClick={() => publish('now')} disabled={!step2Done}>Publish now</Button>
-            </div>
+            <Button onClick={assign} disabled={!step2Done || !fieldExecId}>Save & assign for inspection</Button>
           </div>
         </div>
       )}
