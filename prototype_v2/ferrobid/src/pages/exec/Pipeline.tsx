@@ -40,7 +40,7 @@ export default function Pipeline() {
         return (
           <div className="flex gap-1.5">
             <Button size="sm" variant="success" className="flex-1"
-              onClick={() => { setLotStatus(l.id, 'approved'); pushToast({ kind: 'success', title: `${l.lotNo} approved`, body: 'Lot is ready for cataloguing.' }) }}>
+              onClick={() => { setLotStatus(l.id, 'approved'); pushToast({ kind: 'success', title: `${l.lotNo} approved`, body: 'Cleared for auction, pending the rest of its catalogue.' }) }}>
               Approve
             </Button>
             <Button size="sm" variant="ghost" className="flex-1"

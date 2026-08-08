@@ -27,7 +27,7 @@ export default function LotApproval() {
     <Page>
       <PageHeader
         title="Lot approval"
-        sub="Review verified inspection reports and clear lots for cataloguing. Approved lots become available in the catalogue builder."
+        sub="Review verified inspection reports and decide whether each lot is fit for auction. Approved lots are cleared for their catalogue's eventual publish."
         actions={<Chip tone="steel"><span className="num">{queue.length}</span> awaiting decision</Chip>}
       />
 
@@ -118,8 +118,8 @@ export default function LotApproval() {
 
               <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-line">
                 <Button variant="success"
-                  onClick={() => { setLotStatus(l.id, 'approved'); pushToast({ kind: 'success', title: `${l.lotNo} approved for cataloguing`, body: `${l.grade} is now available in the catalogue builder.` }) }}>
-                  Approve for cataloguing
+                  onClick={() => { setLotStatus(l.id, 'approved'); pushToast({ kind: 'success', title: `${l.lotNo} approved`, body: `${l.grade} is cleared for auction, pending the rest of its catalogue.` }) }}>
+                  Approve
                 </Button>
                 <Button variant="secondary"
                   onClick={() => { setLotStatus(l.id, 'flagged'); pushToast({ kind: 'warning', title: `${l.lotNo} sent back`, body: 'Flagged for re-inspection — the field team has been notified.' }) }}>

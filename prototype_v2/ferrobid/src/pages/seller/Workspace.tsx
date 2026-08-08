@@ -53,7 +53,7 @@ export default function SellerWorkspace() {
 
       {/* live catalogues */}
       <h2 className="text-lg font-bold mt-10 mb-3">My catalogues</h2>
-      {myCats.length === 0 && <EmptyState title="No catalogues yet" body="Submit lots — once inspected and approved, our team catalogues them for auction." />}
+      {myCats.length === 0 && <EmptyState title="No catalogues yet" body="Submit lots — our team catalogues them and assigns a field executive, then inspects and approves them ahead of auction." />}
       <div className="grid md:grid-cols-2 gap-4">
         {myCats.map((c) => {
           const cl = lots.filter((l) => l.catalogueId === c.id)
@@ -89,7 +89,7 @@ export default function SellerWorkspace() {
         {/* pipeline snapshot */}
         <div className="card p-5">
           <h2 className="text-lg font-bold mb-3">Pipeline snapshot</h2>
-          <p className="text-xs text-ink-faint mb-3">Uncatalogued lots handled by ferroBid ops — inspection → approval → cataloguing.</p>
+          <p className="text-xs text-ink-faint mb-3">Uncatalogued lots handled by ferroBid ops — next up: cataloguing & field-exec assignment, then inspection → approval.</p>
           <div className="flex flex-wrap gap-2">
             <Chip tone="steel" className="num h-8 px-3">Pending inspection · {pipeCount('pending_inspection')}</Chip>
             <Chip tone="steel" className="num h-8 px-3">Inspected · {pipeCount('inspected')}</Chip>
