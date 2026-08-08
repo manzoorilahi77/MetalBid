@@ -19,6 +19,7 @@ export default function FieldLotDetail() {
   const lots = useStore((s) => s.lots)
   const catalogues = useStore((s) => s.catalogues)
   const users = useStore((s) => s.users)
+  const inspectionReports = useStore((s) => s.inspectionReports)
 
   const lot = lots.find((l) => l.id === lotId)
   if (!lot) {
@@ -30,6 +31,8 @@ export default function FieldLotDetail() {
   }
   const cat = catalogues.find((c) => c.id === lot.catalogueId)
   const seller = users.find((u) => u.id === cat?.sellerId)
+  const canInspect = ['pending_inspection', 'flagged', 'rejected'].includes(lot.status)
+  const report = inspectionReports.find((r) => r.id === lot.inspectionReportId)
 
   return (
     <Page className="max-w-xl pb-28">
@@ -91,7 +94,7 @@ export default function FieldLotDetail() {
           <div className="font-semibold text-success">Inspection waived</div>
           <div className="text-xs text-ink-muted mt-1">Approved as a known seller{lot.waivedReason ? ` — ${lot.waivedReason}` : ''}. No field inspection needed.</div>
         </div>
-      ) : (
+      ) : canInspect ? (
         <div className="fixed bottom-0 inset-x-0 z-40 border-t border-line bg-surface/95 backdrop-blur">
           <div className="max-w-xl mx-auto px-4 py-3">
             <Link to={`/field/inspect/${lot.id}`} className="block">
@@ -99,7 +102,19 @@ export default function FieldLotDetail() {
             </Link>
           </div>
         </div>
-      )}
+      ) : report ? (
+        <div className="card p-4 mt-5 bg-success-soft border-success/25">
+          <div className="font-semibold text-success">Inspection complete — read only</div>
+          <div className="text-xs text-ink-muted mt-1">
+            This lot is <b className="text-ink">{lot.status}</b> and can no longer be re-inspected from here.
+          </div>
+          <div className="flex items-center gap-2 flex-wrap mt-3">
+            <Chip tone="steel" className="capitalize">{report.condition}</Chip>
+            <span className="num text-sm font-semibold">Measured {num(report.measuredQty)} {report.uom}</span>
+          </div>
+          {report.notes && <div className="text-xs text-ink-muted mt-2 italic">{report.notes}</div>}
+        </div>
+      ) : null}
     </Page>
   )
 }
