@@ -148,6 +148,7 @@ export default function CatalogueBuilder() {
       sellerId: sellerFilter || 'u-seller-1',
       type: 'forward',
       status: mode === 'now' ? 'live' : 'upcoming',
+      assignedFieldExecId: null,
       startsAt: new Date(mode === 'now' ? nowMs : new Date(startLocal).getTime()).toISOString(),
       endsAt: new Date(endsAt).toISOString(),
       inspectionFrom: new Date(`${inspFrom}T10:00`).toISOString(),

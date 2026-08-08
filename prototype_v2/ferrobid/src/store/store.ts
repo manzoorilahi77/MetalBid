@@ -757,6 +757,7 @@ export const useStore = create<State>((set, get) => {
         inspectionReportId: null, status: 'pending_inspection',
         currentRate: null, leadingBidderId: null, bidCount: 0,
         endsAt: new Date(get().now + 30 * 86400_000).toISOString(), extensions: 0, resultH1Rate: null,
+        knownSeller: false, inspectionWaived: false, waivedBy: null, waivedReason: null, waivedAt: null,
         ...partial,
       }
       set((st) => ({ lots: [...st.lots, lot] }))

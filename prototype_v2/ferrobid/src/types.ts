@@ -70,6 +70,7 @@ export interface Catalogue {
   documents: CatalogueDocument[]
   termsSetId: string
   description: string
+  assignedFieldExecId: string | null // exec_manager sets this when assigning a draft catalogue for field inspection
 }
 
 export interface Lot {
@@ -99,6 +100,11 @@ export interface Lot {
   endsAt: string // per-lot close; extends on anti-snipe
   extensions: number
   resultH1Rate?: number | null
+  knownSeller: boolean // seeded trust flag — prototype-level, no real seller-identity link yet
+  inspectionWaived: boolean // true if approved via waiver instead of a real field inspection
+  waivedBy: string | null // exec_manager user id
+  waivedReason: string | null
+  waivedAt: string | null // ISO timestamp
 }
 
 export interface LotPhoto {
