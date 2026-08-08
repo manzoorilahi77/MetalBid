@@ -76,7 +76,7 @@ const PRE_BID = [
 ];
 
 const VIEWS = [
-  { key: 'all', label: 'All Lots' },
+  { key: 'all', label: 'All' },
   { key: 'live', label: 'Live Now' },
   { key: 'upcoming', label: 'Upcoming' },
 ];

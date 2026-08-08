@@ -28,7 +28,7 @@ export default function CreateLot() {
   const [csvLoaded, setCsvLoaded] = useState(false)
   const [f, setF] = useState({
     metal: 'MS', category: 'scrap', grade: '', description: '',
-    qty: '', uom: 'MT', yard: '', startRate: '', increment: '100', emd: '25000', hazardous: false,
+    qty: '', uom: 'MT', yard: '', startRate: '', increment: '100', emdRequired: true, emd: '25000', hazardous: false,
   })
   const set = (k: string, v: string | boolean) => setF({ ...f, [k]: v })
   const valid = f.grade && f.description && Number(f.qty) > 0 && Number(f.startRate) > 0
@@ -39,7 +39,7 @@ export default function CreateLot() {
       description: f.description, indicativeQty: Number(f.qty), uom: f.uom as Uom,
       yard: f.yard || 'Seller yard', startRate: Number(f.startRate),
       increment: Number(f.increment) || 100, reserveRate: Math.round(Number(f.startRate) * 1.07),
-      preBidEmd: Number(f.emd) || 10000, hazardous: f.hazardous,
+      preBidEmd: f.emdRequired ? Number(f.emd) || 10000 : 0, hazardous: f.hazardous,
     })
     pushToast({ kind: 'success', title: 'Lot submitted for inspection', body: 'Our field team will visit your yard, measure and photograph the material.' })
     nav('/seller/lots')
@@ -92,10 +92,18 @@ export default function CreateLot() {
             <Field label="Suggested increment (₹)"><Input inputMode="numeric" className="num" value={f.increment} onChange={(e) => set('increment', e.target.value.replace(/[^\d]/g, ''))} /></Field>
           </div>
           <div className="grid sm:grid-cols-3 gap-4 items-end">
-            <Field label="Pre-bid EMD (₹)" hint="Typically ~5% of lot value."><Input inputMode="numeric" className="num" value={f.emd} onChange={(e) => set('emd', e.target.value.replace(/[^\d]/g, ''))} /></Field>
+            <Field label="Pre-bid EMD required?">
+              <Segmented options={[{ key: 'yes', label: 'Yes' }, { key: 'no', label: 'No' }]}
+                value={f.emdRequired ? 'yes' : 'no'} onChange={(v) => set('emdRequired', v === 'yes')} />
+            </Field>
+            {f.emdRequired && (
+              <Field label="Pre-bid EMD (₹)" hint="Typically ~5% of lot value.">
+                <Input inputMode="numeric" className="num" value={f.emd} onChange={(e) => set('emd', e.target.value.replace(/[^\d]/g, ''))} />
+              </Field>
+            )}
             <Field label="Yard / location"><Input placeholder="Yard name, city" value={f.yard} onChange={(e) => set('yard', e.target.value)} /></Field>
-            <Toggle checked={f.hazardous} onChange={(v) => set('hazardous', v)} label="Hazardous / regulated material" />
           </div>
+          <Toggle checked={f.hazardous} onChange={(v) => set('hazardous', v)} label="Hazardous / regulated material" />
           <div>
             <span className="block text-[13px] font-semibold mb-2">Photos <span className="text-ink-faint font-normal">(our inspector re-shoots officially)</span></span>
             <div className="grid grid-cols-4 gap-2 max-w-md">

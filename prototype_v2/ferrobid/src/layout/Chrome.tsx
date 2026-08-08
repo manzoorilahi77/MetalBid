@@ -5,12 +5,11 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import {
-  Bell, Check, ChevronDown, Flame, Globe, LogOut, Menu, Moon, Search, Sun, User as UserIcon,
-  Wallet as WalletIcon, X, ShieldCheck, LifeBuoy, FileText, SlidersHorizontal,
+  Bell, Check, ChevronDown, Flame, Globe, LogOut, Mail, Menu, Moon, Search, Sun, User as UserIcon,
+  Wallet as WalletIcon, X, LifeBuoy, FileText, SlidersHorizontal,
 } from 'lucide-react'
-import { ROLE_HOME, ROLE_LABEL, ROLE_ORDER, useStore } from '../store/store'
+import { ROLE_HOME, ROLE_LABEL, useStore } from '../store/store'
 import { inrCompact, relTime } from '../lib/format'
-import { requestExitInterstitial } from '../lib/exitInterstitial'
 import { useClientIp } from '../lib/useClientIp'
 import { Avatar, Chip, cx } from '../components/ui'
 import type { Role } from '../types'
@@ -46,8 +45,8 @@ export const NAV_BY_ROLE: Record<Role, NavItem[]> = {
     { to: '/g2/contact', label: 'Contact', in: ['top'] },
   ],
   buyer: [
-    { to: '/buyer', label: 'Dashboard', end: true, in: ['top', 'sub'] },
-    { to: '/browse', label: 'Browse', in: ['top'] },
+    { to: '/buyer', label: 'Home', subLabel: 'Dashboard', end: true, in: ['top', 'sub'] },
+    { to: '/buyermarketplace', label: 'Browse Catalogues', in: ['top'] },
     { to: '/buyer/shortlist', label: 'Shortlist', subLabel: 'Shortlist & EMD', in: ['sub'] },
     { to: '/buyer/bids', label: 'My bids', subLabel: 'Bids & results', in: ['sub'] },
     { to: '/buyer/fulfilment', label: 'Fulfilment', in: ['sub'] },
@@ -56,17 +55,14 @@ export const NAV_BY_ROLE: Record<Role, NavItem[]> = {
     { to: '/buyer/kyc', label: 'Become a seller', in: ['sub'] },
   ],
   seller: [
-    { to: '/seller', label: 'Workspace', end: true, in: ['top', 'sub'] },
+    { to: '/seller', label: 'Workspace', end: true, in: ['sub'] },
     { to: '/seller/create-lot', label: 'Create lot', in: ['sub'] },
     { to: '/seller/lots', label: 'My lots', subLabel: 'My lots & batches', in: ['sub'] },
     { to: '/seller/monitor', label: 'Live monitor', in: ['sub'] },
     { to: '/seller/reports', label: 'Results & reports', in: ['sub'] },
-    { to: '/browse', label: 'Browse', in: ['top'] },
   ],
   field_exec: [
     { to: '/field', label: 'Inspection queue', in: ['top'] },
-    { to: '/browse', label: 'Browse', in: ['top'] },
-    { to: '/noticeboard', label: 'Noticeboard', in: ['top'] },
   ],
   exec_manager: [
     { to: '/exec', label: 'Pipeline', end: true, in: ['top', 'sub'] },
@@ -122,48 +118,6 @@ function useClickAway(onAway: () => void) {
     return () => document.removeEventListener('mousedown', fn)
   }, [onAway])
   return ref
-}
-
-function RoleSwitcher() {
-  const role = useStore((s) => s.role)
-  const switchRole = useStore((s) => s.switchRole)
-  const [open, setOpen] = useState(false)
-  const ref = useClickAway(() => setOpen(false))
-  const nav = useNavigate()
-  const roles = ROLE_ORDER
-  return (
-    <div className="relative" ref={ref}>
-      <button onClick={() => setOpen(!open)}
-        className="h-9 pl-3 pr-2 rounded-xl border border-dashed border-ember/50 bg-ember-soft/60 text-ember-strong text-xs font-bold inline-flex items-center gap-1.5 hover:bg-ember-soft"
-        title="Demo role switcher">
-        <ShieldCheck size={13} />
-        <span className="hidden md:inline">Demo:</span> {ROLE_LABEL[role]}
-        <ChevronDown size={13} />
-      </button>
-      {open && (
-        <div className="absolute right-0 top-11 card shadow-xl w-56 p-1.5 z-50 animate-toast-in">
-          <div className="px-2.5 py-1.5 text-[11px] font-bold uppercase tracking-wider text-ink-faint">Jump to role</div>
-          {roles.map((r) => (
-            <button key={r}
-              onClick={() => {
-                setOpen(false)
-                const go = () => { switchRole(r); nav(ROLE_HOME[r]) }
-                /* Jumping out of a public marketing site is a genuine exit, so
-                   give the current page a chance to show its leave-interstitial
-                   (Guest 2's WhatsApp invite) and finish the switch afterwards.
-                   No interstitial registered → switches immediately. */
-                if (r !== role && requestExitInterstitial(go)) return
-                go()
-              }}
-              className={cx('w-full text-left px-2.5 py-2 rounded-lg text-sm font-medium hover:bg-surface-2',
-                r === role ? 'text-ember-strong bg-ember-soft/60' : 'text-ink')}>
-              {ROLE_LABEL[r]}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  )
 }
 
 function NotificationBell() {
@@ -341,7 +295,9 @@ function TopNav() {
 
   const submitSearch = (e: React.FormEvent) => {
     e.preventDefault()
-    if (q.trim()) nav(`/browse?q=${encodeURIComponent(q.trim())}`)
+    if (!q.trim()) return
+    const dest = role === 'buyer' ? '/buyermarketplace' : '/browse'
+    nav(`${dest}?q=${encodeURIComponent(q.trim())}`)
   }
 
   return (
@@ -353,7 +309,7 @@ function TopNav() {
         <Logo />
         <nav className="hidden lg:flex items-center gap-0.5 ml-4">
           {links.map((l) => (
-            <NavLink key={l.to} to={l.to} end={l.to === ROLE_HOME[role] || l.to === '/browse'}
+            <NavLink key={l.to} to={l.to} end={l.to === ROLE_HOME[role] || l.to === '/browse' || l.to === '/buyermarketplace'}
               className={({ isActive }) => cx('h-9 px-3 rounded-lg text-sm font-semibold inline-flex items-center whitespace-nowrap transition-colors',
                 isActive ? 'text-ember-strong bg-ember-soft/70' : 'text-ink-muted hover:text-ink hover:bg-surface-2')}>
               {l.label}
@@ -382,7 +338,6 @@ function TopNav() {
           {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
         </button>
         {me && <NotificationBell />}
-        <RoleSwitcher />
         <ProfileMenu />
       </div>
       {mobileOpen && (
@@ -412,8 +367,20 @@ function TopNav() {
 }
 
 /* --------------------------------- Footer ---------------------------------- */
-function Footer() {
+/** Copyright/GSTIN strip shared by every footer variant below. */
+function FooterBottom() {
   const year = new Date().getFullYear()
+  return (
+    <div className="border-t border-line">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-2 text-xs text-ink-faint">
+        <span>© {year} ferroBid Technologies Pvt Ltd. Prototype — all data is simulated.</span>
+        <span>GSTIN 27AAICF9021P1ZX · CIN U74999MH2024PTC431180</span>
+      </div>
+    </div>
+  )
+}
+
+function DefaultFooter() {
   const col = 'space-y-2 text-sm text-ink-muted'
   const h = 'text-xs font-bold uppercase tracking-wider text-ink-faint mb-3'
   return (
@@ -452,14 +419,95 @@ function Footer() {
           </div>
         </div>
       </div>
-      <div className="border-t border-line">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-2 text-xs text-ink-faint">
-          <span>© {year} ferroBid Technologies Pvt Ltd. Prototype — all data is simulated.</span>
-          <span>GSTIN 27AAICF9021P1ZX · CIN U74999MH2024PTC431180</span>
-        </div>
-      </div>
+      <FooterBottom />
     </footer>
   )
+}
+
+/** The public homepage's (guest1, #/home) footer, ported to Chrome's Tailwind
+ *  tokens — guest1 ships its own isolated CSS that's disabled outside guest1
+ *  (see Guest1Gate), so its markup can't be reused verbatim here. Guest1-only
+ *  destinations (calendar, pricing, about-us, …) link out via native <a
+ *  href="#/home/…"> rather than <Link>, since those routes live in guest1's
+ *  own HashRouter, not this app's. */
+function HomeFooter() {
+  const col = 'space-y-2 text-sm text-ink-muted'
+  const h = 'text-xs font-bold uppercase tracking-wider text-ink-faint mb-3'
+  return (
+    <footer className="border-t border-line mt-16 bg-surface">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-8">
+        <div className="col-span-2 sm:col-span-3 lg:col-span-1">
+          <Logo />
+          <p className="text-sm text-ink-muted mt-3 max-w-xs">India's Trusted Digital Metal Auction Platform</p>
+          <div className="flex items-center gap-3 mt-3 text-xs text-ink-faint">
+            <a href="#/home/privacy" className="hover:text-ink">Privacy Policy</a>
+            <a href="#/home/terms" className="hover:text-ink">Terms and Conditions</a>
+          </div>
+        </div>
+        <div>
+          <div className={h}>Marketplace</div>
+          <div className={col}>
+            <a href="#/home/marketplace" className="block hover:text-ink">Browse All Auctions</a>
+            <a href="#/home/calendar" className="block hover:text-ink">Auction Calendar</a>
+            <a href="#/home/pricing" className="block hover:text-ink">Pricing & Plans</a>
+          </div>
+        </div>
+        <div>
+          <div className={h}>Company</div>
+          <div className={col}>
+            <a href="#/home/about-us" className="block hover:text-ink">About Us</a>
+            <a href="#/home/how-it-works" className="block hover:text-ink">How it works</a>
+            <a href="#/home/contact" className="block hover:text-ink">Contact Us</a>
+          </div>
+        </div>
+        <div>
+          <div className={h}>Resources</div>
+          <div className={col}>
+            <a href="#/home/blog" className="block hover:text-ink">Blog</a>
+            <a href="#/home/knowledge-center" className="block hover:text-ink">Knowledge Center</a>
+            <a href="#/home/market-reports" className="block hover:text-ink">Market Reports</a>
+          </div>
+        </div>
+        <div>
+          <div className={h}>Support</div>
+          <div className={col}>
+            <a href="#/home/help-center" className="block hover:text-ink">Help Center</a>
+            <a href="#/home/faqs" className="block hover:text-ink">Help & FAQs</a>
+            <a href="#/home/grievance" className="block hover:text-ink">Grievance Redressal</a>
+          </div>
+        </div>
+        <div>
+          <div className={h}>Download App</div>
+          <div className="flex flex-col gap-2">
+            <img src="/badges/google-play.svg" alt="Get it on Google Play" className="h-9 w-auto" />
+            <img src="/badges/app-store.svg" alt="Download on the App Store" className="h-9 w-auto" />
+          </div>
+          <div className="flex items-center gap-3 mt-4 text-ink-faint">
+            <a href="mailto:contact@ferrobid.in" aria-label="Email" className="hover:text-ink"><Mail size={16} /></a>
+            <a href="https://www.linkedin.com/company/ferrobid" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="hover:text-ink">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                <rect x="2" y="9" width="4" height="12" />
+                <circle cx="4" cy="4" r="2" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+      <FooterBottom />
+    </footer>
+  )
+}
+
+/** Roles whose entire section (dashboard + sub-pages) shows the home page's
+ *  footer instead of the default one — per product decision, not every
+ *  Chrome-wrapped page (login, catalogue, browse, g2, …) gets it. */
+const HOME_FOOTER_PATH_PREFIXES = ['/buyer', '/buyermarketplace', '/seller', '/exec', '/field', '/sub', '/admin']
+
+function Footer() {
+  const { pathname } = useLocation()
+  const showHomeFooter = HOME_FOOTER_PATH_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`))
+  return showHomeFooter ? <HomeFooter /> : <DefaultFooter />
 }
 
 /* ------------------------- contextual sub-nav ------------------------------ */
@@ -467,7 +515,7 @@ function Footer() {
 export function SubNav({ items }: { items: { to: string; label: string; end?: boolean; locked?: boolean }[] }) {
   return (
     <div className="border-b border-line bg-surface/60 sticky top-16 z-30 backdrop-blur">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center gap-1 overflow-x-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center gap-1 overflow-x-auto overflow-y-hidden">
         {items.map((it) => (
           <NavLink key={it.to} to={it.to} end={it.end}
             className={({ isActive }) => cx('h-11 px-3.5 text-[13px] font-semibold inline-flex items-center gap-1.5 whitespace-nowrap border-b-2 -mb-px transition-colors',

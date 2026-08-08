@@ -233,7 +233,7 @@
   background:
     radial-gradient(ellipse at 30% 20%, rgba(228, 87, 46, 0.04) 0%, transparent 50%),
     radial-gradient(ellipse at 70% 80%, rgba(200, 68, 31, 0.03) 0%, transparent 50%),
-    linear-gradient(165deg, #fefcf8 0%, #f3efe9 40%, #f3efe9 100%);
+    linear-gradient(165deg, var(--color-surface) 0%, var(--color-surface-2) 40%, var(--color-surface-2) 100%);
 }
 /* Animated golden shimmer line on left edge */
 .auth-right::before {
@@ -322,7 +322,7 @@
   padding: 8px 0;
   font-size: 11px;
   font-weight: 700;
-  color: #6b6560;
+  color: var(--text-muted);
   background: transparent;
   border: none;
   cursor: pointer;
@@ -363,12 +363,12 @@
   font-family: var(--font-heading);
   font-size: 22px;
   font-weight: 700;
-  color: #1c1917;
+  color: var(--dark);
   margin-bottom: 2px;
   letter-spacing: -0.4px;
 }
 .auth-form-subtitle {
-  color: #6b6560;
+  color: var(--text-muted);
   font-size: 11px;
   margin-bottom: 14px;
   line-height: 1.3;
@@ -394,7 +394,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #9c948c;
+  color: var(--color-ink-faint);
   z-index: 3;
   pointer-events: none;
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -422,9 +422,9 @@
   font-size: 13px;
   font-family: var(--font-body);
   font-weight: 500;
-  color: #1c1917;
-  background: white;
-  border: 1.5px solid #e7e1d8;
+  color: var(--dark);
+  background: var(--color-surface);
+  border: 1.5px solid var(--border);
   border-radius: 12px;
   outline: none;
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -445,7 +445,7 @@
 /* Focus: full golden glow */
 .auth-field-input:focus {
   border-color: var(--primary);
-  background: #f3efe9;
+  background: var(--color-surface-2);
   box-shadow:
     0 0 0 4px rgba(228, 87, 46, 0.08),
     0 4px 20px rgba(228, 87, 46, 0.08),
@@ -473,7 +473,7 @@
   top: 50%;
   transform: translateY(-50%);
   font-size: 13px;
-  color: #9c948c;
+  color: var(--color-ink-faint);
   pointer-events: none;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-weight: 500;
@@ -502,7 +502,7 @@
   transform: translateY(-50%);
   background: transparent;
   border: none;
-  color: #9c948c;
+  color: var(--color-ink-faint);
   cursor: pointer;
   padding: 4px;
   border-radius: 6px;
@@ -570,7 +570,7 @@
 .auth-pw-strength-track {
   flex: 1;
   height: 3px;
-  background: #e7e1d8;
+  background: var(--border);
   border-radius: 999px;
   overflow: hidden;
 }
@@ -597,7 +597,7 @@
   align-items: center;
   gap: 8px;
   font-size: 11px;
-  color: #6b6560;
+  color: var(--text-muted);
   cursor: pointer;
   font-weight: 500;
   user-select: none;
@@ -608,7 +608,7 @@
 .auth-checkbox-custom {
   width: 17px;
   height: 17px;
-  border: 2px solid #d6cec2;
+  border: 2px solid var(--color-line-strong);
   border-radius: 5px;
   display: flex;
   align-items: center;
@@ -616,7 +616,7 @@
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   flex-shrink: 0;
   position: relative;
-  background: white;
+  background: var(--color-surface);
 }
 .auth-checkbox-custom::after {
   content: '';
@@ -766,7 +766,7 @@
 }
 .auth-divider span {
   font-size: 10px;
-  color: #9c948c;
+  color: var(--color-ink-faint);
   font-weight: 700;
   white-space: nowrap;
   text-transform: uppercase;
@@ -788,13 +788,13 @@
   justify-content: center;
   gap: 8px;
   padding: 10px;
-  background: white;
-  border: 1.5px solid #e7e1d8;
+  background: var(--color-surface);
+  border: 1.5px solid var(--border);
   border-radius: 12px;
   font-size: 12px;
   font-weight: 600;
   font-family: var(--font-body);
-  color: #1c1917;
+  color: var(--dark);
   cursor: pointer;
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
@@ -810,11 +810,53 @@
   transform: translateY(0);
 }
 
+/* ═══════════════════════════════════════════════
+   QUICK DEMO ROLE ACCESS
+   ═══════════════════════════════════════════════ */
+.auth-quickroles {
+  margin-top: 2px;
+}
+.auth-quickroles-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+.auth-quickrole-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 9px 8px;
+  background: var(--color-surface);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  color: var(--dark);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+.auth-quickrole-btn:hover:not(:disabled) {
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(228, 87, 46, 0.1);
+}
+.auth-quickrole-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+.auth-quickrole-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 /* ─── Switch Text ─── */
 .auth-switch-text {
   text-align: center;
   font-size: 12px;
-  color: #6b6560;
+  color: var(--text-muted);
   font-weight: 500;
 }
 
@@ -860,9 +902,9 @@
   font-size: 20px;
   font-weight: 700;
   font-family: var(--font-body);
-  color: #1c1917;
-  background: white;
-  border: 2px solid #e7e1d8;
+  color: var(--dark);
+  background: var(--color-surface);
+  border: 2px solid var(--border);
   border-radius: 12px;
   outline: none;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -873,11 +915,11 @@
   box-shadow:
     0 0 0 3px rgba(228, 87, 46, 0.1),
     0 4px 16px rgba(228, 87, 46, 0.08);
-  background: #f3efe9;
+  background: var(--color-surface-2);
 }
 .auth-otp-box.filled {
   border-color: var(--primary);
-  background: #f3efe9;
+  background: var(--color-surface-2);
 }
 
 .auth-otp-footer {
@@ -885,7 +927,7 @@
 }
 .auth-otp-timer {
   font-size: 11px;
-  color: #6b6560;
+  color: var(--text-muted);
 }
 
 /* ─── Forgot Done ─── */
@@ -902,12 +944,12 @@
 }
 .auth-forgot-done p {
   font-size: 12px;
-  color: #6b6560;
+  color: var(--text-muted);
   margin-bottom: 6px;
 }
 .auth-forgot-hint {
   font-size: 10px;
-  color: #9c948c;
+  color: var(--color-ink-faint);
   margin-bottom: 14px;
 }
 
@@ -922,7 +964,7 @@
   margin-top: 10px;
   padding-top: 10px;
   border-top: 1px solid rgba(228, 87, 46, 0.08);
-  color: #9c948c;
+  color: var(--color-ink-faint);
   font-size: 9px;
   font-weight: 600;
   letter-spacing: 0.3px;

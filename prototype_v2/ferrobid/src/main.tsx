@@ -11,7 +11,7 @@ document.documentElement.classList.toggle('dark', storedTheme === 'dark')
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    {/* Guest1Gate renders the isolated /guest1 homepage, or <App /> otherwise. */}
+    {/* Guest1Gate renders the isolated /home homepage, or <App /> otherwise. */}
     <Guest1Gate>
       <App />
     </Guest1Gate>

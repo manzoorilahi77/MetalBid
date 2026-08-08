@@ -1,4 +1,4 @@
-@import "tailwindcss";
+﻿@import "tailwindcss";
 
 /* ==========================================================================
    DESIGN TOKENS — "Industrial Forge" theme
@@ -53,8 +53,14 @@
    with system dark mode on. Wiring these values up for real needs a follow-up
    pass converting the hardcoded surface colors to var()-based ones — until
    then, add [data-theme="dark"] to <html> (e.g. via a theme toggle) once
-   that pass is done, and this block will apply correctly. */
-[data-theme="dark"] {
+   that pass is done, and this block will apply correctly.
+
+   Selector is `:root[data-theme="dark"]`, not just `[data-theme="dark"]`:
+   both have to win over the plain `:root` block below on equal specificity,
+   and `:root` comes later in source order — a bare attribute selector here
+   would silently lose to it (this bit --bg-alt/--bg-orange-alt in practice,
+   since :root re-declares them unconditionally rather than just aliasing). */
+:root[data-theme="dark"] {
   --color-canvas: #1c1917;
   --color-surface: #262320;
   --color-surface-2: #2f2b26;
@@ -88,6 +94,13 @@
   --primary-light: var(--color-ember-light);
   --primary-hover: var(--color-ember-hover);
   --dark: var(--color-ink);
+  /* Non-reactive counterpart to --dark: a handful of spots (tooltips, the
+     logo mark, dark hover chips) use "dark" to mean "a permanently dark
+     surface for contrast," not "current ink color" — those still pair it
+     with a hardcoded white foreground. Using the reactive --dark there would
+     flip them to a light surface under a white label in dark mode. Keep
+     those on this fixed literal instead. */
+  --color-ink-fixed: #1c1917;
   --dark-light: #2a2622;
   --dark-card: #262320;
   --text-main: var(--color-ink);
@@ -97,8 +110,9 @@
   /* Alternating section backgrounds: white ↔ warm dim, so adjacent
      sections read as distinct bands. */
   --bg-alt: #f7f3ec;
-  /* Odd-section banding: the same dim-gold tone as --bg-alt. */
-  --bg-orange-alt: #f7f3ec;
+  /* Odd-section banding: the same dim-gold tone as --bg-alt. Aliased to it
+     (not a separate literal) so it inherits --bg-alt's dark-mode value too. */
+  --bg-orange-alt: var(--bg-alt);
   --border: var(--color-line);
   /* Distinct data-viz accent for the Market Intelligence dashboard —
      kept separate from --primary so the analytics widgets read as a
@@ -336,7 +350,7 @@ ul {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
 }
 .btn-outline:hover {
-  background: white;
+  background: var(--color-surface);
   border-color: var(--primary);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(228, 87, 46, 0.1);
@@ -364,10 +378,10 @@ ul {
   border: 1px solid var(--primary-hover);
 }
 .navbar .btn-outline {
-  background: rgba(255,255,255,0.8);
+  background: var(--color-surface);
   border: 1px solid rgba(228, 87, 46, 0.3);
   box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-  color: #1c1917;
+  color: var(--dark);
 }
 /* Header CTAs get a size step over plain nav buttons */
 .navbar .nav-login-btn {
@@ -399,7 +413,7 @@ ul {
 .nav-logo-icon {
   width: 34px;
   height: 34px;
-  background: var(--dark);
+  background: var(--color-ink-fixed);
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -435,7 +449,7 @@ ul {
   position: relative;
   font-size: 14px;
   font-weight: 600;
-  color: var(--dark-light);
+  color: var(--dark);
   letter-spacing: 0px;
   transition: color var(--dur-base) var(--ease-out);
 }
@@ -475,7 +489,7 @@ ul {
 .nav-icon-btn:hover {
   border-color: var(--dark);
   color: var(--dark);
-  background: #fff;
+  background: var(--color-surface);
 }
 .nav-guest-btn {
   padding: var(--space-2) var(--space-4);
@@ -510,7 +524,7 @@ ul {
   background:
     radial-gradient(52% 68% at 10% 8%, rgba(228, 87, 46, 0.055) 0%, rgba(228, 87, 46, 0) 100%),
     radial-gradient(46% 60% at 30% 96%, rgba(43, 76, 126, 0.045) 0%, rgba(43, 76, 126, 0) 100%),
-    radial-gradient(115% 130% at 68% 40%, #ffffff 0%, #faf8f5 62%, #f4f0e9 100%);
+    radial-gradient(115% 130% at 68% 40%, var(--color-surface) 0%, var(--color-canvas) 62%, var(--bg-alt) 100%);
 }
 /* Faint blueprint grid over the copy side only — masked out before the image
    zone so the collage keeps a clean backdrop. */
@@ -613,7 +627,7 @@ ul {
   font-weight: 700;
 }
 .search-bar-wrapper {
-  background: white;
+  background: var(--color-surface);
   border-radius: var(--radius-xl);
   padding: 6px;
   display: flex;
@@ -690,7 +704,7 @@ ul {
   font-size: 12px;
   font-weight: 600;
   color: var(--text-muted);
-  background: white;
+  background: var(--color-surface);
   cursor: pointer;
   box-shadow: 0 1px 3px rgba(28, 25, 23, 0.05);
   white-space: nowrap;
@@ -731,7 +745,7 @@ ul {
   /* Premium gradient-ring border: opaque white fill in the padding-box layer,
      a brand gradient in the border-box layer showing only through the
      border's width. */
-  background-image: linear-gradient(#ffffff, #ffffff), linear-gradient(120deg, var(--color-ember) 0%, #d4af37 50%, var(--color-steel) 100%);
+  background-image: linear-gradient(var(--color-surface), var(--color-surface)), linear-gradient(120deg, var(--color-ember) 0%, #d4af37 50%, var(--color-steel) 100%);
   background-origin: border-box;
   background-clip: padding-box, border-box;
 }
@@ -772,11 +786,14 @@ ul {
 }
 
 /* Scrolling Ticker — a full band in its own right, built on the same header
-   skeleton as Announcements (eyebrow → heading → lead, control ranged right),
-   so it sits in the page's section rhythm instead of reading as a stray strip
-   bolted under the hero. The feed itself runs as a white tape through the warm
-   band — the inverse of the surrounding surfaces, which is what makes the
-   moving lots register as live data rather than as more page. */
+   skeleton as Announcements (heading → lead), so it sits in the page's section
+   rhythm instead of reading as a stray strip bolted under the hero.
+
+   The feed itself is guest2's live-activity format, carried over verbatim: one
+   bordered card on the container grid holding a fixed LIVE ACTIVITY chip and a
+   masked marquee of individual lot pills. That card is built from Tailwind
+   utilities on the markup — the way guest2 writes it — so only the band, the
+   header, and the metal-category beads are styled here. */
 .ticker-band {
   width: 100%;
   background: var(--bg-alt);
@@ -791,35 +808,15 @@ ul {
 }
 
 .ticker-head {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 24px;
   padding-bottom: 28px;
 }
 .ticker-head-text {
   max-width: 640px;
   min-width: 0;
 }
-/* Same eyebrow vocabulary as the Announcements section: 11px/800 uppercase in
-   ember with a 13px lucide glyph, so both bands read as one family. */
-.ticker-eyebrow,
-.ticker-head-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-  font-size: 11px;
-  font-weight: 800;
-  line-height: 1.2;
-  text-transform: uppercase;
-  letter-spacing: var(--track-eyebrow);
-  color: var(--primary);
-  white-space: nowrap;
-}
-.ticker-eyebrow {
-  margin-bottom: 8px;
-}
+/* No eyebrow here, unlike Announcements: the card's own LIVE ACTIVITY chip
+   sits a few pixels below and already marks the band as running, so a second
+   ember label above the heading read as a duplicate rather than a rhythm. */
 .ticker-heading {
   display: flex;
   align-items: center;
@@ -833,7 +830,7 @@ ul {
   color: var(--dark);
   margin: 0 0 8px;
 }
-/* The lot count rides the heading the way the unread badge rides the
+/* The auction count rides the heading the way the unread badge rides the
    Announcements one — same pill, same ember, same place. */
 .ticker-count {
   display: inline-flex;
@@ -857,177 +854,30 @@ ul {
   color: var(--text-muted);
   margin: 0;
 }
-/* The one control in this row, so it takes the same ember pill the page uses
-   for "View all auctions" — scaled to the header's size. Without the fill and
-   the arrow it read as a third label rather than as somewhere you can go. */
-.ticker-head-link {
-  padding: 6px 12px;
-  border-radius: var(--radius-full);
-  background: rgba(228, 87, 46, 0.08);
-  border: 1px solid rgba(228, 87, 46, 0.16);
-  transition: background var(--dur-base) var(--ease-out),
-              border-color var(--dur-base) var(--ease-out);
-}
-.ticker-head-link:hover {
-  background: rgba(228, 87, 46, 0.16);
-  border-color: rgba(228, 87, 46, 0.32);
-}
-.ticker-head-link svg:last-child {
-  transition: transform var(--dur-base) var(--ease-out);
-}
-.ticker-head-link:hover svg:last-child {
-  transform: translateX(3px);
-}
-.ticker-head-link:focus-visible {
-  outline: 2px solid var(--color-ember);
-  outline-offset: 2px;
-}
-
-/* The band's own colour, exactly — header and strip are one continuous
-   surface, and the two ember hairlines are what mark the feed off from the
-   copy above it. Deliberately not a second tint: a near-match would read as a
-   printing error rather than as one band. */
-.ticker-wrapper {
-  width: 100%;
-  overflow: hidden;
-  padding: 18px 0;
-  display: flex;
-  position: relative;
-  z-index: 1;
-  /* The same ember → gold → steel ring the hero's stat card carries, run flat
-     as the strip's two rules — drawn as background layers rather than borders
-     so the gradient can travel the full width instead of restarting per side. */
-  background-color: var(--bg-alt);
-  background-image:
-    linear-gradient(90deg, var(--color-ember) 0%, #d4af37 50%, var(--color-steel) 100%),
-    linear-gradient(90deg, var(--color-ember) 0%, #d4af37 50%, var(--color-steel) 100%);
-  background-repeat: no-repeat;
-  background-size: 100% 1.5px;
-  background-position: 0 0, 0 100%;
-}
-/* Fade edges for smooth entry/exit */
-.ticker-wrapper::before,
-.ticker-wrapper::after {
-  content: "";
-  position: absolute;
-  /* Inset off the two gradient rules — the fade is there to dissolve the
-     moving lots, not the strip's edges, which have to run unbroken. */
-  top: 1.5px;
-  height: calc(100% - 3px);
-  width: 100px;
-  z-index: 2;
-  pointer-events: none;
-}
-.ticker-wrapper::before {
-  left: 0;
-  background: linear-gradient(to right, var(--bg-alt), transparent);
-}
-.ticker-wrapper::after {
-  right: 0;
-  background: linear-gradient(to left, var(--bg-alt), transparent);
-}
-.ticker-content {
-  display: flex;
-  white-space: nowrap;
-  animation: ticker-scroll 75s linear infinite;
-  will-change: transform;
-}
-.ticker-wrapper:hover .ticker-content {
-  animation-play-state: paused;
-}
-.ticker-content:hover .ticker-item {
-  opacity: 0.8; /* Just slightly dim */
-}
-@keyframes ticker-scroll {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); } /* Content will be duplicated to make it seamless */
-}
-/* Stepped down from 19px once the band gained a title — at near-parity the
-   moving lots competed with the heading instead of reading as its feed. */
-.ticker-item {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 0 40px;
-  font-size: 17px;
-  transition: opacity var(--dur-base) var(--ease-out);
-  cursor: pointer;
-}
-.ticker-item:hover { opacity: 1 !important; }
-.ticker-name { transition: color var(--dur-base) var(--ease-out); }
-.ticker-item:hover .ticker-name { color: var(--dark); }
+/* The bead each lot pill leads with. guest2 runs a status colour here (green
+   trading / amber closing); guest1's feed is one status — live — so the bead
+   keeps carrying what it always carried on this page, the metal family, at
+   guest2's 6px. The pulse comes from .animate-live-pulse on the markup. */
 .ticker-dot {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   flex-shrink: 0;
 }
-.ticker-dot.ferrous { background: #2b4c7e; }
-.ticker-dot.aluminium { background: #6f96d6; }
-.ticker-dot.copper { background: #b45309; }
-.ticker-name {
-  color: #6b6560;
-  font-weight: 600;
-}
-.ticker-loc {
-  color: var(--text-muted);
-  font-size: 14px;
-  font-weight: 500;
-  position: relative;
-  padding-left: 16px;
-}
-.ticker-loc::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: currentColor;
-  opacity: 0.4;
-}
-.ticker-price {
-  font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
-  color: #ea580c;
-  font-weight: 700;
-}
-.ticker-qty {
-  font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
-  color: var(--text-muted);
-  font-weight: 500;
-}
-/* The calendar button runs out of room beside the lead first, so the header
-   stacks and the button drops under the copy rather than squeezing it. */
+.ticker-dot.ferrous { background: var(--color-steel); }
+.ticker-dot.aluminium { background: var(--color-steel-light); }
+.ticker-dot.copper { background: var(--color-warning); }
+
+/* The header sits closer to the card on narrow screens, where the copy
+   already wraps to three or four lines of its own. */
 @media (max-width: 760px) {
   .ticker-head {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 18px;
     padding-bottom: 24px;
   }
 }
 @media (max-width: 640px) {
   .ticker-head {
     padding-bottom: 20px;
-  }
-  .ticker-wrapper {
-    padding: 14px 0;
-  }
-  .ticker-wrapper::before,
-  .ticker-wrapper::after {
-    width: 48px;
-  }
-  .ticker-item {
-    font-size: 15px;
-    gap: 12px;
-    padding: 0 24px;
-  }
-  .ticker-loc {
-    font-size: 13px;
   }
 }
 .pulse-item {
@@ -1179,7 +1029,7 @@ ul {
   transform: translateY(-50%);
   width: 44px;
   height: 44px;
-  background: white;
+  background: var(--color-surface);
   border-radius: 50%;
   box-shadow: var(--shadow-lg);
   display: flex;
@@ -1210,7 +1060,7 @@ ul {
   border: 1px solid rgba(228, 87, 46, 0.15);
   border-radius: 16px;
   overflow: hidden;
-  background: linear-gradient(180deg, #ffffff 0%, var(--color-surface-2) 100%);
+  background: linear-gradient(180deg, var(--color-surface) 0%, var(--color-surface-2) 100%);
   box-shadow: var(--shadow-md);
   transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out);
   position: relative;
@@ -1346,7 +1196,6 @@ ul {
 .trust-section {
   padding: var(--space-section-sm) 0;
   background: var(--bg-orange-alt);
-  text-align: center;
 }
 .trust-grid {
   display: flex;
@@ -1371,7 +1220,7 @@ ul {
   flex-wrap: wrap;
   gap: 12px 8px;
   margin-top: 32px;
-  background: #ffffff;
+  background: var(--color-surface);
   border: 1px solid var(--color-line);
   border-radius: var(--radius-card);
   padding: 16px;
@@ -1416,7 +1265,7 @@ ul {
   height: 16px;
 }
 .trust-item:hover .trust-icon {
-  background: #fff;
+  background: var(--color-surface);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 15%, transparent);
 }
 .trust-title {
@@ -1440,7 +1289,7 @@ ul {
   gap: 24px;
 }
 .section-card {
-  background: linear-gradient(145deg, #ffffff 0%, #f3efe9 100%);
+  background: linear-gradient(145deg, var(--color-surface) 0%, var(--color-surface-2) 100%);
   border: 1px solid rgba(228, 87, 46, 0.12);
   border-radius: 20px;
   padding: 32px;
@@ -1481,7 +1330,7 @@ ul {
   height: 44px;
   border-radius: 50%;
   border: 1px solid rgba(228, 87, 46, 0.15);
-  background: #fff;
+  background: var(--color-surface);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1528,7 +1377,7 @@ ul {
   position: absolute;
   width: 10px;
   height: 10px;
-  background: white;
+  background: var(--color-surface);
   border: 2px solid var(--primary);
   border-radius: 50%;
   transform: translate(-50%, -50%);
@@ -1549,7 +1398,7 @@ ul {
   bottom: 100%;
   left: 50%;
   transform: translateX(-50%) translateY(-4px);
-  background: var(--dark);
+  background: var(--color-ink-fixed);
   color: white;
   padding: 4px 8px;
   border-radius: 4px;
@@ -1635,7 +1484,7 @@ ul {
   position: absolute;
   width: 10px;
   height: 10px;
-  background: white;
+  background: var(--color-surface);
   border: 2px solid var(--primary);
   border-radius: 50%;
   transform: translate(-50%, -50%);
@@ -1656,7 +1505,7 @@ ul {
   bottom: 100%;
   left: 50%;
   transform: translateX(-50%) translateY(-4px);
-  background: var(--dark);
+  background: var(--color-ink-fixed);
   color: white;
   padding: 4px 8px;
   border-radius: 4px;
@@ -1715,51 +1564,6 @@ ul {
   font-variant-numeric: tabular-nums;
   color: var(--text-muted);
   font-weight: 500;
-}
-
-/* Big Stats */
-.big-stats-wrapper {
-  border-radius: var(--radius-card);
-  padding: 32px 48px;
-  box-shadow: var(--shadow-float);
-  border: 1.5px solid transparent;
-  margin: 0 auto;
-  /* Premium gradient-ring border, matching .stats-ribbon. */
-  background-image: linear-gradient(#ffffff, #ffffff), linear-gradient(120deg, var(--color-ember) 0%, #d4af37 50%, var(--color-steel) 100%);
-  background-origin: border-box;
-  background-clip: padding-box, border-box;
-}
-.big-stats-grid {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  text-align: center;
-}
-.big-stat-item {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  flex: 1;
-}
-.big-stat-val {
-  font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
-  font-size: 38px;
-  font-weight: 800;
-  color: var(--primary);
-  letter-spacing: -1px;
-}
-.big-stat-label {
-  font-size: 12px;
-  color: var(--text-muted);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: var(--track-label);
-}
-.big-stat-divider {
-  width: 1px;
-  height: 48px;
-  background: rgba(0, 0, 0, 0.08);
 }
 
 /* How It Works & Roles */
@@ -1893,7 +1697,11 @@ ul {
   justify-content: space-between;
   padding: 40px 48px;
   border-radius: 28px;
-  margin: 0 0 56px;
+  /* Equal white above and below. The banner is a floating slab on the page's
+     own background, not a band — with no top margin it sat flush against the
+     bottom edge of whatever section preceded it (the beige testimonials band),
+     so it read as bolted onto that section instead of standing clear of it. */
+  margin: 56px 0;
   background:
     radial-gradient(120% 180% at 85% 20%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0) 55%),
     radial-gradient(90% 160% at 10% 110%, rgba(123, 45, 32, 0.5) 0%, rgba(123, 45, 32, 0) 60%),
@@ -1931,7 +1739,7 @@ ul {
   gap: 12px;
 }
 .cta-btn-white {
-  background: white;
+  background: var(--color-surface);
   color: var(--primary-hover);
   border-radius: 10px;
   font-size: 14px;
@@ -2094,7 +1902,7 @@ ul {
   display: flex;
   align-items: center;
   gap: 16px;
-  background: white;
+  background: var(--color-surface);
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 12px 16px;
@@ -2180,7 +1988,7 @@ ul {
   display: none;
   background: none;
   border: none;
-  color: #6b6560;
+  color: var(--text-muted);
   cursor: pointer;
   padding: 8px;
 }
@@ -2200,16 +2008,16 @@ ul {
     top: 72px; /* Navbar height */
     left: 0;
     right: 0;
-    background: #fff;
+    background: var(--color-surface);
     padding: 24px;
-    border-bottom: 1px solid #e7e1d8;
+    border-bottom: 1px solid var(--border);
     box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
     z-index: 1000;
   }
   .mobile-nav-dropdown a {
     padding: 12px 0;
-    border-bottom: 1px solid #f3efe9;
-    color: #6b6560;
+    border-bottom: 1px solid var(--color-surface-3);
+    color: var(--text-muted);
     font-weight: 500;
     text-decoration: none;
   }
@@ -2238,10 +2046,6 @@ ul {
   .feature-list-col { grid-template-columns: 1fr !important; }
   .how-it-works-roles { grid-template-columns: 1fr !important; gap: 40px !important; }
 
-  /* Big Stats */
-  .big-stats-grid { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 32px !important; }
-  .big-stat-divider { display: none !important; }
-
   /* Footer */
   .footer-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 32px !important; }
 }
@@ -2263,10 +2067,6 @@ ul {
   .cat-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 16px 8px !important; }
   .map-container { flex-direction: column !important; align-items: flex-start !important; }
   .map-image-wrapper { width: 100% !important; max-width: 300px; margin: 0 auto; }
-
-  /* Big Stats */
-  .big-stats-grid { grid-template-columns: 1fr !important; gap: 24px !important; }
-  .big-stats-wrapper { padding: 24px !important; }
 
   /* Trust Section (Grid 1 col) */
   .trust-grid { grid-template-columns: 1fr !important; justify-content: flex-start; }
@@ -2317,7 +2117,7 @@ ul {
 }
 
 .calendar-header-wrapper {
-  background: white;
+  background: var(--color-surface);
   border-bottom: 1px solid rgba(0,0,0,0.04);
   padding: 24px 0;
   margin-bottom: 32px;
@@ -2369,7 +2169,7 @@ ul {
   padding: 12px 16px 12px 42px;
   border: 1px solid rgba(0,0,0,0.08);
   border-radius: 999px; /* Pill shape */
-  background: white;
+  background: var(--color-surface);
   font-size: 14px;
   font-weight: 500;
   color: var(--dark);
@@ -2399,7 +2199,7 @@ ul {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: white;
+  background: var(--color-surface);
   border: 1px solid rgba(0,0,0,0.08);
   border-radius: 999px;
   padding: 6px;
@@ -2423,7 +2223,7 @@ ul {
 }
 
 .nav-btn {
-  background: white;
+  background: var(--color-surface);
   border: 1px solid rgba(0,0,0,0.05);
   color: var(--dark);
   display: flex;
@@ -2458,7 +2258,7 @@ ul {
 }
 
 .calendar-matrix-wrapper {
-  background: white;
+  background: var(--color-surface);
   border-radius: 24px;
   border: 1px solid rgba(0,0,0,0.08);
   overflow: hidden;
@@ -2473,7 +2273,7 @@ ul {
 
 .matrix-corner {
   padding: 12px;
-  background: white;
+  background: var(--color-surface);
   border-bottom: 1px solid rgba(0,0,0,0.15);
   border-right: 1px solid rgba(0,0,0,0.15);
 }
@@ -2483,7 +2283,7 @@ ul {
   text-align: center;
   border-bottom: 1px solid rgba(0,0,0,0.15);
   border-right: 1px solid rgba(0,0,0,0.15);
-  background: white;
+  background: var(--color-surface);
   transition: all 0.3s ease;
 }
 
@@ -2595,7 +2395,7 @@ ul {
   max-height: calc(100vh - 140px);
   display: flex;
   flex-direction: column;
-  background: white;
+  background: var(--color-surface);
   border-radius: 24px;
   border: 1px solid rgba(0,0,0,0.08);
   padding: 24px;
@@ -2642,7 +2442,7 @@ ul {
 }
 
 .calendar-auction-card {
-  background: white;
+  background: var(--color-surface);
   border: 1px solid rgba(0,0,0,0.08);
   border-radius: 16px;
   padding: 16px 20px;
@@ -2685,7 +2485,7 @@ ul {
 
 .mat-badge {
   background: var(--bg-light);
-  color: #6b6560;
+  color: var(--text-muted);
   font-size: 11px;
   font-weight: 700;
   padding: 6px 12px;
@@ -3094,7 +2894,7 @@ ul {
   font-weight: 600;
   white-space: nowrap;
   border: 1px solid var(--border);
-  background: #fff;
+  background: var(--color-surface);
   color: var(--text-muted);
   cursor: pointer;
   transition: all var(--dur-base) var(--ease-out);
@@ -3115,7 +2915,7 @@ ul {
   margin-bottom: 28px;
 }
 .market-kpi-tile {
-  background: #fff;
+  background: var(--color-surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 16px 18px;
@@ -3196,7 +2996,7 @@ ul {
   left: 0;
   top: 100%;
   margin-top: 2px;
-  background: var(--dark);
+  background: var(--color-ink-fixed);
   color: #fff;
   font-size: 10px;
   font-weight: 600;
@@ -3274,7 +3074,7 @@ ul {
 .map-hover-tooltip {
   position: absolute;
   transform: translate(-50%, -115%);
-  background: var(--dark);
+  background: var(--color-ink-fixed);
   color: #fff;
   padding: 8px 12px;
   border-radius: 8px;
@@ -3300,7 +3100,7 @@ ul {
 }
 .map-callout {
   position: absolute;
-  background: rgba(255, 255, 255, 0.97);
+  background: var(--color-surface);
   border: 1px solid var(--border);
   box-shadow: var(--shadow-lg);
   border-radius: 12px;
@@ -3370,7 +3170,7 @@ ul {
   max-width: 120px;
 }
 .market-intel-insights {
-  background: #fff;
+  background: var(--color-surface);
   border: 1px solid var(--border);
   border-radius: 16px;
   padding: 18px 20px;
@@ -3433,7 +3233,7 @@ ul {
   font-size: 12px;
   font-weight: 700;
   color: var(--dark);
-  background: #fff;
+  background: var(--color-surface);
   transition: all var(--dur-base) var(--ease-out);
 }
 .insights-explore-btn:hover {
@@ -3521,7 +3321,7 @@ ul {
   height: 38px;
   border-radius: 50%;
   border: 1px solid var(--border);
-  background: #fff;
+  background: var(--color-surface);
   color: var(--dark);
   display: flex;
   align-items: center;
@@ -3530,9 +3330,9 @@ ul {
   transition: all var(--dur-base) var(--ease-out);
 }
 .cov-nav-btn:hover {
-  background: var(--dark);
+  background: var(--color-ink-fixed);
   color: #fff;
-  border-color: var(--dark);
+  border-color: var(--color-ink-fixed);
 }
 
 /* Editorial rule under the header — broadsheet double rule */
@@ -4027,65 +3827,122 @@ ul {
   outline-offset: 3px;
 }
 
-/* --------------------------------- The card ------------------------------- */
-/* One cell holding two layers: the invisible sizer that fixes the height, and
-   the live slide riding on top of it. Both take grid-area 1/1, so the card
-   cannot change height as entries swap and the page never jumps. */
-.tst-card {
+/* --------------------------------- The deck ------------------------------- */
+/* All five entries live in ONE grid cell, stacked front-to-back like sheets on
+   a spike: the front card carries the quote, the two behind it show a sliver of
+   edge at the bottom and sides, and the rest wait off-stage at opacity 0. The
+   padding at the bottom is the room those slivers need — without it the deck
+   would sit on top of whatever band follows. */
+.tst-deck {
   display: grid;
   position: relative;
-  z-index: 1;
+  padding-bottom: 36px;
+}
+/* Same cell, same stretch: every sheet is exactly the height of the longest
+   quote in the set, so the deck's edges stay parallel and the page never jumps
+   as cards cycle. This is the job the old invisible sizer used to do. */
+.tst-card {
+  grid-area: 1 / 1;
+  align-self: stretch;
+  min-width: 0;
+  display: grid;
+  position: relative;
+  overflow: hidden;
   background: var(--bg-white);
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-lg);
   padding: clamp(20px, 2vw, 28px) clamp(20px, 2.2vw, 32px);
-  overflow: hidden;
+  /* The whole stack pivots from its BOTTOM edge, which is what keeps the peek
+     honest: scaling a card down from there leaves its bottom where it is and
+     hides its top under the card in front, so the y offset framer applies is
+     exactly the sliver you see — the same sliver on a 1200px desktop card and
+     on a phone card twice as tall. */
+  transform-origin: center bottom;
+  will-change: transform;
+  /* Elevation is the only thing CSS animates here; framer owns the transform.
+     Kept on a transition so a card gains and loses its float as it takes and
+     leaves the front position. */
+  transition: box-shadow var(--dur-slow) var(--ease-out),
+              background-color var(--dur-slow) var(--ease-out);
+  /* Which side of the trade this trader sits on, carried as one variable to
+     the tone bar, the seal and the chip. Steel and green are existing tokens —
+     the same colour-coding Announcements gives its categories and the ticker
+     gives its metal grades. */
+  --tst-tone: var(--color-steel);
 }
-.tst-sizer,
-.tst-slide {
-  grid-area: 1 / 1;
-  min-width: 0;
+.tst-card.is-seller {
+  --tst-tone: var(--color-success);
 }
-.tst-sizer {
-  display: grid;
-  visibility: hidden;
-  pointer-events: none;
-}
-.tst-sizer-entry {
-  grid-area: 1 / 1;
-}
-/* 1fr over auto pins the record line to the card's bottom edge, so the rule
-   holds one position across all five entries instead of riding up under every
-   shorter quote. Short quotes get the air above them, not a moving divider. */
-.tst-slide {
-  display: grid;
-  grid-template-rows: 1fr auto;
+/* pan-y keeps a vertical swipe scrolling the page; only horizontal travel is
+   claimed by the carousel. */
+.tst-card.is-front {
   /* The default arrow, not grab: the open-hand cursor is a thin light outline
      that all but disappears against the white card. The arrow carries its own
      dark fill and white keyline, so it stays readable on any surface — and it
      leaves the wheel free to scroll the page rather than reading as a handle. */
   cursor: default;
-  /* Which side of the trade this trader sits on, carried as one variable to
-     the seal and the chip. Steel and green are existing tokens — the same
-     colour-coding Announcements gives its categories and the ticker gives its
-     metal grades. This section was the only taxonomy on the page left grey. */
-  --tst-tone: var(--color-steel);
-}
-.tst-slide.is-seller {
-  --tst-tone: var(--color-success);
+  touch-action: pan-y;
+  box-shadow: var(--shadow-float);
 }
 /* Feedback only once a drag is genuinely under way. */
-.tst-slide:active {
+.tst-card.is-front:active {
   cursor: grabbing;
 }
-/* pan-y keeps a vertical swipe scrolling the page; only horizontal travel is
-   claimed by the carousel. */
-.tst-slide {
-  touch-action: pan-y;
+/* The sheets underneath. Each step back is a shade darker and a shade flatter.
+   They have to go DOWN the surface ramp, not up it: this band's background is
+   already --bg-alt, so a sheet tinted between white and --bg-alt can never be
+   anything but lighter than the paper it lies on, and the deck reads as one
+   white slab with a fringe. Landing them on surface-2 and surface-3 — the
+   tokens that exist precisely for recessed surfaces — is what makes the two
+   edges read as being under something. */
+.tst-card.is-behind {
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
 }
-.tst-slide .tst-body {
+.tst-card.is-behind-1 {
+  background: var(--color-surface-2);
+}
+.tst-card.is-behind-2 {
+  background: var(--color-surface-3);
+  border-color: var(--color-line-strong);
+  box-shadow: var(--shadow-sm);
+}
+/* Faded out and travelling — it must never catch a pointer on its way past. */
+.tst-card.is-offstage {
+  pointer-events: none;
+  box-shadow: var(--shadow-lg);
+}
+/* The card's own top edge is the one edge the deck never covers, so the tone
+   lives there: a hairline of the trader's colour bleeding off to the right. */
+.tst-card-tone {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--tst-tone) 78%, transparent) 0%,
+    color-mix(in srgb, var(--tst-tone) 30%, transparent) 34%,
+    transparent 76%
+  );
+}
+/* 1fr over auto pins the record line to the card's bottom edge, so the rule
+   holds one position across all five entries instead of riding up under every
+   shorter quote. Short quotes get the air above them, not a moving divider. */
+.tst-card-inner {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  min-width: 0;
+}
+.tst-card-inner .tst-body {
   align-self: start;
+}
+/* With motion reduced the component drops the stack entirely and cross-fades a
+   single card, so the room reserved for peeking edges would just be a hole
+   under it. */
+@media (prefers-reduced-motion: reduce) {
+  .tst-deck {
+    padding-bottom: 0;
+  }
 }
 
 /* The figure sits in the gutter, the quote takes the rest. Fixed gutter so the
@@ -4282,6 +4139,12 @@ ul {
     align-items: flex-start;
     gap: 18px;
   }
+  /* The peek is a fixed pixel offset at every width (see transform-origin on
+     the card), so the room reserved for it does not need to change — only the
+     slack above it does. */
+  .tst-deck {
+    padding-bottom: 32px;
+  }
   /* No gutter left to annotate into: the slip keeps its tint and its border,
      it just lies down — figure, label and qualifier across the card's top. */
   .tst-body {
@@ -4360,7 +4223,7 @@ ul {
   height: 42px;
   border-radius: 50%;
   border: 1px solid var(--border);
-  background: #fff;
+  background: var(--color-surface);
   color: var(--dark);
   display: flex;
   align-items: center;
@@ -4429,6 +4292,18 @@ ul {
   display: flex;
   gap: 16px;
   overflow-x: auto;
+  /* Explicit, and load-bearing. Setting overflow-x alone silently computes
+     overflow-y to `auto` too, so any stray pixel of vertical overflow inside
+     the row (a mid-flight transform, a taller card, a future badge) turns this
+     into a tiny vertical scroller. The browser then latches the wheel to it:
+     the page freezes while the row creeps down a few pixels under the cursor.
+     `hidden` keeps the wheel where it belongs — on the page. The 6/12px
+     padding below already reserves the cards' hover-shadow room, which an
+     `auto` scroller was clipping anyway. */
+  overflow-y: hidden;
+  /* Reaching the end of the track shouldn't hand the gesture to the browser's
+     back/forward navigation. */
+  overscroll-behavior-x: contain;
   /* No scroll-snap: a snap container re-snaps while the page scrolls over it,
      jumping the cards up/down. Nav buttons still smooth-scroll by card via JS. */
   scroll-snap-type: none;
@@ -4445,7 +4320,7 @@ ul {
   flex: 0 0 calc(25% - 12px);
   min-width: 210px;
   scroll-snap-align: start;
-  background: #fff;
+  background: var(--color-surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 18px 18px 16px;

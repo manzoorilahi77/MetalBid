@@ -4,9 +4,9 @@ import { usePageActive } from '../../hooks/usePageActive'
 import { randomInt } from '../../utils/random'
 import { HeroImage } from './HeroImage'
 import { FloatingCard } from './FloatingCard'
-import { LiveFloorCard } from './LiveFloorCard'
-import { SettlementCard } from './SettlementCard'
-import { PlatformSignalsCard } from './PlatformSignalsCard'
+import { HowItWorksCard } from './HowItWorksCard'
+import { AssuranceCard } from './AssuranceCard'
+import { MarketplaceCard } from './MarketplaceCard'
 
 /**
  * Card placement, measured directly off the original render.
@@ -19,18 +19,18 @@ import { PlatformSignalsCard } from './PlatformSignalsCard'
  */
 const CARDS = [
   {
-    key: 'floor',
-    label: 'Live auction floor activity',
+    key: 'journey',
+    label: 'How a FerroBid auction works',
     anchor: 'left-[5.95%] top-[16.3%] w-[20.8%] h-[49.5%]',
   },
   {
-    key: 'settlement',
-    label: 'Settlement performance',
+    key: 'assurance',
+    label: 'How every trade is protected',
     anchor: 'left-[63.4%] top-[3.4%] w-[25.9%] h-[38.3%]',
   },
   {
-    key: 'signals',
-    label: 'Platform operating signals',
+    key: 'marketplace',
+    label: 'What trades on FerroBid',
     anchor: 'left-[77.8%] top-[44.6%] w-[18.7%] h-[50.9%]',
   },
 ] as const
@@ -43,14 +43,16 @@ const IDLE_GLOW_MS = 500
 /**
  * The FerroBid hero.
  *
- * A still industrial render at the centre, ringed by three genuinely live
- * cards. Everything a visitor sees moving — the clock, the bid ladder, the
- * price tape, the room's presence count — is real component state on its own
- * independent cadence, never a scripted loop.
+ * A still industrial render at the centre, ringed by three cards that introduce
+ * the platform: how an auction runs, what protects the trade, and what is on
+ * the catalogue. All three are deliberately evergreen — the hero is the first
+ * thing a signed-out visitor sees, so it carries no live floor activity,
+ * settlement performance or order-book figures, none of which belong in public
+ * view. Everything here is information the marketing site states anyway.
  *
- * The orchestrator itself holds almost no state: each card owns its simulation,
- * so a bid landing or a second ticking over re-renders exactly one subtree. The
- * only state up here is the idle glow, which changes at most twice a minute.
+ * The orchestrator itself holds almost no state: each card owns its own
+ * highlight cycle, so a step advancing re-renders exactly one subtree. The only
+ * state up here is the idle glow, which changes at most twice a minute.
  */
 export function HeroIllustration() {
   const reducedMotion = usePrefersReducedMotion()
@@ -102,9 +104,9 @@ export function HeroIllustration() {
             glowing={glowingIndex === index}
             animated={animated}
           >
-            {card.key === 'floor' && <LiveFloorCard animated={animated} />}
-            {card.key === 'settlement' && <SettlementCard animated={animated} />}
-            {card.key === 'signals' && <PlatformSignalsCard animated={animated} />}
+            {card.key === 'journey' && <HowItWorksCard animated={animated} />}
+            {card.key === 'assurance' && <AssuranceCard animated={animated} />}
+            {card.key === 'marketplace' && <MarketplaceCard animated={animated} />}
           </FloatingCard>
         ))}
       </div>

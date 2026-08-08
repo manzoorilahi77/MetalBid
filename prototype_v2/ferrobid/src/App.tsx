@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react'
-import { HashRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom'
+import { HashRouter, Outlet, Route, Routes, useLocation } from 'react-router-dom'
 import Chrome, { NAV_BY_ROLE, Page, SubNav } from './layout/Chrome'
 import type { Role } from './types'
 import { ToastHost } from './components/ui'
@@ -28,8 +28,13 @@ const Guest2HowItWorks = lazy(() => import('./pages/guest2/HowItWorks'))
 const Guest2Contact = lazy(() => import('./pages/guest2/Contact'))
 const Guest2ExitIntent = lazy(() => import('./pages/guest2/ExitIntentWhatsApp'))
 
+/* Master switch for the exit-intent WhatsApp invite. Off for now — the modal
+   and all its logic stay intact; flip this to `true` to bring it back. */
+const SHOW_WHATSAPP_MODAL = false
+
 /* buyer */
 import BuyerDashboard from './pages/buyer/Dashboard'
+import BuyerMarketplace from './pages/buyer/Marketplace'
 import Shortlist from './pages/buyer/Shortlist'
 import BuyerBids from './pages/buyer/Bids'
 import Fulfilment from './pages/buyer/Fulfilment'
@@ -79,6 +84,24 @@ function subNavItems(role: Role) {
   return NAV_BY_ROLE[role]
     .filter((i) => i.in.includes('sub'))
     .map((i) => ({ to: i.to, label: i.subLabel ?? i.label, end: i.end, locked: i.locked }))
+}
+
+/** Browse and Noticeboard are shared pages that live outside every role's own
+ *  route group, so the contextual sub-nav used to disappear the moment a
+ *  signed-in user stepped into them. Whenever the active role links to the
+ *  current page from its top nav, re-render that role's sub-nav here so the
+ *  tab strip stays put across all of its top-level destinations. */
+function SharedLayout() {
+  const role = useStore((s) => s.role)
+  const { pathname } = useLocation()
+  const items = subNavItems(role)
+  const fromTopNav = NAV_BY_ROLE[role].some((i) => i.in.includes('top') && i.to === pathname)
+  return (
+    <>
+      {items.length > 0 && fromTopNav && <SubNav items={items} />}
+      <Outlet />
+    </>
+  )
 }
 
 function ExecLayout() {
@@ -134,7 +157,7 @@ function Guest2Layout() {
   return (
     <Suspense fallback={<Page className="py-24 text-center text-ink-faint">Loading…</Page>}>
       <Outlet />
-      <Guest2ExitIntent />
+      {SHOW_WHATSAPP_MODAL && <Guest2ExitIntent />}
     </Suspense>
   )
 }
@@ -164,15 +187,19 @@ export default function App() {
         <Route element={<Chrome />}>
           <Route index element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/browse" element={<Browse />} />
           <Route path="/catalogue/:id" element={<AuctionDetail />} />
           <Route path="/bidding/:catalogueId" element={<BiddingRoom />} />
-          <Route path="/noticeboard" element={<Noticeboard />} />
           <Route path="/help" element={<Help />} />
           <Route path="/legal" element={<Legal />} />
           <Route path="/disputes" element={<Disputes />} />
           <Route path="/settings/notifications" element={<NotificationPrefs />} />
           <Route path="/profile" element={<Profile />} />
+
+          {/* shared pages that keep the active role's sub-nav (Browse, Noticeboard) */}
+          <Route element={<SharedLayout />}>
+            <Route path="/browse" element={<Browse />} />
+            <Route path="/noticeboard" element={<Noticeboard />} />
+          </Route>
 
           {/* Guest 2 public site — shared chrome, lean top nav (Phase 3/6) */}
           <Route element={<Guest2Layout />}>
@@ -185,6 +212,7 @@ export default function App() {
 
           <Route element={<BuyerLayout />}>
             <Route path="/buyer" element={<BuyerDashboard />} />
+            <Route path="/buyermarketplace" element={<BuyerMarketplace />} />
             <Route path="/buyer/shortlist" element={<Shortlist />} />
             <Route path="/buyer/bids" element={<BuyerBids />} />
             <Route path="/buyer/fulfilment" element={<Fulfilment />} />
@@ -231,7 +259,6 @@ export default function App() {
             <Route path="/admin/audit" element={<Audit />} />
           </Route>
 
-          <Route path="/home" element={<Navigate to="/" replace />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

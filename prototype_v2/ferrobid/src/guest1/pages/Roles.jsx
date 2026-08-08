@@ -127,7 +127,7 @@ const Roles = () => {
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '24px' }}>
         {roles.map((role, idx) => (
-          <div key={idx} style={{ background: 'white', borderRadius: '16px', border: '1px solid var(--border)', padding: '24px', boxShadow: '0 4px 12px rgba(0,0,0,0.02)', transition: 'transform 0.2s' }}>
+          <div key={idx} style={{ background: 'var(--color-surface)', borderRadius: '16px', border: '1px solid var(--border)', padding: '24px', boxShadow: '0 4px 12px rgba(0,0,0,0.02)', transition: 'transform 0.2s' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
               <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: role.bg, color: role.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 {role.icon}

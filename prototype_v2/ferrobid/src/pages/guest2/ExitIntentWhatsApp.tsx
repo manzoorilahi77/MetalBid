@@ -507,10 +507,10 @@ export default function ExitIntentWhatsApp() {
 
   useExitIntent(enabled, onExit)
 
-  /* Claim the chrome-level exit slot, so "Jump to role" shows the invite before
-     it leaves the public site. An explicit role switch is a definitive leave
-     signal, so it skips the dwell timer entirely — but not the eligibility
-     rules, and it never queues behind an already-open invite. */
+  /* Claim the chrome-level exit slot, so a chrome-driven role switch shows the
+     invite before it leaves the public site. An explicit role switch is a
+     definitive leave signal, so it skips the dwell timer entirely — but not
+     the eligibility rules, and it never queues behind an already-open invite. */
   useEffect(() => {
     return registerExitInterstitial((proceed) => {
       if (!eligible || open || pathname === '/g2/contact') return false

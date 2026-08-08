@@ -1,9 +1,9 @@
 /**
- * Small randomness helpers shared by the hero's live simulations.
+ * Small randomness helpers used by the hero.
  *
- * The hero is meant to read as a real auction room, so every simulated value
- * is drawn from a deliberately narrow band. Randomness here is a texture, not
- * a dice roll — it should never produce a number a trader would call absurd.
+ * Randomness here is a texture, not a dice roll: it exists so timings never
+ * fall into a visible pattern, and is always drawn from a deliberately narrow
+ * band.
  */
 
 /** Random integer in the inclusive range [min, max]. */
