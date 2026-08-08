@@ -797,7 +797,11 @@ export const useStore = create<State>((set, get) => {
           return {
             ...l, ...overrides[l.id], catalogueId: cat.id,
             lotNo: `LOT-${String(idx + 1).padStart(2, '0')}`,
-            status: cat.status === 'live' ? 'live' as LotStatus : isDraft ? 'pending_inspection' as LotStatus : 'approved' as LotStatus,
+            status: cat.status === 'live'
+              ? 'live' as LotStatus
+              : isDraft
+                ? (l.inspectionWaived ? 'approved' as LotStatus : 'pending_inspection' as LotStatus)
+                : 'approved' as LotStatus,
             endsAt: isDraft ? l.endsAt : cat.endsAt,
           }
         }),
