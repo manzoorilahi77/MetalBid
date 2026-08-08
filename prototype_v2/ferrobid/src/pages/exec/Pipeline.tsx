@@ -21,9 +21,14 @@ const CARD_CAP = 8
 
 export default function Pipeline() {
   const lots = useStore((s) => s.lots)
+  const catalogues = useStore((s) => s.catalogues)
+  const users = useStore((s) => s.users)
   const reports = useStore((s) => s.inspectionReports)
   const setLotStatus = useStore((s) => s.setLotStatus)
+  const publishDraftCatalogue = useStore((s) => s.publishDraftCatalogue)
   const pushToast = useStore((s) => s.pushToast)
+
+  const draftCatalogues = catalogues.filter((c) => c.status === 'draft')
 
   const byCol = COLS.map((c) => ({ ...c, lots: lots.filter(c.match) }))
 
@@ -31,13 +36,6 @@ export default function Pipeline() {
 
   const actions = (col: ColKey, l: Lot) => {
     switch (col) {
-      case 'pending':
-        return (
-          <Button size="sm" variant="secondary" className="w-full"
-            onClick={() => pushToast({ kind: 'success', title: 'Field executive assigned', body: `${l.lotNo} routed to the yard inspection queue.` })}>
-            Assign field exec
-          </Button>
-        )
       case 'inspected':
         return (
           <div className="flex gap-1.5">
@@ -78,6 +76,42 @@ export default function Pipeline() {
   return (
     <Page>
       <PageHeader title="Lot pipeline" sub="Every lot on the platform, from seller submission through inspection, approval, auction and resolution." />
+
+      {draftCatalogues.length > 0 && (
+        <div className="mb-6 space-y-2">
+          <div className="text-xs font-semibold uppercase tracking-wider text-ink-faint">Draft catalogues awaiting publish</div>
+          {draftCatalogues.map((c) => {
+            const catLots = lots.filter((l) => l.catalogueId === c.id)
+            const resolved = catLots.filter((l) => l.status === 'approved').length
+            const ready = catLots.length > 0 && resolved === catLots.length
+            const exec = users.find((u) => u.id === c.assignedFieldExecId)
+            return (
+              <div key={c.id} className="card p-4 flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="num text-sm font-bold">{c.code}</span>
+                    <span className="font-semibold text-sm">{c.title}</span>
+                  </div>
+                  <div className="text-xs text-ink-muted mt-0.5">
+                    Assigned to {exec?.name ?? 'unassigned'} · <span className="num">{resolved}/{catLots.length}</span> lots approved
+                  </div>
+                </div>
+                <Button
+                  size="sm" variant={ready ? 'success' : 'secondary'} disabled={!ready}
+                  onClick={() => {
+                    const res = publishDraftCatalogue(c.id, 'now')
+                    pushToast(res.ok
+                      ? { kind: 'success', title: `${c.code} is live`, body: `${catLots.length} lots are open for bidding.` }
+                      : { kind: 'warning', title: 'Cannot publish yet', body: res.error })
+                  }}
+                >
+                  {ready ? 'Publish catalogue' : `${resolved}/${catLots.length} lots approved`}
+                </Button>
+              </div>
+            )
+          })}
+        </div>
+      )}
 
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 mb-6">
         <Stat label="Pending inspection" value={byCol[0].lots.length} tone="steel" />
