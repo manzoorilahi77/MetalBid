@@ -225,7 +225,7 @@ export const LegalDoc = ({ eyebrow, eyebrowIcon: HeroIcon, title, lead, meta, se
     window.scrollTo({ top, behavior: reduceMotion ? 'auto' : 'smooth' });
   }, [reduceMotion]);
 
-  /* Deep links (…#/guest1/privacy#data-we-collect) land on the clause rather
+  /* Deep links (…#/home/privacy#data-we-collect) land on the clause rather
      than the top of the document. */
   useEffect(() => {
     const target = window.location.hash.split('#')[2];

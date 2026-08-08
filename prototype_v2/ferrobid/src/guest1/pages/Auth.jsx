@@ -5,10 +5,25 @@ import {
   Eye, EyeOff, Mail, Lock, User, Phone, Building2,
   ArrowLeft, ShieldCheck, CheckCircle, AlertCircle,
   Loader2, ArrowRight, Globe, Gavel, TrendingUp,
-  Award, Users, Zap
+  Award, Users, Zap, ShoppingBag, Package, ClipboardCheck, BarChart3, Crown
 } from 'lucide-react';
-import { useStore, ROLE_HOME } from '../../store/store';
+import { useStore, ROLE_HOME, ROLE_LABEL, DEMO_LOGINS, DEMO_PASSWORD } from '../../store/store';
 import { asset } from '../utils/asset';
+
+/* Quick demo sign-in — one click fills + submits the matching demo account so
+   every role's portal is reachable straight from this page without anyone
+   needing to know the credentials in store.ts. */
+const QUICK_LOGIN_ROLES = [
+  { role: 'buyer', icon: ShoppingBag },
+  { role: 'seller', icon: Package },
+  { role: 'field_exec', icon: ClipboardCheck },
+  { role: 'exec_manager', icon: BarChart3 },
+  { role: 'sub_admin', icon: ShieldCheck },
+  { role: 'super_admin', icon: Crown },
+];
+const DEMO_EMAIL_BY_ROLE = Object.fromEntries(
+  Object.entries(DEMO_LOGINS).map(([email, role]) => [role, email])
+);
 
 /* ─── helpers ─── */
 const validate = {
@@ -139,6 +154,7 @@ export const Auth = () => {
   const [forgotOpen, setForgotOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState('');
+  const [quickRole, setQuickRole] = useState(null);
 
   /* login form */
   const [loginForm, setLoginForm] = useState({ email: '', password: '' });
@@ -223,9 +239,28 @@ export const Auth = () => {
         return;
       }
       setSuccess('Login successful! Redirecting to your portal...');
-      // Leave the /guest1 router and open the manager portal for this role.
+      // Leave the /home router and open the manager portal for this role.
       setTimeout(() => { window.location.hash = ROLE_HOME[res.role]; }, 600);
     }, 1200);
+  };
+
+  /* One-click demo sign-in for a given role: fills the login form with that
+     role's demo account, submits it, then hands off to the portal. */
+  const quickLogin = (role) => {
+    const email = DEMO_EMAIL_BY_ROLE[role];
+    if (!email) return;
+    setTab('login');
+    setLoginForm({ email, password: DEMO_PASSWORD });
+    setLoginErrors({ email: '', password: '' });
+    setLoginTouched({ email: true, password: true });
+    setQuickRole(role);
+    setTimeout(() => {
+      const res = signIn(email, DEMO_PASSWORD);
+      setQuickRole(null);
+      if (!res.ok || !res.role) return;
+      setSuccess(`Signed in as ${ROLE_LABEL[res.role]}! Redirecting to your portal...`);
+      setTimeout(() => { window.location.hash = ROLE_HOME[res.role]; }, 600);
+    }, 700);
   };
 
   const handleRegSubmit = (e) => {
@@ -721,6 +756,27 @@ export const Auth = () => {
                 )}
               </AnimatePresence>
             </>
+          )}
+
+          {/* Quick demo sign-in — one click opens any role's portal directly */}
+          {!otpStep && !forgotOpen && (
+            <div className="auth-quickroles">
+              <div className="auth-divider"><span>Quick demo access</span></div>
+              <div className="auth-quickroles-grid">
+                {QUICK_LOGIN_ROLES.map(({ role, icon: Icon }) => (
+                  <button
+                    key={role}
+                    type="button"
+                    className="auth-quickrole-btn"
+                    disabled={quickRole !== null}
+                    onClick={() => quickLogin(role)}
+                  >
+                    {quickRole === role ? <Loader2 size={14} className="auth-spin" /> : <Icon size={14} />}
+                    <span>{ROLE_LABEL[role]}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
           )}
 
           {/* Security Footer */}

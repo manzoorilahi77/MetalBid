@@ -13,6 +13,7 @@ import {
   useScroll, useSpring, useTransform, useMotionValue
 } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { asset } from '../utils/asset';
 import '../styles/about.css';
 
 /* This page has exactly one authored moment: switching roles in the governance
@@ -496,7 +497,7 @@ const CATALOGUE = [
   {
     id: 'ferrous',
     name: 'Ferrous',
-    img: '/images/tile_steel.jpg',
+    img: asset('/images/tile_steel.jpg'),
     alt: 'Coiled steel wire rod in a mill',
     blurb: 'Mill scrap, secondary coil and plate offcuts from integrated steel plants.',
     examples: ['Heavy Melting Steel (HMS 1)', 'HMS 80:20', 'CR coil secondary stock', 'MS plate offcuts']
@@ -504,7 +505,7 @@ const CATALOGUE = [
   {
     id: 'non-ferrous',
     name: 'Non-ferrous',
-    img: '/images/tile_copper.jpg',
+    img: asset('/images/tile_copper.jpg'),
     alt: 'Coiled copper tube stock',
     blurb: 'Aluminium, copper and brass streams, from turnings to cathode-grade rod.',
     examples: ['Mixed aluminium extrusion', 'Copper millberry wire', 'Aluminium ingots ADC-12', 'Brass borings & turnings']
@@ -512,7 +513,7 @@ const CATALOGUE = [
   {
     id: 'stainless',
     name: 'Stainless steel',
-    img: '/images/tile_aluminium.jpg',
+    img: asset('/images/tile_aluminium.jpg'),
     alt: 'Polished metal billets',
     blurb: 'Grade-sorted stainless scrap with documented composition.',
     examples: ['SS 304 scrap']
@@ -520,7 +521,7 @@ const CATALOGUE = [
   {
     id: 'minor',
     name: 'Minor metals',
-    img: '/images/tile_pipes.jpg',
+    img: asset('/images/tile_pipes.jpg'),
     alt: 'Stacked galvanised pipe sections',
     blurb: 'Process residues and recovery streams from smelters and refiners.',
     examples: ['Zinc top dross', 'Lead battery scrap (RSDL)']

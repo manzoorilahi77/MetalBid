@@ -4,7 +4,7 @@
 --------------------------------------------------------------------------- */
 import { useEffect, useMemo, useRef, useState, type ReactNode, type ButtonHTMLAttributes, type InputHTMLAttributes, type SelectHTMLAttributes, type TextareaHTMLAttributes } from 'react'
 import { Link } from 'react-router-dom'
-import { X, Loader2, Lock, Inbox, CheckCircle2, Minus, Plus } from 'lucide-react'
+import { X, Loader2, Lock, Inbox, CheckCircle2, Minus, Plus, Smartphone, Bell } from 'lucide-react'
 import { useStore } from '../store/store'
 import { countdown, inr, inrWords } from '../lib/format'
 import { useNow } from '../lib/useTick'
@@ -431,6 +431,59 @@ export function MockPayModal({ open, onClose, amount, title, onSuccess }: {
           <div className="font-bold text-ink">Payment successful</div>
         </div>
       )}
+    </Modal>
+  )
+}
+
+/* --------------------------- App coming soon modal -------------------------- */
+/** Opens from either store badge in the footer — the mobile apps aren't built
+ *  yet, so this stands in for the real download flow with a "notify me" capture. */
+export function AppComingSoonModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [email, setEmail] = useState('')
+  const [notified, setNotified] = useState(false)
+  useEffect(() => { if (open) { setNotified(false); setEmail('') } }, [open])
+
+  return (
+    <Modal open={open} onClose={onClose} title="Get the ferroBid app">
+      <div className="flex flex-col items-center text-center -mt-1">
+        <div className="size-14 rounded-2xl bg-gradient-to-br from-ember to-ember-strong text-white grid place-items-center shadow-lg shadow-ember/30">
+          <Smartphone size={26} />
+        </div>
+        <h3 className="mt-4 text-lg font-bold text-ink">On its way</h3>
+        <p className="mt-1.5 text-sm text-ink-muted max-w-xs">
+          We&apos;re putting the finishing touches on iOS &amp; Android. Leave your email
+          and we&apos;ll ping you the moment it&apos;s live — no spam, one message.
+        </p>
+
+        {notified ? (
+          <div className="mt-5 w-full h-11 rounded-xl bg-success/10 text-success flex items-center justify-center gap-2 text-sm font-semibold">
+            <CheckCircle2 size={17} /> You&apos;re on the list — we&apos;ll email you at launch.
+          </div>
+        ) : (
+          <form
+            className="mt-5 w-full flex gap-2"
+            onSubmit={(e) => { e.preventDefault(); setNotified(true) }}
+          >
+            <Input
+              type="email"
+              required
+              placeholder="you@company.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              aria-label="Email address"
+              className="flex-1"
+            />
+            <Button type="submit" className="shrink-0">
+              <Bell size={16} /> Notify me
+            </Button>
+          </form>
+        )}
+
+        <div className="mt-6 pt-5 border-t border-line w-full flex items-center justify-center gap-3">
+          <img src={`${import.meta.env.BASE_URL}badges/google-play.svg`} alt="Google Play — coming soon" className="h-7 w-auto opacity-50 grayscale" />
+          <img src={`${import.meta.env.BASE_URL}badges/app-store.svg`} alt="App Store — coming soon" className="h-7 w-auto opacity-50 grayscale" />
+        </div>
+      </div>
     </Modal>
   )
 }

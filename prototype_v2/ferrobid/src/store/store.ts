@@ -40,7 +40,7 @@ export const ROLE_LABEL: Record<Role, string> = {
 
 export const ROLE_HOME: Record<Role, string> = {
   guest: '/',
-  guest1: '/guest1',
+  guest1: '/home',
   guest2: '/g2',
   buyer: '/buyer',
   seller: '/seller',

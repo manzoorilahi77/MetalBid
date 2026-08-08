@@ -5,10 +5,10 @@
      • loads the homepage's fonts + global stylesheets (relocated verbatim from
        the homepage's original src/main.jsx — which is intentionally NOT copied,
        since it carried createRoot + BrowserRouter that we replace here);
-     • gives the homepage its OWN router with basename "/guest1", so every
+     • gives the homepage its OWN router with basename "/home", so every
        absolute path inside the homepage ("/marketplace", "/blog/:slug",
        "/#how-it-works", …) keeps working byte-for-byte, just scoped under
-       /guest1 — no page/component/link edits required.
+       /home — no page/component/link edits required.
 
    It deliberately does NOT touch the manager's Chrome / TopNav / Footer or any
    role layout. When this component is mounted, the manager tree is unmounted
@@ -51,7 +51,7 @@ import HomepageApp from './App.jsx'
 
 export default function Guest1App() {
   return (
-    <HashRouter basename="/guest1">
+    <HashRouter basename="/home">
       <HomepageApp />
     </HashRouter>
   )

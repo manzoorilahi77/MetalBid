@@ -143,9 +143,9 @@ const AuctionCalendar = () => {
                 }}
               >
                 {/* Header Row */}
-                <div className="matrix-corner" style={{ gridColumn: 1, gridRow: 1, borderRight: '1px solid #e7e1d8', borderBottom: '2px solid #e7e1d8', background: '#f3efe9' }}></div>
+                <div className="matrix-corner" style={{ gridColumn: 1, gridRow: 1, borderRight: '1px solid var(--border)', borderBottom: '2px solid var(--border)', background: 'var(--color-surface-2)' }}></div>
                 {currentDates.map((d, i) => (
-                  <div key={i} className={`matrix-date-col ${d.isToday ? 'active-col' : ''}`} style={{ gridColumn: i + 2, gridRow: 1, borderBottom: '2px solid #e7e1d8', background: '#f3efe9' }}>
+                  <div key={i} className={`matrix-date-col ${d.isToday ? 'active-col' : ''}`} style={{ gridColumn: i + 2, gridRow: 1, borderBottom: '2px solid var(--border)', background: 'var(--color-surface-2)' }}>
                     <div className="date-num">{d.label}</div>
                     <div className="date-day">{d.day}</div>
                   </div>

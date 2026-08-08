@@ -67,7 +67,7 @@ export default function Shortlist() {
         <EmptyState
           title="Nothing shortlisted yet"
           body="Browse live catalogues and tap the star on lots you're interested in — they'll collect here so you can fund EMD in one go."
-          action={<Link to="/browse"><Button>Browse auctions</Button></Link>}
+          action={<Link to="/buyermarketplace"><Button>Browse auctions</Button></Link>}
         />
       ) : (
         <div className="space-y-8">

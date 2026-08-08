@@ -69,8 +69,36 @@ const announcements = [
 
 const unreadCount = announcements.filter((a) => a.unread).length;
 
+/* One dot per *reachable* scroll position, not one per card.
+
+   A dot-per-card is wrong whenever the carousel shows several cards at once:
+   with 6 cards and 4 in view, only the first 3 card positions can ever be
+   scrolled to — the last 3 clamp against maxScroll, so their dots looked dead
+   and the active pip never moved past the 3rd. Here we take each card's start
+   offset, clamp it to the real scroll range, and collapse the duplicates that
+   clamping produces. Every dot that survives maps to a distinct position the
+   carousel can actually reach, so every dot is clickable — at any announcement
+   count and at any breakpoint (4 / 3 / ~2 / 1 cards in view). */
+const DEDUPE_PX = 8;
+
+const measureDotOffsets = (el) => {
+  const cards = Array.from(el.children);
+  if (!cards.length) return [0];
+  const maxScroll = Math.max(0, el.scrollWidth - el.clientWidth);
+  // Offsets relative to the first card, so the maths is independent of which
+  // ancestor happens to be the cards' offsetParent and of the row's padding.
+  const base = cards[0].offsetLeft;
+  const offsets = [];
+  cards.forEach((card) => {
+    const target = Math.min(Math.max(card.offsetLeft - base, 0), maxScroll);
+    if (!offsets.length || target - offsets[offsets.length - 1] > DEDUPE_PX) offsets.push(target);
+  });
+  return offsets;
+};
+
 export const AnnouncementsSection = () => {
   const carouselRef = useRef(null);
+  const [dotOffsets, setDotOffsets] = useState([0]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -81,14 +109,18 @@ export const AnnouncementsSection = () => {
     setCanScrollLeft(el.scrollLeft > 4);
     setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
 
-    // Match against each card's snapped (left-edge) position rather than the
-    // viewport center — with several cards peeking into view at once, the
-    // "center" card is usually the 2nd or 3rd one, not the one actually
-    // snapped to the start, which is what the dots should track.
+    const offsets = measureDotOffsets(el);
+    setDotOffsets((prev) =>
+      prev.length === offsets.length && prev.every((v, i) => Math.abs(v - offsets[i]) < 1) ? prev : offsets,
+    );
+
+    // Track the dot whose scroll position we are nearest to. Because the
+    // offsets are clamped, the last dot stays selectable at the end of the
+    // track instead of the pip stranding itself mid-row.
     let closest = 0;
     let minDist = Infinity;
-    Array.from(el.children).forEach((card, i) => {
-      const dist = Math.abs(card.offsetLeft - el.scrollLeft);
+    offsets.forEach((target, i) => {
+      const dist = Math.abs(target - el.scrollLeft);
       if (dist < minDist) {
         minDist = dist;
         closest = i;
@@ -98,13 +130,20 @@ export const AnnouncementsSection = () => {
   };
 
   useEffect(() => {
-    updateScrollState();
     const el = carouselRef.current;
+    if (!el) return undefined;
+    updateScrollState();
     el.addEventListener('scroll', updateScrollState, { passive: true });
     window.addEventListener('resize', updateScrollState);
+    // Card widths are percentage-based and change at the 1100/900/560px
+    // breakpoints, which changes how many positions are reachable — so the dot
+    // count has to be re-measured whenever the row itself resizes.
+    const ro = new ResizeObserver(updateScrollState);
+    ro.observe(el);
     return () => {
       el.removeEventListener('scroll', updateScrollState);
       window.removeEventListener('resize', updateScrollState);
+      ro.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -120,9 +159,8 @@ export const AnnouncementsSection = () => {
 
   const scrollToIndex = (i) => {
     const el = carouselRef.current;
-    const card = el.children[i];
-    if (!card) return;
-    el.scrollTo({ left: card.offsetLeft - el.offsetLeft, behavior: 'smooth' });
+    if (!el || dotOffsets[i] === undefined) return;
+    el.scrollTo({ left: dotOffsets[i], behavior: 'smooth' });
   };
 
   return (
@@ -162,8 +200,26 @@ export const AnnouncementsSection = () => {
         </div>
 
         <div className="announcements-carousel-wrap">
-        <div className="announcements-carousel" ref={carouselRef}>
-          {announcements.map((a, i) => {
+        {/* The reveal is driven from the row, not from each card. Per-card
+            whileInView keyed off each card's own intersection, and the cards
+            parked off the right-hand edge of the track never intersect the
+            viewport — so they stayed frozen at the initial state: invisible,
+            and still translated 20px down. That leftover transform grew the
+            row's vertical scrollable overflow past its own height, quietly
+            turning this horizontal carousel into an 8px-tall vertical
+            scroller that swallowed the first part of every wheel gesture over
+            it. Staggering from the container keys the reveal to the row's
+            vertical position only, so all cards land at y:0 regardless of
+            where they sit horizontally. */}
+        <motion.div
+          className="announcements-carousel"
+          ref={carouselRef}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-40px' }}
+          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.08 } } }}
+        >
+          {announcements.map((a) => {
             const meta = CATEGORY_META[a.category];
             const Icon = meta.icon;
             return (
@@ -171,10 +227,14 @@ export const AnnouncementsSection = () => {
                 className="announcement-card"
                 key={a.title}
                 style={{ '--accent': meta.color, '--accent-bg': meta.bg }}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-40px' }}
-                transition={{ duration: 0.5, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: {
+                    opacity: 1,
+                    y: 0,
+                    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+                  },
+                }}
               >
                 {a.unread && <span className="announcement-card-new">New</span>}
                 <div className="announcement-card-top">
@@ -194,23 +254,28 @@ export const AnnouncementsSection = () => {
               </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       </div>
 
-      <div className="announcements-dots">
-        {announcements.map((_, i) => (
+      {/* One dot is a dot with nowhere to go — when every card already fits,
+          the row has nothing to navigate, so the control disappears. */}
+      {dotOffsets.length > 1 && (
+        <div className="announcements-dots">
+          {dotOffsets.map((_, i) => (
           <motion.button
             key={i}
             layout
             className={`announcements-dot ${i === activeIndex ? 'active' : ''}`}
             aria-label={`Go to announcement ${i + 1}`}
+            aria-current={i === activeIndex ? 'true' : undefined}
             onClick={() => scrollToIndex(i)}
             whileHover={{ scale: i === activeIndex ? 1 : 1.4 }}
             whileTap={{ scale: 0.9 }}
             transition={{ type: 'spring', stiffness: 500, damping: 30 }}
           />
-        ))}
+          ))}
         </div>
+      )}
       </div>
     </section>
   );

@@ -33,7 +33,7 @@ export default function MyLots() {
       <PageHeader title="My lots & batches" sub="Uncatalogued lots are managed by ferroBid ops through inspection and approval. Quantity is indicative until weighment." />
       <Tabs<TabKey> value={tab} onChange={setTab} tabs={[
         { key: 'pipeline', label: 'In pipeline', count: groups.pipeline.length },
-        { key: 'approved', label: 'Approved', count: groups.approved.length },
+        { key: 'approved', label: <span className="inline-flex items-center gap-1.5">Approved by <img src={`${import.meta.env.BASE_URL}ferrobid-icon.png`} alt="ferroBid" className="h-4 w-auto dark:invert" /></span>, count: groups.approved.length },
         { key: 'live', label: 'In auction', count: groups.live.length },
         { key: 'closed', label: 'Sold & closed', count: groups.closed.length },
       ]} />

@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Quote } from 'lucide-react';
 
 /* ---------------------------------------------------------------------------
@@ -77,58 +77,86 @@ const entries = [
 ];
 
 const EASE = [0.16, 1, 0.3, 1];
-const EASE_OUT = [0.4, 0, 1, 1];
 const SWIPE_THRESHOLD = 70;
+/* Front card plus the two behind it. Everything deeper waits off-stage at
+   opacity 0 — five sheets of visible edge would read as noise, not a deck. */
+const DECK_DEPTH = 3;
 const pad2 = (n) => String(n).padStart(2, '0');
 
-/* The card travels the way you sent it: forward pushes the outgoing card left
-   and brings the next in from the right, back reverses both. Direction is the
-   custom passed down, so one variant set covers both. */
-const cardVariants = {
-  enter: (dir) => ({ x: dir > 0 ? 64 : -64, opacity: 0 }),
-  center: {
-    x: 0,
-    opacity: 1,
-    transition: { duration: 0.55, ease: EASE, staggerChildren: 0.05 },
-  },
-  exit: (dir) => ({
-    x: dir > 0 ? -64 : 64,
-    opacity: 0,
-    transition: { duration: 0.3, ease: EASE_OUT },
-  }),
+/* Where a card sits given how far back in the deck it is.
+
+   Every card pivots from its BOTTOM edge (see transform-origin in the CSS),
+   which is what makes the peek honest: scaling a card down from there keeps
+   its bottom edge in place and pulls its top edge out of sight under the card
+   in front, so the y offset below IS the sliver you see, in pixels, at every
+   viewport. Pivoting from the top instead would have the shrink eat into the
+   offset — and eat more of it the taller the card gets, which on a phone is
+   most of it.
+
+   Off-stage is deliberately to the LEFT for every card, not split by
+   direction. Going forward, the front card leaves for that spot; going back,
+   the returning card arrives from it. One position, both gestures, and the
+   deck never needs to know which way it is travelling. */
+const deckTarget = (pos) => {
+  if (pos >= DECK_DEPTH) {
+    // Down as well as out, and only barely tilted: a wide card rotating about
+    // its bottom edge throws its far corner a long way, and anything more than
+    // a couple of degrees sends that corner up over the section heading.
+    return { x: -120, y: 40, scale: 0.95, rotate: -3, opacity: 0 };
+  }
+  return { x: 0, y: pos * 14, scale: 1 - pos * 0.045, rotate: 0, opacity: 1 };
+};
+
+/* Off-stage cards stay ABOVE the deck rather than dropping behind it: the card
+   being thrown has to travel across the front of the stack to read as thrown,
+   and it is already fading out, so sitting on top costs nothing. */
+const deckLayer = (pos) => (pos >= DECK_DEPTH ? 40 : 30 - pos);
+
+/* Weighted rather than snappy: a card leaving a stack should carry some mass,
+   and the spring is soft enough that the thrown sheet is legible on its way out
+   instead of being gone by the time the eye reaches it. The fade runs on its
+   own clock so the card is still visibly travelling as it goes. */
+const deckTransition = {
+  default: { type: 'spring', stiffness: 200, damping: 28, mass: 1 },
+  opacity: { duration: 0.38, ease: 'easeOut' },
+};
+
+/* The contents settle in only when a card reaches the front — behind the front
+   sheet they sit at rest, invisible under an opaque card, so nothing is
+   wasted. Staged, not simultaneous: the result slip posts first, the quote
+   resolves behind it, the record line lands last. */
+const innerVariants = {
+  rest: {},
+  live: { transition: { staggerChildren: 0.07, delayChildren: 0.1 } },
 };
 
 /* The figure is posted, not faded in: it wipes up from under its own baseline
    the way a printed result appears on a board. */
 const figVariants = {
-  enter: { opacity: 0, y: 14, clipPath: 'inset(0 0 100% 0)' },
-  center: {
+  rest: { opacity: 0, y: 12, clipPath: 'inset(0 0 100% 0)' },
+  live: {
     opacity: 1,
     y: 0,
     clipPath: 'inset(0 0 0% 0)',
-    transition: { duration: 0.6, ease: EASE },
+    transition: { duration: 0.55, ease: EASE },
   },
 };
 
-/* The quote resolves out of a blur as its words rise — fast enough to read as
-   one wave rather than a typewriter, so it never fights the card's travel. */
+/* The quote resolves out of a blur rather than sliding — the card is already
+   travelling, and a second horizontal move inside it would fight the deck. */
 const quoteVariants = {
-  enter: { opacity: 0, filter: 'blur(5px)' },
-  center: {
+  rest: { opacity: 0, y: 10, filter: 'blur(6px)' },
+  live: {
     opacity: 1,
+    y: 0,
     filter: 'blur(0px)',
-    transition: { duration: 0.5, ease: EASE, staggerChildren: 0.009 },
+    transition: { duration: 0.55, ease: EASE },
   },
-};
-
-const wordVariants = {
-  enter: { opacity: 0, y: '0.4em' },
-  center: { opacity: 1, y: 0, transition: { duration: 0.42, ease: EASE } },
 };
 
 const recordVariants = {
-  enter: { opacity: 0, y: 10 },
-  center: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE, delay: 0.12 } },
+  rest: { opacity: 0, y: 12 },
+  live: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE } },
 };
 
 /* The page colour-codes every taxonomy it has — announcement categories, metal
@@ -142,65 +170,23 @@ const monogram = (firm) =>
     .map((w) => w[0].toUpperCase())
     .join('');
 
-/* Shared by the live card and by the invisible sizer underneath it, so the two
-   can never drift apart and mis-measure the card's height. */
-const EntryBody = ({ e, animate }) => (
-  <>
-    <div className="tst-body">
-      {/* The result slip: the figure the quote earned, on its own tinted panel
-          rather than floating in the gutter — the card reads as two materials,
-          and the panel carries the left of the card at any quote length. */}
-      <motion.div className="tst-fig" variants={animate ? figVariants : undefined}>
-        <span className="tst-fig-num">{e.figure}</span>
-        <span className="tst-fig-label">{e.figureLabel}</span>
-        <span className="tst-fig-note">{e.note}</span>
-      </motion.div>
-
-      <motion.blockquote className="tst-quote" variants={animate ? quoteVariants : undefined}>
-        <span className="tst-quote-mark" aria-hidden="true">&ldquo;</span>
-        {e.quote.split(' ').map((word, w) => (
-          <motion.span className="tst-word" key={w} variants={animate ? wordVariants : undefined}>
-            {word + ' '}
-          </motion.span>
-        ))}
-      </motion.blockquote>
-    </div>
-
-    {/* Two columns matching the body above it, so the seal sits under the slip
-        and the name starts on the quote's own left edge. */}
-    <motion.div className="tst-record" variants={animate ? recordVariants : undefined}>
-      <span className="tst-seal" aria-hidden="true">{monogram(e.firm)}</span>
-      <span className="tst-rec-main">
-        <span className="tst-rec-who">
-          <span className="tst-rec-name">{e.name}</span>
-          <span className="tst-rec-role">
-            {e.role}, {e.firm}
-          </span>
-        </span>
-        <span className="tst-rec-place">{e.city}</span>
-        <span className="tst-rec-side">{e.side}</span>
-      </span>
-    </motion.div>
-  </>
-);
+const stateClass = (pos) => {
+  if (pos === 0) return 'is-front';
+  if (pos < DECK_DEPTH) return `is-behind is-behind-${pos}`;
+  return 'is-offstage';
+};
 
 export const TestimonialsSection = () => {
   const reduce = useReducedMotion();
-  const [[index, direction], setState] = useState([0, 1]);
+  const count = entries.length;
+  const [index, setIndex] = useState(0);
 
-  // No timer and no dwell bar: the card moves only when the reader moves it,
-  // with the arrows or by dragging.
-  const go = useCallback((next, dir) => {
-    setState(([current]) => {
-      const target = (next + entries.length) % entries.length;
-      if (target === current) return [current, dir];
-      // Wrapping 4 → 0 should still read as "forward", so trust the caller's
-      // direction when it gives one and only fall back to index order.
-      return [target, dir ?? (target > current ? 1 : -1)];
-    });
-  }, []);
-
-  const active = entries[index];
+  // No timer and no dwell bar: the deck moves only when the reader moves it —
+  // with the arrows, by dragging the top card, or by tapping one behind it.
+  const go = useCallback(
+    (next) => setIndex(((next % count) + count) % count),
+    [count],
+  );
 
   return (
     <section className="testimonials-section">
@@ -219,13 +205,13 @@ export const TestimonialsSection = () => {
 
           <div className="tst-nav">
             <span className="tst-count" aria-hidden="true">
-              {pad2(index + 1)} <span className="tst-count-sep">/</span> {pad2(entries.length)}
+              {pad2(index + 1)} <span className="tst-count-sep">/</span> {pad2(count)}
             </span>
             <button
               type="button"
               className="tst-nav-btn"
               aria-label="Previous testimonial"
-              onClick={() => go(index - 1, -1)}
+              onClick={() => go(index - 1)}
             >
               <ChevronLeft size={18} />
             </button>
@@ -233,54 +219,110 @@ export const TestimonialsSection = () => {
               type="button"
               className="tst-nav-btn"
               aria-label="Next testimonial"
-              onClick={() => go(index + 1, 1)}
+              onClick={() => go(index + 1)}
             >
               <ChevronRight size={18} />
             </button>
           </div>
         </header>
 
-        <div className="tst-board">
-          <div className="tst-card">
-            {/* Invisible, but it is what fixes the card's height: all five
-                entries stacked in one cell, so the card is always as tall as
-                the longest quote and the page never jumps mid-carousel. */}
-            <div className="tst-sizer" aria-hidden="true">
-              {entries.map((e) => (
-                <div className="tst-sizer-entry" key={e.name}>
-                  <EntryBody e={e} animate={false} />
-                </div>
-              ))}
-            </div>
+        {/* Every entry stays mounted, all five in the same grid cell, each one
+            stretched to the cell — so the deck is as tall as the longest quote,
+            every sheet in it is exactly the same size, and the page cannot jump
+            as cards cycle. The old invisible sizer existed to do that job for a
+            single swapping slide; the stack does it for free. */}
+        <div
+          className="tst-deck"
+          role="group"
+          aria-roledescription="carousel"
+          aria-label="Customer testimonials"
+        >
+          {entries.map((e, i) => {
+            const pos = (i - index + count) % count;
+            const front = pos === 0;
+            const target = reduce
+              ? { opacity: front ? 1 : 0 }
+              : deckTarget(pos);
 
-            {/* Default sync mode, not popLayout: both slides already occupy
-                the same grid cell, so they overlap correctly without framer
-                pulling the outgoing one out of flow and shrink-wrapping it. */}
-            <AnimatePresence initial={false} custom={direction}>
+            return (
               <motion.article
-                className={`tst-slide is-${active.side.toLowerCase()}`}
-                key={index}
-                custom={direction}
-                variants={reduce ? undefined : cardVariants}
-                initial={reduce ? false : 'enter'}
-                animate={reduce ? undefined : 'center'}
-                exit={reduce ? undefined : 'exit'}
-                aria-live="off"
+                key={e.name}
+                className={`tst-card is-${e.side.toLowerCase()} ${stateClass(pos)}`}
+                style={{ zIndex: reduce ? (front ? 30 : 1) : deckLayer(pos) }}
+                initial={false}
+                animate={target}
+                transition={reduce ? { duration: 0.2 } : deckTransition}
                 aria-roledescription="slide"
-                aria-label={`${index + 1} of ${entries.length}: ${active.name}, ${active.firm}`}
-                drag={reduce ? false : 'x'}
+                aria-hidden={!front}
+                aria-label={`${i + 1} of ${count}: ${e.name}, ${e.firm}`}
+                /* Only the top sheet is draggable, and only the two visible
+                   behind it are clickable — a card at opacity 0 must never
+                   catch a pointer. */
+                drag={front && !reduce ? 'x' : false}
                 dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.14}
+                dragElastic={0.55}
                 onDragEnd={(_, info) => {
-                  if (info.offset.x < -SWIPE_THRESHOLD) go(index + 1, 1);
-                  else if (info.offset.x > SWIPE_THRESHOLD) go(index - 1, -1);
+                  if (info.offset.x < -SWIPE_THRESHOLD) go(index + 1);
+                  else if (info.offset.x > SWIPE_THRESHOLD) go(index - 1);
                 }}
+                onClick={front ? undefined : () => pos < DECK_DEPTH && go(i)}
               >
-                <EntryBody e={active} animate={!reduce} />
+                {/* The tone bar reads the taxonomy before the chip does, and it
+                    is the one part of the card that is never covered — it sits
+                    on the top edge, which is the edge the deck leaves clear. */}
+                <span className="tst-card-tone" aria-hidden="true" />
+
+                <motion.div
+                  className="tst-card-inner"
+                  variants={innerVariants}
+                  initial={false}
+                  animate={front || reduce ? 'live' : 'rest'}
+                >
+                  <div className="tst-body">
+                    {/* The result slip: the figure the quote earned, on its own
+                        tinted panel rather than floating in the gutter — the
+                        card reads as two materials, and the panel carries the
+                        left of the card at any quote length. */}
+                    <motion.div className="tst-fig" variants={figVariants}>
+                      <span className="tst-fig-num">{e.figure}</span>
+                      <span className="tst-fig-label">{e.figureLabel}</span>
+                      <span className="tst-fig-note">{e.note}</span>
+                    </motion.div>
+
+                    <motion.blockquote className="tst-quote" variants={quoteVariants}>
+                      <span className="tst-quote-mark" aria-hidden="true">&ldquo;</span>
+                      {e.quote}
+                    </motion.blockquote>
+                  </div>
+
+                  {/* Two columns matching the body above it, so the seal sits
+                      under the slip and the name starts on the quote's own left
+                      edge. */}
+                  <motion.div className="tst-record" variants={recordVariants}>
+                    <span className="tst-seal" aria-hidden="true">{monogram(e.firm)}</span>
+                    <span className="tst-rec-main">
+                      <span className="tst-rec-who">
+                        <span className="tst-rec-name">{e.name}</span>
+                        <span className="tst-rec-role">
+                          {e.role}, {e.firm}
+                        </span>
+                      </span>
+                      <span className="tst-rec-place">{e.city}</span>
+                      <span className="tst-rec-side">{e.side}</span>
+                    </span>
+                  </motion.div>
+                </motion.div>
               </motion.article>
-            </AnimatePresence>
-          </div>
+            );
+          })}
         </div>
+
+        {/* The count above is decorative; this is what a screen reader hears
+            when the deck moves. */}
+        <p className="sr-only" aria-live="polite">
+          Testimonial {index + 1} of {count}: {entries[index].name},{' '}
+          {entries[index].firm}.
+        </p>
       </div>
     </section>
   );

@@ -68,7 +68,7 @@ export const AuctionCard = ({ auction, isLive = false }) => {
               className={`btn ${isLive ? 'btn-primary' : 'btn-outline-primary'} btn-sm`}
               style={{ padding: '6px 12px', fontSize: '11px', borderRadius: '999px', textDecoration: 'none' }}
             >
-              {isLive ? 'Bid' : 'View'} <ChevronRight size={14} style={{ marginLeft: '2px' }} />
+              {isLive ? 'Join' : 'View'} <ChevronRight size={14} style={{ marginLeft: '2px' }} />
             </Link>
           </motion.div>
         </div>

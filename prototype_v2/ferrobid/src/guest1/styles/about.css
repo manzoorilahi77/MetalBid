@@ -981,8 +981,8 @@
   .gov-role:hover { transform: none; }
   .gov-role-name { white-space: normal; overflow: visible; }
   .gov-role.is-active {
-    background: var(--row-accent, var(--dark));
-    border-color: var(--row-accent, var(--dark));
+    background: var(--row-accent, var(--color-ink-fixed));
+    border-color: var(--row-accent, var(--color-ink-fixed));
     color: #fff;
   }
   .gov-role.is-active .gov-role-icon {
@@ -1668,7 +1668,7 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: var(--dark);
+  background: var(--color-ink-fixed);
   color: #fff;
 }
 
@@ -1769,7 +1769,7 @@
 }
 
 .path-sell .path-btn.primary {
-  background: var(--dark);
+  background: var(--color-ink-fixed);
   box-shadow: 0 10px 22px -12px rgb(28 25 23 / 0.7);
 }
 

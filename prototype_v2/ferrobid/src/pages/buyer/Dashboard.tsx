@@ -66,7 +66,7 @@ export default function Dashboard() {
       <PageHeader
         title={`Namaste, ${me.name.split(' ')[0]}`}
         sub={`${me.firm} · ${me.city}. Here's where your money and bids stand right now.`}
-        actions={<Link to="/browse"><Button variant="steel">Browse auctions</Button></Link>}
+        actions={<Link to="/buyermarketplace"><Button variant="steel">Browse auctions</Button></Link>}
       />
 
       {/* ------------------------------ Stat row ----------------------------- */}
@@ -157,17 +157,17 @@ export default function Dashboard() {
         )}
       </section>
 
-      {/* -------------------------- My live catalogues ------------------------ */}
+      {/* ----------------------- My shortlisted catalogues -------------------- */}
       <section className="mt-8">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="font-display text-lg font-bold">My live catalogues</h2>
+          <h2 className="font-display text-lg font-bold">My shortlisted catalogues</h2>
           <Link to="/buyer/shortlist" className="text-sm font-semibold text-steel hover:underline">Shortlist & EMD →</Link>
         </div>
         {myCatalogues.length === 0 ? (
           <EmptyState
             title="No live catalogues with your shortlist"
             body="Shortlist lots in a live auction and they'll show up here for quick access."
-            action={<Link to="/browse"><Button variant="secondary">Browse auctions</Button></Link>}
+            action={<Link to="/buyermarketplace"><Button variant="secondary">Browse auctions</Button></Link>}
           />
         ) : (
           <div className="flex gap-3 overflow-x-auto pb-2">

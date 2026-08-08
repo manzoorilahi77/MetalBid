@@ -5,8 +5,8 @@ import {
   ArrowRight, ShieldCheck, FileCheck, Activity, Lock,
   Truck, HelpCircle, MapPin, CheckCircle, SearchCode,
   Bell, BarChart2, Mail, LayoutGrid, Zap, Droplet,
-  ChevronLeft, ChevronRight, Clock, Menu,
-  ShoppingBag, Package, ClipboardCheck, Check, X, Calendar, CalendarDays
+  ChevronLeft, ChevronRight, Menu,
+  ShoppingBag, Package, ClipboardCheck, Check, X, Calendar, CalendarDays, Moon, Sun
 } from 'lucide-react';
 import indiaMapData from '@svg-maps/india';
 import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
@@ -22,11 +22,16 @@ import { IndustryInsightsSection } from './components/IndustryInsightsSection';
 import { TestimonialsSection } from './components/TestimonialsSection';
 import { AnnouncementsSection } from './components/AnnouncementsSection';
 import { WhatsAppCommunityModal } from './components/WhatsAppCommunityModal';
+import { AppComingSoonModal } from './components/AppComingSoonModal';
 import { HeroIllustration } from './components/hero/HeroIllustration';
 import { Auth } from './pages/Auth';
-import RoleSwitcher from './components/RoleSwitcher';
+import { useGuest1Theme } from './hooks/useGuest1Theme';
 import { asset } from './utils/asset';
 import './styles/auth.css';
+
+/* Master switch for the WhatsApp community modal. Off for now — the modal and
+   all its logic stay intact; flip this to `true` to bring it back. */
+const SHOW_WHATSAPP_MODAL = false;
 
 // Secondary footer pages are lazy-loaded to keep the main bundle lean.
 const ContactUs = lazy(() => import('./pages/ContactUs'));
@@ -124,15 +129,17 @@ const UpcomingAuctionCard = ({ item, i }) => {
   );
 };
 
+/* The band runs the rooms that are open right now, so each lot carries its
+   standing highest bid rather than a pre-bid EMD. */
 const tickerData = [
-  { material: 'MS Plate Offcuts (Fresh)', city: 'Mumbai', state: 'Maharashtra', emd: '₹6.20 L', qty: '11 MT', type: 'ferrous' },
-  { material: 'Mixed Aluminium Extrusion Scrap', city: 'Chennai', state: 'Tamil Nadu', emd: '₹7.20 L', qty: '5 MT', type: 'aluminium' },
-  { material: 'Heavy Melting Steel Scrap (HMS 80:20)', city: 'Raipur', state: 'Chhattisgarh', emd: '₹8.50 L', qty: '25 MT', type: 'ferrous' },
-  { material: 'Copper Cable Scrap (Millberry)', city: 'Pune', state: 'Maharashtra', emd: '₹7.23 L', qty: '1 MT', type: 'copper' },
-  { material: 'CR Coil Secondary Stock', city: 'Bhiwadi', state: 'Rajasthan', emd: '₹4.50 L', qty: '10 MT', type: 'ferrous' },
+  { material: 'MS Plate Offcuts (Fresh)', city: 'Mumbai', state: 'Maharashtra', bid: '₹6.20 L', qty: '11 MT', type: 'ferrous' },
+  { material: 'Mixed Aluminium Extrusion Scrap', city: 'Chennai', state: 'Tamil Nadu', bid: '₹7.20 L', qty: '5 MT', type: 'aluminium' },
+  { material: 'Heavy Melting Steel Scrap (HMS 80:20)', city: 'Raipur', state: 'Chhattisgarh', bid: '₹8.50 L', qty: '25 MT', type: 'ferrous' },
+  { material: 'Copper Cable Scrap (Millberry)', city: 'Pune', state: 'Maharashtra', bid: '₹7.23 L', qty: '1 MT', type: 'copper' },
+  { material: 'CR Coil Secondary Stock', city: 'Bhiwadi', state: 'Rajasthan', bid: '₹4.50 L', qty: '10 MT', type: 'ferrous' },
 ];
 
-export const Navbar = () => {
+export const Navbar = ({ theme, toggleTheme }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -173,17 +180,25 @@ export const Navbar = () => {
             <div>IP: 223.178.83.157</div>
             <div>{formatDateTime(currentTime)}</div>
           </div>
+          {/* Calendar icon moved out of the navbar — kept here (not deleted)
+              to be relocated into the buyer page nav.
           <Link to="/calendar" className="nav-icon-btn" aria-label="Calendar">
             <CalendarDays size={20} className="text-muted" />
           </Link>
+          */}
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="nav-icon-btn"
+            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {theme === 'dark' ? <Sun size={20} className="text-muted" /> : <Moon size={20} className="text-muted" />}
+          </button>
           <Link to="/#announcements" className="nav-icon-btn" aria-label="Announcements">
             <Bell size={20} className="text-muted" />
           </Link>
           <Link to="/marketplace" className="btn btn-outline nav-guest-btn" style={{ textDecoration: 'none' }}>Browse as Guest</Link>
           <Link to="/auth" className="btn btn-primary nav-login-btn" style={{ textDecoration: 'none' }}>Login / Register</Link>
-          {/* Demo control — kept in the production build too, since the deployed
-              Pages site is how reviewers walk through the other roles. */}
-          <RoleSwitcher />
         </div>
 
         <button className="mobile-menu-btn" aria-label="Toggle Menu" onClick={() => setIsMenuOpen(!isMenuOpen)}>
@@ -200,11 +215,6 @@ export const Navbar = () => {
           <div className="mobile-nav-actions">
             <Link to="/marketplace" className="btn btn-outline" style={{width: '100%', marginBottom: '10px', textDecoration: 'none'}} onClick={() => setIsMenuOpen(false)}>Browse as Guest</Link>
             <Link to="/auth" className="btn btn-primary" style={{width: '100%', textDecoration: 'none'}} onClick={() => setIsMenuOpen(false)}>Login / Register</Link>
-            {/* .nav-actions is display:none under 992px, so the switcher needs
-                its own mount here or it is unreachable on mobile. */}
-            <div className="mobile-nav-roleswitch">
-              <RoleSwitcher />
-            </div>
           </div>
         </div>
       )}
@@ -212,7 +222,10 @@ export const Navbar = () => {
   );
 };
 
-export const Footer = () => (
+export const Footer = () => {
+  const [appModalOpen, setAppModalOpen] = useState(false);
+
+  return (
   <footer className="footer">
     <div className="container">
       <div className="footer-grid">
@@ -240,7 +253,7 @@ export const Footer = () => (
           <div className="footer-col">
             <h4>Marketplace</h4>
             <ul>
-                <li><Link to="/marketplace">Browse All Lots</Link></li>
+                <li><Link to="/marketplace">Browse All Auctions</Link></li>
                 <li><Link to="/calendar">Auction Calendar</Link></li>
                 <li><Link to="/pricing">Pricing &amp; Plans</Link></li>
             </ul>
@@ -276,12 +289,12 @@ export const Footer = () => (
           <div className="footer-col">
             <h4>Download App</h4>
             <div className="app-buttons">
-                <div className="app-btn-img">
+                <button type="button" className="app-btn-img" onClick={() => setAppModalOpen(true)}>
                   <img src={asset('/badges/google-play.svg')} alt="Get it on Google Play" loading="lazy" decoding="async" />
-                </div>
-                <div className="app-btn-img">
+                </button>
+                <button type="button" className="app-btn-img" onClick={() => setAppModalOpen(true)}>
                   <img src={asset('/badges/app-store.svg')} alt="Download on the App Store" loading="lazy" decoding="async" />
-                </div>
+                </button>
             </div>
             {/* Contact icons sit under the badges. The old "Connect with us:"
                 label went with them: it was set in white-on-white and had never
@@ -302,8 +315,10 @@ export const Footer = () => (
           <span>GSTIN 27AAICF9021P1ZX · CIN U74999MH2024PTC431180</span>
       </div>
     </div>
+    <AppComingSoonModal open={appModalOpen} onClose={() => setAppModalOpen(false)} />
   </footer>
-);
+  );
+};
 
 function Home() {
   const navigate = useNavigate();
@@ -427,38 +442,58 @@ function Home() {
       </div>
 
       {/* Ticker Section — a self-contained warm band: section header on the
-          .container grid, then the full-bleed strip of moving lots, with the
-          band's own colour closing underneath it. */}
-      <section className="ticker-band" aria-labelledby="upcoming-auctions-heading">
+          .container grid, then guest2's live-activity card carrying the feed.
+          The card is guest2's markup verbatim (fixed chip + masked marquee of
+          lot pills); only the fields differ, because guest1's feed knows the
+          lot, where it is, and what it stands at — no seller, no elapsed time. */}
+      <section className="ticker-band" aria-labelledby="live-auctions-heading">
         <div className="container ticker-head">
           <div className="ticker-head-text">
-            <div className="ticker-eyebrow">
-              <Clock size={13} /> Upcoming
-            </div>
-            <h2 className="ticker-heading" id="upcoming-auctions-heading">
-              Next on the Block
-              <span className="ticker-count">{tickerData.length} lots</span>
+            <h2 className="ticker-heading" id="live-auctions-heading">
+              Live Auctions
+              <span className="ticker-count">{tickerData.length} auctions</span>
             </h2>
             <p className="ticker-desc">
-              Lots opening shortly across India. Pre-bid EMD is published up front, so you
-              can fund your shortlist and be ready before bidding starts.
+              Rooms open across India right now. Every bid lands in real time, so the
+              figure beside each lot is the number to beat before the clock closes.
             </p>
           </div>
-          <Link to="/calendar" className="ticker-head-link">
-            <CalendarDays size={13} /> Calendar <ArrowRight size={13} />
-          </Link>
         </div>
 
-        <div className="ticker-wrapper">
-          <div className="ticker-content">
-            {[...tickerData, ...tickerData, ...tickerData, ...tickerData].map((item, i) => (
-              <div className="ticker-item" key={i}>
-                <div className={`ticker-dot ${item.type}`}></div>
-                <span className="ticker-name">{item.material}</span>
-                <span className="ticker-loc">{item.city}, {item.state}</span>
-                <span className="ticker-price">EMD {item.emd}</span>
+        <div className="container">
+          <div className="rounded-2xl bg-surface border border-line p-3 overflow-hidden shadow-sm">
+            <div className="flex items-center gap-3.5">
+              {/* rounded-lg, not guest2's rounded-xl: guest1 redefines --radius-xl
+                  to 16px, which would match the card around it and flatten the
+                  nesting. 12px is the value guest2's rounded-xl resolves to. */}
+              <div className="shrink-0 flex items-center gap-2 px-3.5 py-2 rounded-lg bg-surface-2 text-[13px] font-bold uppercase tracking-wider text-ember-hover border border-line">
+                <Activity size={15} className="animate-pulse" />
+                <span>Live Activity</span>
+                <span className="text-[10px] text-ink-faint hidden sm:inline">Bidding across India</span>
               </div>
-            ))}
+
+              <div className="overflow-hidden whitespace-nowrap relative flex-1 [mask-image:linear-gradient(to_right,transparent,#000_5%,#000_95%,transparent)]">
+                {/* rendered twice back-to-back → seamless -50% loop */}
+                <div className="animate-ticker flex items-center gap-3.5 text-[13px]">
+                  {[...tickerData, ...tickerData].map((item, i) => (
+                    <div
+                      key={i}
+                      aria-hidden={i >= tickerData.length}
+                      className="flex items-center gap-2.5 shrink-0 rounded-lg border border-line bg-surface px-3.5 py-2 shadow-[0_2px_8px_-4px_rgba(0,0,0,0.12)]"
+                    >
+                      <span className={`ticker-dot ${item.type} animate-live-pulse`} />
+                      <span className="font-bold text-ink">{item.material}</span>
+                      <span className="inline-flex items-center gap-1.5 text-ink-muted">
+                        <MapPin size={13} className="text-ember shrink-0" /> {item.city}, {item.state}
+                      </span>
+                      <span className="inline-flex items-center gap-1 rounded-md bg-steel-soft text-steel-strong px-2 py-0.5 text-[11px] font-bold border border-steel/15">
+                        Bid <span className="num text-[13px] font-extrabold">{item.bid}</span>
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -475,7 +510,7 @@ function Home() {
               <h2 className="sec-title">Plan Ahead. Bid Smart.</h2>
               <p className="sec-lead">Upcoming lots across India. Register early and be ready to bid.</p>
             </div>
-            <Link to="/marketplace" className="view-all" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600, color: '#e4572e', textDecoration: 'none', background: 'rgba(228,87,46,0.08)', padding: '10px 18px', borderRadius: '24px' }}>
+            <Link to="/marketplace" className="view-all" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600, color: 'var(--primary)', textDecoration: 'none', background: 'rgba(228,87,46,0.08)', padding: '10px 18px', borderRadius: '24px' }}>
               View all auctions <ArrowRight size={16}/>
             </Link>
           </div>
@@ -501,34 +536,8 @@ function Home() {
         </div>
       </section>
 
-      {/* Big Stats */}
-      <section style={{ backgroundColor: 'var(--bg-white)', padding: 'var(--space-section-sm) 0' }}>
-        <div className="container">
-        <div className="big-stats-wrapper">
-          <div className="big-stats-grid">
-            <div className="big-stat-item">
-              <div className="big-stat-val"><AnimatedNumber end={10000} suffix="+" /></div>
-              <div className="big-stat-label">Registered Users</div>
-            </div>
-            <div className="big-stat-divider"></div>
-            <div className="big-stat-item">
-              <div className="big-stat-val"><AnimatedNumber end={2500} suffix="+" /></div>
-              <div className="big-stat-label">Active Sellers</div>
-            </div>
-            <div className="big-stat-divider"></div>
-            <div className="big-stat-item">
-              <div className="big-stat-val"><AnimatedNumber end={500} prefix="₹" suffix=" Cr+" /></div>
-              <div className="big-stat-label">Traded Since Launch</div>
-            </div>
-            <div className="big-stat-divider"></div>
-            <div className="big-stat-item">
-              <div className="big-stat-val"><AnimatedNumber end={25} suffix="+" /></div>
-              <div className="big-stat-label">States Covered</div>
-            </div>
-          </div>
-        </div>
-        </div>
-      </section>
+      {/* How It Works Section */}
+      <HowItWorksSection />
 
       {/* Pricing Section */}
       <section style={{ backgroundColor: 'var(--bg-orange-alt)', padding: 'var(--space-section) 0', position: 'relative', overflow: 'hidden' }}>
@@ -570,7 +579,7 @@ function Home() {
           >
             <MotionDiv
               style={{
-                background: 'linear-gradient(145deg, #ffffff, var(--color-surface-2))',
+                background: 'linear-gradient(145deg, var(--color-surface), var(--color-surface-2))',
                 padding: '40px', borderRadius: '16px',
                 boxShadow: '0 18px 40px -16px rgba(28,25,23,0.14), 0 4px 12px -4px rgba(28,25,23,0.05)',
                 border: '1px solid rgba(228, 87, 46, 0.15)',
@@ -581,10 +590,10 @@ function Home() {
             >
               <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '60%', height: '4px', background: 'var(--primary)', borderBottomLeftRadius: '4px', borderBottomRightRadius: '4px' }}></div>
               
-              <p style={{ color: '#6b6560', fontSize: '13px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 'var(--track-label)', marginBottom: '8px' }}>Starting at</p>
+              <p style={{ color: 'var(--text-muted)', fontSize: '13px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 'var(--track-label)', marginBottom: '8px' }}>Starting at</p>
               <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '28px' }}>
                 <span style={{ fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums', fontSize: '56px', fontWeight: 700, color: 'var(--primary)', lineHeight: 1, letterSpacing: '-1.5px', textShadow: '0 2px 4px rgba(228, 87, 46,0.1)' }}>₹2,999</span>
-                <span style={{ color: '#6b6560', fontSize: '14px', marginLeft: '6px', fontWeight: 600 }}>/mo</span>
+                <span style={{ color: 'var(--text-muted)', fontSize: '14px', marginLeft: '6px', fontWeight: 600 }}>/mo</span>
               </div>
               <div style={{ height: '1px', background: 'linear-gradient(90deg, rgba(228, 87, 46,0.2) 0%, transparent 100%)', marginBottom: '24px' }}></div>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -599,7 +608,7 @@ function Home() {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.4 + i * 0.08 }}
-                    style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#1c1917', fontSize: '14px', fontWeight: 500 }}
+                    style={{ display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--dark)', fontSize: '14px', fontWeight: 500 }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '24px', height: '24px', borderRadius: '50%', background: 'rgba(228, 87, 46,0.1)', color: 'var(--primary)' }}>
                       <Check size={14} strokeWidth={3} />
@@ -613,16 +622,13 @@ function Home() {
         </div>
       </section>
 
-      {/* How It Works Section */}
-      <HowItWorksSection />
-
       {/* Why Choose FerroBid */}
       <WhyChooseSection />
 
       {/* Trust Section */}
       <section className="trust-section">
         <div className="container">
-          <div className="sec-head is-center">
+          <div className="sec-head">
             <p className="sec-eyebrow">Trusted By Thousands</p>
             <h2 className="sec-title">
               Why thousands trust <span style={{ color: 'var(--primary)' }}>FerroBid</span>
@@ -686,7 +692,7 @@ function Home() {
       </div>
 
       {/* WhatsApp community opt-in — appears ~2.5s after the homepage settles */}
-      <WhatsAppCommunityModal />
+      {SHOW_WHATSAPP_MODAL && <WhatsAppCommunityModal />}
     </>
   );
 }
@@ -694,6 +700,10 @@ function Home() {
 const App = () => {
   const location = useLocation();
   const isAuthPage = location.pathname === '/auth';
+  // Called here (not just inside Navbar) so the data-theme attribute is set
+  // on mount even on pages that hide the shared Navbar, like /auth below —
+  // otherwise a visitor landing there directly never gets dark mode applied.
+  const themeState = useGuest1Theme();
 
   useEffect(() => {
     if (location.hash) {
@@ -712,7 +722,7 @@ const App = () => {
   return (
     <MotionConfig reducedMotion="user">
     <div className="app-wrapper">
-      {!isAuthPage && <Navbar />}
+      {!isAuthPage && <Navbar theme={themeState.theme} toggleTheme={themeState.toggleTheme} />}
       <main>
       <Suspense fallback={<div className="route-loader" aria-busy="true"><span className="route-loader-spinner" /></div>}>
       <Routes>
