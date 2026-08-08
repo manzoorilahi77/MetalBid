@@ -176,6 +176,9 @@ interface State {
   submitInspection: (lotId: string, report: Omit<InspectionReport, 'id' | 'lotId' | 'date'>, outcome: 'verified' | 'flagged' | 'rejected') => void
   setLotStatus: (lotId: string, status: LotStatus) => void
   publishCatalogue: (cat: Catalogue, lotIds: string[], overrides: Record<string, Partial<Lot>>) => void
+  assignCatalogue: (catalogueId: string, fieldExecId: string) => void
+  waiveInspection: (lotId: string, managerId: string, reason: string) => void
+  publishDraftCatalogue: (catalogueId: string, mode: 'now' | 'schedule') => { ok: boolean; error?: string }
   pauseCatalogue: (catalogueId: string) => void
   resumeCatalogue: (catalogueId: string) => void
   extendCatalogue: (catalogueId: string, minutes: number) => void
@@ -785,6 +788,7 @@ export const useStore = create<State>((set, get) => {
     },
 
     publishCatalogue: (cat, lotIds, overrides) => {
+      const isDraft = cat.status === 'draft'
       set((st) => ({
         catalogues: [...st.catalogues, { ...cat, lotIds }],
         lots: st.lots.map((l) => {
@@ -793,13 +797,72 @@ export const useStore = create<State>((set, get) => {
           return {
             ...l, ...overrides[l.id], catalogueId: cat.id,
             lotNo: `LOT-${String(idx + 1).padStart(2, '0')}`,
-            status: cat.status === 'live' ? 'live' as LotStatus : 'approved' as LotStatus,
-            endsAt: cat.endsAt,
+            status: cat.status === 'live' ? 'live' as LotStatus : isDraft ? 'pending_inspection' as LotStatus : 'approved' as LotStatus,
+            endsAt: isDraft ? l.endsAt : cat.endsAt,
           }
         }),
       }))
-      get().audit('catalogue.publish', cat.code, `Published "${cat.title}" with ${lotIds.length} lots`, 'info')
+      get().audit(
+        isDraft ? 'catalogue.assign' : 'catalogue.publish',
+        cat.code,
+        isDraft ? `Assembled "${cat.title}" with ${lotIds.length} lots — assigned for field inspection` : `Published "${cat.title}" with ${lotIds.length} lots`,
+        'info',
+      )
+      if (!isDraft) {
+        get().notify({ userId: null, kind: 'lifecycle', title: `New catalogue ${cat.code}`, body: cat.title, href: `/catalogue/${cat.id}` })
+      }
+    },
+
+    assignCatalogue: (catalogueId, fieldExecId) => {
+      set((st) => ({
+        catalogues: st.catalogues.map((c) => (c.id === catalogueId ? { ...c, assignedFieldExecId: fieldExecId } : c)),
+      }))
+      const cat = get().catalogues.find((c) => c.id === catalogueId)
+      const exec = get().users.find((u) => u.id === fieldExecId)
+      get().audit('catalogue.assign', cat?.code ?? catalogueId, `Assigned to ${exec?.name ?? fieldExecId} for field inspection`)
+    },
+
+    waiveInspection: (lotId, managerId, reason) => {
+      const lot = get().lots.find((l) => l.id === lotId)
+      set((st) => ({
+        lots: st.lots.map((l) =>
+          l.id === lotId
+            ? { ...l, status: 'approved' as LotStatus, inspectionWaived: true, waivedBy: managerId, waivedReason: reason, waivedAt: new Date(st.now).toISOString() }
+            : l,
+        ),
+      }))
+      get().audit('inspection.waive', lot?.lotNo ?? lotId, `Inspection waived — known seller${reason ? `: ${reason}` : ''}`)
+    },
+
+    publishDraftCatalogue: (catalogueId, mode) => {
+      const s = get()
+      const cat = s.catalogues.find((c) => c.id === catalogueId)
+      if (!cat) return { ok: false, error: 'Catalogue not found' }
+      const catLots = s.lots.filter((l) => l.catalogueId === catalogueId)
+      const unresolved = catLots.filter((l) => l.status !== 'approved')
+      if (unresolved.length > 0) {
+        return { ok: false, error: `${unresolved.length} lot${unresolved.length > 1 ? 's' : ''} still need${unresolved.length > 1 ? '' : 's'} approval` }
+      }
+      const nowMs = s.now
+      let endsAt = Date.parse(cat.endsAt)
+      if (mode === 'now' && endsAt <= nowMs) endsAt = nowMs + 3 * 3600_000
+      const status = mode === 'now' ? ('live' as const) : ('upcoming' as const)
+      const endsAtIso = new Date(endsAt).toISOString()
+      set((st) => ({
+        catalogues: st.catalogues.map((c) =>
+          c.id === catalogueId
+            ? { ...c, status, startsAt: new Date(mode === 'now' ? nowMs : Date.parse(c.startsAt)).toISOString(), endsAt: endsAtIso }
+            : c,
+        ),
+        lots: st.lots.map((l) =>
+          l.catalogueId === catalogueId
+            ? { ...l, status: status === 'live' ? ('live' as LotStatus) : ('approved' as LotStatus), endsAt: endsAtIso }
+            : l,
+        ),
+      }))
+      get().audit('catalogue.publish', cat.code, `Published "${cat.title}" with ${catLots.length} lots`, 'info')
       get().notify({ userId: null, kind: 'lifecycle', title: `New catalogue ${cat.code}`, body: cat.title, href: `/catalogue/${cat.id}` })
+      return { ok: true }
     },
 
     pauseCatalogue: (catalogueId) => {
