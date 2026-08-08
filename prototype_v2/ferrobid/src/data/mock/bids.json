@@ -1,46 +1,56 @@
 [
   {
     "id": "bid-0001",
+    "lotId": "lot-001",
+    "catalogueId": "cat-1",
+    "bidderId": "u-buyer-2",
+    "rate": 29750,
+    "at": "2026-07-16T04:22:00.000Z",
+    "type": "auto",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0002",
+    "lotId": "lot-001",
+    "catalogueId": "cat-1",
+    "bidderId": "u-buyer-6",
+    "rate": 30050,
+    "at": "2026-07-16T05:45:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0003",
     "lotId": "lot-002",
     "catalogueId": "cat-1",
-    "bidderId": "u-buyer-5",
+    "bidderId": "u-buyer-1",
     "rate": 26100,
     "at": "2026-07-16T04:22:00.000Z",
     "type": "manual",
     "status": "valid"
   },
   {
-    "id": "bid-0002",
-    "lotId": "lot-003",
-    "catalogueId": "cat-1",
-    "bidderId": "u-buyer-2",
-    "rate": 23000,
-    "at": "2026-07-16T04:22:00.000Z",
-    "type": "manual",
-    "status": "valid"
-  },
-  {
-    "id": "bid-0003",
-    "lotId": "lot-003",
+    "id": "bid-0004",
+    "lotId": "lot-002",
     "catalogueId": "cat-1",
     "bidderId": "u-buyer-1",
-    "rate": 23300,
-    "at": "2026-07-16T05:17:20.000Z",
+    "rate": 26250,
+    "at": "2026-07-16T05:45:00.000Z",
     "type": "manual",
-    "status": "valid"
-  },
-  {
-    "id": "bid-0004",
-    "lotId": "lot-003",
-    "catalogueId": "cat-1",
-    "bidderId": "u-buyer-5",
-    "rate": 23500,
-    "at": "2026-07-16T06:12:40.000Z",
-    "type": "auto",
     "status": "valid"
   },
   {
     "id": "bid-0005",
+    "lotId": "lot-003",
+    "catalogueId": "cat-1",
+    "bidderId": "u-buyer-3",
+    "rate": 23100,
+    "at": "2026-07-16T04:22:00.000Z",
+    "type": "auto",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0006",
     "lotId": "lot-004",
     "catalogueId": "cat-1",
     "bidderId": "u-buyer-5",
@@ -50,7 +60,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0006",
+    "id": "bid-0007",
     "lotId": "lot-005",
     "catalogueId": "cat-1",
     "bidderId": "u-buyer-1",
@@ -60,7 +70,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0007",
+    "id": "bid-0008",
     "lotId": "lot-006",
     "catalogueId": "cat-1",
     "bidderId": "u-buyer-5",
@@ -70,7 +80,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0008",
+    "id": "bid-0009",
     "lotId": "lot-006",
     "catalogueId": "cat-1",
     "bidderId": "u-buyer-6",
@@ -80,7 +90,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0009",
+    "id": "bid-0010",
     "lotId": "lot-007",
     "catalogueId": "cat-1",
     "bidderId": "u-buyer-2",
@@ -90,7 +100,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0010",
+    "id": "bid-0011",
     "lotId": "lot-008",
     "catalogueId": "cat-1",
     "bidderId": "u-buyer-3",
@@ -100,7 +110,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0011",
+    "id": "bid-0012",
     "lotId": "lot-008",
     "catalogueId": "cat-1",
     "bidderId": "u-buyer-2",
@@ -110,7 +120,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0012",
+    "id": "bid-0013",
     "lotId": "lot-008",
     "catalogueId": "cat-1",
     "bidderId": "u-buyer-7",
@@ -120,7 +130,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0013",
+    "id": "bid-0014",
     "lotId": "lot-009",
     "catalogueId": "cat-1",
     "bidderId": "u-buyer-2",
@@ -130,7 +140,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0014",
+    "id": "bid-0015",
     "lotId": "lot-009",
     "catalogueId": "cat-1",
     "bidderId": "u-buyer-7",
@@ -140,7 +150,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0015",
+    "id": "bid-0016",
     "lotId": "lot-010",
     "catalogueId": "cat-1",
     "bidderId": "u-buyer-2",
@@ -150,7 +160,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0016",
+    "id": "bid-0017",
     "lotId": "lot-011",
     "catalogueId": "cat-1",
     "bidderId": "u-buyer-3",
@@ -160,7 +170,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0017",
+    "id": "bid-0018",
     "lotId": "lot-011",
     "catalogueId": "cat-1",
     "bidderId": "u-buyer-1",
@@ -170,7 +180,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0018",
+    "id": "bid-0019",
     "lotId": "lot-013",
     "catalogueId": "cat-1",
     "bidderId": "u-buyer-7",
@@ -180,7 +190,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0019",
+    "id": "bid-0020",
     "lotId": "lot-013",
     "catalogueId": "cat-1",
     "bidderId": "u-buyer-1",
@@ -190,7 +200,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0020",
+    "id": "bid-0021",
     "lotId": "lot-014",
     "catalogueId": "cat-1",
     "bidderId": "u-buyer-2",
@@ -200,7 +210,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0021",
+    "id": "bid-0022",
     "lotId": "lot-014",
     "catalogueId": "cat-1",
     "bidderId": "u-buyer-3",
@@ -210,7 +220,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0022",
+    "id": "bid-0023",
     "lotId": "lot-014",
     "catalogueId": "cat-1",
     "bidderId": "u-buyer-3",
@@ -220,7 +230,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0023",
+    "id": "bid-0024",
     "lotId": "lot-015",
     "catalogueId": "cat-1",
     "bidderId": "u-buyer-3",
@@ -230,7 +240,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0024",
+    "id": "bid-0025",
     "lotId": "lot-016",
     "catalogueId": "cat-1",
     "bidderId": "u-buyer-3",
@@ -240,7 +250,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0025",
+    "id": "bid-0026",
     "lotId": "lot-017",
     "catalogueId": "cat-1",
     "bidderId": "u-buyer-6",
@@ -250,7 +260,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0026",
+    "id": "bid-0027",
     "lotId": "lot-017",
     "catalogueId": "cat-1",
     "bidderId": "u-buyer-2",
@@ -260,7 +270,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0027",
+    "id": "bid-0028",
     "lotId": "lot-018",
     "catalogueId": "cat-1",
     "bidderId": "u-buyer-2",
@@ -270,7 +280,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0028",
+    "id": "bid-0029",
     "lotId": "lot-018",
     "catalogueId": "cat-1",
     "bidderId": "u-buyer-2",
@@ -280,7 +290,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0029",
+    "id": "bid-0030",
     "lotId": "lot-019",
     "catalogueId": "cat-2",
     "bidderId": "u-buyer-6",
@@ -290,7 +300,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0030",
+    "id": "bid-0031",
     "lotId": "lot-019",
     "catalogueId": "cat-2",
     "bidderId": "u-buyer-2",
@@ -300,7 +310,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0031",
+    "id": "bid-0032",
     "lotId": "lot-020",
     "catalogueId": "cat-2",
     "bidderId": "u-buyer-2",
@@ -310,7 +320,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0032",
+    "id": "bid-0033",
     "lotId": "lot-020",
     "catalogueId": "cat-2",
     "bidderId": "u-buyer-3",
@@ -320,7 +330,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0033",
+    "id": "bid-0034",
     "lotId": "lot-020",
     "catalogueId": "cat-2",
     "bidderId": "u-buyer-2",
@@ -330,7 +340,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0034",
+    "id": "bid-0035",
     "lotId": "lot-021",
     "catalogueId": "cat-2",
     "bidderId": "u-buyer-5",
@@ -340,7 +350,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0035",
+    "id": "bid-0036",
     "lotId": "lot-022",
     "catalogueId": "cat-2",
     "bidderId": "u-buyer-7",
@@ -350,7 +360,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0036",
+    "id": "bid-0037",
     "lotId": "lot-023",
     "catalogueId": "cat-2",
     "bidderId": "u-buyer-7",
@@ -360,7 +370,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0037",
+    "id": "bid-0038",
     "lotId": "lot-025",
     "catalogueId": "cat-2",
     "bidderId": "u-buyer-6",
@@ -370,7 +380,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0038",
+    "id": "bid-0039",
     "lotId": "lot-025",
     "catalogueId": "cat-2",
     "bidderId": "u-buyer-6",
@@ -380,7 +390,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0039",
+    "id": "bid-0040",
     "lotId": "lot-026",
     "catalogueId": "cat-2",
     "bidderId": "u-buyer-2",
@@ -390,7 +400,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0040",
+    "id": "bid-0041",
     "lotId": "lot-026",
     "catalogueId": "cat-2",
     "bidderId": "u-buyer-3",
@@ -400,7 +410,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0041",
+    "id": "bid-0042",
     "lotId": "lot-027",
     "catalogueId": "cat-2",
     "bidderId": "u-buyer-2",
@@ -410,7 +420,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0042",
+    "id": "bid-0043",
     "lotId": "lot-027",
     "catalogueId": "cat-2",
     "bidderId": "u-buyer-2",
@@ -420,7 +430,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0043",
+    "id": "bid-0044",
     "lotId": "lot-027",
     "catalogueId": "cat-2",
     "bidderId": "u-buyer-3",
@@ -430,7 +440,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0044",
+    "id": "bid-0045",
     "lotId": "lot-028",
     "catalogueId": "cat-2",
     "bidderId": "u-buyer-7",
@@ -440,7 +450,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0045",
+    "id": "bid-0046",
     "lotId": "lot-028",
     "catalogueId": "cat-2",
     "bidderId": "u-buyer-6",
@@ -450,7 +460,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0046",
+    "id": "bid-0047",
     "lotId": "lot-029",
     "catalogueId": "cat-2",
     "bidderId": "u-buyer-5",
@@ -460,7 +470,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0047",
+    "id": "bid-0048",
     "lotId": "lot-031",
     "catalogueId": "cat-2",
     "bidderId": "u-buyer-3",
@@ -470,7 +480,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0048",
+    "id": "bid-0049",
     "lotId": "lot-033",
     "catalogueId": "cat-3",
     "bidderId": "u-buyer-5",
@@ -480,7 +490,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0049",
+    "id": "bid-0050",
     "lotId": "lot-033",
     "catalogueId": "cat-3",
     "bidderId": "u-buyer-6",
@@ -490,7 +500,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0050",
+    "id": "bid-0051",
     "lotId": "lot-034",
     "catalogueId": "cat-3",
     "bidderId": "u-buyer-6",
@@ -500,7 +510,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0051",
+    "id": "bid-0052",
     "lotId": "lot-035",
     "catalogueId": "cat-3",
     "bidderId": "u-buyer-7",
@@ -510,7 +520,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0052",
+    "id": "bid-0053",
     "lotId": "lot-036",
     "catalogueId": "cat-3",
     "bidderId": "u-buyer-3",
@@ -520,7 +530,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0053",
+    "id": "bid-0054",
     "lotId": "lot-036",
     "catalogueId": "cat-3",
     "bidderId": "u-buyer-3",
@@ -530,7 +540,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0054",
+    "id": "bid-0055",
     "lotId": "lot-037",
     "catalogueId": "cat-3",
     "bidderId": "u-buyer-7",
@@ -540,7 +550,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0055",
+    "id": "bid-0056",
     "lotId": "lot-037",
     "catalogueId": "cat-3",
     "bidderId": "u-buyer-7",
@@ -550,7 +560,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0056",
+    "id": "bid-0057",
     "lotId": "lot-039",
     "catalogueId": "cat-3",
     "bidderId": "u-buyer-7",
@@ -560,7 +570,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0057",
+    "id": "bid-0058",
     "lotId": "lot-039",
     "catalogueId": "cat-3",
     "bidderId": "u-buyer-2",
@@ -570,7 +580,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0058",
+    "id": "bid-0059",
     "lotId": "lot-040",
     "catalogueId": "cat-3",
     "bidderId": "u-buyer-2",
@@ -580,7 +590,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0059",
+    "id": "bid-0060",
     "lotId": "lot-040",
     "catalogueId": "cat-3",
     "bidderId": "u-buyer-6",
@@ -590,7 +600,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0060",
+    "id": "bid-0061",
     "lotId": "lot-040",
     "catalogueId": "cat-3",
     "bidderId": "u-buyer-3",
@@ -600,7 +610,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0061",
+    "id": "bid-0062",
     "lotId": "lot-041",
     "catalogueId": "cat-3",
     "bidderId": "u-buyer-3",
@@ -610,7 +620,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0062",
+    "id": "bid-0063",
     "lotId": "lot-041",
     "catalogueId": "cat-3",
     "bidderId": "u-buyer-3",
@@ -620,7 +630,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0063",
+    "id": "bid-0064",
     "lotId": "lot-041",
     "catalogueId": "cat-3",
     "bidderId": "u-buyer-6",
@@ -630,7 +640,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0064",
+    "id": "bid-0065",
     "lotId": "lot-042",
     "catalogueId": "cat-3",
     "bidderId": "u-buyer-7",
@@ -640,7 +650,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0065",
+    "id": "bid-0066",
     "lotId": "lot-043",
     "catalogueId": "cat-3",
     "bidderId": "u-buyer-7",
@@ -650,7 +660,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0066",
+    "id": "bid-0067",
     "lotId": "lot-044",
     "catalogueId": "cat-3",
     "bidderId": "u-buyer-7",
@@ -660,7 +670,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0067",
+    "id": "bid-0068",
     "lotId": "lot-071",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-3",
@@ -670,7 +680,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0068",
+    "id": "bid-0069",
     "lotId": "lot-071",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-1",
@@ -680,7 +690,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0069",
+    "id": "bid-0070",
     "lotId": "lot-071",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-7",
@@ -690,7 +700,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0070",
+    "id": "bid-0071",
     "lotId": "lot-071",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-5",
@@ -700,7 +710,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0071",
+    "id": "bid-0072",
     "lotId": "lot-071",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-3",
@@ -710,7 +720,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0072",
+    "id": "bid-0073",
     "lotId": "lot-071",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-3",
@@ -720,7 +730,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0073",
+    "id": "bid-0074",
     "lotId": "lot-072",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-2",
@@ -730,7 +740,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0074",
+    "id": "bid-0075",
     "lotId": "lot-072",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-3",
@@ -740,7 +750,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0075",
+    "id": "bid-0076",
     "lotId": "lot-072",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-3",
@@ -750,7 +760,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0076",
+    "id": "bid-0077",
     "lotId": "lot-072",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-3",
@@ -760,7 +770,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0077",
+    "id": "bid-0078",
     "lotId": "lot-072",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-1",
@@ -770,7 +780,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0078",
+    "id": "bid-0079",
     "lotId": "lot-073",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-2",
@@ -780,7 +790,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0079",
+    "id": "bid-0080",
     "lotId": "lot-073",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-6",
@@ -790,7 +800,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0080",
+    "id": "bid-0081",
     "lotId": "lot-073",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-2",
@@ -800,7 +810,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0081",
+    "id": "bid-0082",
     "lotId": "lot-073",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-1",
@@ -810,7 +820,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0082",
+    "id": "bid-0083",
     "lotId": "lot-073",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-1",
@@ -820,7 +830,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0083",
+    "id": "bid-0084",
     "lotId": "lot-073",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-7",
@@ -830,7 +840,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0084",
+    "id": "bid-0085",
     "lotId": "lot-074",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-2",
@@ -840,7 +850,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0085",
+    "id": "bid-0086",
     "lotId": "lot-074",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-6",
@@ -850,7 +860,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0086",
+    "id": "bid-0087",
     "lotId": "lot-074",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-1",
@@ -860,7 +870,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0087",
+    "id": "bid-0088",
     "lotId": "lot-074",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-1",
@@ -870,7 +880,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0088",
+    "id": "bid-0089",
     "lotId": "lot-074",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-7",
@@ -880,7 +890,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0089",
+    "id": "bid-0090",
     "lotId": "lot-074",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-7",
@@ -890,7 +900,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0090",
+    "id": "bid-0091",
     "lotId": "lot-074",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-5",
@@ -900,7 +910,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0091",
+    "id": "bid-0092",
     "lotId": "lot-075",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-3",
@@ -910,7 +920,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0092",
+    "id": "bid-0093",
     "lotId": "lot-075",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-5",
@@ -920,7 +930,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0093",
+    "id": "bid-0094",
     "lotId": "lot-075",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-2",
@@ -930,7 +940,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0094",
+    "id": "bid-0095",
     "lotId": "lot-075",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-5",
@@ -940,7 +950,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0095",
+    "id": "bid-0096",
     "lotId": "lot-075",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-7",
@@ -950,7 +960,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0096",
+    "id": "bid-0097",
     "lotId": "lot-076",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-3",
@@ -960,7 +970,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0097",
+    "id": "bid-0098",
     "lotId": "lot-076",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-3",
@@ -970,7 +980,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0098",
+    "id": "bid-0099",
     "lotId": "lot-076",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-3",
@@ -980,7 +990,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0099",
+    "id": "bid-0100",
     "lotId": "lot-076",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-2",
@@ -990,7 +1000,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0100",
+    "id": "bid-0101",
     "lotId": "lot-076",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-2",
@@ -1000,7 +1010,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0101",
+    "id": "bid-0102",
     "lotId": "lot-077",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-7",
@@ -1010,7 +1020,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0102",
+    "id": "bid-0103",
     "lotId": "lot-077",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-2",
@@ -1020,7 +1030,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0103",
+    "id": "bid-0104",
     "lotId": "lot-077",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-6",
@@ -1030,7 +1040,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0104",
+    "id": "bid-0105",
     "lotId": "lot-077",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-2",
@@ -1040,7 +1050,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0105",
+    "id": "bid-0106",
     "lotId": "lot-077",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-2",
@@ -1050,7 +1060,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0106",
+    "id": "bid-0107",
     "lotId": "lot-077",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-3",
@@ -1060,7 +1070,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0107",
+    "id": "bid-0108",
     "lotId": "lot-078",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-1",
@@ -1070,7 +1080,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0108",
+    "id": "bid-0109",
     "lotId": "lot-078",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-5",
@@ -1080,7 +1090,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0109",
+    "id": "bid-0110",
     "lotId": "lot-078",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-1",
@@ -1090,7 +1100,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0110",
+    "id": "bid-0111",
     "lotId": "lot-079",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-3",
@@ -1100,7 +1110,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0111",
+    "id": "bid-0112",
     "lotId": "lot-079",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-7",
@@ -1110,7 +1120,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0112",
+    "id": "bid-0113",
     "lotId": "lot-079",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-5",
@@ -1120,7 +1130,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0113",
+    "id": "bid-0114",
     "lotId": "lot-080",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-1",
@@ -1130,7 +1140,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0114",
+    "id": "bid-0115",
     "lotId": "lot-080",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-3",
@@ -1140,7 +1150,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0115",
+    "id": "bid-0116",
     "lotId": "lot-080",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-1",
@@ -1150,7 +1160,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0116",
+    "id": "bid-0117",
     "lotId": "lot-080",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-7",
@@ -1160,7 +1170,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0117",
+    "id": "bid-0118",
     "lotId": "lot-080",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-7",
@@ -1170,7 +1180,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0118",
+    "id": "bid-0119",
     "lotId": "lot-081",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-1",
@@ -1180,7 +1190,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0119",
+    "id": "bid-0120",
     "lotId": "lot-081",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-6",
@@ -1190,7 +1200,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0120",
+    "id": "bid-0121",
     "lotId": "lot-081",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-6",
@@ -1200,7 +1210,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0121",
+    "id": "bid-0122",
     "lotId": "lot-081",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-1",
@@ -1210,7 +1220,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0122",
+    "id": "bid-0123",
     "lotId": "lot-081",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-3",
@@ -1220,7 +1230,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0123",
+    "id": "bid-0124",
     "lotId": "lot-082",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-2",
@@ -1230,7 +1240,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0124",
+    "id": "bid-0125",
     "lotId": "lot-082",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-5",
@@ -1240,7 +1250,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0125",
+    "id": "bid-0126",
     "lotId": "lot-082",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-2",
@@ -1250,7 +1260,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0126",
+    "id": "bid-0127",
     "lotId": "lot-082",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-2",
@@ -1260,7 +1270,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0127",
+    "id": "bid-0128",
     "lotId": "lot-082",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-6",
@@ -1270,7 +1280,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0128",
+    "id": "bid-0129",
     "lotId": "lot-082",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-2",
@@ -1280,7 +1290,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0129",
+    "id": "bid-0130",
     "lotId": "lot-083",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-5",
@@ -1290,7 +1300,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0130",
+    "id": "bid-0131",
     "lotId": "lot-083",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-3",
@@ -1300,7 +1310,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0131",
+    "id": "bid-0132",
     "lotId": "lot-083",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-3",
@@ -1310,7 +1320,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0132",
+    "id": "bid-0133",
     "lotId": "lot-083",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-5",
@@ -1320,7 +1330,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0133",
+    "id": "bid-0134",
     "lotId": "lot-083",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-3",
@@ -1330,7 +1340,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0134",
+    "id": "bid-0135",
     "lotId": "lot-083",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-2",
@@ -1340,7 +1350,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0135",
+    "id": "bid-0136",
     "lotId": "lot-083",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-3",
@@ -1350,7 +1360,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0136",
+    "id": "bid-0137",
     "lotId": "lot-084",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-7",
@@ -1360,7 +1370,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0137",
+    "id": "bid-0138",
     "lotId": "lot-084",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-7",
@@ -1370,7 +1380,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0138",
+    "id": "bid-0139",
     "lotId": "lot-084",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-7",
@@ -1380,7 +1390,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0139",
+    "id": "bid-0140",
     "lotId": "lot-085",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-7",
@@ -1390,7 +1400,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0140",
+    "id": "bid-0141",
     "lotId": "lot-085",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-3",
@@ -1400,7 +1410,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0141",
+    "id": "bid-0142",
     "lotId": "lot-085",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-6",
@@ -1410,7 +1420,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0142",
+    "id": "bid-0143",
     "lotId": "lot-085",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-7",
@@ -1420,7 +1430,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0143",
+    "id": "bid-0144",
     "lotId": "lot-085",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-5",
@@ -1430,7 +1440,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0144",
+    "id": "bid-0145",
     "lotId": "lot-086",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-3",
@@ -1440,7 +1450,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0145",
+    "id": "bid-0146",
     "lotId": "lot-086",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-5",
@@ -1450,7 +1460,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0146",
+    "id": "bid-0147",
     "lotId": "lot-086",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-5",
@@ -1460,7 +1470,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0147",
+    "id": "bid-0148",
     "lotId": "lot-086",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-3",
@@ -1470,7 +1480,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0148",
+    "id": "bid-0149",
     "lotId": "lot-086",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-5",
@@ -1480,7 +1490,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0149",
+    "id": "bid-0150",
     "lotId": "lot-086",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-5",
@@ -1490,7 +1500,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0150",
+    "id": "bid-0151",
     "lotId": "lot-086",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-7",
@@ -1500,7 +1510,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0151",
+    "id": "bid-0152",
     "lotId": "lot-087",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-7",
@@ -1510,7 +1520,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0152",
+    "id": "bid-0153",
     "lotId": "lot-087",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-2",
@@ -1520,7 +1530,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0153",
+    "id": "bid-0154",
     "lotId": "lot-087",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-7",
@@ -1530,7 +1540,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0154",
+    "id": "bid-0155",
     "lotId": "lot-087",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-2",
@@ -1540,7 +1550,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0155",
+    "id": "bid-0156",
     "lotId": "lot-087",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-6",
@@ -1550,7 +1560,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0156",
+    "id": "bid-0157",
     "lotId": "lot-087",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-2",
@@ -1560,7 +1570,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0157",
+    "id": "bid-0158",
     "lotId": "lot-087",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-5",
@@ -1570,7 +1580,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0158",
+    "id": "bid-0159",
     "lotId": "lot-088",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-3",
@@ -1580,7 +1590,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0159",
+    "id": "bid-0160",
     "lotId": "lot-088",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-7",
@@ -1590,7 +1600,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0160",
+    "id": "bid-0161",
     "lotId": "lot-088",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-5",
@@ -1600,7 +1610,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0161",
+    "id": "bid-0162",
     "lotId": "lot-089",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-6",
@@ -1610,7 +1620,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0162",
+    "id": "bid-0163",
     "lotId": "lot-089",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-5",
@@ -1620,7 +1630,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0163",
+    "id": "bid-0164",
     "lotId": "lot-089",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-2",
@@ -1630,7 +1640,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0164",
+    "id": "bid-0165",
     "lotId": "lot-089",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-2",
@@ -1640,7 +1650,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0165",
+    "id": "bid-0166",
     "lotId": "lot-089",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-3",
@@ -1650,7 +1660,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0166",
+    "id": "bid-0167",
     "lotId": "lot-090",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-6",
@@ -1660,7 +1670,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0167",
+    "id": "bid-0168",
     "lotId": "lot-090",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-2",
@@ -1670,7 +1680,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0168",
+    "id": "bid-0169",
     "lotId": "lot-090",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-6",
@@ -1680,7 +1690,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0169",
+    "id": "bid-0170",
     "lotId": "lot-090",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-3",
@@ -1690,7 +1700,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0170",
+    "id": "bid-0171",
     "lotId": "lot-090",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-5",
@@ -1700,7 +1710,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0171",
+    "id": "bid-0172",
     "lotId": "lot-090",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-7",
@@ -1710,7 +1720,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0172",
+    "id": "bid-0173",
     "lotId": "lot-090",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-5",
@@ -1720,7 +1730,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0173",
+    "id": "bid-0174",
     "lotId": "lot-090",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-6",
@@ -1730,7 +1740,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0174",
+    "id": "bid-0175",
     "lotId": "lot-091",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-2",
@@ -1740,7 +1750,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0175",
+    "id": "bid-0176",
     "lotId": "lot-091",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-2",
@@ -1750,7 +1760,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0176",
+    "id": "bid-0177",
     "lotId": "lot-091",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-6",
@@ -1760,7 +1770,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0177",
+    "id": "bid-0178",
     "lotId": "lot-091",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-6",
@@ -1770,7 +1780,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0178",
+    "id": "bid-0179",
     "lotId": "lot-091",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-5",
@@ -1780,7 +1790,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0179",
+    "id": "bid-0180",
     "lotId": "lot-091",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-5",
@@ -1790,7 +1800,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0180",
+    "id": "bid-0181",
     "lotId": "lot-091",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-3",
@@ -1800,7 +1810,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0181",
+    "id": "bid-0182",
     "lotId": "lot-092",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-6",
@@ -1810,7 +1820,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0182",
+    "id": "bid-0183",
     "lotId": "lot-092",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-6",
@@ -1820,7 +1830,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0183",
+    "id": "bid-0184",
     "lotId": "lot-092",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-5",
@@ -1830,7 +1840,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0184",
+    "id": "bid-0185",
     "lotId": "lot-092",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-7",
@@ -1840,7 +1850,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0185",
+    "id": "bid-0186",
     "lotId": "lot-092",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-6",
@@ -1850,7 +1860,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0186",
+    "id": "bid-0187",
     "lotId": "lot-092",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-2",
@@ -1860,7 +1870,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0187",
+    "id": "bid-0188",
     "lotId": "lot-092",
     "catalogueId": "cat-7",
     "bidderId": "u-buyer-5",
@@ -1870,32 +1880,22 @@
     "status": "valid"
   },
   {
-    "id": "bid-0188",
-    "lotId": "lot-001",
-    "catalogueId": "cat-1",
-    "bidderId": "u-buyer-6",
-    "rate": 29450,
-    "at": "2026-07-16T06:21:00.000Z",
-    "type": "manual",
-    "status": "valid"
-  },
-  {
     "id": "bid-0189",
     "lotId": "lot-001",
     "catalogueId": "cat-1",
-    "bidderId": "u-buyer-1",
-    "rate": 29600,
-    "at": "2026-07-16T06:27:00.000Z",
+    "bidderId": "u-buyer-6",
+    "rate": 30200,
+    "at": "2026-07-16T06:21:00.000Z",
     "type": "manual",
     "status": "valid"
   },
   {
     "id": "bid-0190",
-    "lotId": "lot-002",
+    "lotId": "lot-001",
     "catalogueId": "cat-1",
     "bidderId": "u-buyer-1",
-    "rate": 26250,
-    "at": "2026-07-16T06:21:00.000Z",
+    "rate": 30350,
+    "at": "2026-07-16T06:27:00.000Z",
     "type": "manual",
     "status": "valid"
   },
@@ -1903,14 +1903,24 @@
     "id": "bid-0191",
     "lotId": "lot-002",
     "catalogueId": "cat-1",
-    "bidderId": "u-buyer-6",
+    "bidderId": "u-buyer-1",
     "rate": 26400,
-    "at": "2026-07-16T06:27:00.000Z",
+    "at": "2026-07-16T06:21:00.000Z",
     "type": "manual",
     "status": "valid"
   },
   {
     "id": "bid-0192",
+    "lotId": "lot-002",
+    "catalogueId": "cat-1",
+    "bidderId": "u-buyer-6",
+    "rate": 26550,
+    "at": "2026-07-16T06:27:00.000Z",
+    "type": "manual",
+    "status": "valid"
+  },
+  {
+    "id": "bid-0193",
     "lotId": "lot-071",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-1",
@@ -1920,7 +1930,7 @@
     "status": "valid"
   },
   {
-    "id": "bid-0193",
+    "id": "bid-0194",
     "lotId": "lot-072",
     "catalogueId": "cat-6",
     "bidderId": "u-buyer-1",

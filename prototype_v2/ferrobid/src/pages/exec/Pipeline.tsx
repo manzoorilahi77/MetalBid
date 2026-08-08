@@ -50,11 +50,10 @@ export default function Pipeline() {
           </div>
         )
       case 'approved':
-        return (
-          <Link to="/exec/catalogue-builder" className="block">
-            <Button size="sm" variant="steel" className="w-full">Add to catalogue</Button>
-          </Link>
-        )
+        // Under the catalogue-before-inspection lifecycle, a lot only reaches
+        // 'approved' after already being catalogued (or via waiver on an
+        // already-catalogue-eligible lot) — there's nothing actionable here.
+        return null
       case 'live':
         return l.catalogueId ? (
           <Link to={`/catalogue/${l.catalogueId}`} className="block">

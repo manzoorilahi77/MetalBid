@@ -3230,113 +3230,11 @@
     "status": "verified"
   },
   {
-    "id": "ir-104",
-    "lotId": "lot-104",
-    "inspectorId": "u-field-1",
-    "date": "2026-07-14T18:38:00.000Z",
-    "measuredQty": 182.44,
-    "uom": "MT",
-    "condition": "good",
-    "notes": "Verified at source yard. Ready for cataloguing.",
-    "checklist": [
-      {
-        "item": "Material matches declared grade",
-        "ok": true
-      },
-      {
-        "item": "Quantity verified (visual/weighment)",
-        "ok": true
-      },
-      {
-        "item": "No hazardous contamination",
-        "ok": true
-      },
-      {
-        "item": "Loading access available",
-        "ok": true
-      },
-      {
-        "item": "Photos captured",
-        "ok": true
-      }
-    ],
-    "photoCount": 3,
-    "status": "verified"
-  },
-  {
-    "id": "ir-105",
-    "lotId": "lot-105",
-    "inspectorId": "u-field-1",
-    "date": "2026-07-14T18:45:00.000Z",
-    "measuredQty": 92.17,
-    "uom": "MT",
-    "condition": "good",
-    "notes": "Verified at source yard. Ready for cataloguing.",
-    "checklist": [
-      {
-        "item": "Material matches declared grade",
-        "ok": true
-      },
-      {
-        "item": "Quantity verified (visual/weighment)",
-        "ok": true
-      },
-      {
-        "item": "No hazardous contamination",
-        "ok": true
-      },
-      {
-        "item": "Loading access available",
-        "ok": true
-      },
-      {
-        "item": "Photos captured",
-        "ok": true
-      }
-    ],
-    "photoCount": 3,
-    "status": "verified"
-  },
-  {
-    "id": "ir-106",
-    "lotId": "lot-106",
-    "inspectorId": "u-field-1",
-    "date": "2026-07-14T18:52:00.000Z",
-    "measuredQty": 3062.08,
-    "uom": "MT",
-    "condition": "good",
-    "notes": "Verified at source yard. Ready for cataloguing.",
-    "checklist": [
-      {
-        "item": "Material matches declared grade",
-        "ok": true
-      },
-      {
-        "item": "Quantity verified (visual/weighment)",
-        "ok": true
-      },
-      {
-        "item": "No hazardous contamination",
-        "ok": true
-      },
-      {
-        "item": "Loading access available",
-        "ok": true
-      },
-      {
-        "item": "Photos captured",
-        "ok": true
-      }
-    ],
-    "photoCount": 3,
-    "status": "verified"
-  },
-  {
     "id": "ir-107",
     "lotId": "lot-107",
     "inspectorId": "u-field-1",
     "date": "2026-07-14T18:59:00.000Z",
-    "measuredQty": 3,
+    "measuredQty": 3.04,
     "uom": "PCS",
     "condition": "mixed",
     "notes": "Ownership papers do not match yard register — escalated to manager.",
@@ -3370,7 +3268,7 @@
     "lotId": "lot-108",
     "inspectorId": "u-field-1",
     "date": "2026-07-14T19:06:00.000Z",
-    "measuredQty": 1844.76,
+    "measuredQty": 1746.39,
     "uom": "KG",
     "condition": "good",
     "notes": "Verified at source yard. Ready for cataloguing.",

@@ -195,9 +195,9 @@ const pipelineDefs = [
   ['inspected', 'u-seller-3', 'MS', 'scrap', 'Point & Crossing Scrap', 'MT', 28800, 65, 'Released points and crossings, manganese steel portions included'],
   ['inspected', 'u-seller-6', 'Copper', 'scrap', 'Cu Radiators', 'KG', 445, 2600, 'Copper-brass radiators, drained, no iron attachments'],
   ['inspected', 'u-seller-2', 'SS 304', 'scrap', '304 Skeleton Scrap', 'KG', 96, 8400, 'SS 304 punching skeletons, coiled, baled at source'],
-  ['approved', 'u-seller-4', 'Ferro Alloys', 'ferro-alloys', 'FeMn Slag', 'MT', 14500, 180, 'Ferro manganese slag, metal recovery grade, ex-dump'],
-  ['approved', 'u-seller-1', 'CI', 'melting-products', 'CI Moulds', 'MT', 23800, 95, 'Rejected CI ingot moulds, cracked, avg 4 MT per piece'],
-  ['approved', 'u-seller-5', 'Minerals', 'minerals', 'Bottom Ash', 'MT', 310, 3200, 'Bottom ash ex-dyke, self-loading, moisture ≤ 20 %'],
+  ['pending_inspection', 'u-seller-4', 'Ferro Alloys', 'ferro-alloys', 'FeMn Slag', 'MT', 14500, 180, 'Ferro manganese slag, metal recovery grade, ex-dump'],
+  ['pending_inspection', 'u-seller-1', 'CI', 'melting-products', 'CI Moulds', 'MT', 23800, 95, 'Rejected CI ingot moulds, cracked, avg 4 MT per piece'],
+  ['pending_inspection', 'u-seller-5', 'Minerals', 'minerals', 'Bottom Ash', 'MT', 310, 3200, 'Bottom ash ex-dyke, self-loading, moisture ≤ 20 %'],
   ['flagged', 'u-seller-3', 'Assets', 'assets', 'Condemned Cranes', 'PCS', 240000, 3, 'Condemned yard cranes — ownership document mismatch, on hold'],
   ['rejected', 'u-seller-6', 'Brass', 'scrap', 'Mixed Brass', 'KG', 372, 1800, 'Mixed brass scrap — rejected: radioactive source scan pending'],
 ]
