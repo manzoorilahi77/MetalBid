@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react'
 import { HashRouter, Outlet, Route, Routes, useLocation } from 'react-router-dom'
 import Chrome, { NAV_BY_ROLE, Page, SubNav } from './layout/Chrome'
+import ScrollToTop from './layout/ScrollToTop'
 import type { Role } from './types'
 import { ToastHost } from './components/ui'
 import { useTick } from './lib/useTick'
@@ -182,6 +183,10 @@ export default function App() {
   return (
     <HashRouter>
       <Engine />
+      {/* Must sit inside the router — it reads useLocation(). Without it nothing
+          resets the offset on navigation and a link clicked from a page footer
+          lands you at the bottom of the next page. */}
+      <ScrollToTop />
       <ToastHost />
       <Routes>
         <Route element={<Chrome />}>

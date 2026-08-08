@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Check } from 'lucide-react';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
+import { asset } from '../utils/asset';
 import { fireConfetti } from '../../lib/confetti';
 
 /* ==========================================================================
@@ -167,7 +168,7 @@ export const WhatsAppCommunityModal = () => {
             {/* Chat header */}
             <div className="wa-head">
               <div className="wa-head-avatar">
-                <img src="/image.png" alt="FerroBid" />
+                <img src={asset('/image.png')} alt="FerroBid" />
               </div>
               <div className="wa-head-meta">
                 <div className="wa-head-name">FerroBid Alerts</div>

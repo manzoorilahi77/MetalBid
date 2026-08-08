@@ -1,10 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { asset } from '../utils/asset';
 
 const reasons = [
-  { img: '/transparent.jfif', title: 'Transparent Auctions' },
-  { img: '/ai.jfif', title: 'AI Fraud Detection' },
-  { img: '/global.jfif', title: 'Pan-India Enterprise Network' },
+  { img: asset('/transparent.jfif'), title: 'Transparent Auctions' },
+  { img: asset('/ai.jfif'), title: 'AI Fraud Detection' },
+  { img: asset('/global.jfif'), title: 'Pan-India Enterprise Network' },
 ];
 
 export const WhyChooseSection = () => (

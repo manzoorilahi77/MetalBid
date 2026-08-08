@@ -8,6 +8,7 @@ import {
   Award, Users, Zap, ShoppingBag, Package, ClipboardCheck, BarChart3, Crown
 } from 'lucide-react';
 import { useStore, ROLE_HOME, ROLE_LABEL, DEMO_LOGINS, DEMO_PASSWORD } from '../../store/store';
+import { asset } from '../utils/asset';
 
 /* Quick demo sign-in — one click fills + submits the matching demo account so
    every role's portal is reachable straight from this page without anyone
@@ -406,7 +407,7 @@ export const Auth = () => {
         <div className="auth-right-inner">
           {/* Logo */}
           <Link to="/" className="auth-logo-link">
-            <img src="/logo.png" alt="FerroBid Logo" className="auth-logo-img" />
+            <img src={asset('/logo.png')} alt="FerroBid Logo" className="auth-logo-img" />
           </Link>
 
           {/* Success Message */}

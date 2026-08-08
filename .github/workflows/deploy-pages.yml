@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: prototype_v1/ferrobid
+        working-directory: prototype_v2/ferrobid
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,7 +30,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: prototype_v1/ferrobid/package-lock.json
+          cache-dependency-path: prototype_v2/ferrobid/package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -44,7 +44,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: prototype_v1/ferrobid/dist
+          path: prototype_v2/ferrobid/dist
 
   deploy:
     needs: build

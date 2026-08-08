@@ -2,6 +2,7 @@ import React from 'react';
 import { Clock, MapPin, Building2, ChevronRight, Lock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { asset } from '../utils/asset';
 
 export const AuctionCard = ({ auction, isLive = false }) => {
   return (
@@ -14,7 +15,7 @@ export const AuctionCard = ({ auction, isLive = false }) => {
       transition={{ duration: 0.4, ease: "easeOut" }}
     >
       <div className="auction-card-image-wrap">
-        <img src={auction.img || '/hero.jpg'} alt={auction.material} className="auction-card-bg-img" />
+        <img src={auction.img || asset('/hero.jpg')} alt={auction.material} className="auction-card-bg-img" />
         <div className="auction-card-img-overlay"></div>
         
         {isLive ? (
