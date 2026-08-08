@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Newspaper, ChevronRight, ArrowUpRight, Clock } from 'lucide-react';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
+import { asset } from '../utils/asset';
 
 /* Magazine layout: one large image-led featured story and a ranked headline
    list beside it — mirrors the guest2 "News & Insights" section so both
@@ -24,7 +25,7 @@ const insights = [
     source: 'NMDC Ltd.',
     date: '23 Jul 2026',
     time: '2h ago',
-    img: '/images/auction_steel_coils.png',
+    img: asset('/images/auction_steel_coils.png'),
   },
   {
     tone: 'steel',
@@ -33,7 +34,7 @@ const insights = [
     source: 'Ministry of Steel',
     date: '23 Jul 2026',
     time: '3h ago',
-    img: '/images/hero_steel_mill.png',
+    img: asset('/images/hero_steel_mill.png'),
   },
   {
     tone: 'warning',
@@ -42,7 +43,7 @@ const insights = [
     source: 'Coal India Ltd.',
     date: '23 Jul 2026',
     time: '6h ago',
-    img: '/images/auction_cat_excavator.png',
+    img: asset('/images/auction_cat_excavator.png'),
   },
   {
     tone: 'success',
@@ -51,7 +52,7 @@ const insights = [
     source: 'SAIL',
     date: '23 Jul 2026',
     time: '8h ago',
-    img: '/images/auction_copper_cathodes.png',
+    img: asset('/images/auction_copper_cathodes.png'),
   },
   {
     tone: 'steel',
@@ -60,7 +61,7 @@ const insights = [
     source: 'JSW Steel',
     date: '23 Jul 2026',
     time: '14h ago',
-    img: '/images/tile_steel.jpg',
+    img: asset('/images/tile_steel.jpg'),
   },
 ];
 

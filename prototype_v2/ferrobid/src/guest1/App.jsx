@@ -22,6 +22,7 @@ import { IndustryInsightsSection } from './components/IndustryInsightsSection';
 import { TestimonialsSection } from './components/TestimonialsSection';
 import { AnnouncementsSection } from './components/AnnouncementsSection';
 import { WhatsAppCommunityModal } from './components/WhatsAppCommunityModal';
+import { AppComingSoonModal } from './components/AppComingSoonModal';
 import { HeroIllustration } from './components/hero/HeroIllustration';
 import { Auth } from './pages/Auth';
 import { useGuest1Theme } from './hooks/useGuest1Theme';
@@ -221,7 +222,10 @@ export const Navbar = ({ theme, toggleTheme }) => {
   );
 };
 
-export const Footer = () => (
+export const Footer = () => {
+  const [appModalOpen, setAppModalOpen] = useState(false);
+
+  return (
   <footer className="footer">
     <div className="container">
       <div className="footer-grid">
@@ -285,12 +289,12 @@ export const Footer = () => (
           <div className="footer-col">
             <h4>Download App</h4>
             <div className="app-buttons">
-                <div className="app-btn-img">
+                <button type="button" className="app-btn-img" onClick={() => setAppModalOpen(true)}>
                   <img src={asset('/badges/google-play.svg')} alt="Get it on Google Play" loading="lazy" decoding="async" />
-                </div>
-                <div className="app-btn-img">
+                </button>
+                <button type="button" className="app-btn-img" onClick={() => setAppModalOpen(true)}>
                   <img src={asset('/badges/app-store.svg')} alt="Download on the App Store" loading="lazy" decoding="async" />
-                </div>
+                </button>
             </div>
             {/* Contact icons sit under the badges. The old "Connect with us:"
                 label went with them: it was set in white-on-white and had never
@@ -311,8 +315,10 @@ export const Footer = () => (
           <span>GSTIN 27AAICF9021P1ZX · CIN U74999MH2024PTC431180</span>
       </div>
     </div>
+    <AppComingSoonModal open={appModalOpen} onClose={() => setAppModalOpen(false)} />
   </footer>
-);
+  );
+};
 
 function Home() {
   const navigate = useNavigate();

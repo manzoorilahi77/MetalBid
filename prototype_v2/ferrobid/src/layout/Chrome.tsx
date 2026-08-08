@@ -11,7 +11,7 @@ import {
 import { ROLE_HOME, ROLE_LABEL, useStore } from '../store/store'
 import { inrCompact, relTime } from '../lib/format'
 import { useClientIp } from '../lib/useClientIp'
-import { Avatar, Chip, cx } from '../components/ui'
+import { AppComingSoonModal, Avatar, Chip, cx } from '../components/ui'
 import type { Role } from '../types'
 
 /** A single source of truth per role: which nav item(s) appear on the top
@@ -433,6 +433,7 @@ function DefaultFooter() {
 function HomeFooter() {
   const col = 'space-y-2 text-sm text-ink-muted'
   const h = 'text-xs font-bold uppercase tracking-wider text-ink-faint mb-3'
+  const [appModalOpen, setAppModalOpen] = useState(false)
   return (
     <footer className="border-t border-line mt-16 bg-surface">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-8">
@@ -478,9 +479,15 @@ function HomeFooter() {
         </div>
         <div>
           <div className={h}>Download App</div>
-          <div className="flex flex-col gap-2">
-            <img src="/badges/google-play.svg" alt="Get it on Google Play" className="h-9 w-auto" />
-            <img src="/badges/app-store.svg" alt="Download on the App Store" className="h-9 w-auto" />
+          <div className="flex flex-wrap gap-2">
+            {/* Vite doesn't rewrite string-literal src paths, so public/ assets
+                need BASE_URL or they 404 when served from a sub-path (GitHub Pages). */}
+            <button type="button" onClick={() => setAppModalOpen(true)} aria-label="Get it on Google Play" className="p-0 border-0 bg-transparent leading-none cursor-pointer rounded-lg transition-opacity hover:opacity-80">
+              <img src={`${import.meta.env.BASE_URL}badges/google-play.svg`} alt="" className="h-6 w-auto" />
+            </button>
+            <button type="button" onClick={() => setAppModalOpen(true)} aria-label="Download on the App Store" className="p-0 border-0 bg-transparent leading-none cursor-pointer rounded-lg transition-opacity hover:opacity-80">
+              <img src={`${import.meta.env.BASE_URL}badges/app-store.svg`} alt="" className="h-6 w-auto" />
+            </button>
           </div>
           <div className="flex items-center gap-3 mt-4 text-ink-faint">
             <a href="mailto:contact@ferrobid.in" aria-label="Email" className="hover:text-ink"><Mail size={16} /></a>
@@ -495,6 +502,7 @@ function HomeFooter() {
         </div>
       </div>
       <FooterBottom />
+      <AppComingSoonModal open={appModalOpen} onClose={() => setAppModalOpen(false)} />
     </footer>
   )
 }

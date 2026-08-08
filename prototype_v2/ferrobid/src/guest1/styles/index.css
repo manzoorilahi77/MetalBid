@@ -1833,6 +1833,9 @@ ul {
    "Google Pla". They now hold their size and wrap to a second line instead. */
 .app-btn-img {
   flex: none;
+  -webkit-appearance: none;
+  appearance: none;
+  font: inherit;
   background: black;
   border: 1px solid #333;
   border-radius: 6px;
@@ -4672,4 +4675,183 @@ ul {
 
 @media (max-width: 420px) {
   .wa-card { width: calc(100vw - 32px); }
+}
+
+/* ==========================================================================
+   "App launching soon" modal — opens from either Download App badge in the
+   footer. On-brand ember accent, one-shot "notify me" capture with a soft
+   success state (prototype only, no backend).
+   ========================================================================== */
+.soon-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background:
+    radial-gradient(130% 120% at 50% 50%,
+      rgba(18, 15, 13, 0.3) 0%,
+      rgba(18, 15, 13, 0.46) 55%,
+      rgba(12, 10, 9, 0.58) 100%);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+.soon-card {
+  position: relative;
+  width: min(400px, calc(100vw - 40px));
+  border-radius: 20px;
+  overflow: hidden;
+  outline: none;
+  background: #fff;
+  padding: 32px 28px 26px;
+  text-align: center;
+  box-shadow:
+    0 2px 8px -2px rgba(24, 20, 16, 0.16),
+    0 30px 60px -18px rgba(24, 20, 16, 0.4);
+  will-change: transform, opacity;
+}
+
+.soon-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-line);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+.soon-close:hover { background: var(--color-line-strong); color: var(--dark); }
+
+.soon-icon {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 18px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+  box-shadow: 0 10px 24px -8px color-mix(in srgb, var(--primary) 65%, transparent);
+}
+
+.soon-title {
+  font-family: var(--font-heading);
+  font-size: 21px;
+  font-weight: 700;
+  color: var(--dark);
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+}
+
+.soon-desc {
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--text-muted);
+  max-width: 320px;
+  margin: 0 auto 20px;
+}
+
+.soon-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+.soon-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 44px;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1.5px solid var(--color-line);
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  color: var(--dark);
+  background: #fff;
+  transition: border-color 0.18s;
+}
+.soon-input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+.soon-cta {
+  flex: none;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  font-weight: 700;
+  background: var(--primary);
+  box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--primary) 70%, transparent);
+  transition: background 0.18s, box-shadow 0.18s, transform 0.12s;
+  white-space: nowrap;
+}
+.soon-cta:hover { background: var(--primary-hover); }
+.soon-cta:active { transform: scale(0.97); }
+.soon-cta:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--primary) 35%, transparent);
+  outline-offset: 2px;
+}
+
+.soon-done {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  margin-bottom: 22px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--color-success) 14%, transparent);
+  color: var(--color-success);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+}
+.soon-done-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--color-success);
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.soon-badges {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding-top: 18px;
+  border-top: 1px solid var(--color-line);
+}
+.soon-badges img {
+  height: 30px;
+  opacity: 0.55;
+  filter: grayscale(0.3);
+}
+
+@media (max-width: 420px) {
+  .soon-card { width: calc(100vw - 32px); padding: 28px 20px 22px; }
+  .soon-form { flex-direction: column; }
+  .soon-cta { width: 100%; justify-content: center; }
 }
