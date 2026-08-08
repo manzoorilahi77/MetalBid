@@ -58,7 +58,7 @@ export default function AuctionDetail() {
   const [payOpen, setPayOpen] = useState(false)
   const [slotBooked, setSlotBooked] = useState(false)
 
-  const cat = catalogues.find((c) => c.id === id)
+  const cat = catalogues.find((c) => c.id === id && c.status !== 'draft')
   if (!cat) {
     return <Page><EmptyState title="Catalogue not found" body="It may have been removed in this demo session." action={<Link to="/browse"><Button variant="secondary">Back to browse</Button></Link>} /></Page>
   }

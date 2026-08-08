@@ -53,6 +53,7 @@ export default function Browse() {
   /* non-tab filters (search, category, region, seller, EMD) — applied before
      tab split so tab counts reflect the filtered universe */
   const matchesFilters = (cat: Catalogue): boolean => {
+    if (cat.status === 'draft') return false
     const catLots = lots.filter((l) => l.catalogueId === cat.id)
     if (q.trim()) {
       const needle = q.trim().toLowerCase()
