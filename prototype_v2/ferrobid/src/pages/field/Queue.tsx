@@ -1,21 +1,23 @@
-/* Field executive — inspection queue (mobile-first). */
+/* Field executive — inspection queue: catalogues assigned to me (mobile-first). */
 import { Link } from 'react-router-dom'
 import { ClipboardCheck, MapPin } from 'lucide-react'
 import { Page } from '../../layout/Chrome'
-import { Button, Chip, EmptyState, PhotoThumb, StatusChip } from '../../components/ui'
+import { Chip, EmptyState, StatusChip } from '../../components/ui'
 import { useStore } from '../../store/store'
-import { num, relTime } from '../../lib/format'
+import { fmtDate, num, relTime } from '../../lib/format'
 import { useNow } from '../../lib/useTick'
 
 export default function FieldQueue() {
   const now = useNow()
   const me = useStore((s) => s.currentUser)
+  const catalogues = useStore((s) => s.catalogues)
   const lots = useStore((s) => s.lots)
+  const users = useStore((s) => s.users)
   const reports = useStore((s) => s.inspectionReports)
 
-  const queue = lots.filter((l) => l.status === 'pending_inspection')
+  const myCatalogues = catalogues.filter((c) => c.status === 'draft' && c.assignedFieldExecId === me?.id)
   const myReports = reports
-    .filter((r) => r.inspectorId === me?.id || r.inspectorId === 'u-field-1')
+    .filter((r) => r.inspectorId === me?.id)
     .sort((a, b) => Date.parse(b.date) - Date.parse(a.date))
   const done = myReports
     .map((r) => ({ r, lot: lots.find((l) => l.id === r.lotId) }))
@@ -27,35 +29,37 @@ export default function FieldQueue() {
       <div className="flex items-end justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold">Inspection queue</h1>
-          <p className="text-sm text-ink-muted mt-1">{me?.name ?? 'Field executive'} · {queue.length} visit{queue.length === 1 ? '' : 's'} pending</p>
+          <p className="text-sm text-ink-muted mt-1">{me?.name ?? 'Field executive'} · {myCatalogues.length} catalogue{myCatalogues.length === 1 ? '' : 's'} assigned</p>
         </div>
-        <Chip tone="ember" className="num h-7">{queue.length} due</Chip>
+        <Chip tone="ember" className="num h-7">{myCatalogues.length} assigned</Chip>
       </div>
 
       <div className="space-y-3">
-        {queue.length === 0 && <EmptyState icon={<ClipboardCheck size={32} strokeWidth={1.5} />} title="Queue clear" body="No lots pending inspection right now." />}
-        {queue.map((l) => (
-          <article key={l.id} className="card p-4">
-            <div className="flex gap-3">
-              <PhotoThumb hue={l.photos[0]?.hue ?? 24} category={l.category} className="w-20 h-16" />
-              <div className="flex-1 min-w-0">
+        {myCatalogues.length === 0 && (
+          <EmptyState icon={<ClipboardCheck size={32} strokeWidth={1.5} />} title="No catalogues assigned" body="Catalogues assigned to you by the Executive Manager will appear here." />
+        )}
+        {myCatalogues.map((c) => {
+          const catLots = lots.filter((l) => l.catalogueId === c.id)
+          const inspected = catLots.filter((l) => l.status !== 'pending_inspection').length
+          const seller = users.find((u) => u.id === c.sellerId)
+          return (
+            <Link key={c.id} to={`/field/catalogue/${c.id}`} className="block">
+              <article className="card card-hover p-4">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="num font-bold">{l.lotNo}</span>
-                  <Chip tone="steel">{l.metal}</Chip>
-                  <Chip tone="warning">Due today</Chip>
+                  <span className="num font-bold">{c.code}</span>
+                  <span className="font-semibold text-sm">{c.title}</span>
                 </div>
-                <div className="font-semibold text-sm mt-1">{l.grade}</div>
-                <div className="text-xs text-ink-muted mt-0.5 flex items-center gap-1">
-                  <MapPin size={11} /> {l.yard}
+                <div className="text-xs text-ink-muted mt-1 flex items-center gap-1">
+                  <MapPin size={11} /> {c.yardName} · {c.region}
                 </div>
-                <div className="num text-xs text-ink-faint mt-0.5">Declared {num(l.indicativeQty)} {l.uom}</div>
-              </div>
-            </div>
-            <Link to={`/field/inspect/${l.id}`} className="block mt-3">
-              <Button className="w-full" size="lg"><ClipboardCheck size={17} /> Start inspection</Button>
+                <div className="text-xs text-ink-faint mt-0.5">
+                  {seller?.firm ?? 'Seller'} · {fmtDate(c.inspectionFrom)}–{fmtDate(c.inspectionTo)} · {c.inspectionHours}
+                </div>
+                <div className="num text-xs text-ink-muted mt-2 font-semibold">{inspected} of {catLots.length} lots inspected</div>
+              </article>
             </Link>
-          </article>
-        ))}
+          )
+        })}
       </div>
 
       <h2 className="text-lg font-bold mt-10 mb-3">Recently completed</h2>
