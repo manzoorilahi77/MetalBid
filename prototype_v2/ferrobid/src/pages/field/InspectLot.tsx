@@ -59,7 +59,7 @@ export default function InspectLot() {
       title: `${lot.lotNo} ${outcome}`,
       body: outcome === 'verified' ? 'Report sent to Executive Manager for approval.' : 'Escalated with your notes.',
     })
-    nav('/field')
+    nav(lot.catalogueId ? `/field/catalogue/${lot.catalogueId}` : '/field')
   }
 
   return (
