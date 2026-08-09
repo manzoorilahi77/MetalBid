@@ -1,16 +1,121 @@
 /* Buyer home — an action feed. Whatever needs doing next is highest on the
    page: a live, fully-funded auction pins to the top with one tap into its
    bidding room; everything else queues below in EMD fund-by order. */
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { AlertTriangle, ArrowRight, Bell, CheckCircle2, Gavel, Truck, UserRound } from 'lucide-react'
+import {
+  AlertTriangle, ArrowRight, Bell, CalendarDays, CheckCircle2, ChevronLeft, ChevronRight, Gavel, Truck, UserRound,
+} from 'lucide-react'
 import { Page } from '../../layout/Chrome'
-import { Button, Chip, Countdown, EmptyState, PageHeader, Stat } from '../../components/ui'
+import { Button, Chip, Countdown, EmptyState, PageHeader, Stat, cx } from '../../components/ui'
 import { EmdReminderBanner } from '../../components/EmdReminder'
 import { useBidroomGate } from '../../components/BidroomGate'
 import { useStore, selectionSummary } from '../../store/store'
-import { inr, inrCompact, relTime } from '../../lib/format'
+import { fmtDate, inr, inrCompact, relTime } from '../../lib/format'
 import { useNow } from '../../lib/useTick'
 import type { Catalogue } from '../../types'
+
+type CalEventTone = 'ember' | 'danger' | 'success' | 'steel'
+type CalEvent = { date: string; label: string; tone: CalEventTone }
+const TONE_DOT: Record<CalEventTone, string> = {
+  ember: 'bg-ember', danger: 'bg-danger', success: 'bg-success', steel: 'bg-steel',
+}
+
+/** Compact month calendar — dots mark days with a buyer-relevant deadline
+    (auction close, active-bid close, delivery lift-by); the side list spells
+    out whatever's coming up next so the dots aren't a guessing game. */
+function DashboardCalendar({ events }: { events: CalEvent[] }) {
+  const now = useNow()
+  const [monthOffset, setMonthOffset] = useState(0)
+  const today = new Date(now)
+  const viewDate = new Date(today.getFullYear(), today.getMonth() + monthOffset, 1)
+  const year = viewDate.getFullYear()
+  const month = viewDate.getMonth()
+  const firstDow = new Date(year, month, 1).getDay()
+  const daysInMonth = new Date(year, month + 1, 0).getDate()
+
+  const eventsByDay = new Map<number, CalEvent[]>()
+  for (const e of events) {
+    const d = new Date(e.date)
+    if (d.getFullYear() === year && d.getMonth() === month) {
+      const day = d.getDate()
+      eventsByDay.set(day, [...(eventsByDay.get(day) ?? []), e])
+    }
+  }
+
+  const cells: (number | null)[] = [...Array(firstDow).fill(null), ...Array.from({ length: daysInMonth }, (_, i) => i + 1)]
+  const monthLabel = viewDate.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })
+
+  const upcoming = [...events]
+    .filter((e) => Date.parse(e.date) >= now)
+    .sort((a, b) => Date.parse(a.date) - Date.parse(b.date))
+    .slice(0, 6)
+
+  return (
+    <section className="mt-8">
+      <div className="flex items-center gap-2 mb-3">
+        <CalendarDays size={16} className="text-ink-muted" />
+        <h2 className="font-display text-lg font-bold">Calendar</h2>
+      </div>
+      <div className="card p-4 grid md:grid-cols-[1fr_260px] gap-5">
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <button aria-label="Previous month" onClick={() => setMonthOffset((o) => o - 1)}
+              className="size-7 rounded-lg grid place-items-center text-ink-muted hover:bg-surface-2 hover:text-ink">
+              <ChevronLeft size={16} />
+            </button>
+            <span className="font-semibold text-sm">{monthLabel}</span>
+            <button aria-label="Next month" onClick={() => setMonthOffset((o) => o + 1)}
+              className="size-7 rounded-lg grid place-items-center text-ink-muted hover:bg-surface-2 hover:text-ink">
+              <ChevronRight size={16} />
+            </button>
+          </div>
+          <div className="grid grid-cols-7 gap-1 text-center text-[11px] font-semibold text-ink-faint mb-1">
+            {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => <div key={i}>{d}</div>)}
+          </div>
+          <div className="grid grid-cols-7 gap-1">
+            {cells.map((d, i) => {
+              if (d === null) return <div key={i} />
+              const isToday = monthOffset === 0 && d === today.getDate()
+              const dayEvents = eventsByDay.get(d) ?? []
+              return (
+                <div key={i}
+                  title={dayEvents.map((e) => e.label).join('\n') || undefined}
+                  className={cx('aspect-square rounded-lg border flex flex-col items-center justify-center gap-0.5 text-xs',
+                    isToday ? 'border-ember bg-ember-soft font-bold text-ember-strong' : 'border-line text-ink')}>
+                  {d}
+                  <span className="flex gap-0.5 h-1">
+                    {dayEvents.slice(0, 4).map((e, j) => (
+                      <span key={j} className={cx('size-1 rounded-full', TONE_DOT[e.tone])} />
+                    ))}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+        <div>
+          <div className="text-[11px] font-bold uppercase tracking-wider text-ink-faint mb-2">Upcoming</div>
+          {upcoming.length === 0 ? (
+            <p className="text-sm text-ink-muted">Nothing on your calendar right now.</p>
+          ) : (
+            <div className="flex flex-col gap-2.5">
+              {upcoming.map((e, i) => (
+                <div key={i} className="flex items-start gap-2 text-sm">
+                  <span className={cx('size-1.5 rounded-full mt-1.5 shrink-0', TONE_DOT[e.tone])} />
+                  <div className="min-w-0">
+                    <div className="font-medium truncate">{e.label}</div>
+                    <div className="text-xs text-ink-faint">{fmtDate(e.date)}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  )
+}
 
 type Row = {
   cat: Catalogue
@@ -72,6 +177,20 @@ export default function Dashboard() {
   const myNotifs = notifications.filter((n) => n.userId === me.id || n.userId === null).slice(0, 5)
 
   const attentionCount = (totalShortfall > 0 ? 1 : 0) + (outbidLots.length > 0 ? 1 : 0) + (pendingDos.length > 0 ? 1 : 0)
+
+  // Calendar: every date-bound thing this buyer is on the hook for — auction
+  // closes for shortlisted catalogues, per-lot closes for live bids (coloured
+  // by whether I'm leading), and lift-by deadlines on unpaid delivery orders.
+  const calEvents: CalEvent[] = [
+    ...rows.map((r): CalEvent => ({ date: r.cat.endsAt, label: `${r.cat.code} auction closes`, tone: 'ember' })),
+    ...activeLots.map((l): CalEvent => ({
+      date: l.endsAt, label: `${l.lotNo} bid closes`, tone: l.leadingBidderId === me.id ? 'success' : 'danger',
+    })),
+    ...pendingDos.map((d): CalEvent => {
+      const l = lotById.get(d.lotId)
+      return { date: d.liftingBy, label: `${l?.lotNo ?? d.lotId} lift-by deadline`, tone: 'steel' }
+    }),
+  ]
 
   return (
     <Page>
@@ -199,6 +318,8 @@ export default function Dashboard() {
           </div>
         )}
       </section>
+
+      <DashboardCalendar events={calEvents} />
     </Page>
   )
 }
