@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { ArrowRight, Gavel, Trophy, UserRound } from 'lucide-react'
 import { Page } from '../../layout/Chrome'
 import { Button, Chip, Countdown, EmptyState, PageHeader, PhotoThumb, Tabs, cx } from '../../components/ui'
+import { useBidroomGate } from '../../components/BidroomGate'
 import { myLotResult, useStore } from '../../store/store'
 import { fmtDateTime, inr, inrCompact, num } from '../../lib/format'
 
@@ -23,6 +24,7 @@ export default function Bids() {
   const lots = useStore((s) => s.lots)
   const catalogues = useStore((s) => s.catalogues)
   const bids = useStore((s) => s.bids)
+  const { enterBidroom } = useBidroomGate()
   // Tab lives in the URL so other pages can deep-link into one — e.g. the buyer
   // dashboard's "Active Auctions" tile. Active is the default, so it stays bare.
   const [params, setParams] = useSearchParams()
@@ -138,11 +140,10 @@ export default function Bids() {
                     </div>
                   </div>
                   <Countdown endsAt={lot.endsAt} size="sm" />
-                  <Link to={`/bidding/${lot.catalogueId}?lot=${lot.id}`}>
-                    <Button size="sm" variant={leading ? 'secondary' : 'primary'}>
-                      Go to bidding room <ArrowRight size={14} />
-                    </Button>
-                  </Link>
+                  <Button size="sm" variant={leading ? 'secondary' : 'primary'}
+                    onClick={() => enterBidroom(lot.catalogueId, { lotId: lot.id })}>
+                    Go to bidding room <ArrowRight size={14} />
+                  </Button>
                 </div>
               )
             })}

@@ -15,6 +15,7 @@ import { Page } from '../layout/Chrome'
 import {
   AmountStepper, Button, Chip, Countdown, EmptyState, Input, Modal, Segmented, StatusChip, Toggle, cx,
 } from '../components/ui'
+import { useBidroomGate } from '../components/BidroomGate'
 import { ladderStandings, myBidTrail, selectionSummary, useStore } from '../store/store'
 import { fireConfetti } from '../lib/confetti'
 import { countdown, inr, inrWords, num, relTime } from '../lib/format'
@@ -51,6 +52,7 @@ export default function BiddingRoom() {
   const lastWonLotId = useStore((s) => s.lastWonLotId)
   const clearWinFlag = useStore((s) => s.clearWinFlag)
   const termsAccepted = useStore((s) => s.termsAccepted)
+  const { enterBidroom } = useBidroomGate()
 
   const cat = catalogues.find((c) => c.id === catalogueId)
   const catLots = useMemo(() => lots.filter((l) => l.catalogueId === catalogueId), [lots, catalogueId])
@@ -161,14 +163,8 @@ export default function BiddingRoom() {
               Wallet balance {inr(wallets.find((w) => w.userId === me.id)?.balance ?? 0)}. EMD is scoped per lot and auto-releases if you don't win.
             </p>
           )}
-          <Button size="lg" className="w-full mt-5" onClick={() => {
-            const ok = fundEmd(cat.id, summary.unfundedLotIds, 'Wallet')
-            if (ok) {
-              pushToast({ kind: 'success', title: 'EMD locked', body: `${gateLots.length} lot${gateLots.length > 1 ? 's' : ''} unlocked for bidding.` })
-            } else {
-              pushToast({ kind: 'danger', title: 'Insufficient balance', body: 'Top up your wallet from Wallet & EMD ledger.' })
-            }
-          }}>
+          {/* Same gate as every other entry point — pending EMD, then terms. */}
+          <Button size="lg" className="w-full mt-5" onClick={() => enterBidroom(cat.id)}>
             Fund {inr(summary.shortfall)} to enter
           </Button>
           <Link to={`/catalogue/${cat.id}`} className="block w-full text-center text-sm font-semibold text-ink-muted hover:text-ink mt-3">
@@ -198,7 +194,9 @@ export default function BiddingRoom() {
 
   const gateOr = (fn: () => void) => {
     if (!me) { pushToast({ kind: 'warning', title: 'Sign in to bid', body: 'Use the demo role switcher or the login screen.' }); return }
-    if (!accepted) { pushToast({ kind: 'warning', title: 'Accept the catalogue T&C first', body: 'Open the catalogue page and accept terms — bidding is gated on it.' }); return }
+    // Arriving by direct URL skips the gate, so run it here rather than
+    // inventing a second terms rule.
+    if (!accepted) { enterBidroom(cat.id); return }
     if (!funded) { setEmdGateLot(lot); return }
     fn()
   }

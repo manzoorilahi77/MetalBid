@@ -1,8 +1,8 @@
 [
   {
     "userId": "u-buyer-1",
-    "balance": 850000,
-    "emdLocked": 335000,
+    "balance": 1650000,
+    "emdLocked": 665000,
     "ledger": [
       {
         "id": "led-001",
@@ -71,6 +71,46 @@
         "lotId": "lot-003",
         "catalogueId": "cat-1",
         "note": "Pre-bid EMD locked — LOT-03 (AUC-2412)"
+      },
+      {
+        "id": "led-030",
+        "at": "2026-07-15T08:50:00.000Z",
+        "type": "emd_lock",
+        "amount": -80000,
+        "ref": "EMD-2430-01",
+        "lotId": "lot-023",
+        "catalogueId": "cat-2",
+        "note": "Pre-bid EMD locked — LOT-05 (AUC-2415)"
+      },
+      {
+        "id": "led-031",
+        "at": "2026-07-15T08:54:00.000Z",
+        "type": "emd_lock",
+        "amount": -35000,
+        "ref": "EMD-2431-02",
+        "lotId": "lot-024",
+        "catalogueId": "cat-2",
+        "note": "Pre-bid EMD locked — LOT-06 (AUC-2415)"
+      },
+      {
+        "id": "led-032",
+        "at": "2026-07-15T08:58:00.000Z",
+        "type": "emd_lock",
+        "amount": -110000,
+        "ref": "EMD-2432-03",
+        "lotId": "lot-025",
+        "catalogueId": "cat-2",
+        "note": "Pre-bid EMD locked — LOT-07 (AUC-2415)"
+      },
+      {
+        "id": "led-033",
+        "at": "2026-07-15T09:02:00.000Z",
+        "type": "emd_lock",
+        "amount": -105000,
+        "ref": "EMD-2433-04",
+        "lotId": "lot-061",
+        "catalogueId": "cat-5",
+        "note": "Pre-bid EMD locked — LOT-01 (AUC-2424)"
       },
       {
         "id": "led-020",

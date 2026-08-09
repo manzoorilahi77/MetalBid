@@ -4,6 +4,7 @@ import Chrome, { NAV_BY_ROLE, Page, SubNav } from './layout/Chrome'
 import ScrollToTop from './layout/ScrollToTop'
 import type { Role } from './types'
 import { ToastHost } from './components/ui'
+import { BidroomGateProvider } from './components/BidroomGate'
 import { useTick } from './lib/useTick'
 import { useStore } from './store/store'
 
@@ -190,6 +191,9 @@ export default function App() {
           lands you at the bottom of the next page. */}
       <ScrollToTop />
       <ToastHost />
+      {/* Owns the one gate into any bidding room, so every trigger in every
+          page runs the same pending-EMD → terms → navigate sequence. */}
+      <BidroomGateProvider>
       <Routes>
         <Route element={<Chrome />}>
           <Route index element={<Home />} />
@@ -271,6 +275,7 @@ export default function App() {
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
+      </BidroomGateProvider>
     </HashRouter>
   )
 }

@@ -113,13 +113,19 @@ const YARDS = {
   'cat-8': { name: 'BSP Scrap Yard 3', addr: 'Gate 7, SAIL Bhilai Steel Plant, Bhilai, Chhattisgarh 490001', region: 'Bhilai, CG' },
 }
 
-/* ------------------------------ catalogues ------------------------------- */
+/* ------------------------------ catalogues -------------------------------
+   `emdLead` = minutes before `start` that pre-bid EMD funding closes (see
+   src/lib/emd.ts). Defaults to one day. cat-4 deliberately sits PAST its
+   cut-off and cat-5 deliberately sits just inside the 24h reminder window, so
+   both the "deadline passed" refusal and the reminder banner are visible the
+   moment the prototype loads. */
+const EMD_LEAD_DEFAULT = 1 * DAY
 const cataloguesDef = [
   { id: 'cat-1', code: 'AUC-2412', title: 'SAIL Bhilai — Mixed MS Scrap, Turnings & TMT Rejects', sellerId: 'u-seller-1', status: 'live', start: -3 * DAY, end: 42, pool: 'msScrap', count: 18, insp: [-6 * DAY, -2 * DAY], contact: { name: 'S. K. Sahu', phone: '+91 94252 10883', role: 'Yard In-charge (Inspection & Lifting)' }, antiSnipe: 3, validity: 7 },
   { id: 'cat-2', code: 'AUC-2415', title: 'Tata Steel Jamshedpur — SS Offcuts, Coil Ends & Turnings', sellerId: 'u-seller-2', status: 'live', start: -2 * DAY, end: 205, pool: 'ssOffcuts', count: 14, insp: [-5 * DAY, -1 * DAY], contact: { name: 'M. Oraon', phone: '+91 82102 44561', role: 'Dy. Manager, By-products' }, antiSnipe: 5, validity: 10 },
   { id: 'cat-3', code: 'AUC-2418', title: 'East Coast Railway — Released Rails, Wagons & OHE Copper', sellerId: 'u-seller-3', status: 'live', start: -1 * DAY, end: 21, pool: 'railway', count: 12, insp: [-4 * DAY, -1 * DAY], contact: { name: 'B. Pradhan', phone: '+91 89178 30425', role: 'SSE / Depot Material Superintendent' }, antiSnipe: 3, validity: 14 },
-  { id: 'cat-4', code: 'AUC-2421', title: 'JSW Vijayanagar — Aluminium, Copper & Ferro Alloy Lots', sellerId: 'u-seller-4', status: 'upcoming', start: 1 * DAY + 120, end: 1 * DAY + 420, pool: 'nonFerrous', count: 16, insp: [10 * 60, 1 * DAY], contact: { name: 'H. Kulkarni', phone: '+91 90360 71182', role: 'Manager, Commercial (Disposals)' }, antiSnipe: 5, validity: 7 },
-  { id: 'cat-5', code: 'AUC-2424', title: 'NTPC Ramagundam — Coal Rejects, Fly Ash & Used Oil', sellerId: 'u-seller-5', status: 'upcoming', start: 3 * DAY, end: 3 * DAY + 300, pool: 'coal', count: 10, insp: [1 * DAY, 2 * DAY + 720], contact: { name: 'G. Srinivas', phone: '+91 87903 55240', role: 'AGM (Fuel Handling)' }, antiSnipe: 5, validity: 10 },
+  { id: 'cat-4', code: 'AUC-2421', title: 'JSW Vijayanagar — Aluminium, Copper & Ferro Alloy Lots', sellerId: 'u-seller-4', status: 'upcoming', start: 1 * DAY + 120, end: 1 * DAY + 420, pool: 'nonFerrous', count: 16, insp: [10 * 60, 1 * DAY], contact: { name: 'H. Kulkarni', phone: '+91 90360 71182', role: 'Manager, Commercial (Disposals)' }, antiSnipe: 5, validity: 7, emdLead: 2 * DAY },
+  { id: 'cat-5', code: 'AUC-2424', title: 'NTPC Ramagundam — Coal Rejects, Fly Ash & Used Oil', sellerId: 'u-seller-5', status: 'upcoming', start: 3 * DAY, end: 3 * DAY + 300, pool: 'coal', count: 10, insp: [1 * DAY, 2 * DAY + 720], contact: { name: 'G. Srinivas', phone: '+91 87903 55240', role: 'AGM (Fuel Handling)' }, antiSnipe: 5, validity: 10, emdLead: 2 * DAY + 180 },
   { id: 'cat-6', code: 'AUC-2406', title: 'MSTC Eastern Region — Copper, Brass & Cable Scrap', sellerId: 'u-seller-6', status: 'closed', start: -3 * DAY, end: -2 * DAY, pool: 'copperBrass', count: 12, insp: [-6 * DAY, -4 * DAY], contact: { name: 'T. Ghosh', phone: '+91 90070 18836', role: 'Yard Supervisor' }, antiSnipe: 3, validity: 7 },
   { id: 'cat-7', code: 'AUC-2402', title: 'BHEL Trichy — Plant & Machinery, Condemned Assets', sellerId: 'u-seller-7', status: 'closed', start: -7 * DAY, end: -6 * DAY, pool: 'assets', count: 10, insp: [-10 * DAY, -8 * DAY], contact: { name: 'R. Elango', phone: '+91 94430 20951', role: 'Sr. Engineer (Disposals)' }, antiSnipe: 5, validity: 15 },
   { id: 'cat-8', code: 'AUC-2430', title: 'Bhilai Yard — Mixed Ferrous Scrap for Field Inspection', sellerId: 'u-seller-1', status: 'draft', assignedFieldExecId: 'u-field-1', start: 6 * DAY, end: 6 * DAY + 300, pool: 'msScrap', count: 5, insp: [2 * 60, 4 * DAY], contact: { name: 'S. K. Sahu', phone: '+91 94252 10883', role: 'Yard In-charge (Inspection & Lifting)' }, antiSnipe: 3, validity: 7 },
@@ -363,9 +369,21 @@ const demoSelection = demoLots.map((l) => l.id) // 5 shortlisted in cat-1
 const demoFunded = demoSelection.slice(0, 3) // 3 of 5 EMD-funded (partial — showcases shortfall)
 const fundedEmd = demoFunded.reduce((s, id) => s + lotById[id].preBidEmd, 0)
 
+/* The rest of buyer-1's shortlist, shaped so the action feed shows one of each
+   stage on load: cat-2 live and fully funded (pins to the top with a one-tap
+   "Enter bidroom"), cat-4 upcoming and past its EMD cut-off (funding refused),
+   cat-5 upcoming with its cut-off inside the 24h reminder window. */
+const lotsOf = (catId) => lots.filter((l) => l.catalogueId === catId).map((l) => l.id)
+const b1Cat2 = lotsOf('cat-2').slice(4, 7) // buyer-2 holds the first four
+const b1Cat4 = lotsOf('cat-4').slice(0, 2)
+const b1Cat5 = lotsOf('cat-5').slice(0, 3)
+const b1Cat5Funded = b1Cat5.slice(0, 1)
+const extraFunded = [...b1Cat2, ...b1Cat5Funded]
+const extraFundedEmd = extraFunded.reduce((s, id) => s + lotById[id].preBidEmd, 0)
+
 const wallets = [
   {
-    userId: 'u-buyer-1', balance: 850000, emdLocked: fundedEmd,
+    userId: 'u-buyer-1', balance: 1650000, emdLocked: fundedEmd + extraFundedEmd,
     ledger: [
       { id: 'led-001', at: iso(-12 * DAY), type: 'topup', amount: 1500000, ref: 'UTR-N2607-118842', note: 'RTGS top-up — HDFC ****4412' },
       { id: 'led-002', at: iso(-2 * DAY - 60), type: 'emd_lock', amount: -lotById[wonLots[0].id].preBidEmd, ref: 'EMD-2406-01', lotId: wonLots[0].id, catalogueId: 'cat-6', note: `EMD locked — ${wonLots[0].lotNo} (AUC-2406)` },
@@ -374,6 +392,11 @@ const wallets = [
       ...demoFunded.map((id, i) => ({
         id: `led-01${i}`, at: iso(-1 * DAY + 90 + i * 3), type: 'emd_lock', amount: -lotById[id].preBidEmd,
         ref: `EMD-2412-0${i + 1}`, lotId: id, catalogueId: 'cat-1', note: `Pre-bid EMD locked — ${lotById[id].lotNo} (AUC-2412)`,
+      })),
+      ...extraFunded.map((id, i) => ({
+        id: `led-03${i}`, at: iso(-1 * DAY + 140 + i * 4), type: 'emd_lock', amount: -lotById[id].preBidEmd,
+        ref: `EMD-24${i + 30}-0${i + 1}`, lotId: id, catalogueId: lotById[id].catalogueId,
+        note: `Pre-bid EMD locked — ${lotById[id].lotNo} (${cataloguesDef.find((c) => c.id === lotById[id].catalogueId).code})`,
       })),
       { id: 'led-020', at: iso(-4 * 60), type: 'topup', amount: 200000, ref: 'UTR-U2607-90211', note: 'UPI top-up — arvind@okhdfcbank' },
     ],
@@ -390,6 +413,9 @@ const wallets = [
 /* ------------------------------ selections -------------------------------- */
 const selections = [
   { buyerId: 'u-buyer-1', catalogueId: 'cat-1', lotIds: demoSelection, emdFundedLotIds: demoFunded },
+  { buyerId: 'u-buyer-1', catalogueId: 'cat-2', lotIds: b1Cat2, emdFundedLotIds: b1Cat2 },
+  { buyerId: 'u-buyer-1', catalogueId: 'cat-4', lotIds: b1Cat4, emdFundedLotIds: [] },
+  { buyerId: 'u-buyer-1', catalogueId: 'cat-5', lotIds: b1Cat5, emdFundedLotIds: b1Cat5Funded },
   { buyerId: 'u-buyer-2', catalogueId: 'cat-2', lotIds: lots.filter((l) => l.catalogueId === 'cat-2').slice(0, 4).map((l) => l.id), emdFundedLotIds: lots.filter((l) => l.catalogueId === 'cat-2').slice(0, 2).map((l) => l.id) },
 ]
 
@@ -504,6 +530,7 @@ const inspectionSlots = [
 const catalogues = cataloguesDef.map((c) => ({
   id: c.id, code: c.code, title: c.title, sellerId: c.sellerId, type: 'forward',
   status: c.status, assignedFieldExecId: c.assignedFieldExecId ?? null, startsAt: iso(c.start), endsAt: iso(c.end),
+  emdDeadline: iso(c.start - (c.emdLead ?? EMD_LEAD_DEFAULT)),
   inspectionFrom: iso(c.insp[0]), inspectionTo: iso(c.insp[1]),
   inspectionHours: '10:00–16:00 IST', inspectionContact: c.contact,
   yardName: YARDS[c.id].name, yardAddress: YARDS[c.id].addr, region: YARDS[c.id].region,

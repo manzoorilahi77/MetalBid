@@ -24,6 +24,7 @@ import bankAccountsJson from '../data/mock/bankAccounts.json'
 import depositClaimsJson from '../data/mock/depositClaims.json'
 import withdrawalRequestsJson from '../data/mock/withdrawalRequests.json'
 import companyBankAccountsJson from '../data/mock/companyBankAccounts.json'
+import { defaultEmdDeadline } from '../lib/emd'
 import type {
   Announcement, AppNotification, AuditEvent, AutoBidSetting, BankAccount, Bid,
   BuyerLotSelection, Catalogue, CompanyBankAccount, DemandDraft, DeliveryOrder, DepositClaim,
@@ -71,7 +72,12 @@ export interface SeedData {
 
 export function loadSeed(): SeedData {
   return {
-    catalogues: deepShift(cataloguesJson) as unknown as Catalogue[],
+    // `emdDeadline` was added after the first mock runs — backfill it from
+    // startsAt so an older/hand-edited catalogues.json still loads.
+    catalogues: (deepShift(cataloguesJson) as unknown as Catalogue[]).map((c) => ({
+      ...c,
+      emdDeadline: c.emdDeadline ?? defaultEmdDeadline(c.startsAt),
+    })),
     lots: deepShift(lotsJson) as unknown as Lot[],
     users: deepShift(usersJson) as unknown as User[],
     bids: deepShift(bidsJson) as unknown as Bid[],

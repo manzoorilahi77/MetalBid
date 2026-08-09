@@ -7,7 +7,10 @@ import { Page } from '../../layout/Chrome'
 import {
   Button, Chip, Countdown, EmptyState, MockPayModal, PageHeader, PhotoThumb, Segmented, StatusChip,
 } from '../../components/ui'
+import { EmdReminderBanner } from '../../components/EmdReminder'
+import { useBidroomGate } from '../../components/BidroomGate'
 import { useStore, selectionSummary, catalogueUiStatus } from '../../store/store'
+import { emdBlockedMessage, emdWindowClosed } from '../../lib/emd'
 import { inr, num, relTime } from '../../lib/format'
 import { useNow } from '../../lib/useTick'
 
@@ -20,6 +23,7 @@ export default function Shortlist() {
   const fundEmd = useStore((s) => s.fundEmd)
   const toggleShortlist = useStore((s) => s.toggleShortlist)
   const pushToast = useStore((s) => s.pushToast)
+  const { enterBidroom } = useBidroomGate()
   const now = useNow()
   const [payCatId, setPayCatId] = useState<string | null>(null)
   const [view, setView] = useState<'live' | 'upcoming'>('live')
@@ -62,6 +66,8 @@ export default function Shortlist() {
           </div>
         }
       />
+
+      <EmdReminderBanner className="mb-5" />
 
       {mySelections.length === 0 ? (
         <EmptyState
@@ -126,9 +132,13 @@ export default function Shortlist() {
                   <span className="text-sm text-ink-muted">Shortfall <span className={`num font-bold ${summary.shortfall > 0 ? 'text-warning' : 'text-ink'}`}>{inr(summary.shortfall)}</span></span>
                   <span className="ml-auto">
                     {summary.shortfall > 0 ? (
-                      <Button size="sm" onClick={() => setPayCatId(cat.id)}>
-                        Fund EMD for selected lots
-                      </Button>
+                      emdWindowClosed(cat, now) ? (
+                        <Chip tone="danger">EMD deadline passed</Chip>
+                      ) : (
+                        <Button size="sm" onClick={() => setPayCatId(cat.id)}>
+                          Fund EMD for selected lots
+                        </Button>
+                      )
                     ) : (
                       <Chip tone="success">All selected lots funded</Chip>
                     )}
@@ -170,9 +180,9 @@ export default function Shortlist() {
                             ? <Chip tone="success">EMD funded</Chip>
                             : <Chip tone="warning">EMD pending</Chip>}
                           {funded ? (
-                            <Link to={`/bidding/${cat.id}?lot=${lot.id}`}>
-                              <Button size="sm"><Gavel size={14} /> Bid</Button>
-                            </Link>
+                            <Button size="sm" onClick={() => enterBidroom(cat.id, { lotId: lot.id })}>
+                              <Gavel size={14} /> Bid
+                            </Button>
                           ) : (
                             <span title="Fund the pre-bid EMD for this lot to unlock bidding">
                               <Button size="sm" disabled><Gavel size={14} /> Bid</Button>
@@ -209,6 +219,11 @@ export default function Shortlist() {
         amount={paySummary?.shortfall ?? 0}
         onSuccess={(method) => {
           if (!payCatId || !paySummary) return
+          if (payCat && emdWindowClosed(payCat, now)) {
+            pushToast({ kind: 'danger', title: 'EMD funding has closed', body: emdBlockedMessage(payCat) })
+            setPayCatId(null)
+            return
+          }
           const ok = fundEmd(payCatId, paySummary.unfundedLotIds, method)
           if (!ok) {
             pushToast({

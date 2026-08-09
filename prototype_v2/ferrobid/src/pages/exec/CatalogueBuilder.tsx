@@ -8,6 +8,7 @@ import {
   PageHeader, Tabs, Button, Chip, Field, Input, Select, EmptyState, PhotoThumb, cx,
 } from '../../components/ui'
 import { useStore } from '../../store/store'
+import { defaultEmdDeadline } from '../../lib/emd'
 import { inr, inrCompact, num, uid, fmtDateTime, fmtDate } from '../../lib/format'
 import type { Catalogue, CatalogueDocument, Lot, Uom } from '../../types'
 
@@ -155,6 +156,8 @@ export default function CatalogueBuilder() {
       assignedFieldExecId: fieldExecId,
       startsAt: new Date(startLocal).toISOString(),
       endsAt: new Date(endLocal).toISOString(),
+      // Pre-bid EMD closes a day ahead of go-live (src/lib/emd.ts).
+      emdDeadline: defaultEmdDeadline(new Date(startLocal).toISOString()),
       inspectionFrom: new Date(`${inspFrom}T10:00`).toISOString(),
       inspectionTo: new Date(`${inspTo}T16:00`).toISOString(),
       inspectionHours: inspHours,

@@ -5,13 +5,14 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import {
-  Bell, Check, ChevronDown, Flame, Globe, LogOut, Mail, Menu, Moon, Search, Sun, User as UserIcon,
+  Bell, Check, ChevronDown, Flame, Gavel, Globe, LogOut, Mail, Menu, Moon, Search, Sun, User as UserIcon,
   Wallet as WalletIcon, X, LifeBuoy, FileText, SlidersHorizontal,
 } from 'lucide-react'
 import { ROLE_HOME, ROLE_LABEL, useStore } from '../store/store'
 import { inrCompact, relTime } from '../lib/format'
 import { useClientIp } from '../lib/useClientIp'
 import { AppComingSoonModal, Avatar, Chip, cx } from '../components/ui'
+import { useBidroomGate } from '../components/BidroomGate'
 import type { Role } from '../types'
 
 /** A single source of truth per role: which nav item(s) appear on the top
@@ -286,9 +287,13 @@ function TopNav() {
   const location = useLocation()
   useEffect(() => setMobileOpen(false), [location.pathname])
 
+  const { openBidNow } = useBidroomGate()
+
   const links = NAV_BY_ROLE[role].filter((i) => i.in.includes('top'))
   const wallet = wallets.find((w) => w.userId === me?.id)
   const showWallet = role === 'buyer' || role === 'seller'
+  /* The shortcut straight into a live auction — buyers only, wherever they are. */
+  const showBidNow = role === 'buyer' && !!me
   /* Guest 2 is the public marketing site: no catalogue search in its chrome —
      it shows the session IP readout instead. Every other role keeps search. */
   const isGuest2 = role === 'guest2'
@@ -326,6 +331,12 @@ function TopNav() {
             <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search catalogues…"
               className="h-9 w-40 xl:w-52 pl-9 pr-3 rounded-xl bg-surface-2 border border-line text-sm placeholder:text-ink-faint focus:outline-2 focus:outline-ember/50 focus:bg-surface" />
           </form>
+        )}
+        {showBidNow && (
+          <button onClick={openBidNow} title="Pick a live auction and go straight to its bidding room"
+            className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-xl bg-ember text-white text-[13px] font-bold hover:bg-ember-strong whitespace-nowrap shrink-0">
+            <Gavel size={15} /> Bid Now
+          </button>
         )}
         {showWallet && wallet && (
           <Link to="/buyer/wallet" className="hidden sm:inline-flex items-center gap-1.5 h-9 px-3 rounded-xl bg-surface-2 border border-line hover:border-line-strong whitespace-nowrap shrink-0" title="Wallet & EMD">

@@ -4,7 +4,7 @@
    T&C (versioned, gates bidding), inspection & contacts, documents.
 --------------------------------------------------------------------------- */
 import { useMemo, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import {
   AlertTriangle, CalendarDays, Check, Download, FileText, Gavel, Lock, MapPin,
   Phone, QrCode, ScrollText, Search, Star, X,
@@ -14,8 +14,10 @@ import {
   Button, Chip, Countdown, EmptyState, Input, Modal, PhotoThumb,
   Select, StatusChip, Tabs, Toggle, cx,
 } from '../components/ui'
+import { useBidroomGate } from '../components/BidroomGate'
 import { catalogueUiStatus, selectionSummary, useStore } from '../store/store'
-import { fmtDate, fmtDateTime, inr, inrCompact, inrWords, num } from '../lib/format'
+import { emdDeadlineMs, emdWindowClosed } from '../lib/emd'
+import { fmtDate, fmtDateTime, inr, inrCompact, num } from '../lib/format'
 import { useNow } from '../lib/useTick'
 import type { Lot } from '../types'
 
@@ -32,7 +34,6 @@ type Filters = typeof DEFAULT_FILTERS
 
 export default function AuctionDetail() {
   const { id } = useParams()
-  const nav = useNavigate()
   const now = useNow()
   const me = useStore((s) => s.currentUser)
   const role = useStore((s) => s.role)
@@ -45,8 +46,8 @@ export default function AuctionDetail() {
   const termsAccepted = useStore((s) => s.termsAccepted)
   const acceptTerms = useStore((s) => s.acceptTerms)
   const toggleShortlist = useStore((s) => s.toggleShortlist)
-  const fundEmd = useStore((s) => s.fundEmd)
   const pushToast = useStore((s) => s.pushToast)
+  const { enterBidroom } = useBidroomGate()
   const bookSlot = useStore((s) => s.bookInspectionSlot)
   const inspectionSlots = useStore((s) => s.inspectionSlots)
   const announcements = useStore((s) => s.announcements)
@@ -55,7 +56,6 @@ export default function AuctionDetail() {
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS)
   const [sort, setSort] = useState<'lotNo' | 'rate' | 'emd' | 'qty'>('lotNo')
   const [termsOpen, setTermsOpen] = useState(false)
-  const [payOpen, setPayOpen] = useState(false)
   const [slotBooked, setSlotBooked] = useState(false)
 
   const cat = catalogues.find((c) => c.id === id && c.status !== 'draft')
@@ -135,6 +135,13 @@ export default function AuctionDetail() {
           <div className="flex flex-col items-end gap-2">
             {canBid && <Countdown endsAt={cat.endsAt} prefix="closes in" size="lg" />}
             {ui === 'upcoming' && <Chip tone="steel" className="h-8 px-3 text-sm num">Starts {fmtDateTime(cat.startsAt)}</Chip>}
+            {/* The cut-off buyers actually have to hit — funding closes well
+                before the sale opens (src/lib/emd.ts). */}
+            {ui === 'upcoming' && (
+              emdWindowClosed(cat, now)
+                ? <Chip tone="danger" className="h-8 px-3 text-sm num">EMD closed {fmtDateTime(new Date(emdDeadlineMs(cat)).toISOString())}</Chip>
+                : <Chip tone="warning" className="h-8 px-3 text-sm num">Fund EMD by {fmtDateTime(new Date(emdDeadlineMs(cat)).toISOString())}</Chip>
+            )}
             <div className="flex gap-2">
               <Button variant="secondary" size="sm" onClick={() => pushToast({ kind: 'info', title: 'Catalogue PDF downloading', body: `${cat.code} Catalogue & Annexure.pdf (demo)` })}>
                 <Download size={14} /> Catalogue PDF
@@ -352,10 +359,7 @@ export default function AuctionDetail() {
                         <div className="flex lg:flex-col gap-2 items-stretch shrink-0">
                           <Countdown endsAt={lot.endsAt} size="sm" className="justify-center" />
                           <Button size="sm"
-                            onClick={() => {
-                              if (!accepted) { setTermsOpen(true); return }
-                              nav(`/bidding/${cat.id}?lot=${lot.id}`)
-                            }}>
+                            onClick={() => enterBidroom(cat.id, { lotId: lot.id })}>
                             <Gavel size={14} /> Bid
                           </Button>
                         </div>
@@ -493,20 +497,15 @@ export default function AuctionDetail() {
               <span className="text-ink-faint"> · </span>Funded <b className="text-success">{inr(summary.funded)}</b>
               <span className="text-ink-faint"> · </span>Shortfall <b className={summary.shortfall > 0 ? 'text-ember-strong' : 'text-success'}>{inr(summary.shortfall)}</b>
             </div>
-            {/* one path in: accept T&C → fund every shortlisted lot → enter */}
+            {/* One path in, shared with every other entry point in the app:
+                pending EMD → terms → bidroom (see components/BidroomGate). */}
             <div className="ml-auto flex items-center gap-2 flex-wrap">
               {summary.shortfall > 0 ? (
-                <Button variant="steel" onClick={() => {
-                  if (!accepted) { setTermsOpen(true); return }
-                  setPayOpen(true)
-                }}>
+                <Button variant="steel" onClick={() => enterBidroom(cat.id)}>
                   <Lock size={15} /> Fund {inr(summary.shortfall)} EMD to enter
                 </Button>
               ) : (
-                <Button onClick={() => {
-                  if (!accepted) { setTermsOpen(true); return }
-                  nav(`/bidding/${cat.id}`)
-                }}>
+                <Button onClick={() => enterBidroom(cat.id)}>
                   <Gavel size={15} /> Enter bidding room
                 </Button>
               )}
@@ -521,13 +520,6 @@ export default function AuctionDetail() {
         setTermsOpen(false)
         pushToast({ kind: 'success', title: 'Terms accepted', body: `${terms?.name} ${terms?.version} — you can now bid on ${cat.code}.` })
       }} />
-      <FundEmdModal open={payOpen} onClose={() => setPayOpen(false)} catalogueId={cat.id}
-        lotIds={summary.unfundedLotIds} amount={summary.shortfall}
-        onDone={(method) => {
-          const ok = fundEmd(cat.id, summary.unfundedLotIds, method)
-          if (ok) pushToast({ kind: 'success', title: 'EMD funded', body: `${inr(summary.shortfall)} locked for ${summary.unfundedLotIds.length} lot(s).` })
-          else pushToast({ kind: 'danger', title: 'Insufficient wallet balance', body: 'Top up your wallet, then fund EMD again.' })
-        }} />
     </>
   )
 }
@@ -563,59 +555,6 @@ function TermsGateModal({ open, onClose, catalogueId, onAccept }: {
         <Button variant="ghost" onClick={onClose}>Not now</Button>
         <Button disabled={!agree} onClick={onAccept}><Check size={15} /> Accept & continue</Button>
       </div>
-    </Modal>
-  )
-}
-
-/* --------------------------- fund EMD modal -------------------------------- */
-function FundEmdModal({ open, onClose, lotIds, amount, onDone, catalogueId }: {
-  open: boolean; onClose: () => void; lotIds: string[]; amount: number
-  catalogueId: string; onDone: (method: string) => void
-}) {
-  const lots = useStore((s) => s.lots)
-  const wallets = useStore((s) => s.wallets)
-  const me = useStore((s) => s.currentUser)
-  const wallet = wallets.find((w) => w.userId === me?.id)
-  const selLots = lots.filter((l) => l.catalogueId === catalogueId && lotIds.includes(l.id))
-  const enough = (wallet?.balance ?? 0) >= amount
-  const [phase, setPhase] = useState<'review' | 'processing'>('review')
-  return (
-    <Modal open={open} onClose={() => { setPhase('review'); onClose() }} title="Fund EMD for selected lots">
-      {phase === 'review' ? (
-        <div className="space-y-4">
-          <div className="card bg-surface-2 border-0 divide-y divide-line">
-            {selLots.map((l) => (
-              <div key={l.id} className="flex items-center justify-between px-4 py-2.5 text-sm">
-                <span><b className="num">{l.lotNo}</b> <span className="text-ink-muted">{l.grade}</span></span>
-                <span className="num font-semibold">{inr(l.preBidEmd)}</span>
-              </div>
-            ))}
-            <div className="px-4 py-3">
-              <div className="flex items-center justify-between gap-3">
-                <span className="font-bold">EMD to lock now</span>
-                <span className="num text-lg font-bold text-ember-strong">{inr(amount)}</span>
-              </div>
-              <div className="text-xs text-ink-muted mt-1 text-right italic">{inrWords(amount)}</div>
-            </div>
-          </div>
-          <p className="text-xs text-ink-muted">
-            EMD locks only against your <b>selected</b> lots — never the full catalogue. Funds move from your wallet balance ({wallet ? inr(wallet.balance) : '₹0'}) into the locked EMD pool and auto-release within 24h if you're not H1.
-          </p>
-          {!enough && <div className="card border-danger/40 bg-danger-soft px-4 py-2.5 text-sm text-danger font-semibold">Wallet balance is short. Top up from Wallet & EMD ledger first.</div>}
-          <Button className="w-full" size="lg" disabled={!enough}
-            onClick={() => {
-              setPhase('processing')
-              setTimeout(() => { onDone('Wallet'); setPhase('review'); onClose() }, 1300)
-            }}>
-            Lock {inr(amount)} from wallet
-          </Button>
-        </div>
-      ) : (
-        <div className="py-10 text-center">
-          <div className="mx-auto size-9 border-[3px] border-ember border-t-transparent rounded-full animate-spin" />
-          <div className="font-semibold mt-3">Locking EMD…</div>
-        </div>
-      )}
     </Modal>
   )
 }

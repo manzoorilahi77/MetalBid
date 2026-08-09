@@ -6,6 +6,7 @@
 import { create } from 'zustand'
 import { loadSeed } from './seed'
 import { uid, inr, num } from '../lib/format'
+import { defaultEmdDeadline, emdWindowClosed } from '../lib/emd'
 import type {
   AppNotification, AuditEvent, AutoBidSetting, BankAccount, Bid, BidType, BuyerLotSelection,
   Catalogue, CompanyBankAccount, DemandDraft, DeliveryOrder, DepositClaim, Dispute, InspectionReport,
@@ -521,6 +522,9 @@ export const useStore = create<State>((set, get) => {
       const total = lots.reduce((sum, l) => sum + l.preBidEmd, 0)
       if (w.balance < total) return false
       const cat = s.catalogues.find((c) => c.id === catalogueId)!
+      // Cut-off guard. Callers pre-check `emdWindowClosed` so they can show the
+      // deadline message rather than the balance one; this is the backstop.
+      if (emdWindowClosed(cat, s.now)) return false
       set((st) => ({
         wallets: st.wallets.map((x) =>
           x.userId === me.id
@@ -855,7 +859,15 @@ export const useStore = create<State>((set, get) => {
       set((st) => ({
         catalogues: st.catalogues.map((c) =>
           c.id === catalogueId
-            ? { ...c, status, startsAt: new Date(mode === 'now' ? nowMs : Date.parse(c.startsAt)).toISOString(), endsAt: endsAtIso }
+            ? (() => {
+                const startsAt = new Date(mode === 'now' ? nowMs : Date.parse(c.startsAt)).toISOString()
+                return {
+                  ...c, status, startsAt, endsAt: endsAtIso,
+                  // Going live now leaves no pre-auction window, so the cut-off
+                  // is "now"; a scheduled sale gets the standard lead time.
+                  emdDeadline: mode === 'now' ? new Date(nowMs).toISOString() : defaultEmdDeadline(startsAt),
+                }
+              })()
             : c,
         ),
         lots: st.lots.map((l) =>

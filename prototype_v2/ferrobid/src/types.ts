@@ -57,6 +57,9 @@ export interface Catalogue {
   status: CatalogueStatus
   startsAt: string // ISO — rebased to "now" at seed load
   endsAt: string
+  /** Pre-bid EMD funding cut-off — 1–2 days ahead of `startsAt`. Funding is
+   *  refused between this instant and go-live (see src/lib/emd.ts). */
+  emdDeadline: string
   inspectionFrom: string
   inspectionTo: string
   inspectionHours: string // e.g. "10:00–16:00 IST"
