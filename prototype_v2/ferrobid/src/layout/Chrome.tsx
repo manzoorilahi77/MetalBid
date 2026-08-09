@@ -24,6 +24,10 @@ export type NavItem = {
   end?: boolean
   locked?: boolean
   in: ('top' | 'sub')[]
+  /** Extra path prefixes (besides `to`) that should also mark this item active —
+   *  for routes that conceptually belong to this item but live outside its own
+   *  path prefix (e.g. catalogue detail pages reached from a listing tab). */
+  activeMatch?: string[]
 }
 
 export const NAV_BY_ROLE: Record<Role, NavItem[]> = {
@@ -47,8 +51,8 @@ export const NAV_BY_ROLE: Record<Role, NavItem[]> = {
   ],
   buyer: [
     { to: '/buyer', label: 'Home', subLabel: 'Dashboard', end: true, in: ['top', 'sub'] },
-    { to: '/buyermarketplace', label: 'Browse & Shortlist', in: ['sub'] },
-    { to: '/buyer/emd-shortlisted-catalogue', label: 'EMD & payments', subLabel: 'EMD for shortlisted catalogues', in: ['sub'] },
+    { to: '/buyermarketplace', label: 'Browse & Shortlist', in: ['sub'], activeMatch: ['/catalogue'] },
+    { to: '/buyer/emd-shortlisted-catalogue', label: 'EMD & payments', subLabel: 'EMD for shortlisted catalogues', in: ['sub'], activeMatch: ['/buyer/shortlist'] },
     { to: '/buyer/bids', label: 'My bids', subLabel: 'Bids & results', in: ['sub'] },
     { to: '/buyer/auction-status', label: 'Auction status', in: ['sub'] },
     { to: '/noticeboard', label: 'Noticeboard', in: ['top'] },
@@ -531,18 +535,22 @@ function Footer() {
 
 /* ------------------------- contextual sub-nav ------------------------------ */
 /** Secondary nav under the header for multi-section areas — never a sidebar. */
-export function SubNav({ items }: { items: { to: string; label: string; end?: boolean; locked?: boolean }[] }) {
+export function SubNav({ items }: { items: { to: string; label: string; end?: boolean; locked?: boolean; activeMatch?: string[] }[] }) {
+  const { pathname } = useLocation()
   return (
     <div className="border-b border-line bg-surface/60 sticky top-16 z-30 backdrop-blur">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center gap-1 overflow-x-auto overflow-y-hidden">
-        {items.map((it) => (
-          <NavLink key={it.to} to={it.to} end={it.end}
-            className={({ isActive }) => cx('h-11 px-3.5 text-[13px] font-semibold inline-flex items-center gap-1.5 whitespace-nowrap border-b-2 -mb-px transition-colors',
-              isActive ? 'border-ember text-ink' : 'border-transparent text-ink-muted hover:text-ink')}>
-            {it.label}
-            {it.locked && <span className="text-ink-faint" title="Restricted for this role">🔒</span>}
-          </NavLink>
-        ))}
+        {items.map((it) => {
+          const extraActive = it.activeMatch?.some((p) => pathname === p || pathname.startsWith(`${p}/`))
+          return (
+            <NavLink key={it.to} to={it.to} end={it.end}
+              className={({ isActive }) => cx('h-11 px-3.5 text-[13px] font-semibold inline-flex items-center gap-1.5 whitespace-nowrap border-b-2 -mb-px transition-colors',
+                (isActive || extraActive) ? 'border-ember text-ink' : 'border-transparent text-ink-muted hover:text-ink')}>
+              {it.label}
+              {it.locked && <span className="text-ink-faint" title="Restricted for this role">🔒</span>}
+            </NavLink>
+          )
+        })}
       </div>
     </div>
   )
