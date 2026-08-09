@@ -160,8 +160,15 @@ export const CatalogueDetail = () => {
               const rep = reports.find((r) => r.id === lot.inspectionReportId);
               return (
                 <article key={lot.id} className="card p-4">
-                  <div className="flex flex-col lg:flex-row lg:items-center gap-4">
-                    <div className="flex items-start gap-3 flex-1 min-w-0">
+                  {/* grid, not flex-col/lg:flex-row: guest1's own global CSS defines an
+                      unlayered `.flex-col { flex-direction: column }` utility of its own
+                      (src/guest1/styles/index.css) which — because it's unlayered — always
+                      wins over Tailwind's layered `lg:flex-row` override, permanently
+                      pinning this row to a column layout on guest1 routes. grid-cols
+                      responsive variants aren't shadowed the same way (guest1 has no
+                      colliding `.grid-cols-*` classes), so a grid switch sidesteps it. */}
+                  <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto_auto] lg:items-center">
+                    <div className="flex items-start gap-3 min-w-0">
                       <div className="min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="num font-bold">{lot.lotNo}</span>
@@ -185,7 +192,7 @@ export const CatalogueDetail = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-x-5 gap-y-2 lg:text-right shrink-0">
+                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-x-5 gap-y-2 lg:text-right">
                       <div>
                         <div className="text-[10px] font-bold uppercase tracking-wider text-ink-faint">Indicative qty</div>
                         <div className="num text-sm font-bold">{num(lot.indicativeQty)} {lot.uom}</div>
@@ -208,7 +215,7 @@ export const CatalogueDetail = () => {
                       </div>
                     </div>
                     {canBid && lot.status === 'live' && (
-                      <div className="flex lg:flex-col gap-2 items-stretch shrink-0">
+                      <div className="flex items-stretch">
                         <Countdown endsAt={lot.endsAt} size="sm" className="justify-center" />
                       </div>
                     )}
