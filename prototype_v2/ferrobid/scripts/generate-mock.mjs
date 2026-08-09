@@ -323,6 +323,17 @@ for (const lot of wonLots) {
 }
 
 /* --------------------------- delivery orders ----------------------------- */
+const emptyLiftingChecklist = () => [
+  { key: 'vehicle_at_weighbridge', label: 'Vehicle at weighbridge', done: false },
+  { key: 'loading_complete', label: 'Loading complete', done: false },
+  { key: 'gross_weighment', label: 'Gross weighment recorded', done: false },
+]
+const completedLiftingChecklist = (at) => [
+  { key: 'vehicle_at_weighbridge', label: 'Vehicle at weighbridge', done: true, at },
+  { key: 'loading_complete', label: 'Loading complete', done: true, at },
+  { key: 'gross_weighment', label: 'Gross weighment recorded', done: true, at },
+]
+
 const deliveryOrders = wonLots.map((lot, i) => {
   const materialValue = Math.round(lot.resultH1Rate * lot.indicativeQty)
   const gst = Math.round(materialValue * 0.18)
@@ -334,6 +345,7 @@ const deliveryOrders = wonLots.map((lot, i) => {
     materialValue, gstAmount: gst, tcsAmount: tcs,
     paidAmount: i === 0 ? materialValue + gst + tcs : Math.round((materialValue + gst + tcs) * 0.25),
     liftingBy: iso(5 * DAY), createdAt: iso(-2 * DAY + 300),
+    liftingChecklist: emptyLiftingChecklist(),
   }
 })
 // one completed DO from an older auction for history
@@ -342,6 +354,8 @@ deliveryOrders.push({
   stage: 'completed', h1Rate: 291000, awardedQty: 2, uom: 'PCS',
   materialValue: 582000, gstAmount: 104760, tcsAmount: 5820, paidAmount: 692580,
   liftingBy: iso(-1 * DAY), createdAt: iso(-6 * DAY + 400),
+  liftingChecklist: completedLiftingChecklist(iso(-2 * DAY)),
+  weighedQty: 2,
 })
 
 /* ------------------------------- wallets --------------------------------- */
