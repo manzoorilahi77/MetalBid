@@ -10,7 +10,7 @@ import { defaultEmdDeadline, emdWindowClosed } from '../lib/emd'
 import type {
   AppNotification, AuditEvent, AutoBidSetting, BankAccount, Bid, BidType, BuyerLotSelection,
   Catalogue, CompanyBankAccount, DemandDraft, DeliveryOrder, DepositClaim, Dispute, InspectionReport,
-  LiftingChecklistItem, Lot, LotStatus, NotificationKind, Role, User, WithdrawalRequest, WithdrawalWindowConfig,
+  LiftingChecklistItem, Lot, LotStatus, NotificationKind, Role, User, WatchlistEntry, WithdrawalRequest, WithdrawalWindowConfig,
 } from '../types'
 
 const seed = loadSeed()
@@ -130,6 +130,8 @@ interface State {
   disputes: Dispute[]
   auditEvents: typeof seed.auditEvents
   selections: BuyerLotSelection[]
+  /** Catalogue-level "interested" marker — separate from `selections` (interest vs. committed-to-bid). */
+  watchlist: WatchlistEntry[]
   autoBids: AutoBidSetting[]
   inspectionSlots: typeof seed.inspectionSlots
   bankAccounts: BankAccount[]
@@ -154,6 +156,7 @@ interface State {
 
   /* --- buyer --- */
   toggleShortlist: (catalogueId: string, lotId: string) => void
+  toggleWatchlist: (catalogueId: string) => void
   fundEmd: (catalogueId: string, lotIds: string[], method: string) => boolean
   placeBid: (lotId: string, rate: number, bidderId?: string, type?: BidType) => { ok: boolean; error?: string }
   setAutoBid: (lotId: string, maxRate: number, active: boolean) => void
@@ -258,8 +261,14 @@ export const useStore = create<State>((set, get) => {
     const cat = s.catalogues.find((c) => c.id === lot.catalogueId)
     if (!cat || cat.status !== 'live' || lot.status !== 'live') return { ok: false, error: 'Lot is not live' }
     if (s.paused[cat.id]) return { ok: false, error: 'Auction is paused by the administrator' }
-    const minRate = lot.currentRate == null ? lot.startRate : lot.currentRate + lot.increment
-    if (rate < minRate) return { ok: false, error: `Minimum next bid is ${inr(minRate)}/${lot.uom}` }
+    const isTender = cat.type === 'tender'
+    // Sealed tender: exactly one offer per buyer per lot — no revision, no resubmission.
+    if (isTender && s.bids.some((b) => b.lotId === lotId && b.bidderId === bidderId && b.status === 'valid')) {
+      return { ok: false, error: 'You have already submitted an offer for this lot' }
+    }
+    // Tender offers aren't ranked against a visible current rate — only against the floor.
+    const minRate = isTender ? lot.startRate : lot.currentRate == null ? lot.startRate : lot.currentRate + lot.increment
+    if (rate < minRate) return { ok: false, error: `Minimum ${isTender ? 'offer' : 'next bid'} is ${inr(minRate)}/${lot.uom}` }
 
     const prevLeader = lot.leadingBidderId
     const bid: Bid = {
@@ -267,13 +276,16 @@ export const useStore = create<State>((set, get) => {
       at: new Date(s.now).toISOString(), type, status: 'valid',
     }
 
-    // anti-snipe: a bid inside the last N minutes extends the lot by N minutes
+    // anti-snipe: a bid inside the last N minutes extends the lot by N minutes.
+    // Tender lots have no visible countdown pressure to snipe, so they're exempt.
     let endsAt = lot.endsAt
     let extensions = lot.extensions
-    const msLeft = Date.parse(lot.endsAt) - s.now
-    if (msLeft < cat.antiSnipeMinutes * 60_000) {
-      endsAt = new Date(Date.parse(lot.endsAt) + cat.antiSnipeMinutes * 60_000).toISOString()
-      extensions += 1
+    if (!isTender) {
+      const msLeft = Date.parse(lot.endsAt) - s.now
+      if (msLeft < cat.antiSnipeMinutes * 60_000) {
+        endsAt = new Date(Date.parse(lot.endsAt) + cat.antiSnipeMinutes * 60_000).toISOString()
+        extensions += 1
+      }
     }
 
     set((st) => ({
@@ -285,8 +297,9 @@ export const useStore = create<State>((set, get) => {
       ),
     }))
 
+    // Sealed tender offers have no visible leader, so there's nothing to be "outbid" from.
     const me = get().currentUser
-    if (me && prevLeader === me.id && bidderId !== me.id) {
+    if (!isTender && me && prevLeader === me.id && bidderId !== me.id) {
       const bidder = get().users.find((u) => u.id === bidderId)
       get().notify({
         userId: me.id, kind: 'bid', title: `Outbid on ${lot.lotNo}`,
@@ -305,6 +318,8 @@ export const useStore = create<State>((set, get) => {
     for (const ab of s.autoBids.filter((a) => a.active && a.buyerId === me.id)) {
       const lot = s.lots.find((l) => l.id === ab.lotId)
       if (!lot || lot.status !== 'live' || lot.leadingBidderId === me.id) continue
+      const cat = s.catalogues.find((c) => c.id === lot.catalogueId)
+      if (cat?.type === 'tender') continue // no auto-bid resolution on sealed tender lots
       const next = (lot.currentRate ?? lot.startRate - lot.increment) + lot.increment
       if (next <= ab.maxRate) applyBid(lot.id, next, me.id, 'auto')
     }
@@ -315,7 +330,7 @@ export const useStore = create<State>((set, get) => {
     for (const lot of s.lots) {
       if (lot.status !== 'live' || !lot.catalogueId) continue
       const cat = s.catalogues.find((c) => c.id === lot.catalogueId)
-      if (!cat || cat.status !== 'live' || s.paused[cat.id]) continue
+      if (!cat || cat.status !== 'live' || s.paused[cat.id] || cat.type === 'tender') continue
       const msLeft = Date.parse(lot.endsAt) - s.now
       if (msLeft <= 0) continue
       // bots bid more aggressively as close approaches
@@ -355,7 +370,7 @@ export const useStore = create<State>((set, get) => {
           get().notify({
             userId: me.id, kind: 'bid', title: `You won ${lot.lotNo} 🎉`,
             body: `H1 confirmed at ${inr(lot.currentRate!)}/${lot.uom}. Delivery order will be issued after settlement.`,
-            href: '/buyer/fulfilment',
+            href: '/buyer/auction-status',
           })
           set((st) => ({
             deliveryOrders: [...st.deliveryOrders, {
@@ -428,6 +443,7 @@ export const useStore = create<State>((set, get) => {
 
     withdrawalWindow: DEFAULT_WITHDRAWAL_WINDOW,
     termsAccepted: {},
+    watchlist: [],
     toasts: [],
     lastWonLotId: null,
 
@@ -513,6 +529,19 @@ export const useStore = create<State>((set, get) => {
       })
     },
 
+    toggleWatchlist: (catalogueId) => {
+      const me = get().currentUser
+      if (!me) return
+      set((st) => {
+        const has = st.watchlist.some((w) => w.buyerId === me.id && w.catalogueId === catalogueId)
+        return {
+          watchlist: has
+            ? st.watchlist.filter((w) => !(w.buyerId === me.id && w.catalogueId === catalogueId))
+            : [...st.watchlist, { buyerId: me.id, catalogueId }],
+        }
+      })
+    },
+
     fundEmd: (catalogueId, lotIds, method) => {
       const s = get()
       const me = s.currentUser
@@ -555,7 +584,7 @@ export const useStore = create<State>((set, get) => {
       }))
       get().notify({
         userId: me.id, kind: 'wallet', title: `EMD locked for ${lots.length} lot${lots.length > 1 ? 's' : ''}`,
-        body: `${inr(total)} locked against ${cat.code} via ${method}.`, href: '/buyer/shortlist',
+        body: `${inr(total)} locked against ${cat.code} via ${method}.`, href: '/buyer/emd-shortlisted-catalogue',
       })
       return true
     },
@@ -1124,6 +1153,17 @@ export function selectionSummary(s: Pick<State, 'selections' | 'lots'>, buyerId:
     shortfall: Math.max(0, required - fundedAmt),
     unfundedLotIds: lotIds.filter((id) => !funded.includes(id)),
   }
+}
+
+/** A catalogue counts as "shortlisted" (Browse & Shortlist's scope filter) if the
+ *  buyer has watchlisted it directly OR starred at least one of its lots. */
+export function isCatalogueShortlisted(
+  s: Pick<State, 'watchlist' | 'selections'>, buyerId: string | undefined, catalogueId: string,
+): boolean {
+  if (!buyerId) return false
+  if (s.watchlist.some((w) => w.buyerId === buyerId && w.catalogueId === catalogueId)) return true
+  const sel = s.selections.find((x) => x.buyerId === buyerId && x.catalogueId === catalogueId)
+  return !!sel && sel.lotIds.length > 0
 }
 
 /** Status of a catalogue for chips: live / closing-soon / upcoming / closed. */

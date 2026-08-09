@@ -13,7 +13,7 @@ import {
 } from 'lucide-react'
 import { Page } from '../layout/Chrome'
 import {
-  AmountStepper, Button, Chip, Countdown, EmptyState, Input, Modal, Segmented, StatusChip, Toggle, cx,
+  AmountStepper, Button, Chip, Countdown, EmptyState, Field, Input, Modal, Segmented, StatusChip, Toggle, cx,
 } from '../components/ui'
 import { useBidroomGate } from '../components/BidroomGate'
 import { ladderStandings, myBidTrail, selectionSummary, useStore } from '../store/store'
@@ -36,6 +36,7 @@ export default function BiddingRoom() {
   const now = useNow()
 
   const me = useStore((s) => s.currentUser)
+  const role = useStore((s) => s.role)
   const catalogues = useStore((s) => s.catalogues)
   const lots = useStore((s) => s.lots)
   const bids = useStore((s) => s.bids)
@@ -68,6 +69,8 @@ export default function BiddingRoom() {
   const [ladderView, setLadderView] = useState<'ladder' | 'mine'>('ladder')
   // open on arrival so the ladder is discoverable; closing it sticks for the session
   const [ladderOpen, setLadderOpen] = useState(true)
+  // sealed-tender single offer input — reset to the lot's floor whenever the lot changes
+  const [tenderOffer, setTenderOffer] = useState(0)
 
   // cockpit lots: shortlisted first (funded first within), else all
   const cockpitLots = useMemo(() => {
@@ -106,14 +109,20 @@ export default function BiddingRoom() {
   // bid builder tracks the lot's own minimum — reset whenever the lot changes
   // or someone else's bid moves the floor out from under a stale amount
   useEffect(() => { setBidAmount(minNext) }, [lot?.id, minNext])
+  useEffect(() => { setTenderOffer(lot?.startRate ?? 0) }, [lot?.id])
   // Only the pending bid confirmation is lot-specific and must not carry across.
   // The ladder stays open and on whichever tab you left it — switching lots from
   // the market list is browsing, not a reason to pack the panel away.
   useEffect(() => { setConfirmOpen(false) }, [lot?.id])
 
   if (!cat || !lot) {
-    return <Page><EmptyState title="Nothing to bid on here" body="This catalogue has no lots, or it doesn't exist in this demo session." action={<Link to="/browse"><Button variant="secondary">Browse auctions</Button></Link>} /></Page>
+    return <Page><EmptyState title="Nothing to bid on here" body="This catalogue has no lots, or it doesn't exist in this demo session." action={<Link to={role === 'buyer' ? '/buyermarketplace' : '/browse'}><Button variant="secondary">Browse auctions</Button></Link>} /></Page>
   }
+
+  // Sealed-bid tender: no visible price/ladder, no H1/leading indicator, no
+  // outbid alerts, no auto-bid, no anti-snipe — a single one-time rate input.
+  const isTender = cat.type === 'tender'
+  const myTenderBid = bids.find((b) => b.lotId === lot.id && b.bidderId === me?.id && b.status === 'valid' && b.type === 'tender')
 
   if (summary.count === 0) {
     return (
@@ -202,13 +211,52 @@ export default function BiddingRoom() {
   }
 
   const doBid = (rate: number) => gateOr(() => {
-    const res = placeBid(lot.id, rate)
+    const res = placeBid(lot.id, rate, undefined, isTender ? 'tender' : 'manual')
     if (res.ok) {
-      pushToast({ kind: 'success', title: `Bid placed — ${inr(rate)}/${lot.uom}`, body: `${lot.lotNo} · you are H1` })
+      pushToast(isTender
+        ? { kind: 'success', title: `Offer submitted — ${inr(rate)}/${lot.uom}`, body: `${lot.lotNo} · sealed, cannot be revised` }
+        : { kind: 'success', title: `Bid placed — ${inr(rate)}/${lot.uom}`, body: `${lot.lotNo} · you are H1` })
     } else {
-      pushToast({ kind: 'danger', title: 'Bid rejected', body: res.error })
+      pushToast({ kind: 'danger', title: isTender ? 'Offer rejected' : 'Bid rejected', body: res.error })
     }
   })
+
+  /* --------------------------- sealed tender control ------------------------ */
+  const renderTenderControl = () => {
+    if (myTenderBid) {
+      return (
+        <div className="card bg-success-soft border-success/25 p-4 text-center">
+          <div className="text-sm font-bold text-success">Offer submitted {inr(myTenderBid.rate)}/{lot.uom}</div>
+          <p className="text-xs text-ink-muted mt-1">Sealed — one offer per bidder, no revisions. Results show after the catalogue closes.</p>
+        </div>
+      )
+    }
+    return (
+      <div className="flex flex-col gap-3">
+        <Field label={`Your offer (₹/${lot.uom}) — minimum ${inr(lot.startRate)}`}>
+          <Input inputMode="numeric" className="num" value={tenderOffer.toLocaleString('en-IN')}
+            onChange={(e) => setTenderOffer(Number(e.target.value.replace(/[^\d]/g, '')) || 0)} />
+        </Field>
+        <Button disabled={isPaused || tenderOffer < lot.startRate}
+          onClick={() => gateOr(() => { setConfirmRate(tenderOffer); setConfirmOpen(true) })}>
+          <Gavel size={16} /> Submit offer
+        </Button>
+        {tenderOffer < lot.startRate && (
+          <p className="text-xs font-semibold text-danger">Offer must be at least {inr(lot.startRate)}/{lot.uom}.</p>
+        )}
+        <p className="text-xs text-ink-faint">
+          Sealed tender — one confidential offer per bidder, submitted once and opened at close. No visible competing price, no revisions.
+        </p>
+      </div>
+    )
+  }
+
+  const renderSealedNotice = () => (
+    <div className="card p-6 flex flex-col items-center text-center gap-2 text-sm text-ink-muted">
+      <Lock size={18} className="text-ink-faint" />
+      Sealed tender — no visible bid ladder. Offers are opened when this catalogue closes.
+    </div>
+  )
 
   /* -------------------------- shared bid builder -------------------------- */
   const renderBidBuilder = (size: 'md' | 'md+' | 'lg') => (
@@ -323,7 +371,9 @@ export default function BiddingRoom() {
     ]} />
   )
 
-  const statusChipFor = () => lot.status === 'live'
+  // Sealed tender has no visible leader/H1 to surface — renderTenderControl
+  // covers "have I already offered" instead.
+  const statusChipFor = () => isTender ? null : lot.status === 'live'
     ? (leading
       ? <Chip tone="success" pulse>You are H1</Chip>
       : lot.leadingBidderId
@@ -356,6 +406,7 @@ export default function BiddingRoom() {
           const active = l.id === lot.id
           const lFunded = summary.fundedLotIds.includes(l.id)
           const lLeading = l.leadingBidderId === me?.id
+          const lMine = bids.some((b) => b.lotId === l.id && b.bidderId === me?.id && b.status === 'valid')
           return (
             <button key={l.id}
               onClick={() => setParams({ lot: l.id }, { replace: true })}
@@ -363,15 +414,20 @@ export default function BiddingRoom() {
                 active ? 'border-ember bg-ember-soft/40' : 'hover:border-line-strong')}>
               <div className="flex items-center justify-between gap-2">
                 <span className="num text-xs font-bold">{l.lotNo}</span>
-                {l.status === 'live'
-                  ? (lLeading ? <Chip tone="success" className="h-5 text-[10px]">H1</Chip>
-                    : l.bidCount > 0 && summary.lotIds.includes(l.id) ? <Chip tone="danger" className="h-5 text-[10px]">Outbid</Chip>
-                    : <Chip tone="ember" pulse className="h-5 text-[10px]">Live</Chip>)
-                  : <StatusChip status={l.status} />}
+                {isTender
+                  ? (l.status === 'live'
+                    ? (lMine ? <Chip tone="success" className="h-5 text-[10px]">Offered</Chip> : <Chip tone="ember" pulse className="h-5 text-[10px]">Open</Chip>)
+                    : <StatusChip status={l.status} />)
+                  : l.status === 'live'
+                    ? (lLeading ? <Chip tone="success" className="h-5 text-[10px]">H1</Chip>
+                      : l.bidCount > 0 && summary.lotIds.includes(l.id) ? <Chip tone="danger" className="h-5 text-[10px]">Outbid</Chip>
+                      : <Chip tone="ember" pulse className="h-5 text-[10px]">Live</Chip>)
+                    : <StatusChip status={l.status} />}
               </div>
               <div className="text-xs text-ink-muted truncate mt-1">{l.grade}</div>
               <div className="num text-sm font-bold mt-0.5">
-                {l.currentRate ? inr(l.currentRate) : inr(l.startRate)}<span className="text-[10px] text-ink-faint font-medium">/{l.uom}</span>
+                {isTender ? `Start ${inr(l.startRate)}` : l.currentRate ? inr(l.currentRate) : inr(l.startRate)}
+                {!isTender && <span className="text-[10px] text-ink-faint font-medium">/{l.uom}</span>}
               </div>
               <div className="flex items-center justify-between mt-1">
                 {l.status === 'live' ? <Countdown endsAt={l.endsAt} size="sm" className="h-5 text-[10px] px-1.5" /> : <span />}
@@ -414,27 +470,33 @@ export default function BiddingRoom() {
                 {lot.status === 'live' && <Countdown endsAt={lot.endsAt} prefix="lot closes" size="lg" />}
               </div>
 
-              {/* the big number */}
+              {/* the big number — hidden entirely on sealed tender lots */}
               <div className="mt-6 grid sm:grid-cols-3 gap-4 items-end">
-                <div className="sm:col-span-2">
-                  <div className="text-[11px] font-bold uppercase tracking-wider text-ink-faint">
-                    {lot.status === 'live' ? 'Current rate (H1)' : 'Final rate (H1)'}
+                {!isTender && (
+                  <div className="sm:col-span-2">
+                    <div className="text-[11px] font-bold uppercase tracking-wider text-ink-faint">
+                      {lot.status === 'live' ? 'Current rate (H1)' : 'Final rate (H1)'}
+                    </div>
+                    <div key={lot.currentRate ?? 0} className={cx('num font-bold leading-none mt-1 animate-bid-in',
+                      'text-4xl sm:text-6xl', leading ? 'text-success' : 'text-ink')}>
+                      {lot.currentRate ? inr(lot.currentRate) : '—'}
+                      <span className="text-lg sm:text-2xl text-ink-faint font-medium">/{lot.uom}</span>
+                    </div>
+                    <div className="flex items-center gap-2 mt-2.5 flex-wrap">
+                      {statusChipFor()}
+                      <span className="num text-xs text-ink-muted"><TrendingUp size={12} className="inline mr-1" />{lot.bidCount} bids</span>
+                      {myAuto && <Chip tone="steel" className="num"><Bot size={11} /> Auto-bid to {inr(myAuto.maxRate)}</Chip>}
+                    </div>
                   </div>
-                  <div key={lot.currentRate ?? 0} className={cx('num font-bold leading-none mt-1 animate-bid-in',
-                    'text-4xl sm:text-6xl', leading ? 'text-success' : 'text-ink')}>
-                    {lot.currentRate ? inr(lot.currentRate) : '—'}
-                    <span className="text-lg sm:text-2xl text-ink-faint font-medium">/{lot.uom}</span>
-                  </div>
-                  <div className="flex items-center gap-2 mt-2.5 flex-wrap">
-                    {statusChipFor()}
-                    <span className="num text-xs text-ink-muted"><TrendingUp size={12} className="inline mr-1" />{lot.bidCount} bids</span>
-                    {myAuto && <Chip tone="steel" className="num"><Bot size={11} /> Auto-bid to {inr(myAuto.maxRate)}</Chip>}
-                  </div>
-                </div>
-                <div className="card bg-surface-2 border-0 p-3.5 text-sm">
+                )}
+                <div className={cx('card bg-surface-2 border-0 p-3.5 text-sm', isTender && 'sm:col-span-3')}>
                   <div className="flex justify-between"><span className="text-ink-muted">Start rate</span><span className="num font-semibold">{inr(lot.startRate)}</span></div>
-                  <div className="flex justify-between mt-1"><span className="text-ink-muted">Increment</span><span className="num font-semibold">{inr(lot.increment)}</span></div>
-                  <div className="flex justify-between mt-1"><span className="text-ink-muted">Min next bid</span><span className="num font-bold text-ember-strong">{inr(minNext)}</span></div>
+                  {!isTender && (
+                    <>
+                      <div className="flex justify-between mt-1"><span className="text-ink-muted">Increment</span><span className="num font-semibold">{inr(lot.increment)}</span></div>
+                      <div className="flex justify-between mt-1"><span className="text-ink-muted">Min next bid</span><span className="num font-bold text-ember-strong">{inr(minNext)}</span></div>
+                    </>
+                  )}
                   <div className="flex justify-between mt-1"><span className="text-ink-muted">Your EMD</span>
                     <span className={cx('num font-semibold', funded ? 'text-success' : 'text-warning')}>{funded ? 'Locked ✓' : inr(lot.preBidEmd)}</span></div>
                 </div>
@@ -443,7 +505,7 @@ export default function BiddingRoom() {
               {/* bid controls */}
               {lot.status === 'live' ? (
                 <div className="mt-6 border-t border-line pt-5">
-                  {renderBidBuilder('md')}
+                  {isTender ? renderTenderControl() : renderBidBuilder('md')}
                 </div>
               ) : (
                 <div className={cx('mt-6 card border-0 p-5 text-center',
@@ -451,11 +513,11 @@ export default function BiddingRoom() {
                   {lot.status === 'sold' && leading ? (
                     <div className="text-success font-bold text-lg flex items-center justify-center gap-2">
                       <Sparkles size={20} /> You won this lot at {inr(lot.resultH1Rate ?? 0)}/{lot.uom} 🎉
-                      <Link to="/buyer/fulfilment" className="underline text-sm font-semibold">Track fulfilment</Link>
+                      <Link to="/buyer/auction-status" className="underline text-sm font-semibold">Track auction status</Link>
                     </div>
                   ) : (
                     <div className="text-ink-muted font-semibold">
-                      Bidding closed — {lot.status === 'sold' ? `sold at ${inr(lot.resultH1Rate ?? 0)}/${lot.uom}` : lot.status === 'sta' ? 'H1 below reserve, subject to seller approval' : 'no sale'}
+                      Bidding closed — {lot.status === 'sold' ? `sold at ${inr(lot.resultH1Rate ?? 0)}/${lot.uom}` : lot.status === 'sta' ? `${isTender ? 'Offer' : 'H1'} below reserve, subject to seller approval` : 'no sale'}
                     </div>
                   )}
                 </div>
@@ -463,7 +525,7 @@ export default function BiddingRoom() {
             </div>
           </div>
 
-          {renderLadder(false)}
+          {isTender ? renderSealedNotice() : renderLadder(false)}
         </div>
       )}
 
@@ -473,15 +535,18 @@ export default function BiddingRoom() {
             {/* one-line status banner — the first thing the eye lands on */}
             <div className={cx('flex items-center justify-center gap-1.5 px-5 py-2.5 text-xs font-extrabold',
               lot.status !== 'live' ? 'bg-surface-2 text-ink-muted'
+                : isTender ? 'bg-surface-2 text-ink-muted'
                 : leading ? 'bg-success-soft text-success'
                   : lot.leadingBidderId ? 'bg-danger-soft text-danger' : 'bg-surface-2 text-ink-muted')}>
               {lot.status !== 'live'
                 ? (lot.status === 'sold' && leading ? '🎉 You won this lot' : 'Bidding closed')
-                : leading
-                  ? <><Crown size={13} /> You're leading — sit tight</>
-                  : lot.leadingBidderId
-                    ? <><ArrowUpRight size={13} /> Outbid — one tap takes it back</>
-                    : <><Gavel size={13} /> No bid from you yet</>}
+                : isTender
+                  ? (myTenderBid ? <><Gavel size={13} /> Offer submitted</> : <><Gavel size={13} /> Sealed tender — one offer</>)
+                  : leading
+                    ? <><Crown size={13} /> You're leading — sit tight</>
+                    : lot.leadingBidderId
+                      ? <><ArrowUpRight size={13} /> Outbid — one tap takes it back</>
+                      : <><Gavel size={13} /> No bid from you yet</>}
             </div>
 
             <div className="p-5 flex flex-col items-center text-center gap-3">
@@ -493,11 +558,20 @@ export default function BiddingRoom() {
 
               {lot.status === 'live' && <Countdown endsAt={lot.endsAt} prefix="closes in" size="lg" />}
 
-              <div key={lot.currentRate ?? 0} className="num font-bold leading-none text-5xl animate-bid-in text-ink">
-                {lot.currentRate ? inr(lot.currentRate) : inr(lot.startRate)}
-                <span className="text-lg text-ink-faint font-medium">/{lot.uom}</span>
-              </div>
-              <span className="num text-xs text-ink-muted"><TrendingUp size={12} className="inline mr-1" />{lot.bidCount} bids · min next {inr(minNext)}</span>
+              {isTender ? (
+                <div className="num font-bold leading-none text-3xl text-ink">
+                  Start {inr(lot.startRate)}
+                  <span className="text-lg text-ink-faint font-medium">/{lot.uom}</span>
+                </div>
+              ) : (
+                <>
+                  <div key={lot.currentRate ?? 0} className="num font-bold leading-none text-5xl animate-bid-in text-ink">
+                    {lot.currentRate ? inr(lot.currentRate) : inr(lot.startRate)}
+                    <span className="text-lg text-ink-faint font-medium">/{lot.uom}</span>
+                  </div>
+                  <span className="num text-xs text-ink-muted"><TrendingUp size={12} className="inline mr-1" />{lot.bidCount} bids · min next {inr(minNext)}</span>
+                </>
+              )}
 
               {!funded && (
                 <Button className="w-full" onClick={() => setEmdGateLot(lot)}>Fund {inr(lot.preBidEmd)} EMD to bid</Button>
@@ -505,17 +579,17 @@ export default function BiddingRoom() {
 
               {lot.status === 'live' ? (
                 <div className="w-full flex flex-col items-center gap-3 pt-2 border-t border-line mt-1">
-                  {renderBidBuilder('lg')}
+                  {isTender ? renderTenderControl() : renderBidBuilder('lg')}
                 </div>
               ) : (
                 <div className="w-full text-ink-muted font-semibold text-sm py-2">
-                  {lot.status === 'sold' ? `Sold at ${inr(lot.resultH1Rate ?? 0)}/${lot.uom}` : lot.status === 'sta' ? 'H1 below reserve, subject to seller approval' : 'No sale'}
+                  {lot.status === 'sold' ? `Sold at ${inr(lot.resultH1Rate ?? 0)}/${lot.uom}` : lot.status === 'sta' ? `${isTender ? 'Offer' : 'H1'} below reserve, subject to seller approval` : 'No sale'}
                 </div>
               )}
             </div>
           </div>
 
-          {renderLadder(true)}
+          {isTender ? renderSealedNotice() : renderLadder(true)}
         </div>
       )}
 
@@ -539,31 +613,39 @@ export default function BiddingRoom() {
             <p className="text-xs text-ink-muted mt-1 truncate">{lot.description}</p>
 
             <div className="mt-3 flex items-end justify-between gap-3">
-              <div key={lot.currentRate ?? 0} className={cx('num font-bold leading-none animate-bid-in text-3xl', leading ? 'text-success' : 'text-ink')}>
-                {lot.currentRate ? inr(lot.currentRate) : inr(lot.startRate)}
-                <span className="text-sm text-ink-faint font-medium">/{lot.uom}</span>
-              </div>
+              {isTender ? (
+                <div className="num font-bold leading-none text-3xl text-ink">
+                  Start {inr(lot.startRate)}<span className="text-sm text-ink-faint font-medium">/{lot.uom}</span>
+                </div>
+              ) : (
+                <div key={lot.currentRate ?? 0} className={cx('num font-bold leading-none animate-bid-in text-3xl', leading ? 'text-success' : 'text-ink')}>
+                  {lot.currentRate ? inr(lot.currentRate) : inr(lot.startRate)}
+                  <span className="text-sm text-ink-faint font-medium">/{lot.uom}</span>
+                </div>
+              )}
               {statusChipFor()}
             </div>
 
-            <div className="grid grid-cols-3 gap-2 mt-3 text-xs">
-              <div className="card bg-surface-2 border-0 p-2"><div className="text-ink-faint">Start</div><div className="num font-semibold">{inr(lot.startRate)}</div></div>
-              <div className="card bg-surface-2 border-0 p-2"><div className="text-ink-faint">Increment</div><div className="num font-semibold">{inr(lot.increment)}</div></div>
-              <div className="card bg-surface-2 border-0 p-2"><div className="text-ink-faint">Min next</div><div className="num font-bold text-ember-strong">{inr(minNext)}</div></div>
-            </div>
+            {!isTender && (
+              <div className="grid grid-cols-3 gap-2 mt-3 text-xs">
+                <div className="card bg-surface-2 border-0 p-2"><div className="text-ink-faint">Start</div><div className="num font-semibold">{inr(lot.startRate)}</div></div>
+                <div className="card bg-surface-2 border-0 p-2"><div className="text-ink-faint">Increment</div><div className="num font-semibold">{inr(lot.increment)}</div></div>
+                <div className="card bg-surface-2 border-0 p-2"><div className="text-ink-faint">Min next</div><div className="num font-bold text-ember-strong">{inr(minNext)}</div></div>
+              </div>
+            )}
 
             {lot.status === 'live' ? (
               <div className="mt-3 border-t border-line pt-3">
-                {renderBidBuilder('md')}
+                {isTender ? renderTenderControl() : renderBidBuilder('md')}
               </div>
             ) : (
               <div className="mt-3 text-ink-muted font-semibold text-xs">
-                {lot.status === 'sold' ? `Sold at ${inr(lot.resultH1Rate ?? 0)}/${lot.uom}` : lot.status === 'sta' ? 'H1 below reserve — subject to seller approval' : 'No sale'}
+                {lot.status === 'sold' ? `Sold at ${inr(lot.resultH1Rate ?? 0)}/${lot.uom}` : lot.status === 'sta' ? `${isTender ? 'Offer' : 'H1'} below reserve — subject to seller approval` : 'No sale'}
               </div>
             )}
           </div>
 
-          {renderLadder(true)}
+          {isTender ? renderSealedNotice() : renderLadder(true)}
 
           {/* market ticker — every lot in this catalogue at a glance */}
           <div className="card overflow-hidden">
@@ -573,14 +655,23 @@ export default function BiddingRoom() {
             <div className="max-h-[430px] overflow-y-auto divide-y divide-line">
               {catLots.map((l) => {
                 const lLeading = l.leadingBidderId === me?.id
+                const lMine = bids.some((b) => b.lotId === l.id && b.bidderId === me?.id && b.status === 'valid')
                 return (
                   <button key={l.id} onClick={() => setParams({ lot: l.id }, { replace: true })}
                     className={cx('w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-surface-2 transition-colors', l.id === lot.id && 'bg-ember-soft/30')}>
                     <span className="num text-[11px] font-bold w-14 shrink-0">{l.lotNo}</span>
-                    <span className="num text-xs font-semibold flex-1 truncate">{l.currentRate ? inr(l.currentRate) : inr(l.startRate)}</span>
-                    {l.status === 'live'
-                      ? (lLeading ? <Chip tone="success" className="h-5 text-[9px]">H1</Chip> : <Chip tone="ember" pulse className="h-5 text-[9px]">Live</Chip>)
-                      : <StatusChip status={l.status} />}
+                    {isTender ? (
+                      <span className="num text-xs font-semibold flex-1 truncate">Start {inr(l.startRate)}</span>
+                    ) : (
+                      <span className="num text-xs font-semibold flex-1 truncate">{l.currentRate ? inr(l.currentRate) : inr(l.startRate)}</span>
+                    )}
+                    {isTender
+                      ? (l.status === 'live'
+                        ? (lMine ? <Chip tone="success" className="h-5 text-[9px]">Offered</Chip> : <Chip tone="ember" pulse className="h-5 text-[9px]">Open</Chip>)
+                        : <StatusChip status={l.status} />)
+                      : l.status === 'live'
+                        ? (lLeading ? <Chip tone="success" className="h-5 text-[9px]">H1</Chip> : <Chip tone="ember" pulse className="h-5 text-[9px]">Live</Chip>)
+                        : <StatusChip status={l.status} />}
                   </button>
                 )
               })}
@@ -615,53 +706,64 @@ export default function BiddingRoom() {
             <p className="text-xs text-ink-muted mt-1 truncate">{lot.description}</p>
 
             <div className="mt-3 flex items-end justify-between gap-3 flex-wrap">
-              <div key={lot.currentRate ?? 0} className={cx('num font-bold leading-none animate-bid-in text-3xl', leading ? 'text-success' : 'text-ink')}>
-                {lot.currentRate ? inr(lot.currentRate) : inr(lot.startRate)}
-                <span className="text-sm text-ink-faint font-medium">/{lot.uom}</span>
-              </div>
+              {isTender ? (
+                <div className="num font-bold leading-none text-3xl text-ink">
+                  Start {inr(lot.startRate)}<span className="text-sm text-ink-faint font-medium">/{lot.uom}</span>
+                </div>
+              ) : (
+                <div key={lot.currentRate ?? 0} className={cx('num font-bold leading-none animate-bid-in text-3xl', leading ? 'text-success' : 'text-ink')}>
+                  {lot.currentRate ? inr(lot.currentRate) : inr(lot.startRate)}
+                  <span className="text-sm text-ink-faint font-medium">/{lot.uom}</span>
+                </div>
+              )}
               <div className="flex items-center gap-2 flex-wrap">
                 {statusChipFor()}
                 {/* the panel glyph points at the reserved column to this card's right,
-                    and flips to a close affordance once the ladder is in it */}
-                <Button variant={ladderOpen ? 'steel' : 'secondary'} size="sm"
-                  aria-expanded={ladderOpen}
-                  title={ladderOpen ? 'Hide the bid ladder' : 'Open the bid ladder beside this card'}
-                  onClick={() => setLadderOpen((o) => !o)}>
-                  {ladderOpen ? <PanelRightClose size={15} /> : <PanelRightOpen size={15} />}
-                  Bid ladder
-                  <span className={cx('num text-[11px] font-bold rounded-md px-1.5 py-px',
-                    ladderOpen ? 'bg-white/20 text-white' : 'bg-surface-2 text-ink-muted')}>
-                    {lot.bidCount}
-                  </span>
-                </Button>
+                    and flips to a close affordance once the ladder is in it — no ladder
+                    exists for a sealed tender lot, so the toggle itself disappears */}
+                {!isTender && (
+                  <Button variant={ladderOpen ? 'steel' : 'secondary'} size="sm"
+                    aria-expanded={ladderOpen}
+                    title={ladderOpen ? 'Hide the bid ladder' : 'Open the bid ladder beside this card'}
+                    onClick={() => setLadderOpen((o) => !o)}>
+                    {ladderOpen ? <PanelRightClose size={15} /> : <PanelRightOpen size={15} />}
+                    Bid ladder
+                    <span className={cx('num text-[11px] font-bold rounded-md px-1.5 py-px',
+                      ladderOpen ? 'bg-white/20 text-white' : 'bg-surface-2 text-ink-muted')}>
+                      {lot.bidCount}
+                    </span>
+                  </Button>
+                )}
               </div>
             </div>
 
             {/* same tiles as Desk, one notch taller so the bigger numerals sit right */}
-            <div className="grid grid-cols-3 gap-2 mt-3">
-              <div className="card bg-surface-2 border-0 px-2.5 py-2">
-                <div className="text-[11px] text-ink-faint">Start</div>
-                <div className="num font-bold text-lg leading-tight">{inr(lot.startRate)}</div>
+            {!isTender && (
+              <div className="grid grid-cols-3 gap-2 mt-3">
+                <div className="card bg-surface-2 border-0 px-2.5 py-2">
+                  <div className="text-[11px] text-ink-faint">Start</div>
+                  <div className="num font-bold text-lg leading-tight">{inr(lot.startRate)}</div>
+                </div>
+                <div className="card bg-surface-2 border-0 px-2.5 py-2">
+                  <div className="text-[11px] text-ink-faint">Increment</div>
+                  <div className="num font-bold text-lg leading-tight">{inr(lot.increment)}</div>
+                </div>
+                <div className="card bg-surface-2 border-0 px-2.5 py-2">
+                  <div className="text-[11px] text-ink-faint">Min next</div>
+                  <div className="num font-bold text-lg leading-tight text-ember-strong">{inr(minNext)}</div>
+                </div>
               </div>
-              <div className="card bg-surface-2 border-0 px-2.5 py-2">
-                <div className="text-[11px] text-ink-faint">Increment</div>
-                <div className="num font-bold text-lg leading-tight">{inr(lot.increment)}</div>
-              </div>
-              <div className="card bg-surface-2 border-0 px-2.5 py-2">
-                <div className="text-[11px] text-ink-faint">Min next</div>
-                <div className="num font-bold text-lg leading-tight text-ember-strong">{inr(minNext)}</div>
-              </div>
-            </div>
+            )}
 
             {lot.status === 'live' ? (
               <div className="mt-3 border-t border-line pt-3">
-                {renderBidBuilder('md+')}
+                {isTender ? renderTenderControl() : renderBidBuilder('md+')}
               </div>
             ) : (
               <div className="mt-3 text-ink-muted font-semibold text-xs">
                 {lot.status === 'sold' && leading
-                  ? <span className="text-success inline-flex items-center gap-1.5"><Sparkles size={14} /> You won at {inr(lot.resultH1Rate ?? 0)}/{lot.uom} — <Link to="/buyer/fulfilment" className="underline">track fulfilment</Link></span>
-                  : lot.status === 'sold' ? `Sold at ${inr(lot.resultH1Rate ?? 0)}/${lot.uom}` : lot.status === 'sta' ? 'H1 below reserve — subject to seller approval' : 'No sale'}
+                  ? <span className="text-success inline-flex items-center gap-1.5"><Sparkles size={14} /> You won at {inr(lot.resultH1Rate ?? 0)}/{lot.uom} — <Link to="/buyer/auction-status" className="underline">track auction status</Link></span>
+                  : lot.status === 'sold' ? `Sold at ${inr(lot.resultH1Rate ?? 0)}/${lot.uom}` : lot.status === 'sta' ? `${isTender ? 'Offer' : 'H1'} below reserve — subject to seller approval` : 'No sale'}
               </div>
             )}
           </div>
@@ -674,6 +776,7 @@ export default function BiddingRoom() {
             <div className="flex flex-wrap gap-2">
               {urgentLots.map((l) => {
                 const lLeading = l.leadingBidderId === me?.id
+                const lMine = bids.some((b) => b.lotId === l.id && b.bidderId === me?.id && b.status === 'valid')
                 return (
                   <button key={l.id}
                     onClick={() => setParams({ lot: l.id }, { replace: true })}
@@ -681,18 +784,21 @@ export default function BiddingRoom() {
                       'bg-danger-soft/40', l.id === lot.id ? 'border-danger' : 'border-danger/45 hover:border-danger')}>
                     <div className="flex items-center justify-between gap-2">
                       <span className="num text-xs font-bold">{l.lotNo}</span>
-                      {lLeading
-                        ? <Chip tone="success" className="h-5 text-[10px]">H1</Chip>
-                        : <Chip tone="danger" pulse className="h-5 text-[10px]">Closing</Chip>}
+                      {isTender
+                        ? (lMine ? <Chip tone="success" className="h-5 text-[10px]">Offered</Chip> : <Chip tone="danger" pulse className="h-5 text-[10px]">Closing</Chip>)
+                        : lLeading ? <Chip tone="success" className="h-5 text-[10px]">H1</Chip>
+                          : <Chip tone="danger" pulse className="h-5 text-[10px]">Closing</Chip>}
                     </div>
                     <div className="text-xs text-ink-muted truncate mt-1">{l.grade}</div>
-                    <div className="num text-sm font-bold mt-0.5">
-                      {l.currentRate ? inr(l.currentRate) : inr(l.startRate)}<span className="text-[10px] text-ink-faint font-medium">/{l.uom}</span>
-                    </div>
+                    {!isTender && (
+                      <div className="num text-sm font-bold mt-0.5">
+                        {l.currentRate ? inr(l.currentRate) : inr(l.startRate)}<span className="text-[10px] text-ink-faint font-medium">/{l.uom}</span>
+                      </div>
+                    )}
                     <div className="flex items-center justify-between gap-2 mt-1.5">
                       <Countdown endsAt={l.endsAt} size="sm" className="h-5 text-[10px] px-1.5" />
                       <span className="text-[10px] font-semibold text-danger">
-                        {lLeading ? 'Hold or raise' : 'Bid or let go'}
+                        {isTender ? (lMine ? 'Awaiting close' : 'Offer or let go') : lLeading ? 'Hold or raise' : 'Bid or let go'}
                       </span>
                     </div>
                   </button>
@@ -703,9 +809,10 @@ export default function BiddingRoom() {
           </div>
 
           {/* middle column — always rendered so the market keeps column 3 and the
-              tracks never shift; the ladder just fills it when toggled on */}
+              tracks never shift; sealed tender has no ladder, so it always shows
+              the sealed notice instead of following the ladderOpen toggle */}
           <div className="min-w-0">
-            {ladderOpen && renderLadder(true)}
+            {isTender ? renderSealedNotice() : ladderOpen && renderLadder(true)}
           </div>
 
           {/* market ticker — grade alongside the lot no so rows are identifiable */}
@@ -725,6 +832,7 @@ export default function BiddingRoom() {
               style={{ maxHeight: MARKET_ROWS * MARKET_ROW_PX }}>
               {marketLots.map((l) => {
                 const lLeading = l.leadingBidderId === me?.id
+                const lMine = bids.some((b) => b.lotId === l.id && b.bidderId === me?.id && b.status === 'valid')
                 // gold rail = already on my shortlist; only meaningful in the All list,
                 // where mine and everyone else's lots sit side by side
                 const mine = showAll && summary.lotIds.includes(l.id)
@@ -750,17 +858,23 @@ export default function BiddingRoom() {
                           (H1 is far narrower than Live), and a variable chip would drag
                           the rate's right edge around from row to row */}
                       <span className="num text-xs font-semibold ml-auto w-[76px] text-right truncate shrink-0">
-                        {l.currentRate ? inr(l.currentRate) : inr(l.startRate)}
+                        {isTender ? `Start ${inr(l.startRate)}` : l.currentRate ? inr(l.currentRate) : inr(l.startRate)}
                       </span>
                       <span className="w-14 shrink-0 flex justify-end">
-                        {l.status === 'live'
-                          ? (lLeading
-                            ? <Chip tone="success" className="h-4 text-[9px] px-1.5">H1</Chip>
-                            : <Chip tone="ember" pulse className="h-4 text-[9px] px-1.5">Live</Chip>)
-                          : <Chip className="h-4 text-[9px] px-1.5"
-                            tone={l.status === 'sold' ? 'success' : l.status === 'sta' ? 'warning' : 'neutral'}>
-                            {l.status === 'sold' ? 'Sold' : l.status === 'sta' ? 'STA' : 'Unsold'}
-                          </Chip>}
+                        {isTender
+                          ? (l.status === 'live'
+                            ? (lMine ? <Chip tone="success" className="h-4 text-[9px] px-1.5">Offered</Chip> : <Chip tone="ember" pulse className="h-4 text-[9px] px-1.5">Open</Chip>)
+                            : <Chip className="h-4 text-[9px] px-1.5" tone={l.status === 'sold' ? 'success' : l.status === 'sta' ? 'warning' : 'neutral'}>
+                              {l.status === 'sold' ? 'Accepted' : l.status === 'sta' ? 'STA' : 'Unsold'}
+                            </Chip>)
+                          : l.status === 'live'
+                            ? (lLeading
+                              ? <Chip tone="success" className="h-4 text-[9px] px-1.5">H1</Chip>
+                              : <Chip tone="ember" pulse className="h-4 text-[9px] px-1.5">Live</Chip>)
+                            : <Chip className="h-4 text-[9px] px-1.5"
+                              tone={l.status === 'sold' ? 'success' : l.status === 'sta' ? 'warning' : 'neutral'}>
+                              {l.status === 'sold' ? 'Sold' : l.status === 'sta' ? 'STA' : 'Unsold'}
+                            </Chip>}
                       </span>
                     </span>
                     <span className="text-[10px] text-ink-faint truncate leading-tight">{l.grade}</span>
@@ -782,35 +896,46 @@ export default function BiddingRoom() {
             : { kind: 'info', title: 'Auto-bid disabled', body: lot.lotNo })
         }} />
 
-      {/* bid confirmation modal */}
-      <Modal open={confirmOpen} onClose={() => setConfirmOpen(false)} title="Confirm your bid">
+      {/* bid / sealed-offer confirmation modal — shared, but a tender confirm
+          must never surface minNext/currentRate: those are derived from the
+          hidden highest sealed offer and would leak exactly what "no visible
+          current rate" is supposed to hide. */}
+      <Modal open={confirmOpen} onClose={() => setConfirmOpen(false)} title={isTender ? 'Confirm your offer' : 'Confirm your bid'}>
         <div className="space-y-4">
           <p className="text-sm text-ink-muted">
-            Confirm bid of <b className="num text-ink">{inr(confirmRate)}/{lot.uom}</b> for <b className="num text-ink">{lot.lotNo}</b>?
+            {isTender ? 'Confirm offer of' : 'Confirm bid of'} <b className="num text-ink">{inr(confirmRate)}/{lot.uom}</b> for <b className="num text-ink">{lot.lotNo}</b>?
+            {isTender && ' This is final — it cannot be revised or resubmitted.'}
           </p>
           {/* rate in words — a mistyped digit is far easier to catch spelled out */}
           <div className="card bg-surface-2 border-0 px-3.5 py-2.5">
-            <div className="text-[11px] font-bold uppercase tracking-wider text-ink-faint">Bid amount</div>
+            <div className="text-[11px] font-bold uppercase tracking-wider text-ink-faint">{isTender ? 'Offer amount' : 'Bid amount'}</div>
             <div className="num text-xl font-bold mt-0.5">{inr(confirmRate)}<span className="text-sm text-ink-faint font-medium">/{lot.uom}</span></div>
             <div className="text-xs text-ink-muted mt-1 italic">{inrWords(confirmRate)} per {lot.uom}</div>
           </div>
-          <div className="card bg-surface-2 border-0 p-3.5 text-sm space-y-1.5">
-            <div className="flex justify-between"><span className="text-ink-muted">Current H1</span><span className="num font-semibold">{lot.currentRate ? inr(lot.currentRate) : '—'}</span></div>
-            {myAuto && <div className="flex justify-between"><span className="text-ink-muted">Your auto-bid ceiling</span><span className="num font-semibold">{inr(myAuto.maxRate)}</span></div>}
-          </div>
-          {confirmRate < minNext && (
+          {!isTender && (
+            <div className="card bg-surface-2 border-0 p-3.5 text-sm space-y-1.5">
+              <div className="flex justify-between"><span className="text-ink-muted">Current H1</span><span className="num font-semibold">{lot.currentRate ? inr(lot.currentRate) : '—'}</span></div>
+              {myAuto && <div className="flex justify-between"><span className="text-ink-muted">Your auto-bid ceiling</span><span className="num font-semibold">{inr(myAuto.maxRate)}</span></div>}
+            </div>
+          )}
+          {!isTender && confirmRate < minNext && (
             <div className="rounded-xl bg-warning-soft border border-warning/25 px-3.5 py-2.5 text-sm font-semibold text-warning">
               Someone just bid — minimum is now {inr(minNext)}/{lot.uom}.
             </div>
           )}
+          {isTender && confirmRate < lot.startRate && (
+            <div className="rounded-xl bg-warning-soft border border-warning/25 px-3.5 py-2.5 text-sm font-semibold text-warning">
+              Offer must be at least {inr(lot.startRate)}/{lot.uom}.
+            </div>
+          )}
           <div className="flex gap-2">
             <Button variant="secondary" className="flex-1" onClick={() => setConfirmOpen(false)}>Cancel</Button>
-            <Button className="flex-1" onClick={() => {
-              const rate = confirmRate < minNext ? minNext : confirmRate
+            <Button className="flex-1" disabled={isTender && confirmRate < lot.startRate} onClick={() => {
+              const rate = isTender ? confirmRate : confirmRate < minNext ? minNext : confirmRate
               doBid(rate)
               setConfirmOpen(false)
             }}>
-              {confirmRate < minNext ? `Bid ${inr(minNext)} instead` : 'Confirm'}
+              {!isTender && confirmRate < minNext ? `Bid ${inr(minNext)} instead` : 'Confirm'}
             </Button>
           </div>
         </div>

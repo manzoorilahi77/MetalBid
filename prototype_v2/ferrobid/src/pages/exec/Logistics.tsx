@@ -66,7 +66,7 @@ export default function Logistics() {
                 <Button size="sm" variant="success" className="flex-1"
                   onClick={() => {
                     advanceDeliveryOrder(d.id)
-                    pushToast({ kind: 'success', title: `${d.id.toUpperCase()} lifting started`, body: 'Weighbridge checklist now active — buyer tracks it in Fulfilment.' })
+                    pushToast({ kind: 'success', title: `${d.id.toUpperCase()} lifting started`, body: 'Weighbridge checklist now active — buyer tracks it in Auction status.' })
                   }}>
                   Confirm lifting started
                 </Button>

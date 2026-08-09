@@ -5,16 +5,16 @@ import { Page } from '../../layout/Chrome'
 import { PageHeader, Button, Chip, Stat, ProgressBar, EmptyState, Modal, Field, Input, LockChip } from '../../components/ui'
 import { useStore } from '../../store/store'
 import { inr, inrCompact, num } from '../../lib/format'
-import type { DeliveryOrder, FulfilmentStage } from '../../types'
+import type { DeliveryOrder, AuctionStatusStage } from '../../types'
 
-const STAGE_LABEL: Record<FulfilmentStage, string> = {
+const STAGE_LABEL: Record<AuctionStatusStage, string> = {
   payment_pending: 'Payment pending',
   dd_issued: 'DD received',
   lifting_scheduled: 'Lifting scheduled',
   lifted: 'Lifted',
   completed: 'Completed',
 }
-const STAGE_TONE: Record<FulfilmentStage, 'warning' | 'steel' | 'success' | 'neutral'> = {
+const STAGE_TONE: Record<AuctionStatusStage, 'warning' | 'steel' | 'success' | 'neutral'> = {
   payment_pending: 'warning',
   dd_issued: 'steel',
   lifting_scheduled: 'steel',
@@ -164,7 +164,7 @@ export default function Settlement() {
                         <Button size="sm" variant="secondary"
                           onClick={() => {
                             advanceDeliveryOrder(d.id)
-                            pushToast({ kind: 'success', title: `${d.id.toUpperCase()} advanced`, body: 'Fulfilment moved to the next stage.' })
+                            pushToast({ kind: 'success', title: `${d.id.toUpperCase()} advanced`, body: 'Auction status moved to the next stage.' })
                           }}>
                           Advance stage
                         </Button>

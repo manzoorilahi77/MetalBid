@@ -41,11 +41,13 @@ export default function AuctionDetail() {
   const lots = useStore((s) => s.lots)
   const users = useStore((s) => s.users)
   const selections = useStore((s) => s.selections)
+  const watchlist = useStore((s) => s.watchlist)
   const reports = useStore((s) => s.inspectionReports)
   const termsSets = useStore((s) => s.termsSets)
   const termsAccepted = useStore((s) => s.termsAccepted)
   const acceptTerms = useStore((s) => s.acceptTerms)
   const toggleShortlist = useStore((s) => s.toggleShortlist)
+  const toggleWatchlist = useStore((s) => s.toggleWatchlist)
   const pushToast = useStore((s) => s.pushToast)
   const { enterBidroom } = useBidroomGate()
   const bookSlot = useStore((s) => s.bookInspectionSlot)
@@ -57,10 +59,17 @@ export default function AuctionDetail() {
   const [sort, setSort] = useState<'lotNo' | 'rate' | 'emd' | 'qty'>('lotNo')
   const [termsOpen, setTermsOpen] = useState(false)
   const [slotBooked, setSlotBooked] = useState(false)
+  const [unshortlistConfirm, setUnshortlistConfirm] = useState(false)
+
+  // Buyers browse their own faceted grid at /buyermarketplace, not the
+  // guest-facing /browse — sending a signed-in buyer there was landing them
+  // on a page outside their own nav entirely.
+  const browseHref = role === 'buyer' ? '/buyermarketplace' : '/browse'
+  const browseLabel = role === 'buyer' ? 'Browse & Shortlist' : 'Browse'
 
   const cat = catalogues.find((c) => c.id === id && c.status !== 'draft')
   if (!cat) {
-    return <Page><EmptyState title="Catalogue not found" body="It may have been removed in this demo session." action={<Link to="/browse"><Button variant="secondary">Back to browse</Button></Link>} /></Page>
+    return <Page><EmptyState title="Catalogue not found" body="It may have been removed in this demo session." action={<Link to={browseHref}><Button variant="secondary">Back to {browseLabel.toLowerCase()}</Button></Link>} /></Page>
   }
 
   const catLots = lots.filter((l) => l.catalogueId === cat.id)
@@ -70,6 +79,9 @@ export default function AuctionDetail() {
   const accepted = !!termsAccepted[cat.id]
   const summary = selectionSummary({ selections, lots }, me?.id, cat.id)
   const isBuyer = role === 'buyer'
+  // Watchlist-only, not the isCatalogueShortlisted union with starred lots — this
+  // button must be able to turn itself back off on click without also clearing lots.
+  const watchlisted = !!me && watchlist.some((w) => w.buyerId === me.id && w.catalogueId === cat.id)
   const catAnnouncements = announcements.filter((a) => a.catalogueId === cat.id)
   const mySlot = inspectionSlots.find((s) => s.catalogueId === cat.id && s.userId === me?.id)
 
@@ -119,7 +131,7 @@ export default function AuctionDetail() {
         {/* ------------------------------ header ------------------------------ */}
         <nav className="text-xs text-ink-faint mb-2 flex items-center gap-1.5">
           <Link to="/" className="hover:text-ink">Home</Link><span>/</span>
-          <Link to="/browse" className="hover:text-ink">Browse</Link><span>/</span>
+          <Link to={browseHref} className="hover:text-ink">{browseLabel}</Link><span>/</span>
           <span className="text-ink-muted num">{cat.code}</span>
         </nav>
         <div className="flex flex-wrap items-start justify-between gap-4">
@@ -127,13 +139,29 @@ export default function AuctionDetail() {
             <div className="flex items-center gap-2.5 flex-wrap">
               <StatusChip status={ui} />
               <span className="num text-sm font-bold text-ink-muted">{cat.code}</span>
-              {cat.type === 'forward' && <Chip tone="neutral">Forward e-auction</Chip>}
+              {cat.type === 'forward' ? <Chip tone="neutral">Forward e-auction</Chip> : <Chip tone="steel">Sealed tender</Chip>}
             </div>
             <h1 className="text-2xl sm:text-4xl font-bold mt-2">{cat.title}</h1>
             <p className="text-sm text-ink-muted mt-2">{cat.description}</p>
           </div>
           <div className="flex flex-col items-end gap-2">
-            {canBid && <Countdown endsAt={cat.endsAt} prefix="closes in" size="lg" />}
+            {(canBid || isBuyer) && (
+              <div className="flex items-center gap-3">
+                {canBid && <Countdown endsAt={cat.endsAt} prefix="closes in" size="lg" />}
+                {isBuyer && (
+                  <Button
+                    variant={watchlisted ? 'success' : 'secondary'}
+                    size="md"
+                    onClick={() => watchlisted ? setUnshortlistConfirm(true) : toggleWatchlist(cat.id)}
+                    aria-pressed={watchlisted}
+                    aria-label={watchlisted ? 'Remove from shortlist' : 'Add to shortlist'}
+                  >
+                    <Star size={14} fill={watchlisted ? 'currentColor' : 'none'} />
+                    {watchlisted ? 'Shortlisted' : 'Add to shortlist'}
+                  </Button>
+                )}
+              </div>
+            )}
             {ui === 'upcoming' && <Chip tone="steel" className="h-8 px-3 text-sm num">Starts {fmtDateTime(cat.startsAt)}</Chip>}
             {/* The cut-off buyers actually have to hit — funding closes well
                 before the sale opens (src/lib/emd.ts). */}
@@ -143,12 +171,12 @@ export default function AuctionDetail() {
                 : <Chip tone="warning" className="h-8 px-3 text-sm num">Fund EMD by {fmtDateTime(new Date(emdDeadlineMs(cat)).toISOString())}</Chip>
             )}
             <div className="flex gap-2">
-              <Button variant="secondary" size="sm" onClick={() => pushToast({ kind: 'info', title: 'Catalogue PDF downloading', body: `${cat.code} Catalogue & Annexure.pdf (demo)` })}>
+              <Button variant="secondary" size="md" onClick={() => pushToast({ kind: 'info', title: 'Catalogue PDF downloading', body: `${cat.code} Catalogue & Annexure.pdf (demo)` })}>
                 <Download size={14} /> Catalogue PDF
               </Button>
               {accepted
-                ? <Chip tone="success" className="h-8 px-3"><Check size={12} /> T&C accepted · {termsAccepted[cat.id]}</Chip>
-                : <Button variant="steel" size="sm" onClick={() => setTermsOpen(true)}><ScrollText size={14} /> Accept Terms & Conditions</Button>}
+                ? <Chip tone="success" className="h-10 px-4"><Check size={12} /> T&C accepted · {termsAccepted[cat.id]}</Chip>
+                : <Button variant="steel" size="md" onClick={() => setTermsOpen(true)}><ScrollText size={14} /> Accept Terms & Conditions</Button>}
             </div>
           </div>
         </div>
@@ -337,8 +365,10 @@ export default function AuctionDetail() {
                           <div className="text-[10px] font-bold uppercase tracking-wider text-ink-faint">Start rate</div>
                           <div className="num text-sm font-bold">{inr(lot.startRate)}<span className="text-ink-faint font-medium">/{lot.uom}</span></div>
                         </div>
-                        {/* live rate + increment stay inside the bidding room — showing them here lets buyers self-select out before entering */}
-                        {lot.status !== 'live' && (
+                        {/* live rate + increment stay inside the bidding room — showing them here lets
+                            buyers self-select out before entering. Tender lots hide this column
+                            entirely — no live price/H1 language anywhere on a sealed-bid lot. */}
+                        {cat.type !== 'tender' && lot.status !== 'live' && (
                           <div>
                             <div className="text-[10px] font-bold uppercase tracking-wider text-ink-faint">Result (H1)</div>
                             <div className={cx('num text-sm font-bold', lot.currentRate ? 'text-ember-strong' : 'text-ink-faint')}>
@@ -520,6 +550,22 @@ export default function AuctionDetail() {
         setTermsOpen(false)
         pushToast({ kind: 'success', title: 'Terms accepted', body: `${terms?.name} ${terms?.version} — you can now bid on ${cat.code}.` })
       }} />
+
+      <Modal open={unshortlistConfirm} onClose={() => setUnshortlistConfirm(false)} title="Remove from shortlist?">
+        <p className="text-sm text-ink-muted">
+          {cat.code} will no longer show as shortlisted. Any lots you've starred in this catalogue stay shortlisted separately.
+        </p>
+        <div className="flex justify-end gap-2 mt-5">
+          <Button variant="ghost" onClick={() => setUnshortlistConfirm(false)}>Cancel</Button>
+          <Button variant="danger" onClick={() => {
+            toggleWatchlist(cat.id)
+            setUnshortlistConfirm(false)
+            pushToast({ kind: 'info', title: 'Removed from shortlist', body: cat.code })
+          }}>
+            Remove
+          </Button>
+        </div>
+      </Modal>
     </>
   )
 }

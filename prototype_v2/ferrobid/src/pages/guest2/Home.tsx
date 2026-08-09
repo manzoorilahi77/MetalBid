@@ -491,7 +491,7 @@ const ANNOUNCEMENTS: Announcement[] = [
   {
     id: 'an-4', category: 'Logistics', tone: 'warning', icon: <Truck size={22} />,
     title: 'Area Pass & Vehicle-Placement Protocol',
-    body: 'Generate area-pass requests for lifting directly from the fulfilment tracker — new gate-pass checklist attached.',
+    body: 'Generate area-pass requests for lifting directly from the auction status tracker — new gate-pass checklist attached.',
     date: 'Jul 10, 2026', action: 'download',
   },
   {

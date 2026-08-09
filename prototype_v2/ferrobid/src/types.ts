@@ -53,7 +53,9 @@ export interface Catalogue {
   code: string // e.g. AUC-2418
   title: string
   sellerId: string
-  type: 'forward' // English forward auction on rate
+  /** 'forward' = live ascending-price English auction. 'tender' = sealed-bid —
+   *  one confidential offer per bidder, no visible competing price. */
+  type: 'forward' | 'tender'
   status: CatalogueStatus
   startsAt: string // ISO — rebased to "now" at seed load
   endsAt: string
@@ -116,7 +118,7 @@ export interface LotPhoto {
   hue: number // 0-360 — drives the placeholder gradient
 }
 
-export type BidType = 'manual' | 'auto' | 'bot'
+export type BidType = 'manual' | 'auto' | 'bot' | 'tender'
 
 export interface Bid {
   id: string
@@ -278,7 +280,7 @@ export interface TermsSet {
   lotSpecificNote: string
 }
 
-export type FulfilmentStage =
+export type AuctionStatusStage =
   | 'payment_pending'
   | 'dd_issued'
   | 'lifting_scheduled'
@@ -307,7 +309,7 @@ export interface DeliveryOrder {
   lotId: string
   catalogueId: string
   buyerId: string
-  stage: FulfilmentStage
+  stage: AuctionStatusStage
   h1Rate: number
   awardedQty: number
   uom: Uom
@@ -328,6 +330,13 @@ export interface BuyerLotSelection {
   catalogueId: string
   lotIds: string[] // shortlisted
   emdFundedLotIds: string[] // subset with EMD locked
+}
+
+/** Catalogue-level "interested" marker — separate from BuyerLotSelection's
+ *  per-lot shortlist. A buyer can watchlist a catalogue with no lots starred. */
+export interface WatchlistEntry {
+  buyerId: string
+  catalogueId: string
 }
 
 export interface AutoBidSetting {

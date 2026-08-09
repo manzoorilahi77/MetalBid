@@ -47,10 +47,10 @@ export const NAV_BY_ROLE: Record<Role, NavItem[]> = {
   ],
   buyer: [
     { to: '/buyer', label: 'Home', subLabel: 'Dashboard', end: true, in: ['top', 'sub'] },
-    { to: '/buyermarketplace', label: 'Browse Catalogues', in: ['top'] },
-    { to: '/buyer/shortlist', label: 'Shortlist', subLabel: 'Shortlist & EMD', in: ['sub'] },
+    { to: '/buyermarketplace', label: 'Browse & Shortlist', in: ['sub'] },
+    { to: '/buyer/emd-shortlisted-catalogue', label: 'EMD & payments', subLabel: 'EMD for shortlisted catalogues', in: ['sub'] },
     { to: '/buyer/bids', label: 'My bids', subLabel: 'Bids & results', in: ['sub'] },
-    { to: '/buyer/fulfilment', label: 'Fulfilment', in: ['sub'] },
+    { to: '/buyer/auction-status', label: 'Auction status', in: ['sub'] },
     { to: '/noticeboard', label: 'Noticeboard', in: ['top'] },
     { to: '/buyer/wallet', label: 'Wallet & ledger', in: ['sub'] },
     { to: '/buyer/kyc', label: 'Become a seller', in: ['sub'] },

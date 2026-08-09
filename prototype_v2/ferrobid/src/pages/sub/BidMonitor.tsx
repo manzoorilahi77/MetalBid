@@ -12,8 +12,8 @@ import { inr, fmtDateTime, relTime, num } from '../../lib/format'
 import { useNow } from '../../lib/useTick'
 import type { Bid, BidType } from '../../types'
 
-const TYPE_LABEL: Record<BidType, string> = { manual: 'Manual', auto: 'Auto', bot: 'Floor' }
-const TYPE_TONE: Record<BidType, 'neutral' | 'steel' | 'ember'> = { manual: 'neutral', auto: 'steel', bot: 'ember' }
+const TYPE_LABEL: Record<BidType, string> = { manual: 'Manual', auto: 'Auto', bot: 'Floor', tender: 'Tender offer' }
+const TYPE_TONE: Record<BidType, 'neutral' | 'steel' | 'ember'> = { manual: 'neutral', auto: 'steel', bot: 'ember', tender: 'neutral' }
 
 const FLAG_REASONS = [
   'Rapid-fire pattern',

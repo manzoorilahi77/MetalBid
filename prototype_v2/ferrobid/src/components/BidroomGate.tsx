@@ -16,11 +16,12 @@
 --------------------------------------------------------------------------- */
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { AlertTriangle, ArrowLeft, Check, Gavel, Lock, Star, Wallet as WalletIcon } from 'lucide-react'
+import { AlertTriangle, ArrowLeft, Check, Gavel, Lock, Wallet as WalletIcon } from 'lucide-react'
 import { Button, Chip, Countdown, Modal, StatusChip } from './ui'
+import { LotShortlistModal } from './LotShortlistModal'
 import { catalogueUiStatus, selectionSummary, useStore } from '../store/store'
 import { emdBlockedMessage, emdWindowClosed } from '../lib/emd'
-import { inr, inrWords, num } from '../lib/format'
+import { inr, inrWords } from '../lib/format'
 import type { Catalogue } from '../types'
 
 type Step = 'auctions' | 'lots' | 'emd' | 'terms'
@@ -209,79 +210,26 @@ function AuctionPickerStep({ open, auctions, onClose, onPick }: {
 function LotPickerStep({ open, cat, onBack, onClose, onContinue }: {
   open: boolean; cat: Catalogue | null; onBack: () => void; onClose: () => void; onContinue: () => void
 }) {
-  const me = useStore((s) => s.currentUser)
-  const lots = useStore((s) => s.lots)
-  const selections = useStore((s) => s.selections)
-  const toggleShortlist = useStore((s) => s.toggleShortlist)
-  const pushToast = useStore((s) => s.pushToast)
-  if (!cat) return null
-
-  const catLots = lots.filter((l) => l.catalogueId === cat.id)
-  const summary = selectionSummary({ selections, lots }, me?.id, cat.id)
-
   return (
-    <Modal open={open} onClose={onClose} wide
-      title={<span className="flex items-center gap-2"><span className="num text-sm text-ink-faint">{cat.code}</span> Lots in this auction</span>}>
-      <p className="text-sm text-ink-muted">
-        Star the lots you want to bid on. Pre-bid EMD is locked per lot — only starred lots enter the room with you.
-      </p>
-
-      <div className="mt-3 card bg-surface-2 border-0 divide-y divide-line max-h-[45vh] overflow-y-auto">
-        {catLots.map((l) => {
-          const shortlisted = summary.lotIds.includes(l.id)
-          const funded = summary.fundedLotIds.includes(l.id)
-          return (
-            <div key={l.id} className="flex items-center gap-3 px-3 py-2.5">
-              <button
-                onClick={() => {
-                  if (funded) {
-                    pushToast({ kind: 'info', title: `${l.lotNo} stays shortlisted`, body: 'EMD is locked on this lot until the auction closes.' })
-                    return
-                  }
-                  toggleShortlist(cat.id, l.id)
-                }}
-                aria-label={shortlisted ? `Remove ${l.lotNo} from shortlist` : `Shortlist ${l.lotNo}`}
-                aria-pressed={shortlisted}
-                className={`p-1.5 rounded-lg shrink-0 transition-colors ${shortlisted ? 'text-ember' : 'text-ink-faint hover:text-ink'} ${funded ? 'cursor-default' : 'hover:bg-surface'}`}
-              >
-                <Star size={18} fill={shortlisted ? 'currentColor' : 'none'} />
-              </button>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <span className="num text-sm font-bold">{l.lotNo}</span>
-                  <Chip tone="neutral">{l.metal}</Chip>
-                </div>
-                <div className="text-xs text-ink-muted line-clamp-1 mt-0.5">{l.description}</div>
-                <div className="text-[11px] text-ink-faint mt-0.5 num">
-                  {num(l.indicativeQty)} {l.uom} · start {inr(l.startRate)}/{l.uom} · EMD {inr(l.preBidEmd)}
-                </div>
-              </div>
-              {funded
-                ? <Chip tone="success">EMD paid</Chip>
-                : shortlisted
-                  ? <Chip tone="warning">EMD pending</Chip>
-                  : <Chip tone="neutral">Not shortlisted</Chip>}
-            </div>
-          )
-        })}
-      </div>
-
-      <div className="flex flex-wrap items-center gap-2 mt-4">
-        <Button variant="ghost" onClick={onBack}><ArrowLeft size={15} /> Auctions</Button>
-        <span className="text-sm text-ink-muted ml-auto">
-          <span className="num font-bold text-ink">{summary.count}</span> shortlisted
-          {summary.shortfall > 0 && <> · EMD due <span className="num font-bold text-warning">{inr(summary.shortfall)}</span></>}
-        </span>
-        <span title={summary.count === 0 ? 'Shortlist at least one lot to continue' : undefined}>
-          <Button disabled={summary.count === 0} onClick={onContinue}>
-            <Gavel size={15} /> Enter bidding room
-          </Button>
-        </span>
-      </div>
-      {summary.count === 0 && (
-        <p className="text-xs font-semibold text-ink-faint mt-2 text-right">Shortlist at least one lot to continue.</p>
-      )}
-    </Modal>
+    <LotShortlistModal open={open} cat={cat} onClose={onClose} footer={(summary) => (
+      <>
+        <div className="flex flex-wrap items-center gap-2 mt-4">
+          <Button variant="ghost" onClick={onBack}><ArrowLeft size={15} /> Auctions</Button>
+          <span className="text-sm text-ink-muted ml-auto">
+            <span className="num font-bold text-ink">{summary.count}</span> shortlisted
+            {summary.shortfall > 0 && <> · EMD due <span className="num font-bold text-warning">{inr(summary.shortfall)}</span></>}
+          </span>
+          <span title={summary.count === 0 ? 'Shortlist at least one lot to continue' : undefined}>
+            <Button disabled={summary.count === 0} onClick={onContinue}>
+              <Gavel size={15} /> Enter bidding room
+            </Button>
+          </span>
+        </div>
+        {summary.count === 0 && (
+          <p className="text-xs font-semibold text-ink-faint mt-2 text-right">Shortlist at least one lot to continue.</p>
+        )}
+      </>
+    )} />
   )
 }
 

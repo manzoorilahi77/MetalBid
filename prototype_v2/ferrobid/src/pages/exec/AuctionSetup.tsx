@@ -82,6 +82,9 @@ export default function AuctionSetup() {
                   <div className="flex items-center gap-2">
                     <span className="num text-xs font-bold text-ink-muted">{c.code}</span>
                     <StatusChip status={ui} />
+                    {/* Auction type is set once in Catalogue Builder and fixed from here on —
+                        read-only, since this board only manages already-assigned/published sales. */}
+                    <Chip tone="neutral">{c.type === 'tender' ? 'Sealed tender' : 'Forward'}</Chip>
                     {ui !== 'upcoming' && <Countdown endsAt={c.endsAt} prefix="ends" size="sm" />}
                   </div>
                   <div className="font-semibold mt-1">{c.title}</div>
@@ -116,6 +119,7 @@ export default function AuctionSetup() {
               <span className="num text-xs font-bold text-ink-muted w-20">{c.code}</span>
               <span className="text-sm font-semibold flex-1 min-w-40 truncate">{c.title}</span>
               <span className="text-xs text-ink-faint hidden sm:block">{firm(c.sellerId)}</span>
+              <Chip tone="neutral">{c.type === 'tender' ? 'Sealed tender' : 'Forward'}</Chip>
               <span className="num text-xs text-ink-faint">{lotCount(c)} lots</span>
               <span className="num text-xs text-ink-faint hidden md:block">ended {fmtDateTime(c.endsAt)}</span>
               <StatusChip status={c.status} />

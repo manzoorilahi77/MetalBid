@@ -39,7 +39,7 @@ import BuyerDashboard from './pages/buyer/Dashboard'
 import BuyerMarketplace from './pages/buyer/Marketplace'
 import Shortlist from './pages/buyer/Shortlist'
 import BuyerBids from './pages/buyer/Bids'
-import Fulfilment from './pages/buyer/Fulfilment'
+import AuctionStatus from './pages/buyer/AuctionStatus'
 import Wallet from './pages/buyer/Wallet'
 import BecomeSeller from './pages/buyer/BecomeSeller'
 
@@ -103,6 +103,23 @@ function SharedLayout() {
   return (
     <>
       {items.length > 0 && fromTopNav && <SubNav items={items} />}
+      <Outlet />
+    </>
+  )
+}
+
+/** Catalogue detail is reached from every role's own area (dashboard rails,
+ *  browse grids, notifications) but — like Browse/Noticeboard — lives outside
+ *  every role's route group, so the contextual sub-nav used to disappear the
+ *  moment a signed-in user drilled into a catalogue. Unlike SharedLayout, this
+ *  isn't itself a role's top-nav destination, so it shows the active role's
+ *  sub-nav unconditionally rather than gating on a top-nav pathname match. */
+function CatalogueDetailLayout() {
+  const role = useStore((s) => s.role)
+  const items = subNavItems(role)
+  return (
+    <>
+      {items.length > 0 && <SubNav items={items} />}
       <Outlet />
     </>
   )
@@ -198,7 +215,6 @@ export default function App() {
         <Route element={<Chrome />}>
           <Route index element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/catalogue/:id" element={<AuctionDetail />} />
           <Route path="/bidding/:catalogueId" element={<BiddingRoom />} />
           <Route path="/help" element={<Help />} />
           <Route path="/legal" element={<Legal />} />
@@ -210,6 +226,10 @@ export default function App() {
           <Route element={<SharedLayout />}>
             <Route path="/browse" element={<Browse />} />
             <Route path="/noticeboard" element={<Noticeboard />} />
+          </Route>
+
+          <Route element={<CatalogueDetailLayout />}>
+            <Route path="/catalogue/:id" element={<AuctionDetail />} />
           </Route>
 
           {/* Guest 2 public site — shared chrome, lean top nav (Phase 3/6) */}
@@ -224,9 +244,9 @@ export default function App() {
           <Route element={<BuyerLayout />}>
             <Route path="/buyer" element={<BuyerDashboard />} />
             <Route path="/buyermarketplace" element={<BuyerMarketplace />} />
-            <Route path="/buyer/shortlist" element={<Shortlist />} />
+            <Route path="/buyer/emd-shortlisted-catalogue" element={<Shortlist />} />
             <Route path="/buyer/bids" element={<BuyerBids />} />
-            <Route path="/buyer/fulfilment" element={<Fulfilment />} />
+            <Route path="/buyer/auction-status" element={<AuctionStatus />} />
             <Route path="/buyer/wallet" element={<Wallet />} />
             <Route path="/buyer/kyc" element={<BecomeSeller />} />
           </Route>

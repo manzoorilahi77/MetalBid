@@ -15,7 +15,7 @@ import { fmtDateTime, inr, relTime } from '../../lib/format'
 import { useNow } from '../../lib/useTick'
 import type { LedgerType, WithdrawalWindowConfig } from '../../types'
 
-type TabKey = 'dashboard' | 'deposits' | 'withdrawals' | 'bank' | 'refunds' | 'reports'
+type TabKey = 'deposits' | 'withdrawals' | 'bank' | 'refunds' | 'reports'
 
 type LedgerFilter = 'all' | 'locks' | 'releases' | 'topups' | 'payments'
 const LEDGER_TYPES: Record<Exclude<LedgerFilter, 'all'>, LedgerType[]> = {
@@ -76,7 +76,7 @@ export default function Wallet() {
   const pushToast = useStore((s) => s.pushToast)
   const now = useNow()
 
-  const [tab, setTab] = useState<TabKey>('dashboard')
+  const [tab, setTab] = useState<TabKey>('deposits')
 
   // add funds (instant, unchanged)
   const [pickOpen, setPickOpen] = useState(false)
@@ -163,9 +163,15 @@ export default function Wallet() {
         actions={<Button onClick={() => setPickOpen(true)}><Banknote size={16} /> Add funds</Button>}
       />
 
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+        <Stat label="Available balance" value={inr(balance)} tone="success" sub="Free to fund EMD or withdraw" />
+        <Stat label="EMD locked" value={inr(locked)} tone="steel" sub="Held against shortlisted lots in play" />
+        <Stat label="Withdrawal pending" value={inr(pendingWithdrawal)} tone={pendingWithdrawal > 0 ? 'warning' : undefined} sub="Debited, not yet processed" />
+        <Stat label="Total" value={inr(balance + locked)} sub="Available + locked" />
+      </div>
+
       <Tabs<TabKey>
         tabs={[
-          { key: 'dashboard', label: 'Dashboard' },
           { key: 'deposits', label: 'Deposits', count: myDeposits.length },
           { key: 'withdrawals', label: 'Withdrawals', count: myWithdrawals.length },
           { key: 'bank', label: 'Bank accounts', count: myBankAccounts.length },
@@ -176,39 +182,6 @@ export default function Wallet() {
         onChange={setTab}
         className="mb-5"
       />
-
-      {/* ------------------------------ Dashboard ------------------------------ */}
-      {tab === 'dashboard' && (
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            <Stat label="Available balance" value={inr(balance)} tone="success" sub="Free to fund EMD or withdraw" />
-            <Stat label="EMD locked" value={inr(locked)} tone="steel" sub="Held against shortlisted lots in play" />
-            <Stat label="Withdrawal pending" value={inr(pendingWithdrawal)} tone={pendingWithdrawal > 0 ? 'warning' : undefined} sub="Debited, not yet processed" />
-            <Stat label="Total" value={inr(balance + locked)} sub="Available + locked" />
-          </div>
-
-          <div>
-            <h2 className="font-bold text-sm mb-2">Recent activity</h2>
-            {ledger.length === 0 ? (
-              <EmptyState title="No activity yet" body="Top-ups, EMD locks and payments will appear here." />
-            ) : (
-              <div className="card divide-y divide-line overflow-hidden">
-                {ledger.slice(0, 5).map((e) => (
-                  <div key={e.id} className="flex items-center gap-3 px-4 py-2.5 text-sm">
-                    <div className="min-w-0 flex-1">
-                      <div className="font-medium truncate">{e.note}</div>
-                      <div className="text-xs text-ink-faint">{fmtDateTime(e.at)}</div>
-                    </div>
-                    <span className={cx('num font-semibold whitespace-nowrap', e.amount > 0 ? 'text-success' : 'text-ink')}>
-                      {e.amount > 0 ? `+${inr(e.amount)}` : `−${inr(Math.abs(e.amount))}`}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* ------------------------------- Deposits ------------------------------- */}
       {tab === 'deposits' && (
@@ -551,6 +524,29 @@ export default function Wallet() {
                   })}
                 </tbody>
               </table>
+            </div>
+          )}
+        </div>
+      )}
+
+      {tab !== 'reports' && (
+        <div className="mt-6">
+          <h2 className="font-bold text-sm mb-2">Recent activity</h2>
+          {ledger.length === 0 ? (
+            <EmptyState title="No activity yet" body="Top-ups, EMD locks and payments will appear here." />
+          ) : (
+            <div className="card divide-y divide-line overflow-hidden">
+              {ledger.slice(0, 5).map((e) => (
+                <div key={e.id} className="flex items-center gap-3 px-4 py-2.5 text-sm">
+                  <div className="min-w-0 flex-1">
+                    <div className="font-medium truncate">{e.note}</div>
+                    <div className="text-xs text-ink-faint">{fmtDateTime(e.at)}</div>
+                  </div>
+                  <span className={cx('num font-semibold whitespace-nowrap', e.amount > 0 ? 'text-success' : 'text-ink')}>
+                    {e.amount > 0 ? `+${inr(e.amount)}` : `−${inr(Math.abs(e.amount))}`}
+                  </span>
+                </div>
+              ))}
             </div>
           )}
         </div>

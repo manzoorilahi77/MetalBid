@@ -73,6 +73,7 @@ export default function CatalogueBuilder() {
   const [inspHours, setInspHours] = useState('10:00–16:00 IST')
   const [contactName, setContactName] = useState('R. Venkatesan')
   const [contactPhone, setContactPhone] = useState('+91 94430 18276')
+  const [auctionType, setAuctionType] = useState<Catalogue['type']>('forward')
   const [antiSnipe, setAntiSnipe] = useState('5')
   const [validityDays, setValidityDays] = useState('7')
   const [termsSetId, setTermsSetId] = useState(termsSets[0]?.id ?? 'ts-standard')
@@ -151,7 +152,7 @@ export default function CatalogueBuilder() {
       code,
       title: title.trim(),
       sellerId: sellerFilter || 'u-seller-1',
-      type: 'forward',
+      type: auctionType,
       status: 'draft',
       assignedFieldExecId: fieldExecId,
       startsAt: new Date(startLocal).toISOString(),
@@ -318,8 +319,11 @@ export default function CatalogueBuilder() {
           <Field label="Catalogue title" className="md:col-span-2 xl:col-span-2">
             <Input placeholder="e.g. Mixed non-ferrous & slag disposal — July window" value={title} onChange={(e) => setTitle(e.target.value)} />
           </Field>
-          <Field label="Auction type">
-            <Select defaultValue="forward"><option value="forward">Forward (English, on rate)</option></Select>
+          <Field label="Auction type" hint="Tender switches every buyer to a single sealed offer — no visible ladder, no auto-bid.">
+            <Select value={auctionType} onChange={(e) => setAuctionType(e.target.value as Catalogue['type'])}>
+              <option value="forward">Forward (English, on rate)</option>
+              <option value="tender">Tender (sealed bid)</option>
+            </Select>
           </Field>
           <Field label="Auction starts">
             <Input type="datetime-local" value={startLocal} onChange={(e) => setStartLocal(e.target.value)} />
@@ -457,7 +461,7 @@ export default function CatalogueBuilder() {
             <div className="p-5">
               <div className="flex flex-wrap items-center gap-2">
                 <Chip tone="steel"><span className="num">{code}</span></Chip>
-                <Chip tone="ember" pulse>Forward e-auction</Chip>
+                {auctionType === 'tender' ? <Chip tone="steel">Sealed tender</Chip> : <Chip tone="ember" pulse>Forward e-auction</Chip>}
                 <Chip tone="neutral">As-is-where-is</Chip>
               </div>
               <h2 className="font-display text-2xl font-bold mt-2">{title.trim() || 'Untitled catalogue'}</h2>

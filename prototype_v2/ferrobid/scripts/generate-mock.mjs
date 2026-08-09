@@ -111,6 +111,20 @@ const YARDS = {
   'cat-6': { name: 'MSTC Paradip Yard', addr: 'MSTC Stockyard, Paradip Port Area, Jagatsinghpur, Odisha 754142', region: 'Paradip, OD' },
   'cat-7': { name: 'BHEL Unit II Yard', addr: 'BHEL Tiruchirappalli, Kailasapuram, Tamil Nadu 620014', region: 'Trichy, TN' },
   'cat-8': { name: 'BSP Scrap Yard 3', addr: 'Gate 7, SAIL Bhilai Steel Plant, Bhilai, Chhattisgarh 490001', region: 'Bhilai, CG' },
+  'cat-9': { name: 'MSTC Paradip Yard', addr: 'MSTC Stockyard, Paradip Port Area, Jagatsinghpur, Odisha 754142', region: 'Paradip, OD' },
+  'cat-10': { name: 'VJNR Yard B', addr: 'JSW Steel Vijayanagar Works, Toranagallu, Bellary, Karnataka 583275', region: 'Bellary, KA' },
+  'cat-11': { name: 'BHEL Unit II Yard', addr: 'BHEL Tiruchirappalli, Kailasapuram, Tamil Nadu 620014', region: 'Trichy, TN' },
+  'cat-12': { name: 'BSP Scrap Yard 3', addr: 'Gate 7, SAIL Bhilai Steel Plant, Bhilai, Chhattisgarh 490001', region: 'Bhilai, CG' },
+  'cat-13': { name: 'BSP Scrap Yard 3', addr: 'Gate 7, SAIL Bhilai Steel Plant, Bhilai, Chhattisgarh 490001', region: 'Bhilai, CG' },
+  'cat-14': { name: 'Burma Mines Yard', addr: 'Burma Mines, Tata Steel Works, Jamshedpur, Jharkhand 831007', region: 'Jamshedpur, JH' },
+  'cat-15': { name: 'Mancheswar Depot', addr: 'Carriage Repair Workshop, Mancheswar, Bhubaneswar, Odisha 751017', region: 'Bhubaneswar, OD' },
+  'cat-16': { name: 'VJNR Yard B', addr: 'JSW Steel Vijayanagar Works, Toranagallu, Bellary, Karnataka 583275', region: 'Bellary, KA' },
+  'cat-17': { name: 'RSTPS Ash Yard', addr: 'NTPC Ramagundam, Jyothinagar, Peddapalli, Telangana 505215', region: 'Ramagundam, TS' },
+  'cat-18': { name: 'MSTC Paradip Yard', addr: 'MSTC Stockyard, Paradip Port Area, Jagatsinghpur, Odisha 754142', region: 'Paradip, OD' },
+  'cat-19': { name: 'BHEL Unit II Yard', addr: 'BHEL Tiruchirappalli, Kailasapuram, Tamil Nadu 620014', region: 'Trichy, TN' },
+  'cat-20': { name: 'BSP Scrap Yard 3', addr: 'Gate 7, SAIL Bhilai Steel Plant, Bhilai, Chhattisgarh 490001', region: 'Bhilai, CG' },
+  'cat-21': { name: 'Burma Mines Yard', addr: 'Burma Mines, Tata Steel Works, Jamshedpur, Jharkhand 831007', region: 'Jamshedpur, JH' },
+  'cat-22': { name: 'VJNR Yard B', addr: 'JSW Steel Vijayanagar Works, Toranagallu, Bellary, Karnataka 583275', region: 'Bellary, KA' },
 }
 
 /* ------------------------------ catalogues -------------------------------
@@ -123,12 +137,28 @@ const EMD_LEAD_DEFAULT = 1 * DAY
 const cataloguesDef = [
   { id: 'cat-1', code: 'AUC-2412', title: 'SAIL Bhilai — Mixed MS Scrap, Turnings & TMT Rejects', sellerId: 'u-seller-1', status: 'live', start: -3 * DAY, end: 42, pool: 'msScrap', count: 18, insp: [-6 * DAY, -2 * DAY], contact: { name: 'S. K. Sahu', phone: '+91 94252 10883', role: 'Yard In-charge (Inspection & Lifting)' }, antiSnipe: 3, validity: 7 },
   { id: 'cat-2', code: 'AUC-2415', title: 'Tata Steel Jamshedpur — SS Offcuts, Coil Ends & Turnings', sellerId: 'u-seller-2', status: 'live', start: -2 * DAY, end: 205, pool: 'ssOffcuts', count: 14, insp: [-5 * DAY, -1 * DAY], contact: { name: 'M. Oraon', phone: '+91 82102 44561', role: 'Dy. Manager, By-products' }, antiSnipe: 5, validity: 10 },
-  { id: 'cat-3', code: 'AUC-2418', title: 'East Coast Railway — Released Rails, Wagons & OHE Copper', sellerId: 'u-seller-3', status: 'live', start: -1 * DAY, end: 21, pool: 'railway', count: 12, insp: [-4 * DAY, -1 * DAY], contact: { name: 'B. Pradhan', phone: '+91 89178 30425', role: 'SSE / Depot Material Superintendent' }, antiSnipe: 3, validity: 14 },
+  // Sealed tender — no buyer-1 selection/EMD scenario rides on this catalogue,
+  // so it's free to demo the tender flow (shortlist → EMD → submit offer) fresh.
+  { id: 'cat-3', code: 'AUC-2418', title: 'East Coast Railway — Released Rails, Wagons & OHE Copper', sellerId: 'u-seller-3', status: 'live', start: -1 * DAY, end: 21, pool: 'railway', count: 12, insp: [-4 * DAY, -1 * DAY], contact: { name: 'B. Pradhan', phone: '+91 89178 30425', role: 'SSE / Depot Material Superintendent' }, antiSnipe: 3, validity: 14, type: 'tender' },
   { id: 'cat-4', code: 'AUC-2421', title: 'JSW Vijayanagar — Aluminium, Copper & Ferro Alloy Lots', sellerId: 'u-seller-4', status: 'upcoming', start: 1 * DAY + 120, end: 1 * DAY + 420, pool: 'nonFerrous', count: 16, insp: [10 * 60, 1 * DAY], contact: { name: 'H. Kulkarni', phone: '+91 90360 71182', role: 'Manager, Commercial (Disposals)' }, antiSnipe: 5, validity: 7, emdLead: 2 * DAY },
   { id: 'cat-5', code: 'AUC-2424', title: 'NTPC Ramagundam — Coal Rejects, Fly Ash & Used Oil', sellerId: 'u-seller-5', status: 'upcoming', start: 3 * DAY, end: 3 * DAY + 300, pool: 'coal', count: 10, insp: [1 * DAY, 2 * DAY + 720], contact: { name: 'G. Srinivas', phone: '+91 87903 55240', role: 'AGM (Fuel Handling)' }, antiSnipe: 5, validity: 10, emdLead: 2 * DAY + 180 },
   { id: 'cat-6', code: 'AUC-2406', title: 'MSTC Eastern Region — Copper, Brass & Cable Scrap', sellerId: 'u-seller-6', status: 'closed', start: -3 * DAY, end: -2 * DAY, pool: 'copperBrass', count: 12, insp: [-6 * DAY, -4 * DAY], contact: { name: 'T. Ghosh', phone: '+91 90070 18836', role: 'Yard Supervisor' }, antiSnipe: 3, validity: 7 },
   { id: 'cat-7', code: 'AUC-2402', title: 'BHEL Trichy — Plant & Machinery, Condemned Assets', sellerId: 'u-seller-7', status: 'closed', start: -7 * DAY, end: -6 * DAY, pool: 'assets', count: 10, insp: [-10 * DAY, -8 * DAY], contact: { name: 'R. Elango', phone: '+91 94430 20951', role: 'Sr. Engineer (Disposals)' }, antiSnipe: 5, validity: 15 },
   { id: 'cat-8', code: 'AUC-2430', title: 'Bhilai Yard — Mixed Ferrous Scrap for Field Inspection', sellerId: 'u-seller-1', status: 'draft', assignedFieldExecId: 'u-field-1', start: 6 * DAY, end: 6 * DAY + 300, pool: 'msScrap', count: 5, insp: [2 * 60, 4 * DAY], contact: { name: 'S. K. Sahu', phone: '+91 94252 10883', role: 'Yard In-charge (Inspection & Lifting)' }, antiSnipe: 3, validity: 7 },
+  { id: 'cat-9', code: 'AUC-2436', title: 'MSTC Paradip — Copper, Brass & Cable Scrap (Lot 2)', sellerId: 'u-seller-6', status: 'live', start: -1 * DAY, end: 95, pool: 'copperBrass', count: 10, insp: [-3 * DAY, -1 * DAY], contact: { name: 'T. Ghosh', phone: '+91 90070 18836', role: 'Yard Supervisor' }, antiSnipe: 3, validity: 7 },
+  { id: 'cat-10', code: 'AUC-2439', title: 'JSW Vijayanagar — Prime CRC End Cuts & SS Offcuts', sellerId: 'u-seller-4', status: 'live', start: -1 * DAY, end: 150, pool: 'ssOffcuts', count: 12, insp: [-4 * DAY, -1 * DAY], contact: { name: 'H. Kulkarni', phone: '+91 90360 71182', role: 'Manager, Commercial (Disposals)' }, antiSnipe: 5, validity: 7 },
+  { id: 'cat-11', code: 'AUC-2442', title: 'BHEL Trichy — Compressors, DG Sets & Lathe Machines', sellerId: 'u-seller-7', status: 'upcoming', start: 2 * DAY, end: 2 * DAY + 240, pool: 'assets', count: 8, insp: [12 * 60, 1 * DAY + 720], contact: { name: 'R. Elango', phone: '+91 94430 20951', role: 'Sr. Engineer (Disposals)' }, antiSnipe: 5, validity: 15 },
+  { id: 'cat-12', code: 'AUC-2398', title: 'SAIL Bhilai — Rail & Wagon Dismantling Scrap', sellerId: 'u-seller-1', status: 'closed', start: -10 * DAY, end: -9 * DAY, pool: 'railway', count: 10, insp: [-13 * DAY, -11 * DAY], contact: { name: 'S. K. Sahu', phone: '+91 94252 10883', role: 'Yard In-charge (Inspection & Lifting)' }, antiSnipe: 3, validity: 7 },
+  { id: 'cat-13', code: 'AUC-2445', title: 'SAIL Bhilai — HMS Scrap & CI Borings (Lot 2)', sellerId: 'u-seller-1', status: 'upcoming', start: 4 * DAY, end: 4 * DAY + 260, pool: 'msScrap', count: 14, insp: [2 * DAY, 4 * DAY - 720], contact: { name: 'S. K. Sahu', phone: '+91 94252 10883', role: 'Yard In-charge (Inspection & Lifting)' }, antiSnipe: 3, validity: 7 },
+  { id: 'cat-14', code: 'AUC-2448', title: 'Tata Steel Jamshedpur — 316 Offcuts & CRC End Cuts (Lot 2)', sellerId: 'u-seller-2', status: 'upcoming', start: 4 * DAY + 300, end: 4 * DAY + 560, pool: 'ssOffcuts', count: 12, insp: [2 * DAY + 300, 4 * DAY - 420], contact: { name: 'M. Oraon', phone: '+91 82102 44561', role: 'Dy. Manager, By-products' }, antiSnipe: 5, validity: 10 },
+  { id: 'cat-15', code: 'AUC-2451', title: 'East Coast Railway — PSC Sleeper & Brake Block Scrap', sellerId: 'u-seller-3', status: 'upcoming', start: 5 * DAY, end: 5 * DAY + 240, pool: 'railway', count: 10, insp: [3 * DAY, 5 * DAY - 720], contact: { name: 'B. Pradhan', phone: '+91 89178 30425', role: 'SSE / Depot Material Superintendent' }, antiSnipe: 3, validity: 14 },
+  { id: 'cat-16', code: 'AUC-2454', title: 'JSW Vijayanagar — Zinc Dross & FeSiMg Fines', sellerId: 'u-seller-4', status: 'upcoming', start: 5 * DAY + 320, end: 5 * DAY + 600, pool: 'nonFerrous', count: 15, insp: [3 * DAY + 320, 5 * DAY - 400], contact: { name: 'H. Kulkarni', phone: '+91 90360 71182', role: 'Manager, Commercial (Disposals)' }, antiSnipe: 5, validity: 7 },
+  { id: 'cat-17', code: 'AUC-2457', title: 'NTPC Ramagundam — Washery Rejects & Bottom Ash', sellerId: 'u-seller-5', status: 'upcoming', start: 6 * DAY, end: 6 * DAY + 220, pool: 'coal', count: 9, insp: [4 * DAY, 6 * DAY - 720], contact: { name: 'G. Srinivas', phone: '+91 87903 55240', role: 'AGM (Fuel Handling)' }, antiSnipe: 5, validity: 10 },
+  { id: 'cat-18', code: 'AUC-2460', title: 'MSTC Eastern Region — Cu Armature & Brass Shell Scrap', sellerId: 'u-seller-6', status: 'upcoming', start: 6 * DAY + 280, end: 6 * DAY + 520, pool: 'copperBrass', count: 11, insp: [4 * DAY + 280, 6 * DAY - 440], contact: { name: 'T. Ghosh', phone: '+91 90070 18836', role: 'Yard Supervisor' }, antiSnipe: 3, validity: 7 },
+  { id: 'cat-19', code: 'AUC-2463', title: 'BHEL Trichy — EOT Crane Parts & Storage Tanks', sellerId: 'u-seller-7', status: 'upcoming', start: 7 * DAY, end: 7 * DAY + 200, pool: 'assets', count: 8, insp: [5 * DAY, 7 * DAY - 720], contact: { name: 'R. Elango', phone: '+91 94430 20951', role: 'Sr. Engineer (Disposals)' }, antiSnipe: 5, validity: 15 },
+  { id: 'cat-20', code: 'AUC-2466', title: 'SAIL Bhilai — CRC End Cuts & 304 Turnings', sellerId: 'u-seller-1', status: 'upcoming', start: 7 * DAY + 260, end: 7 * DAY + 520, pool: 'ssOffcuts', count: 13, insp: [5 * DAY + 260, 7 * DAY - 460], contact: { name: 'S. K. Sahu', phone: '+91 94252 10883', role: 'Yard In-charge (Inspection & Lifting)' }, antiSnipe: 3, validity: 7 },
+  { id: 'cat-21', code: 'AUC-2469', title: 'Tata Steel Jamshedpur — Rejected TMT & Plate Cuttings', sellerId: 'u-seller-2', status: 'upcoming', start: 8 * DAY, end: 8 * DAY + 300, pool: 'msScrap', count: 16, insp: [6 * DAY, 8 * DAY - 720], contact: { name: 'M. Oraon', phone: '+91 82102 44561', role: 'Dy. Manager, By-products' }, antiSnipe: 5, validity: 10 },
+  { id: 'cat-22', code: 'AUC-2472', title: 'JSW Vijayanagar — Compressors & DG Sets', sellerId: 'u-seller-4', status: 'upcoming', start: 8 * DAY + 340, end: 8 * DAY + 560, pool: 'assets', count: 7, insp: [6 * DAY + 340, 8 * DAY - 380], contact: { name: 'H. Kulkarni', phone: '+91 90360 71182', role: 'Manager, Commercial (Disposals)' }, antiSnipe: 5, validity: 7 },
 ]
 
 const PHOTO_LABELS = ['Overview', 'Close-up', 'Stack view', 'Weighbridge', 'Condition detail']
@@ -258,21 +288,30 @@ const bids = []
 let bidSeq = 0
 const lotById = Object.fromEntries(lots.map((l) => [l.id, l]))
 
-function seedBidsForLot(lot, cat, { closed = false, includeDemoBuyer = false } = {}) {
-  const n = closed ? 3 + Math.floor(rnd() * 6) : Math.floor(rnd() * 4)
-  let rate = lot.startRate
+function seedBidsForLot(lot, cat, { closed = false, includeDemoBuyer = false, tender = false } = {}) {
   const bidders = [...BOTS]
   if (includeDemoBuyer) bidders.push('u-buyer-1', 'u-buyer-1')
+  // Sealed tender: at most one offer per bidder, so cap n to the bidder pool.
+  const n = tender
+    ? Math.min(bidders.length, closed ? 2 + Math.floor(rnd() * 3) : Math.floor(rnd() * 3))
+    : closed ? 3 + Math.floor(rnd() * 6) : Math.floor(rnd() * 4)
+  let rate = lot.startRate
   const windowStart = closed ? -300 : -170
   const windowEnd = closed ? -10 : -4
+  const usedBidders = new Set()
   for (let i = 0; i < n; i++) {
     rate = rate + lot.increment * (1 + Math.floor(rnd() * 3))
     bidSeq++
+    let bidderId = pick(bidders)
+    if (tender) {
+      while (usedBidders.has(bidderId) && usedBidders.size < bidders.length) bidderId = pick(bidders)
+      usedBidders.add(bidderId)
+    }
     bids.push({
       id: `bid-${String(bidSeq).padStart(4, '0')}`, lotId: lot.id, catalogueId: cat.id,
-      bidderId: pick(bidders), rate,
+      bidderId, rate,
       at: iso(Date.parse(cat.endsAt ?? 0) ? 0 : 0), // placeholder, fixed below
-      type: rnd() < 0.15 ? 'auto' : 'manual', status: 'valid',
+      type: tender ? 'tender' : rnd() < 0.15 ? 'auto' : 'manual', status: 'valid',
     })
     const catEndMin = cataloguesDef.find((c) => c.id === cat.id).end
     bids[bids.length - 1].at = iso(catEndMin + windowStart + ((windowEnd - windowStart) / n) * i)
@@ -294,10 +333,11 @@ function seedBidsForLot(lot, cat, { closed = false, includeDemoBuyer = false } =
 
 for (const c of cataloguesDef) {
   const catLots = lots.filter((l) => l.catalogueId === c.id)
+  const tender = c.type === 'tender'
   if (c.status === 'live') {
-    for (const l of catLots) seedBidsForLot(l, c, { includeDemoBuyer: c.id === 'cat-1' && rnd() < 0.5 })
+    for (const l of catLots) seedBidsForLot(l, c, { includeDemoBuyer: c.id === 'cat-1' && rnd() < 0.5, tender })
   } else if (c.status === 'closed') {
-    for (const l of catLots) seedBidsForLot(l, c, { closed: true, includeDemoBuyer: c.id === 'cat-6' })
+    for (const l of catLots) seedBidsForLot(l, c, { closed: true, includeDemoBuyer: c.id === 'cat-6', tender })
   }
 }
 
@@ -315,7 +355,7 @@ for (const [lot, winner] of [[dl1, 'u-buyer-1'], [dl2, 'u-buyer-6']]) {
   lot.bidCount += 2
 }
 
-// closed cat-6: make sure demo buyer WON two lots (drives fulfilment tracker)
+// closed cat-6: make sure demo buyer WON two lots (drives auction status tracker)
 const wonLots = lots.filter((l) => l.catalogueId === 'cat-6').slice(0, 2)
 for (const lot of wonLots) {
   bidSeq++
@@ -427,8 +467,8 @@ const autoBids = [
 const notifications = [
   { id: 'ntf-01', userId: 'u-buyer-1', kind: 'bid', title: 'You have been outbid', body: `OmShakti Metal Corp is leading ${dl2.lotNo} (AUC-2412) at ₹${(dl2.currentRate).toLocaleString('en-IN')}/${dl2.uom}.`, at: iso(-3), read: false, href: `/bidding/cat-1?lot=${dl2.id}` },
   { id: 'ntf-02', userId: 'u-buyer-1', kind: 'lifecycle', title: 'AUC-2418 closing soon', body: 'East Coast Railway catalogue closes in under 30 minutes. 2 of your watched lots are still open.', at: iso(-16), read: false, href: '/catalogue/cat-3' },
-  { id: 'ntf-03', userId: 'u-buyer-1', kind: 'wallet', title: 'EMD locked for 3 lots', body: `₹${fundedEmd.toLocaleString('en-IN')} locked against AUC-2412 shortlist. 2 lots still unfunded.`, at: iso(-1 * DAY + 95), read: true, href: '/buyer/shortlist' },
-  { id: 'ntf-04', userId: 'u-buyer-1', kind: 'bid', title: 'You won 2 lots in AUC-2406', body: 'Congratulations — H1 confirmed on both lots. Delivery order do-001 issued; payment pending on do-002.', at: iso(-2 * DAY + 290), read: true, href: '/buyer/fulfilment' },
+  { id: 'ntf-03', userId: 'u-buyer-1', kind: 'wallet', title: 'EMD locked for 3 lots', body: `₹${fundedEmd.toLocaleString('en-IN')} locked against AUC-2412 shortlist. 2 lots still unfunded.`, at: iso(-1 * DAY + 95), read: true, href: '/buyer/emd-shortlisted-catalogue' },
+  { id: 'ntf-04', userId: 'u-buyer-1', kind: 'bid', title: 'You won 2 lots in AUC-2406', body: 'Congratulations — H1 confirmed on both lots. Delivery order do-001 issued; payment pending on do-002.', at: iso(-2 * DAY + 290), read: true, href: '/buyer/auction-status' },
   { id: 'ntf-05', userId: 'u-buyer-1', kind: 'wallet', title: 'Wallet top-up successful', body: '₹2,00,000 added via UPI (arvind@okhdfcbank). Available balance ₹8,50,000.', at: iso(-4 * 60), read: true, href: '/buyer/wallet' },
   { id: 'ntf-06', userId: 'u-buyer-1', kind: 'system', title: 'Inspection slot confirmed', body: 'JSW Vijayanagar (AUC-2421) — visit booked. Gate pass QR available in Inspection & Contacts.', at: iso(-7 * 60), read: true, href: '/catalogue/cat-4' },
   { id: 'ntf-07', userId: null, kind: 'system', title: 'Scheduled maintenance', body: 'ferroBid will be unavailable Sun 02:00–04:00 IST for planned maintenance. No auctions close in this window.', at: iso(-1 * DAY), read: false },
@@ -528,7 +568,7 @@ const inspectionSlots = [
 
 /* -------------------------------- write ---------------------------------- */
 const catalogues = cataloguesDef.map((c) => ({
-  id: c.id, code: c.code, title: c.title, sellerId: c.sellerId, type: 'forward',
+  id: c.id, code: c.code, title: c.title, sellerId: c.sellerId, type: c.type ?? 'forward',
   status: c.status, assignedFieldExecId: c.assignedFieldExecId ?? null, startsAt: iso(c.start), endsAt: iso(c.end),
   emdDeadline: iso(c.start - (c.emdLead ?? EMD_LEAD_DEFAULT)),
   inspectionFrom: iso(c.insp[0]), inspectionTo: iso(c.insp[1]),

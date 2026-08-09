@@ -18,6 +18,13 @@ const OUTCOME_CHIP: Record<'won' | 'lost' | 'sta' | 'unsold', { tone: 'success' 
   sta: { tone: 'warning', label: 'Subject to approval' },
   unsold: { tone: 'neutral', label: 'Unsold' },
 }
+// Sealed tender has no H1/leading-bidder concept — results read as offer accepted/not, not "won"/"lost".
+const TENDER_OUTCOME_CHIP: typeof OUTCOME_CHIP = {
+  won: { tone: 'success', label: 'Offer accepted' },
+  lost: { tone: 'neutral', label: 'Offer not accepted' },
+  sta: { tone: 'warning', label: 'Subject to approval' },
+  unsold: { tone: 'neutral', label: 'Unsold' },
+}
 
 export default function Bids() {
   const me = useStore((s) => s.currentUser)
@@ -108,12 +115,13 @@ export default function Bids() {
             icon={<Gavel size={32} strokeWidth={1.5} />}
             title="No active bids"
             body="Fund EMD on shortlisted lots and place a bid — your live positions will track here."
-            action={<Link to="/buyer/shortlist"><Button variant="secondary">Go to shortlist</Button></Link>}
+            action={<Link to="/buyer/emd-shortlisted-catalogue"><Button variant="secondary">Go to shortlist</Button></Link>}
           />
         ) : (
           <div className="space-y-3">
             {activeLots.map((lot) => {
               const cat = catById.get(lot.catalogueId)
+              const isTender = cat?.type === 'tender'
               const mine = myBestOn(lot.id)
               const leading = lot.leadingBidderId === me.id
               return (
@@ -123,24 +131,27 @@ export default function Bids() {
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="num text-sm font-bold">{lot.lotNo}</span>
                       <span className="num text-xs text-ink-faint">{cat?.code}</span>
-                      {leading
-                        ? <Chip tone="success">Leading H1</Chip>
-                        : <Chip tone="danger" pulse>Outbid</Chip>}
+                      {isTender
+                        ? <Chip tone="steel">Offer submitted</Chip>
+                        : leading ? <Chip tone="success">Leading H1</Chip> : <Chip tone="danger" pulse>Outbid</Chip>}
                     </div>
                     <div className="text-sm text-ink-muted mt-0.5 line-clamp-1">{lot.description}</div>
                   </div>
                   <div className="text-right">
-                    <div className="text-[11px] uppercase tracking-wider text-ink-faint">My best</div>
+                    <div className="text-[11px] uppercase tracking-wider text-ink-faint">{isTender ? 'Your offer' : 'My best'}</div>
                     <div className="num text-sm font-semibold">{inr(mine)}<span className="text-xs text-ink-faint">/{lot.uom}</span></div>
                   </div>
-                  <div className="text-right">
-                    <div className="text-[11px] uppercase tracking-wider text-ink-faint">Current H1</div>
-                    <div className={`num text-sm font-bold ${leading ? 'text-success' : 'text-danger'}`}>
-                      {inr(lot.currentRate ?? lot.startRate)}<span className="text-xs text-ink-faint">/{lot.uom}</span>
+                  {/* No visible current rate on a sealed tender lot — nothing to compare against. */}
+                  {!isTender && (
+                    <div className="text-right">
+                      <div className="text-[11px] uppercase tracking-wider text-ink-faint">Current H1</div>
+                      <div className={`num text-sm font-bold ${leading ? 'text-success' : 'text-danger'}`}>
+                        {inr(lot.currentRate ?? lot.startRate)}<span className="text-xs text-ink-faint">/{lot.uom}</span>
+                      </div>
                     </div>
-                  </div>
+                  )}
                   <Countdown endsAt={lot.endsAt} size="sm" />
-                  <Button size="sm" variant={leading ? 'secondary' : 'primary'}
+                  <Button size="sm" variant={isTender ? 'secondary' : leading ? 'secondary' : 'primary'}
                     onClick={() => enterBidroom(lot.catalogueId, { lotId: lot.id })}>
                     Go to bidding room <ArrowRight size={14} />
                   </Button>
@@ -157,12 +168,13 @@ export default function Bids() {
           <EmptyState
             icon={<Trophy size={32} strokeWidth={1.5} />}
             title="No wins yet"
-            body="When you finish as confirmed H1 on a lot, it lands here with a link to fulfilment."
+            body="When you finish as confirmed H1 on a lot, it lands here with a link to auction status."
           />
         ) : (
           <div className="space-y-3">
             {wonLots.map((lot) => {
               const cat = catById.get(lot.catalogueId)
+              const isTender = cat?.type === 'tender'
               const rate = lot.resultH1Rate ?? lot.currentRate ?? 0
               return (
                 <div key={lot.id} className="card p-4 flex flex-wrap items-center gap-3 border-l-4 border-l-success">
@@ -171,7 +183,7 @@ export default function Bids() {
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="num text-sm font-bold">{lot.lotNo}</span>
                       <span className="num text-xs text-ink-faint">{cat?.code}</span>
-                      <Chip tone="success">Won · H1</Chip>
+                      <Chip tone="success">{isTender ? 'Offer accepted' : 'Won · H1'}</Chip>
                     </div>
                     <div className="text-sm text-ink-muted mt-0.5 line-clamp-1">{lot.description}</div>
                     <div className="text-xs text-ink-faint mt-0.5">
@@ -179,15 +191,15 @@ export default function Bids() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-[11px] uppercase tracking-wider text-ink-faint">H1 rate</div>
+                    <div className="text-[11px] uppercase tracking-wider text-ink-faint">{isTender ? 'Accepted rate' : 'H1 rate'}</div>
                     <div className="num text-sm font-bold text-success">{inr(rate)}<span className="text-xs text-ink-faint">/{lot.uom}</span></div>
                   </div>
                   <div className="text-right">
                     <div className="text-[11px] uppercase tracking-wider text-ink-faint">Est. value</div>
                     <div className="num text-sm font-bold">{inrCompact(rate * lot.indicativeQty)}</div>
                   </div>
-                  <Link to="/buyer/fulfilment">
-                    <Button size="sm" variant="success">Track fulfilment <ArrowRight size={14} /></Button>
+                  <Link to="/buyer/auction-status">
+                    <Button size="sm" variant="success">Track auction status <ArrowRight size={14} /></Button>
                   </Link>
                 </div>
               )
@@ -220,14 +232,18 @@ export default function Bids() {
                   </div>
                   <div className="space-y-3">
                     {rows.map(({ lot, result }) => {
-                      const chip = OUTCOME_CHIP[result.outcome]
+                      const isTender = cat.type === 'tender'
+                      const chip = (isTender ? TENDER_OUTCOME_CHIP : OUTCOME_CHIP)[result.outcome]
                       return (
                         <div key={lot.id} className={cx('card p-4 flex flex-wrap items-center gap-3', result.outcome === 'won' && 'border-l-4 border-l-success')}>
                           <PhotoThumb hue={lot.photos[0]?.hue ?? 24} category={lot.category} className="w-16 h-12" />
-                          <span className={cx('rounded-lg grid place-items-center font-bold shrink-0 size-7 text-[10px]',
-                            result.rank === 1 ? 'bg-ember text-white' : 'bg-surface-2 text-ink-faint')}>
-                            H{result.rank}
-                          </span>
+                          {/* Sealed tender never surfaces a rank — there's no ladder to have ranked on. */}
+                          {!isTender && (
+                            <span className={cx('rounded-lg grid place-items-center font-bold shrink-0 size-7 text-[10px]',
+                              result.rank === 1 ? 'bg-ember text-white' : 'bg-surface-2 text-ink-faint')}>
+                              H{result.rank}
+                            </span>
+                          )}
                           <div className="min-w-0 flex-1 basis-52">
                             <div className="flex items-center gap-2 flex-wrap">
                               <span className="num text-sm font-bold">{lot.lotNo}</span>
@@ -236,24 +252,24 @@ export default function Bids() {
                             <div className="text-sm text-ink-muted mt-0.5 line-clamp-1">{lot.description}</div>
                             {result.outcome === 'sta' && (
                               <div className="text-xs text-ink-faint mt-0.5">
-                                Your H1 was below reserve — the seller has {cat.bidValidityDays} days to accept or decline.
+                                Your {isTender ? 'offer' : 'H1'} was below reserve — the seller has {cat.bidValidityDays} days to accept or decline.
                               </div>
                             )}
                           </div>
                           <div className="text-right">
-                            <div className="text-[11px] uppercase tracking-wider text-ink-faint">Your bid</div>
+                            <div className="text-[11px] uppercase tracking-wider text-ink-faint">{isTender ? 'Your offer' : 'Your bid'}</div>
                             <div className="num text-sm font-semibold">{inr(result.myBestRate)}<span className="text-xs text-ink-faint">/{lot.uom}</span></div>
                           </div>
                           <div className="text-right">
-                            <div className="text-[11px] uppercase tracking-wider text-ink-faint">Closing H1</div>
+                            <div className="text-[11px] uppercase tracking-wider text-ink-faint">{isTender ? 'Closing rate' : 'Closing H1'}</div>
                             <div className="num text-sm font-semibold">
                               {result.closingH1 != null ? inr(result.closingH1) : '—'}
                               <span className="text-xs text-ink-faint">/{lot.uom}</span>
                             </div>
                           </div>
                           {result.outcome === 'won' ? (
-                            <Link to="/buyer/fulfilment">
-                              <Button size="sm" variant="success">Track fulfilment <ArrowRight size={14} /></Button>
+                            <Link to="/buyer/auction-status">
+                              <Button size="sm" variant="success">Track auction status <ArrowRight size={14} /></Button>
                             </Link>
                           ) : (
                             <Link to={`/catalogue/${lot.catalogueId}`}>
@@ -300,7 +316,7 @@ export default function Bids() {
                       </td>
                       <td className="px-4 py-2.5 text-right num font-semibold">{inr(b.rate)}<span className="text-xs text-ink-faint">/{lot?.uom ?? ''}</span></td>
                       <td className="px-4 py-2.5">
-                        {b.type === 'auto' ? <Chip tone="steel">Auto</Chip> : <Chip tone="neutral">Manual</Chip>}
+                        {b.type === 'auto' ? <Chip tone="steel">Auto</Chip> : b.type === 'tender' ? <Chip tone="steel">Tender offer</Chip> : <Chip tone="neutral">Manual</Chip>}
                       </td>
                       <td className="px-4 py-2.5 num text-ink-muted whitespace-nowrap">{fmtDateTime(b.at)}</td>
                       <td className="px-4 py-2.5">
