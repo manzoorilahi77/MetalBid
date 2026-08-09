@@ -154,59 +154,59 @@ export function Segmented<T extends string>({ options, value, onChange, classNam
 }
 
 /* ----------------------------- Amount stepper ------------------------------ */
-/** Bid-step ladder — real rupee rungs, not multiples of the lot increment.
-    Scaled to the lot's own rate so a ₹1k lot never offers a ₹10k rung. */
-const STEP_LADDER = [200, 500, 1000, 2000, 5000, 10000]
-
-export function stepOptionsFor(rate: number, increment: number): number[] {
-  const opts = STEP_LADDER.filter((s) => s >= increment && s <= Math.max(rate * 0.5, increment))
-  return opts.length ? opts : [increment]
-}
-
-const stepLabel = (n: number) => (n >= 1000 && n % 1000 === 0 ? `₹${n / 1000}k` : `₹${n}`)
-
-/** −/+ bid builder with a selectable step-size ladder (₹200…₹10k, scaled to the lot).
+/** −/+ bid builder with a grid of the next 8 valid bid amounts — each rung is the
+    seller's own lot increment stacked on top of the current rate (current 30k +
+    1k increment → 31k, 32k … 38k), not an arbitrary fixed rupee delta.
     `md+` keeps `md`'s compact box and only grows the numerals — the rungs and the
     amount were the unreadable part, not the controls. */
 const STEPPER_SIZES = {
-  md: { chip: 'h-6 px-2.5 text-[11px]', arrow: 'w-9', icon: 14, input: 'h-9 w-24 text-sm' },
-  'md+': { chip: 'h-7 px-3 text-[13px]', arrow: 'w-10', icon: 16, input: 'h-10 w-28 text-lg' },
-  lg: { chip: 'h-7 px-3 text-xs', arrow: 'w-12', icon: 18, input: 'h-12 w-32 text-xl' },
+  md: { chip: 'h-8 text-[11px]', arrow: 'w-9', icon: 14, input: 'h-9 w-24 text-sm' },
+  'md+': { chip: 'h-9 text-[13px]', arrow: 'w-10', icon: 16, input: 'h-10 w-28 text-lg' },
+  lg: { chip: 'h-9 text-xs', arrow: 'w-12', icon: 18, input: 'h-12 w-32 text-xl' },
 }
 
-export function AmountStepper({ minNext, increment, value, onChange, size = 'md', className }: {
+/** The grid of the next 8 valid bid amounts, standalone so callers can place the
+    −/+ input on its own line alongside other controls (e.g. the Bid button). */
+export function AmountGrid({ minNext, increment, value, onChange, size = 'md', className }: {
   minNext: number; increment: number; value: number; onChange: (v: number) => void
   size?: 'md' | 'md+' | 'lg'; className?: string
 }) {
-  const steps = useMemo(() => stepOptionsFor(minNext, increment), [minNext, increment])
-  const [step, setStep] = useState(steps[0])
-  const activeStep = steps.includes(step) ? step : steps[0]
+  const options = useMemo(() => Array.from({ length: 8 }, (_, i) => minNext + i * increment), [minNext, increment])
   const s = STEPPER_SIZES[size]
   return (
-    <div className={cx('inline-flex flex-col gap-2', className)}>
-      <div className="flex flex-wrap gap-1.5" role="radiogroup" aria-label="Bid step size">
-        {steps.map((n) => (
-          <button key={n} type="button" role="radio" aria-checked={n === activeStep} onClick={() => setStep(n)}
-            className={cx('num rounded-full border font-bold transition-colors', s.chip,
-              n === activeStep ? 'bg-ember text-white border-ember' : 'bg-surface-2 text-ink-muted border-line hover:border-line-strong')}>
-            +{stepLabel(n)}
-          </button>
-        ))}
-      </div>
-      <div className="inline-flex items-stretch rounded-xl border border-line-strong bg-surface overflow-hidden w-fit">
-        <button type="button" aria-label="Decrease bid" disabled={value <= minNext}
-          onClick={() => onChange(Math.max(minNext, value - activeStep))}
-          className={cx('grid place-items-center shrink-0 text-ink-muted hover:bg-surface-2 hover:text-ink disabled:opacity-30 disabled:pointer-events-none', s.arrow)}>
-          <Minus size={s.icon} />
+    <div className={cx('grid grid-cols-4 gap-1.5', className)} role="radiogroup" aria-label="Bid amount">
+      {options.map((n) => (
+        <button key={n} type="button" role="radio" aria-checked={n === value} onClick={() => onChange(n)}
+          className={cx('num rounded-lg border font-bold transition-colors', s.chip,
+            n === value ? 'bg-ember text-white border-ember' : 'bg-surface text-ink-muted border-line hover:border-line-strong hover:text-ink')}>
+          {inr(n)}
         </button>
-        <input inputMode="numeric" aria-label="Bid amount" value={value.toLocaleString('en-IN')}
-          onChange={(e) => { const n = Number(e.target.value.replace(/[^\d]/g, '')); onChange(n) }}
-          className={cx('num font-bold text-center bg-transparent focus:outline-none border-x border-line', s.input)} />
-        <button type="button" aria-label="Increase bid" onClick={() => onChange(value + activeStep)}
-          className={cx('grid place-items-center shrink-0 text-ink-muted hover:bg-surface-2 hover:text-ink', s.arrow)}>
-          <Plus size={s.icon} />
-        </button>
-      </div>
+      ))}
+    </div>
+  )
+}
+
+/** −/+ bid amount input, standalone so callers can place it alongside other
+    controls (e.g. the Bid button) on the same line. */
+export function AmountInput({ minNext, increment, value, onChange, size = 'md', className }: {
+  minNext: number; increment: number; value: number; onChange: (v: number) => void
+  size?: 'md' | 'md+' | 'lg'; className?: string
+}) {
+  const s = STEPPER_SIZES[size]
+  return (
+    <div className={cx('inline-flex items-stretch rounded-xl border border-line-strong bg-surface overflow-hidden w-fit', className)}>
+      <button type="button" aria-label="Decrease bid" disabled={value <= minNext}
+        onClick={() => onChange(Math.max(minNext, value - increment))}
+        className={cx('grid place-items-center shrink-0 text-ink-muted hover:bg-surface-2 hover:text-ink disabled:opacity-30 disabled:pointer-events-none', s.arrow)}>
+        <Minus size={s.icon} />
+      </button>
+      <input inputMode="numeric" aria-label="Bid amount" value={value.toLocaleString('en-IN')}
+        onChange={(e) => { const n = Number(e.target.value.replace(/[^\d]/g, '')); onChange(n) }}
+        className={cx('num font-bold text-center bg-transparent focus:outline-none border-x border-line', s.input)} />
+      <button type="button" aria-label="Increase bid" onClick={() => onChange(value + increment)}
+        className={cx('grid place-items-center shrink-0 text-ink-muted hover:bg-surface-2 hover:text-ink', s.arrow)}>
+        <Plus size={s.icon} />
+      </button>
     </div>
   )
 }
