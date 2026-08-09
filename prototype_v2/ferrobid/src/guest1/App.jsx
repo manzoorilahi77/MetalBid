@@ -14,6 +14,7 @@ import Roles from './pages/Roles';
 import Pricing from './pages/Pricing';
 import AuctionCalendar from './pages/AuctionCalendar';
 import { Marketplace } from './pages/Marketplace';
+import { CatalogueDetail } from './pages/CatalogueDetail';
 import { HowItWorks } from './pages/HowItWorks';
 import { AboutUs } from './pages/AboutUs';
 import { HowItWorksSection } from './components/HowItWorksSection';
@@ -728,6 +729,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/marketplace" element={<Marketplace />} />
+        <Route path="/catalogue/:id" element={<CatalogueDetail />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
         <Route path="/about-us" element={<AboutUs />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
