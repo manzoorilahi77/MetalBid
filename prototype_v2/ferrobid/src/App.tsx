@@ -88,7 +88,7 @@ import Audit from './pages/admin/Audit'
 function subNavItems(role: Role) {
   return NAV_BY_ROLE[role]
     .filter((i) => i.in.includes('sub'))
-    .map((i) => ({ to: i.to, label: i.subLabel ?? i.label, end: i.end, locked: i.locked }))
+    .map((i) => ({ to: i.to, label: i.subLabel ?? i.label, end: i.end, locked: i.locked, activeMatch: i.activeMatch }))
 }
 
 /** Browse and Noticeboard are shared pages that live outside every role's own

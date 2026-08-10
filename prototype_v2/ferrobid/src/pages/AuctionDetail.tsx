@@ -7,12 +7,12 @@ import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import {
   AlertTriangle, CalendarDays, Check, Download, FileText, Gavel, Lock, MapPin,
-  Phone, QrCode, ScrollText, Search, Star, X,
+  Phone, QrCode, ScrollText, Star,
 } from 'lucide-react'
 import { Page } from '../layout/Chrome'
 import {
-  Button, Chip, Countdown, EmptyState, Input, Modal, PhotoThumb,
-  Select, StatusChip, Tabs, Toggle, cx,
+  Button, Chip, Countdown, EmptyState, Modal, PhotoThumb,
+  StatusChip, Tabs, Toggle, cx,
 } from '../components/ui'
 import { useBidroomGate } from '../components/BidroomGate'
 import { catalogueUiStatus, selectionSummary, useStore } from '../store/store'
@@ -23,13 +23,7 @@ import type { Lot } from '../types'
 
 type TabKey = 'lots' | 'terms' | 'inspection' | 'documents'
 
-const DEFAULT_FILTERS = {
-  q: '', metal: 'all', status: 'all', uom: 'all',
-  emd: 'all' as 'all' | 'lt50' | '50to2' | 'gt2',
-  rate: 'all' as 'all' | 'lt1k' | '1kto50k' | 'gt50k',
-  qty: 'all' as 'all' | 'small' | 'medium' | 'large',
-  hazardous: false, onlySelected: false,
-}
+const DEFAULT_FILTERS = { onlySelected: false }
 type Filters = typeof DEFAULT_FILTERS
 
 export default function AuctionDetail() {
@@ -56,7 +50,6 @@ export default function AuctionDetail() {
 
   const [tab, setTab] = useState<TabKey>('lots')
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS)
-  const [sort, setSort] = useState<'lotNo' | 'rate' | 'emd' | 'qty'>('lotNo')
   const [termsOpen, setTermsOpen] = useState(false)
   const [slotBooked, setSlotBooked] = useState(false)
   const [unshortlistConfirm, setUnshortlistConfirm] = useState(false)
@@ -85,40 +78,11 @@ export default function AuctionDetail() {
   const catAnnouncements = announcements.filter((a) => a.catalogueId === cat.id)
   const mySlot = inspectionSlots.find((s) => s.catalogueId === cat.id && s.userId === me?.id)
 
-  const metals = [...new Set(catLots.map((l) => l.metal))]
-  const uoms = [...new Set(catLots.map((l) => l.uom))]
-
   const filtered = useMemo(() => {
-    let list = catLots.filter((l) => {
-      if (filters.q && !`${l.lotNo} ${l.description} ${l.metal} ${l.grade}`.toLowerCase().includes(filters.q.toLowerCase())) return false
-      if (filters.metal !== 'all' && l.metal !== filters.metal) return false
-      if (filters.uom !== 'all' && l.uom !== filters.uom) return false
-      if (filters.status !== 'all' && l.status !== filters.status) return false
-      if (filters.hazardous && !l.hazardous) return false
-      if (filters.emd === 'lt50' && l.preBidEmd >= 50_000) return false
-      if (filters.emd === '50to2' && (l.preBidEmd < 50_000 || l.preBidEmd > 200_000)) return false
-      if (filters.emd === 'gt2' && l.preBidEmd <= 200_000) return false
-      if (filters.rate === 'lt1k' && l.startRate >= 1000) return false
-      if (filters.rate === '1kto50k' && (l.startRate < 1000 || l.startRate > 50_000)) return false
-      if (filters.rate === 'gt50k' && l.startRate <= 50_000) return false
-      const qtyBand = l.uom === 'KG' ? l.indicativeQty / 1000 : l.indicativeQty
-      if (filters.qty === 'small' && qtyBand >= 25) return false
-      if (filters.qty === 'medium' && (qtyBand < 25 || qtyBand > 100)) return false
-      if (filters.qty === 'large' && qtyBand <= 100) return false
-      if (filters.onlySelected && !summary.lotIds.includes(l.id)) return false
-      return true
-    })
-    const key: Record<typeof sort, (l: Lot) => number | string> = {
-      lotNo: (l) => l.lotNo, rate: (l) => l.startRate, emd: (l) => l.preBidEmd, qty: (l) => l.indicativeQty,
-    }
-    list = [...list].sort((a, b) => {
-      const ka = key[sort](a), kb = key[sort](b)
-      return ka < kb ? -1 : ka > kb ? 1 : 0
-    })
-    return list
-  }, [catLots, filters, sort, summary.lotIds])
+    const list = catLots.filter((l) => !filters.onlySelected || summary.lotIds.includes(l.id))
+    return [...list].sort((a, b) => (a.lotNo < b.lotNo ? -1 : a.lotNo > b.lotNo ? 1 : 0))
+  }, [catLots, filters, summary.lotIds])
 
-  const dirty = JSON.stringify(filters) !== JSON.stringify(DEFAULT_FILTERS)
   const canBid = ui === 'live' || ui === 'closing'
 
   const factCls = 'py-3 px-4 border-l border-line first:border-l-0 min-w-40'
@@ -243,61 +207,6 @@ export default function AuctionDetail() {
           <div className="mt-5">
             <div className="card px-3 py-2.5 flex items-center gap-2 text-sm bg-warning-soft/60 border-warning/30 text-warning font-medium mb-4">
               <AlertTriangle size={15} /> Quantity is indicative — final quantity and payment are determined on weighment. Material sells as-is-where-is after inspection.
-            </div>
-
-            {/* filter bar */}
-            <div className="card p-3 flex flex-wrap items-center gap-2">
-              <div className="relative">
-                <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-ink-faint" />
-                <Input className="h-9 w-48 pl-8 text-[13px]" placeholder="Lot no / description…" value={filters.q}
-                  onChange={(e) => setFilters({ ...filters, q: e.target.value })} />
-              </div>
-              <Select className="h-9 w-32 text-[13px]" value={filters.metal} onChange={(e) => setFilters({ ...filters, metal: e.target.value })}>
-                <option value="all">Metal: all</option>
-                {metals.map((m) => <option key={m} value={m}>{m}</option>)}
-              </Select>
-              <Select className="h-9 w-30 text-[13px]" value={filters.uom} onChange={(e) => setFilters({ ...filters, uom: e.target.value })}>
-                <option value="all">UOM: all</option>
-                {uoms.map((u) => <option key={u} value={u}>{u}</option>)}
-              </Select>
-              <Select className="h-9 w-36 text-[13px]" value={filters.emd} onChange={(e) => setFilters({ ...filters, emd: e.target.value as Filters['emd'] })}>
-                <option value="all">EMD: any</option>
-                <option value="lt50">Below ₹50k</option>
-                <option value="50to2">₹50k – ₹2L</option>
-                <option value="gt2">Above ₹2L</option>
-              </Select>
-              <Select className="h-9 w-38 text-[13px]" value={filters.rate} onChange={(e) => setFilters({ ...filters, rate: e.target.value as Filters['rate'] })}>
-                <option value="all">Start rate: any</option>
-                <option value="lt1k">Below ₹1,000</option>
-                <option value="1kto50k">₹1k – ₹50k</option>
-                <option value="gt50k">Above ₹50k</option>
-              </Select>
-              <Select className="h-9 w-32 text-[13px]" value={filters.qty} onChange={(e) => setFilters({ ...filters, qty: e.target.value as Filters['qty'] })}>
-                <option value="all">Qty: any</option>
-                <option value="small">Small (&lt;25 MT)</option>
-                <option value="medium">25–100 MT</option>
-                <option value="large">Large (&gt;100 MT)</option>
-              </Select>
-              <Select className="h-9 w-32 text-[13px]" value={filters.status} onChange={(e) => setFilters({ ...filters, status: e.target.value })}>
-                <option value="all">Status: all</option>
-                {['live', 'sold', 'sta', 'unsold', 'approved'].map((st) => <option key={st} value={st}>{st.toUpperCase()}</option>)}
-              </Select>
-              <label className="flex items-center gap-1.5 text-[13px] font-medium text-ink-muted cursor-pointer select-none">
-                <input type="checkbox" checked={filters.hazardous} onChange={(e) => setFilters({ ...filters, hazardous: e.target.checked })} className="accent-[#E4572E]" />
-                Hazardous only
-              </label>
-              <div className="ml-auto flex items-center gap-2">
-                <Select className="h-9 w-36 text-[13px]" value={sort} onChange={(e) => setSort(e.target.value as typeof sort)}>
-                  <option value="lotNo">Sort: lot no</option>
-                  <option value="rate">Sort: start rate</option>
-                  <option value="emd">Sort: EMD</option>
-                  <option value="qty">Sort: quantity</option>
-                </Select>
-                {dirty && (
-                  <button className="text-[13px] font-semibold text-steel hover:underline inline-flex items-center gap-1"
-                    onClick={() => setFilters(DEFAULT_FILTERS)}><X size={13} /> Clear all</button>
-                )}
-              </div>
             </div>
 
             {/* "my lots" toggle */}

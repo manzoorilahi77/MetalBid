@@ -1,13 +1,26 @@
 import React from 'react';
 import { Clock, MapPin, Building2, ChevronRight, Lock } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { asset } from '../utils/asset';
 
 export const AuctionCard = ({ auction, isLive = false }) => {
+  const navigate = useNavigate();
+  const goToDetail = () => navigate(`/catalogue/${auction.catalogueId}`);
+  const onCardKeyDown = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      goToDetail();
+    }
+  };
+
   return (
-    <motion.div 
+    <motion.div
       className="auction-card premium-small-card"
+      role="button"
+      tabIndex={0}
+      onClick={goToDetail}
+      onKeyDown={onCardKeyDown}
       whileHover={{ y: -6, boxShadow: '0 16px 32px -8px rgba(228, 87, 46, 0.2)' }}
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -58,7 +71,7 @@ export const AuctionCard = ({ auction, isLive = false }) => {
         <div className="auction-price-row">
           <div className="price-block">
             <span className="price-label">{isLive ? 'Current Bid' : 'Starting Price'}</span>
-            <Link to="/pricing" className="price-locked" title="Subscribe to view pricing">
+            <Link to="/pricing" className="price-locked" title="Subscribe to view pricing" onClick={(e) => e.stopPropagation()}>
               <Lock size={11} /> Subscribers only
             </Link>
           </div>
@@ -67,6 +80,7 @@ export const AuctionCard = ({ auction, isLive = false }) => {
               to="/pricing"
               className={`btn ${isLive ? 'btn-primary' : 'btn-outline-primary'} btn-sm`}
               style={{ padding: '6px 12px', fontSize: '11px', borderRadius: '999px', textDecoration: 'none' }}
+              onClick={(e) => e.stopPropagation()}
             >
               {isLive ? 'Join' : 'View'} <ChevronRight size={14} style={{ marginLeft: '2px' }} />
             </Link>
