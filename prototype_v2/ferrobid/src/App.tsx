@@ -38,6 +38,7 @@ const SHOW_WHATSAPP_MODAL = false
 import BuyerDashboard from './pages/buyer/Dashboard'
 import BuyerMarketplace from './pages/buyer/Marketplace'
 import Shortlist from './pages/buyer/Shortlist'
+import ShortlistCatalogue from './pages/buyer/ShortlistCatalogue'
 import BuyerBids from './pages/buyer/Bids'
 import AuctionStatus from './pages/buyer/AuctionStatus'
 import Wallet from './pages/buyer/Wallet'
@@ -245,6 +246,8 @@ export default function App() {
             <Route path="/buyer" element={<BuyerDashboard />} />
             <Route path="/buyermarketplace" element={<BuyerMarketplace />} />
             <Route path="/buyer/emd-shortlisted-catalogue" element={<Shortlist />} />
+            <Route path="/buyer/shortlist" element={<Shortlist />} />
+            <Route path="/buyer/shortlist/:catalogueId" element={<ShortlistCatalogue />} />
             <Route path="/buyer/bids" element={<BuyerBids />} />
             <Route path="/buyer/auction-status" element={<AuctionStatus />} />
             <Route path="/buyer/wallet" element={<Wallet />} />
