@@ -19,7 +19,6 @@ import { catalogueUiStatus, selectionSummary, useStore } from '../store/store'
 import { emdDeadlineMs, emdWindowClosed } from '../lib/emd'
 import { fmtDate, fmtDateTime, inr, inrCompact, num } from '../lib/format'
 import { useNow } from '../lib/useTick'
-import type { Lot } from '../types'
 
 type TabKey = 'lots' | 'terms' | 'inspection' | 'documents'
 
