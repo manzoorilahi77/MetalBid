@@ -1,19 +1,19 @@
 /* Domain components shared across Home, Browse and role pages. */
-import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { CalendarDays, Download, Layers, MapPin, Star } from 'lucide-react'
+import { CalendarDays, Download, Layers, Lock, MapPin, Star } from 'lucide-react'
 import type { Catalogue, MetalCategory } from '../types'
-import { useStore, catalogueUiStatus, isCatalogueShortlisted } from '../store/store'
+import { useStore, catalogueUiStatus, isCatalogueShortlisted, isCatalogueEmdLocked } from '../store/store'
 import { fmtDate, inrCompact, relTime } from '../lib/format'
 import { categoryImageUrl } from '../data/categoryImages'
 import { useNow } from '../lib/useTick'
-import { LotShortlistModal } from './LotShortlistModal'
 import { Button, Chip, Countdown, PhotoThumb, StatusChip, cx } from './ui'
 
 /** Marketplace catalogue card — Home rail + Browse grid. Pass `showBuyerActions`
- *  to add the Browse & Shortlist footer (watchlist star, lot picker, PDF, view
- *  details) — opt-in so Home/Browse's guest- and role-neutral cards, which
- *  render this same component, are unaffected. */
+ *  to add the Browse & Shortlist footer (watchlist star, PDF, view details) —
+ *  opt-in so Home/Browse's guest- and role-neutral cards, which render this
+ *  same component, are unaffected. Browse & Shortlist only ever shortlists
+ *  whole catalogues — lot-level shortlisting happens later, inside the EMD
+ *  flow (see pages/buyer/ShortlistCatalogue.tsx). */
 export function CatalogueCard({ cat, className, showBuyerActions }: { cat: Catalogue; className?: string; showBuyerActions?: boolean }) {
   const now = useNow()
   const me = useStore((s) => s.currentUser)
@@ -23,14 +23,16 @@ export function CatalogueCard({ cat, className, showBuyerActions }: { cat: Catal
   const selections = useStore((s) => s.selections)
   const toggleWatchlist = useStore((s) => s.toggleWatchlist)
   const pushToast = useStore((s) => s.pushToast)
-  const [pickerOpen, setPickerOpen] = useState(false)
   const catLots = lots.filter((l) => l.catalogueId === cat.id)
   const seller = users.find((u) => u.id === cat.sellerId)
   const ui = catalogueUiStatus(cat, now, catLots)
   const emdFrom = catLots.length ? Math.min(...catLots.map((l) => l.preBidEmd)) : 0
   const emdTo = catLots.length ? Math.max(...catLots.map((l) => l.preBidEmd)) : 0
   const covers = catLots.slice(0, 3).flatMap((l) => l.photos.slice(0, 1).map((p) => ({ photo: p, category: l.category })))
-  const shortlisted = isCatalogueShortlisted({ watchlist, selections }, me?.id, cat.id)
+  const shortlisted = isCatalogueShortlisted({ watchlist }, me?.id, cat.id)
+  // EMD already funded for this catalogue — its shortlist star is read-only
+  // from here; unshortlisting only happens by letting the lot close.
+  const emdLocked = shortlisted && isCatalogueEmdLocked({ selections, lots }, me?.id, cat.id)
 
   return (
     <div className={cx('card card-hover flex flex-col min-w-[290px]',
@@ -72,15 +74,16 @@ export function CatalogueCard({ cat, className, showBuyerActions }: { cat: Catal
       {showBuyerActions && (
         <div className="flex items-center gap-1 px-3 pb-3 pt-1 border-t border-line">
           <button
-            onClick={() => toggleWatchlist(cat.id)}
+            onClick={() => { if (!emdLocked) toggleWatchlist(cat.id) }}
+            disabled={emdLocked}
             aria-label={shortlisted ? 'Remove from watchlist' : 'Add to watchlist'}
             aria-pressed={shortlisted}
-            title="Watchlist this catalogue"
-            className={cx('p-2 rounded-lg transition-colors', shortlisted ? 'text-ember' : 'text-ink-faint hover:text-ink hover:bg-surface-2')}
+            title={emdLocked ? 'EMD funded — this catalogue is read only until it closes' : 'Watchlist this catalogue'}
+            className={cx('p-2 rounded-lg transition-colors', shortlisted ? 'text-ember' : 'text-ink-faint hover:text-ink hover:bg-surface-2',
+              'disabled:opacity-70 disabled:pointer-events-none')}
           >
-            <Star size={16} fill={shortlisted ? 'currentColor' : 'none'} />
+            {emdLocked ? <Lock size={16} /> : <Star size={16} fill={shortlisted ? 'currentColor' : 'none'} />}
           </button>
-          <Button size="sm" variant="secondary" onClick={() => setPickerOpen(true)}>Shortlist lots</Button>
           <Button size="sm" variant="ghost"
             onClick={() => pushToast({ kind: 'info', title: 'Catalogue PDF downloading', body: `${cat.code} Catalogue & Annexure.pdf (demo)` })}>
             <Download size={14} /> PDF
@@ -89,11 +92,6 @@ export function CatalogueCard({ cat, className, showBuyerActions }: { cat: Catal
             <Button size="sm" variant="ghost">View details</Button>
           </Link>
         </div>
-      )}
-
-      {showBuyerActions && (
-        <LotShortlistModal open={pickerOpen} cat={cat} onClose={() => setPickerOpen(false)}
-          footer={() => <div className="flex justify-end mt-4"><Button onClick={() => setPickerOpen(false)}>Done</Button></div>} />
       )}
     </div>
   )

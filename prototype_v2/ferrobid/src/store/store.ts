@@ -443,7 +443,6 @@ export const useStore = create<State>((set, get) => {
 
     withdrawalWindow: DEFAULT_WITHDRAWAL_WINDOW,
     termsAccepted: {},
-    watchlist: [],
     toasts: [],
     lastWonLotId: null,
 
@@ -508,6 +507,10 @@ export const useStore = create<State>((set, get) => {
     toggleShortlist: (catalogueId, lotId) => {
       const me = get().currentUser
       if (!me) return
+      const cat = get().catalogues.find((c) => c.id === catalogueId)
+      // Cut-off guard, same rule fundEmd enforces. Callers pre-check
+      // `emdWindowClosed` so they can show the deadline message; this is the backstop.
+      if (cat && emdWindowClosed(cat, get().now)) return
       set((st) => {
         const existing = st.selections.find((x) => x.buyerId === me.id && x.catalogueId === catalogueId)
         if (!existing) {
@@ -534,6 +537,9 @@ export const useStore = create<State>((set, get) => {
       if (!me) return
       set((st) => {
         const has = st.watchlist.some((w) => w.buyerId === me.id && w.catalogueId === catalogueId)
+        // EMD already funded for this catalogue — it's read-only, stays
+        // watchlisted regardless of which surface tries to unshortlist it.
+        if (has && isCatalogueEmdLocked(st, me.id, catalogueId)) return st
         return {
           watchlist: has
             ? st.watchlist.filter((w) => !(w.buyerId === me.id && w.catalogueId === catalogueId))
@@ -1155,15 +1161,26 @@ export function selectionSummary(s: Pick<State, 'selections' | 'lots'>, buyerId:
   }
 }
 
+/** True once every shortlisted lot's pre-bid EMD is funded — the catalogue is
+ *  "done": lot selection AND the catalogue-level watchlist star both lock from
+ *  here (Browse & Shortlist, the catalogue detail page, and the EMD drill-down
+ *  all read this the same way) until the lot closes. */
+export function isCatalogueEmdLocked(
+  s: Pick<State, 'selections' | 'lots'>, buyerId: string | undefined, catalogueId: string,
+): boolean {
+  const summary = selectionSummary(s, buyerId, catalogueId)
+  return summary.count > 0 && summary.shortfall === 0
+}
+
 /** A catalogue counts as "shortlisted" (Browse & Shortlist's scope filter) if the
- *  buyer has watchlisted it directly OR starred at least one of its lots. */
+ *  buyer has watchlisted it. Browse & Shortlist only ever shortlists whole
+ *  catalogues — lot-level selection happens later, inside the EMD flow — so
+ *  this deliberately ignores per-lot `selections`. */
 export function isCatalogueShortlisted(
-  s: Pick<State, 'watchlist' | 'selections'>, buyerId: string | undefined, catalogueId: string,
+  s: Pick<State, 'watchlist'>, buyerId: string | undefined, catalogueId: string,
 ): boolean {
   if (!buyerId) return false
-  if (s.watchlist.some((w) => w.buyerId === buyerId && w.catalogueId === catalogueId)) return true
-  const sel = s.selections.find((x) => x.buyerId === buyerId && x.catalogueId === catalogueId)
-  return !!sel && sel.lotIds.length > 0
+  return s.watchlist.some((w) => w.buyerId === buyerId && w.catalogueId === catalogueId)
 }
 
 /** Status of a catalogue for chips: live / closing-soon / upcoming / closed. */

@@ -4,7 +4,7 @@
 --------------------------------------------------------------------------- */
 import { useEffect, useMemo, useRef, useState, type ReactNode, type ButtonHTMLAttributes, type InputHTMLAttributes, type SelectHTMLAttributes, type TextareaHTMLAttributes } from 'react'
 import { Link } from 'react-router-dom'
-import { X, Loader2, Lock, Inbox, CheckCircle2, Minus, Plus, Smartphone, Bell } from 'lucide-react'
+import { X, Loader2, Lock, Inbox, CheckCircle2, Minus, Plus, Smartphone, Bell, ShieldCheck } from 'lucide-react'
 import { useStore } from '../store/store'
 import { countdown, inr, inrWords } from '../lib/format'
 import { useNow } from '../lib/useTick'
@@ -429,6 +429,138 @@ export function MockPayModal({ open, onClose, amount, title, onSuccess }: {
         <div className="py-10 flex flex-col items-center gap-3 text-success">
           <CheckCircle2 size={40} />
           <div className="font-bold text-ink">Payment successful</div>
+        </div>
+      )}
+    </Modal>
+  )
+}
+
+/* mask a phone number down to its last two digits, e.g. "+91 98200 41775"
+   → "+91 98••••••75" — enough to recognise, not enough to read off a screen. */
+function maskPhone(phone?: string) {
+  const digits = (phone ?? '').replace(/\D/g, '').slice(-10)
+  if (digits.length < 4) return 'your registered number'
+  return `+91 ${digits.slice(0, 2)}${'•'.repeat(digits.length - 4)}${digits.slice(-2)}`
+}
+
+/* -------------------------- Mock OTP verify modal --------------------------- */
+/** SMS OTP step between "confirm" and "pay" for money-moving actions — six
+ *  auto-advancing digit boxes, a resend countdown, then a brief verifying
+ *  beat before handing off. Demo: any 6 digits verify. */
+export function MockOtpModal({ open, onClose, onVerified, phone }: {
+  open: boolean; onClose: () => void; onVerified: () => void; phone?: string
+}) {
+  const [digits, setDigits] = useState<string[]>(Array(6).fill(''))
+  const [phase, setPhase] = useState<'enter' | 'verifying' | 'verified'>('enter')
+  const [resendIn, setResendIn] = useState(30)
+  const [error, setError] = useState(false)
+  const inputsRef = useRef<(HTMLInputElement | null)[]>([])
+  const timer = useRef<ReturnType<typeof setTimeout>>(null)
+
+  useEffect(() => () => { if (timer.current) clearTimeout(timer.current) }, [])
+  useEffect(() => {
+    if (!open) return
+    setDigits(Array(6).fill(''))
+    setPhase('enter')
+    setResendIn(30)
+    setError(false)
+    const focusTimer = setTimeout(() => inputsRef.current[0]?.focus(), 50)
+    return () => clearTimeout(focusTimer)
+  }, [open])
+  useEffect(() => {
+    if (!open || phase !== 'enter' || resendIn <= 0) return
+    const id = setInterval(() => setResendIn((s) => Math.max(0, s - 1)), 1000)
+    return () => clearInterval(id)
+  }, [open, phase, resendIn])
+
+  const code = digits.join('')
+  const complete = code.length === 6
+
+  const setDigit = (i: number, raw: string) => {
+    const clean = raw.replace(/\D/g, '').slice(-1)
+    setError(false)
+    setDigits((d) => { const next = [...d]; next[i] = clean; return next })
+    if (clean && i < 5) inputsRef.current[i + 1]?.focus()
+  }
+  const onKeyDown = (i: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace' && !digits[i] && i > 0) inputsRef.current[i - 1]?.focus()
+  }
+  const onPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    const text = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6)
+    if (!text) return
+    e.preventDefault()
+    setDigits(Array.from({ length: 6 }, (_, i) => text[i] ?? ''))
+    inputsRef.current[Math.min(text.length, 5)]?.focus()
+  }
+
+  const verify = () => {
+    setPhase('verifying')
+    timer.current = setTimeout(() => {
+      setPhase('verified')
+      timer.current = setTimeout(() => { onVerified(); onClose() }, 700)
+    }, 1100)
+  }
+
+  return (
+    <Modal open={open} onClose={phase === 'enter' ? onClose : () => {}} title="Verify it's you">
+      {phase === 'enter' && (
+        <div className="space-y-5">
+          <div className="flex items-start gap-3 card bg-surface-2 border-0 p-4">
+            <span className="size-10 rounded-xl bg-ember-soft text-ember grid place-items-center shrink-0 shadow-sm">
+              <ShieldCheck size={18} />
+            </span>
+            <div className="text-sm">
+              <div className="font-semibold text-ink">Enter the 6-digit code we sent</div>
+              <div className="text-ink-muted mt-0.5">via SMS to <span className="num font-semibold text-ink">{maskPhone(phone)}</span></div>
+            </div>
+          </div>
+
+          <div className="flex justify-center gap-2">
+            {digits.map((d, i) => (
+              <input
+                key={i}
+                ref={(el) => { inputsRef.current[i] = el }}
+                value={d}
+                onChange={(e) => setDigit(i, e.target.value)}
+                onKeyDown={(e) => onKeyDown(i, e)}
+                onPaste={onPaste}
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                maxLength={1}
+                aria-label={`Digit ${i + 1} of 6`}
+                className={cx(
+                  'size-11 sm:size-12 text-center text-lg font-bold num rounded-xl border bg-surface transition-colors',
+                  'focus:outline-2 focus:outline-ember/60 focus:outline-offset-0',
+                  error ? 'border-danger text-danger' : d ? 'border-ember text-ink' : 'border-line-strong text-ink',
+                )}
+              />
+            ))}
+          </div>
+
+          <div className="text-center text-xs">
+            {resendIn > 0 ? (
+              <span className="text-ink-faint">Resend code in <span className="num font-semibold text-ink-muted">0:{String(resendIn).padStart(2, '0')}</span></span>
+            ) : (
+              <button className="text-ember font-semibold hover:underline" onClick={() => setResendIn(30)}>Resend code</button>
+            )}
+          </div>
+
+          <p className="text-[11px] text-ink-faint text-center italic">Demo — enter any 6 digits to continue.</p>
+
+          <Button className="w-full" size="lg" disabled={!complete} onClick={verify}>Verify &amp; continue</Button>
+        </div>
+      )}
+      {phase === 'verifying' && (
+        <div className="py-10 flex flex-col items-center gap-3">
+          <Loader2 size={36} className="animate-spin text-ember" />
+          <div className="font-semibold">Verifying code…</div>
+          <div className="text-xs text-ink-faint">One moment (simulated)</div>
+        </div>
+      )}
+      {phase === 'verified' && (
+        <div className="py-10 flex flex-col items-center gap-3 text-success">
+          <CheckCircle2 size={40} />
+          <div className="font-bold text-ink">Number verified</div>
         </div>
       )}
     </Modal>

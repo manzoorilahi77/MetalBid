@@ -18,6 +18,7 @@ import announcementsJson from '../data/mock/announcements.json'
 import disputesJson from '../data/mock/disputes.json'
 import auditEventsJson from '../data/mock/auditEvents.json'
 import selectionsJson from '../data/mock/selections.json'
+import watchlistJson from '../data/mock/watchlist.json'
 import autoBidsJson from '../data/mock/autoBids.json'
 import inspectionSlotsJson from '../data/mock/inspectionSlots.json'
 import bankAccountsJson from '../data/mock/bankAccounts.json'
@@ -28,7 +29,7 @@ import { defaultEmdDeadline } from '../lib/emd'
 import type {
   Announcement, AppNotification, AuditEvent, AutoBidSetting, BankAccount, Bid,
   BuyerLotSelection, Catalogue, CompanyBankAccount, DemandDraft, DeliveryOrder, DepositClaim,
-  Dispute, InspectionReport, InspectionSlot, Lot, TermsSet, User, Wallet, WithdrawalRequest,
+  Dispute, InspectionReport, InspectionSlot, Lot, TermsSet, User, Wallet, WatchlistEntry, WithdrawalRequest,
 } from '../types'
 
 const delta = Date.now() - Date.parse((anchorJson as { anchor: string }).anchor)
@@ -62,6 +63,7 @@ export interface SeedData {
   disputes: Dispute[]
   auditEvents: AuditEvent[]
   selections: BuyerLotSelection[]
+  watchlist: WatchlistEntry[]
   autoBids: AutoBidSetting[]
   inspectionSlots: InspectionSlot[]
   bankAccounts: BankAccount[]
@@ -91,6 +93,7 @@ export function loadSeed(): SeedData {
     disputes: deepShift(disputesJson) as unknown as Dispute[],
     auditEvents: deepShift(auditEventsJson) as unknown as AuditEvent[],
     selections: selectionsJson as unknown as BuyerLotSelection[],
+    watchlist: watchlistJson as unknown as WatchlistEntry[],
     autoBids: autoBidsJson as unknown as AutoBidSetting[],
     inspectionSlots: deepShift(inspectionSlotsJson) as unknown as InspectionSlot[],
     bankAccounts: deepShift(bankAccountsJson) as unknown as BankAccount[],

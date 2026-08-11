@@ -6,7 +6,7 @@
 import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import {
-  AlertTriangle, CalendarDays, Check, Download, FileText, Gavel, Lock, MapPin,
+  AlertTriangle, ArrowLeft, CalendarDays, Check, Download, FileText, Lock, MapPin,
   Phone, QrCode, ScrollText, Star,
 } from 'lucide-react'
 import { Page } from '../layout/Chrome'
@@ -14,8 +14,7 @@ import {
   Button, Chip, Countdown, EmptyState, Modal, PhotoThumb,
   StatusChip, Tabs, Toggle, cx,
 } from '../components/ui'
-import { useBidroomGate } from '../components/BidroomGate'
-import { catalogueUiStatus, selectionSummary, useStore } from '../store/store'
+import { catalogueUiStatus, isCatalogueEmdLocked, selectionSummary, useStore } from '../store/store'
 import { emdDeadlineMs, emdWindowClosed } from '../lib/emd'
 import { fmtDate, fmtDateTime, inr, inrCompact, num } from '../lib/format'
 import { useNow } from '../lib/useTick'
@@ -39,10 +38,8 @@ export default function AuctionDetail() {
   const termsSets = useStore((s) => s.termsSets)
   const termsAccepted = useStore((s) => s.termsAccepted)
   const acceptTerms = useStore((s) => s.acceptTerms)
-  const toggleShortlist = useStore((s) => s.toggleShortlist)
   const toggleWatchlist = useStore((s) => s.toggleWatchlist)
   const pushToast = useStore((s) => s.pushToast)
-  const { enterBidroom } = useBidroomGate()
   const bookSlot = useStore((s) => s.bookInspectionSlot)
   const inspectionSlots = useStore((s) => s.inspectionSlots)
   const announcements = useStore((s) => s.announcements)
@@ -74,6 +71,9 @@ export default function AuctionDetail() {
   // Watchlist-only, not the isCatalogueShortlisted union with starred lots — this
   // button must be able to turn itself back off on click without also clearing lots.
   const watchlisted = !!me && watchlist.some((w) => w.buyerId === me.id && w.catalogueId === cat.id)
+  // EMD already funded for this catalogue — the shortlist star locks read-only
+  // from here; unshortlisting only happens by letting the lot close.
+  const emdLocked = watchlisted && isCatalogueEmdLocked({ selections, lots }, me?.id, cat.id)
   const catAnnouncements = announcements.filter((a) => a.catalogueId === cat.id)
   const mySlot = inspectionSlots.find((s) => s.catalogueId === cat.id && s.userId === me?.id)
 
@@ -92,6 +92,9 @@ export default function AuctionDetail() {
     <>
       <Page className="pb-32">
         {/* ------------------------------ header ------------------------------ */}
+        <Link to={browseHref} className="inline-block mb-3">
+          <Button variant="secondary" size="sm"><ArrowLeft size={15} /> Back to {browseLabel}</Button>
+        </Link>
         <nav className="text-xs text-ink-faint mb-2 flex items-center gap-1.5">
           <Link to="/" className="hover:text-ink">Home</Link><span>/</span>
           <Link to={browseHref} className="hover:text-ink">{browseLabel}</Link><span>/</span>
@@ -112,16 +115,19 @@ export default function AuctionDetail() {
               <div className="flex items-center gap-3">
                 {canBid && <Countdown endsAt={cat.endsAt} prefix="closes in" size="lg" />}
                 {isBuyer && (
-                  <Button
-                    variant={watchlisted ? 'success' : 'secondary'}
-                    size="md"
-                    onClick={() => watchlisted ? setUnshortlistConfirm(true) : toggleWatchlist(cat.id)}
-                    aria-pressed={watchlisted}
-                    aria-label={watchlisted ? 'Remove from shortlist' : 'Add to shortlist'}
-                  >
-                    <Star size={14} fill={watchlisted ? 'currentColor' : 'none'} />
-                    {watchlisted ? 'Shortlisted' : 'Add to shortlist'}
-                  </Button>
+                  <span title={emdLocked ? 'EMD funded — this catalogue is read only until it closes' : undefined}>
+                    <Button
+                      variant={watchlisted ? 'success' : 'secondary'}
+                      size="md"
+                      disabled={emdLocked}
+                      onClick={() => watchlisted ? setUnshortlistConfirm(true) : toggleWatchlist(cat.id)}
+                      aria-pressed={watchlisted}
+                      aria-label={watchlisted ? 'Remove from shortlist' : 'Add to shortlist'}
+                    >
+                      {emdLocked ? <Lock size={14} /> : <Star size={14} fill={watchlisted ? 'currentColor' : 'none'} />}
+                      {emdLocked ? 'EMD funded' : watchlisted ? 'Shortlisted' : 'Add to shortlist'}
+                    </Button>
+                  </span>
                 )}
               </div>
             )}
@@ -229,17 +235,9 @@ export default function AuctionDetail() {
                 return (
                   <article key={lot.id} className={cx('card p-4 transition-colors', selected && 'border-ember/40 bg-ember-soft/20')}>
                     <div className="flex flex-col lg:flex-row lg:items-center gap-4">
-                      {/* shortlist + identity */}
+                      {/* identity — lots are view-only here; shortlisting and EMD
+                          funding happen on the dedicated EMD & payments page. */}
                       <div className="flex items-start gap-3 flex-1 min-w-0">
-                        {isBuyer && (
-                          <button
-                            aria-label={selected ? 'Remove from shortlist' : 'Add to shortlist'}
-                            onClick={() => toggleShortlist(cat.id, lot.id)}
-                            className={cx('mt-0.5 size-9 rounded-xl border grid place-items-center shrink-0 transition-colors',
-                              selected ? 'bg-ember text-white border-ember' : 'border-line-strong text-ink-faint hover:text-ember hover:border-ember/50')}>
-                            <Star size={16} fill={selected ? 'currentColor' : 'none'} />
-                          </button>
-                        )}
                         <div className="min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
                             <span className="num font-bold">{lot.lotNo}</span>
@@ -292,14 +290,16 @@ export default function AuctionDetail() {
                             : <Chip tone="warning" className="mt-1">EMD pending</Chip>)}
                         </div>
                       </div>
-                      {/* CTA */}
+                      {/* No bid entry here — bidding happens in the bidding room,
+                          a separate page. This is view + fund-EMD only. */}
                       {canBid && lot.status === 'live' && (
                         <div className="flex lg:flex-col gap-2 items-stretch shrink-0">
                           <Countdown endsAt={lot.endsAt} size="sm" className="justify-center" />
-                          <Button size="sm"
-                            onClick={() => enterBidroom(cat.id, { lotId: lot.id })}>
-                            <Gavel size={14} /> Bid
-                          </Button>
+                          {isBuyer && selected && !funded && (
+                            <Link to={`/buyer/shortlist/${cat.id}`}>
+                              <Button size="sm" variant="steel"><Lock size={14} /> Fund EMD</Button>
+                            </Link>
+                          )}
                         </div>
                       )}
                     </div>
@@ -435,17 +435,19 @@ export default function AuctionDetail() {
               <span className="text-ink-faint"> · </span>Funded <b className="text-success">{inr(summary.funded)}</b>
               <span className="text-ink-faint"> · </span>Shortfall <b className={summary.shortfall > 0 ? 'text-ember-strong' : 'text-success'}>{inr(summary.shortfall)}</b>
             </div>
-            {/* One path in, shared with every other entry point in the app:
-                pending EMD → terms → bidroom (see components/BidroomGate). */}
+            {/* EMD is only ever funded from the dedicated EMD & payments flow
+                (pages/buyer/ShortlistCatalogue.tsx) — this page just points
+                there. No bid entry here — bidding happens on the separate
+                bidding room page, not from Browse & Shortlist. */}
             <div className="ml-auto flex items-center gap-2 flex-wrap">
               {summary.shortfall > 0 ? (
-                <Button variant="steel" onClick={() => enterBidroom(cat.id)}>
-                  <Lock size={15} /> Fund {inr(summary.shortfall)} EMD to enter
-                </Button>
+                <Link to={`/buyer/shortlist/${cat.id}`}>
+                  <Button variant="steel">
+                    <Lock size={15} /> Fund {inr(summary.shortfall)} EMD in EMD & payments
+                  </Button>
+                </Link>
               ) : (
-                <Button onClick={() => enterBidroom(cat.id)}>
-                  <Gavel size={15} /> Enter bidding room
-                </Button>
+                <Chip tone="success">EMD fully funded</Chip>
               )}
             </div>
           </div>

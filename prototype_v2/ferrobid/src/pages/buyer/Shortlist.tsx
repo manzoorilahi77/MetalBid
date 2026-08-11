@@ -1,7 +1,7 @@
 /* My Shortlist & EMD — the §9 showcase: per-catalogue selections with
-   scoped pre-bid EMD funding. This page lists the catalogues you have
-   shortlisted lots in, soonest EMD deadline first; open one to fund EMD
-   and manage its lots. */
+   scoped pre-bid EMD funding. This page lists exactly the catalogues the
+   buyer starred on Browse & Shortlist (the watchlist), soonest EMD deadline
+   first; open one to pick lots and fund EMD. */
 import { Link } from 'react-router-dom'
 import { AlertTriangle, ChevronRight, Clock, UserRound, Wallet } from 'lucide-react'
 import { Page } from '../../layout/Chrome'
@@ -14,6 +14,7 @@ import { useNow } from '../../lib/useTick'
 export default function Shortlist() {
   const me = useStore((s) => s.currentUser)
   const selections = useStore((s) => s.selections)
+  const watchlist = useStore((s) => s.watchlist)
   const lots = useStore((s) => s.lots)
   const catalogues = useStore((s) => s.catalogues)
   const wallets = useStore((s) => s.wallets)
@@ -34,19 +35,23 @@ export default function Shortlist() {
 
   const wallet = wallets.find((w) => w.userId === me.id)
 
-  // Catalogues with at least one shortlisted lot, soonest EMD deadline first —
-  // the ones that need attention surface at the top instead of getting lost
-  // in selection order.
-  const cards = selections
-    .filter((x) => x.buyerId === me.id && x.lotIds.length > 0)
-    .map((sel) => catalogues.find((c) => c.id === sel.catalogueId))
+  // Exactly the catalogues starred on Browse & Shortlist, soonest EMD deadline
+  // first — the ones that need attention surface at the top instead of
+  // getting lost in shortlist order.
+  const cards = watchlist
+    .filter((w) => w.buyerId === me.id)
+    .map((w) => catalogues.find((c) => c.id === w.catalogueId))
     .filter((cat): cat is NonNullable<typeof cat> => !!cat)
-    .map((cat) => ({
-      cat,
-      summary: selectionSummary({ selections, lots }, me.id, cat.id),
-      ui: catalogueUiStatus(cat, now, lots.filter((l) => l.catalogueId === cat.id)),
-      deadline: emdDeadlineMs(cat),
-    }))
+    .map((cat) => {
+      const catLots = lots.filter((l) => l.catalogueId === cat.id)
+      return {
+        cat,
+        catLots,
+        summary: selectionSummary({ selections, lots }, me.id, cat.id),
+        ui: catalogueUiStatus(cat, now, catLots),
+        deadline: emdDeadlineMs(cat),
+      }
+    })
     .sort((a, b) => a.deadline - b.deadline)
 
   return (
@@ -66,14 +71,19 @@ export default function Shortlist() {
       {cards.length === 0 ? (
         <EmptyState
           title="Nothing shortlisted yet"
-          body="Browse live catalogues and tap the star on lots you're interested in — they'll collect here so you can fund EMD in one go."
+          body="Browse live catalogues and tap the star on a catalogue you're interested in — it'll collect here so you can pick lots and fund EMD in one go."
           action={<Link to="/buyermarketplace"><Button>Browse auctions</Button></Link>}
         />
       ) : (
         <div className="space-y-3">
-          {cards.map(({ cat, summary, ui, deadline }) => {
+          {cards.map(({ cat, catLots, summary, ui, deadline }) => {
             const closed = emdWindowClosed(cat, now)
             const needsAttention = emdDeadlineSoon(cat, now) && summary.shortfall > 0
+            // Every lot in the catalogue — not just the shortlisted subset — is
+            // shortlisted and funded: nothing left to fund, so the deadline
+            // countdown is no longer actionable. Fewer lots shortlisted than
+            // exist means the buyer may still want to add more before it closes.
+            const allLotsCovered = catLots.length > 0 && summary.count === catLots.length && summary.shortfall === 0
             return (
               <Link
                 key={cat.id}
@@ -97,7 +107,7 @@ export default function Shortlist() {
                   <span className="inline-flex items-center gap-1.5 text-xs font-bold text-warning num whitespace-nowrap">
                     <Clock size={13} /> {countdown(deadline - now)} left to fund
                   </span>
-                ) : ui === 'upcoming' && !closed ? (
+                ) : ui === 'upcoming' && !closed && allLotsCovered ? null : ui === 'upcoming' && !closed ? (
                   <Countdown endsAt={new Date(deadline).toISOString()} prefix="fund EMD by" size="sm" />
                 ) : ui === 'upcoming' ? (
                   <Chip tone="steel" className="num">starts {relTime(cat.startsAt, now)}</Chip>
@@ -108,7 +118,9 @@ export default function Shortlist() {
                     <span className="num font-bold">{summary.count}</span>
                     <span className="text-ink-muted"> lot{summary.count === 1 ? '' : 's'} shortlisted</span>
                   </span>
-                  {summary.shortfall > 0 ? (
+                  {summary.count === 0 ? (
+                    <Chip tone="neutral">No lots shortlisted yet</Chip>
+                  ) : summary.shortfall > 0 ? (
                     closed ? (
                       <Chip tone="danger">EMD deadline passed</Chip>
                     ) : (

@@ -544,8 +544,10 @@ export function SubNav({ items }: { items: { to: string; label: string; end?: bo
           const extraActive = it.activeMatch?.some((p) => pathname === p || pathname.startsWith(`${p}/`))
           return (
             <NavLink key={it.to} to={it.to} end={it.end}
-              className={({ isActive }) => cx('h-11 px-3.5 text-[13px] font-semibold inline-flex items-center gap-1.5 whitespace-nowrap border-b-2 -mb-px transition-colors',
-                (isActive || extraActive) ? 'border-ember text-ink' : 'border-transparent text-ink-muted hover:text-ink')}>
+              className={({ isActive }) => cx('h-11 px-3.5 text-[13px] inline-flex items-center gap-1.5 whitespace-nowrap border-b-[3px] -mb-px transition-colors',
+                (isActive || extraActive)
+                  ? 'border-ember text-ember-strong font-bold bg-ember-soft/40'
+                  : 'border-transparent font-semibold text-ink-muted hover:text-ink hover:bg-surface-2')}>
               {it.label}
               {it.locked && <span className="text-ink-faint" title="Restricted for this role">🔒</span>}
             </NavLink>

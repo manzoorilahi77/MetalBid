@@ -31,7 +31,6 @@ export default function BuyerMarketplace() {
   const catalogues = useStore((s) => s.catalogues)
   const lots = useStore((s) => s.lots)
   const watchlist = useStore((s) => s.watchlist)
-  const selections = useStore((s) => s.selections)
   const [params, setParams] = useSearchParams()
 
   const tabParam = params.get('tab')
@@ -72,7 +71,7 @@ export default function BuyerMarketplace() {
   // with every other filter rather than replacing them.
   const matchesFilters = (cat: Catalogue): boolean =>
     matchesFiltersIgnoringScope(cat) &&
-    (scope !== 'shortlisted' || isCatalogueShortlisted({ watchlist, selections }, me?.id, cat.id))
+    (scope !== 'shortlisted' || isCatalogueShortlisted({ watchlist }, me?.id, cat.id))
 
   const { byTab, results, shortlistedCount } = useMemo(() => {
     const filtered = catalogues.filter(matchesFilters)
@@ -93,10 +92,10 @@ export default function BuyerMarketplace() {
     // respects every other filter, so the two dimensions genuinely combine.
     const shortlistedCount = catalogues
       .filter(matchesFiltersIgnoringScope)
-      .filter((cat) => isCatalogueShortlisted({ watchlist, selections }, me?.id, cat.id)).length
+      .filter((cat) => isCatalogueShortlisted({ watchlist }, me?.id, cat.id)).length
     return { byTab, results, shortlistedCount }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [catalogues, lots, now, q, sort, tab, scope, watchlist, selections, me])
+  }, [catalogues, lots, now, q, sort, tab, scope, watchlist, me])
 
   const anyFilter = q.trim() !== ''
 
@@ -169,7 +168,7 @@ export default function BuyerMarketplace() {
             icon={<SearchX size={32} strokeWidth={1.5} />}
             title="No catalogues match"
             body={scope === 'shortlisted'
-              ? 'Nothing shortlisted in this status yet — star a catalogue or a lot inside it to see it here.'
+              ? 'Nothing shortlisted in this status yet — star a catalogue to see it here.'
               : 'Try widening your search or clearing a filter — lot-level matches (metal, grade, description) surface their catalogue here too.'}
             action={<Button variant="secondary" onClick={clearFilters}>Clear filters</Button>}
           />

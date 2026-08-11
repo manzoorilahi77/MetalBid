@@ -46,9 +46,7 @@
       "lot-062",
       "lot-063"
     ],
-    "emdFundedLotIds": [
-      "lot-061"
-    ]
+    "emdFundedLotIds": []
   },
   {
     "buyerId": "u-buyer-2",
@@ -62,6 +60,42 @@
     "emdFundedLotIds": [
       "lot-019",
       "lot-020"
+    ]
+  },
+  {
+    "buyerId": "u-buyer-1",
+    "catalogueId": "cat-19",
+    "lotIds": [
+      "lot-209",
+      "lot-210",
+      "lot-211",
+      "lot-212",
+      "lot-213",
+      "lot-214",
+      "lot-215",
+      "lot-216"
+    ],
+    "emdFundedLotIds": [
+      "lot-209",
+      "lot-210",
+      "lot-211",
+      "lot-212",
+      "lot-213",
+      "lot-214",
+      "lot-215",
+      "lot-216"
+    ]
+  },
+  {
+    "buyerId": "u-buyer-1",
+    "catalogueId": "cat-13",
+    "lotIds": [
+      "lot-138",
+      "lot-139"
+    ],
+    "emdFundedLotIds": [
+      "lot-138",
+      "lot-139"
     ]
   }
 ]
