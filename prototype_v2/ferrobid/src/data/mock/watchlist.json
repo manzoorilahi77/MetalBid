@@ -2,5 +2,11 @@
   { "buyerId": "u-buyer-1", "catalogueId": "cat-19" },
   { "buyerId": "u-buyer-1", "catalogueId": "cat-13" },
   { "buyerId": "u-buyer-1", "catalogueId": "cat-5" },
-  { "buyerId": "u-buyer-1", "catalogueId": "cat-4" }
+  { "buyerId": "u-buyer-1", "catalogueId": "cat-4" },
+  { "buyerId": "u-buyer-1", "catalogueId": "cat-11" },
+  { "buyerId": "u-buyer-1", "catalogueId": "cat-14" },
+  { "buyerId": "u-buyer-1", "catalogueId": "cat-1" },
+  { "buyerId": "u-buyer-1", "catalogueId": "cat-2" },
+  { "buyerId": "u-buyer-1", "catalogueId": "cat-6" },
+  { "buyerId": "u-buyer-1", "catalogueId": "cat-28" }
 ]

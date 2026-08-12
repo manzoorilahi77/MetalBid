@@ -339,6 +339,23 @@ export interface WatchlistEntry {
   catalogueId: string
 }
 
+/** Buyer request to reopen pre-bid EMD funding after the deadline passed —
+ *  reviewed by a sub-admin. Catalogue-scoped, since `emdWindowClosed` gates
+ *  the whole catalogue rather than individual lots. */
+export type EmdExemptionStatus = 'pending' | 'approved' | 'rejected'
+
+export interface EmdExemptionRequest {
+  id: string
+  buyerId: string
+  catalogueId: string
+  reason: string
+  status: EmdExemptionStatus
+  createdAt: string
+  decidedAt?: string
+  decidedBy?: string
+  rejectionReason?: string
+}
+
 export interface AutoBidSetting {
   buyerId: string
   lotId: string

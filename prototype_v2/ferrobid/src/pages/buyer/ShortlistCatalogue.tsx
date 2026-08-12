@@ -3,15 +3,17 @@
    status) alongside the full lot list so you can add more. */
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { AlertTriangle, ArrowLeft, ArrowRight, Lock, Star, Trash2, UserRound } from 'lucide-react'
+import { AlertTriangle, ArrowLeft, ArrowRight, Gavel, Lock, Star, Trash2, UserRound } from 'lucide-react'
 import { Page } from '../../layout/Chrome'
 import {
-  Button, Chip, Countdown, EmptyState, Modal, MockOtpModal, MockPayModal, PageHeader, PhotoThumb, StatusChip, Tabs, cx,
+  Button, Chip, Countdown, EmptyState, Input, Modal, MockOtpModal, MockPayModal, PageHeader, PhotoThumb, StatusChip, Tabs, cx,
 } from '../../components/ui'
-import { useStore, selectionSummary, catalogueUiStatus } from '../../store/store'
-import { emdBlockedMessage, emdWindowClosed } from '../../lib/emd'
-import { inr, num, relTime } from '../../lib/format'
+import { EmdExemptionControl } from '../../components/EmdExemption'
+import { useStore, selectionSummary, catalogueUiStatus, latestEmdExemptionRequest } from '../../store/store'
+import { emdBlockedMessage, emdDeadlineMs, emdWindowClosed } from '../../lib/emd'
+import { fmtDate, fmtDateTime, inr, inrCompact, inrWords, num } from '../../lib/format'
 import { useNow } from '../../lib/useTick'
+import type { Bid, Lot } from '../../types'
 
 type LotsTab = 'shortlisted' | 'all'
 
@@ -21,14 +23,24 @@ export default function ShortlistCatalogue() {
   const selections = useStore((s) => s.selections)
   const lots = useStore((s) => s.lots)
   const catalogues = useStore((s) => s.catalogues)
+  const users = useStore((s) => s.users)
+  const emdExemptionRequests = useStore((s) => s.emdExemptionRequests)
+  const bids = useStore((s) => s.bids)
+  const termsSets = useStore((s) => s.termsSets)
   const fundEmd = useStore((s) => s.fundEmd)
+  const placeBid = useStore((s) => s.placeBid)
+  const acceptTerms = useStore((s) => s.acceptTerms)
   const toggleShortlist = useStore((s) => s.toggleShortlist)
   const pushToast = useStore((s) => s.pushToast)
   const now = useNow()
   const [tab, setTab] = useState<LotsTab>('all')
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [otpOpen, setOtpOpen] = useState(false)
+  const [termsOpen, setTermsOpen] = useState(false)
+  const [agree, setAgree] = useState(false)
   const [payOpen, setPayOpen] = useState(false)
+  // sealed-tender per-lot offer confirmation — shared by both tabs' lot rows
+  const [tenderFlow, setTenderFlow] = useState<{ lot: Lot; rate: number; phase: 'ask' | 'confirm' } | null>(null)
 
   if (!me) {
     return (
@@ -55,7 +67,14 @@ export default function ShortlistCatalogue() {
     )
   }
 
+  const terms = termsSets.find((t) => t.id === cat.termsSetId)
+  const isTender = cat.type === 'tender'
+  const myTenderBid = (lotId: string): Bid | undefined =>
+    bids.find((b) => b.lotId === lotId && b.bidderId === me.id && b.status === 'valid' && b.type === 'tender')
+
   const catLots = lots.filter((l) => l.catalogueId === cat.id)
+  const totalEmd = catLots.reduce((sum, l) => sum + l.preBidEmd, 0)
+  const seller = users.find((u) => u.id === cat.sellerId)
   const ui = catalogueUiStatus(cat, now, catLots)
   const summary = selectionSummary({ selections, lots }, me.id, cat.id)
   const shortlisted = catLots.filter((l) => summary.lotIds.includes(l.id))
@@ -63,7 +82,9 @@ export default function ShortlistCatalogue() {
   // Missed the pre-bid EMD cut-off while the catalogue is still upcoming — the
   // whole catalogue freezes here: no more shortlisting, unshortlisting, or
   // funding until it either goes live (funding reopens per lot) or closes out.
-  const deadlinePassed = emdWindowClosed(cat, now)
+  // A sub-admin-approved exemption request reopens it early, same as going live would.
+  const exemption = latestEmdExemptionRequest({ emdExemptionRequests }, me.id, cat.id)
+  const deadlinePassed = emdWindowClosed(cat, now) && exemption?.status !== 'approved'
 
   // Full-catalogue funded state (every lot, not just what's shortlisted) — used
   // only for the "read only" badge below.
@@ -96,7 +117,8 @@ export default function ShortlistCatalogue() {
   }
 
   return (
-    <Page>
+    <>
+    <Page className={hasSelection ? 'pb-28' : undefined}>
       <Link to="/buyer/shortlist" className="inline-block mb-3">
         <Button variant="secondary" size="sm"><ArrowLeft size={15} /> Back to EMD & payments</Button>
       </Link>
@@ -108,12 +130,56 @@ export default function ShortlistCatalogue() {
           <div className="flex items-center gap-2">
             <StatusChip status={ui} />
             {readOnly && <Chip tone="success"><Lock size={12} /> EMD funded — read only</Chip>}
-            {!readOnly && deadlinePassed && <Chip tone="danger"><AlertTriangle size={12} /> EMD deadline passed</Chip>}
+            {!readOnly && deadlinePassed && (
+              <>
+                <Chip tone="danger"><AlertTriangle size={12} /> EMD deadline passed</Chip>
+                <EmdExemptionControl catalogueId={cat.id} />
+              </>
+            )}
             {canBid && <Countdown endsAt={cat.endsAt} prefix="ends" size="sm" />}
-            {ui === 'upcoming' && <Chip tone="steel" className="num">starts {relTime(cat.startsAt, now)}</Chip>}
           </div>
         }
       />
+
+      {/* Standing outside the header actions and the lots list so the two
+          dates that actually gate this catalogue — go-live and the EMD
+          cut-off — stay legible on their own instead of getting lost among
+          the other header badges. */}
+      {ui === 'upcoming' && (
+        <div className="flex flex-wrap items-center gap-2 mt-3">
+          <Chip tone="steel" className="num h-8 px-3 text-sm">Starts {fmtDateTime(cat.startsAt)}</Chip>
+          {deadlinePassed
+            ? <Chip tone="danger" className="num h-8 px-3 text-sm">EMD closed {fmtDateTime(new Date(emdDeadlineMs(cat)).toISOString())}</Chip>
+            : <Chip tone="warning" className="num h-8 px-3 text-sm">Fund EMD by {fmtDateTime(new Date(emdDeadlineMs(cat)).toISOString())}</Chip>}
+        </div>
+      )}
+
+      {/* --------------------------- key facts strip -------------------------- */}
+      <div className="card mt-4 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 overflow-hidden">
+        <div className="py-3 px-4 border-l border-line first:border-l-0 min-w-40">
+          <div className="text-[11px] font-bold uppercase tracking-wider text-ink-faint">Seller / principal</div>
+          <div className="text-sm font-semibold text-ink mt-0.5">{seller?.firm}</div>
+        </div>
+        <div className="py-3 px-4 border-l border-line min-w-40">
+          <div className="text-[11px] font-bold uppercase tracking-wider text-ink-faint">Inspection window</div>
+          <div className="text-sm font-semibold text-ink mt-0.5 num">From: {fmtDate(cat.inspectionFrom)}</div>
+          <div className="text-sm font-semibold text-ink mt-0.5 num">Till: {fmtDate(cat.inspectionTo)}</div>
+          <div className="text-xs text-ink-muted num">{cat.inspectionHours}</div>
+        </div>
+        <div className="py-3 px-4 border-l border-line min-w-40">
+          <div className="text-[11px] font-bold uppercase tracking-wider text-ink-faint">E-auction date & time</div>
+          <div className="text-sm font-semibold text-ink mt-0.5 num">{fmtDateTime(cat.startsAt)} → {fmtDateTime(cat.endsAt)}</div>
+        </div>
+        <div className="py-3 px-4 border-l border-line min-w-40">
+          <div className="text-[11px] font-bold uppercase tracking-wider text-ink-faint">Material location</div>
+          <div className="text-sm font-semibold text-ink mt-0.5">{cat.yardName}</div>
+          <div className="text-xs text-ink-muted">{cat.region}</div>
+        </div>
+        <div className="py-3 px-4 border-l border-line min-w-40">
+          <div className="text-[11px] font-bold uppercase tracking-wider text-ink-faint">EMD value</div>
+          <div className="text-sm font-semibold text-ink mt-0.5 num">{inrCompact(totalEmd)}</div>
+        </div>
+      </div>
 
       {/* ---------------------------- summary strip ---------------------------- */}
       <div className="card flex flex-wrap items-center gap-x-5 gap-y-2 px-5 py-3.5">
@@ -127,7 +193,7 @@ export default function ShortlistCatalogue() {
         <span className="ml-auto">
           {!hasSelection ? null : scopeShortfall > 0 ? (
             deadlinePassed ? (
-              <Chip tone="danger"><Lock size={12} /> EMD deadline passed</Chip>
+              <EmdExemptionControl catalogueId={cat.id} />
             ) : (
               <Button size="sm" onClick={() => setConfirmOpen(true)}>
                 Pay EMD for shortlisted lots {inr(scopeShortfall)}
@@ -209,6 +275,10 @@ export default function ShortlistCatalogue() {
                     <Trash2 size={16} />
                   </button>
                 </div>
+                {isTender && funded && (
+                  <TenderOfferRow lot={lot} myOffer={myTenderBid(lot.id)}
+                    onSubmit={(l, rate) => setTenderFlow({ lot: l, rate, phase: 'ask' })} />
+                )}
               </div>
             )
           })}
@@ -284,6 +354,10 @@ export default function ShortlistCatalogue() {
                   ? (funded ? <Chip tone="success">EMD funded</Chip> : <Chip tone="warning">EMD pending</Chip>)
                   : <Chip tone="neutral">Not shortlisted</Chip>}
               </div>
+              {isTender && selected && funded && (
+                <TenderOfferRow lot={lot} myOffer={myTenderBid(lot.id)}
+                  onSubmit={(l, rate) => setTenderFlow({ lot: l, rate, phase: 'ask' })} />
+              )}
             </div>
           )
         })}
@@ -306,10 +380,45 @@ export default function ShortlistCatalogue() {
         </p>
         <div className="flex justify-end gap-2 mt-5">
           <Button variant="ghost" onClick={() => setConfirmOpen(false)}>Cancel</Button>
-          <Button onClick={() => { setConfirmOpen(false); setOtpOpen(true) }}>Confirm</Button>
+          <Button onClick={() => { setConfirmOpen(false); setTermsOpen(true) }}>Confirm</Button>
         </div>
       </Modal>
 
+      {/* terms & conditions — second popup, required before OTP, same
+          wording/checkbox as the bidding-room entry gate */}
+      <Modal open={termsOpen} onClose={() => { setAgree(false); setTermsOpen(false) }} wide
+        title={<span>Terms & Conditions {terms && <Chip tone="steel" className="num ml-1">{terms.version}</Chip>}</span>}>
+        {terms && (
+          <div className="max-h-64 overflow-y-auto card bg-surface-2 border-0 p-4 space-y-3 text-sm text-ink-muted">
+            <div className="font-bold text-ink">{terms.name}</div>
+            <ol className="list-decimal pl-5 space-y-1.5">
+              {terms.general.map((g, i) => <li key={i}>{g}</li>)}
+            </ol>
+            <div className="font-bold text-ink pt-1">Special conditions</div>
+            <ol className="list-decimal pl-5 space-y-1.5">
+              {terms.special.map((g, i) => <li key={i}>{g}</li>)}
+            </ol>
+            <p className="text-xs italic">{terms.lotSpecificNote}</p>
+          </div>
+        )}
+        <label className="flex items-start gap-2.5 mt-4 text-sm cursor-pointer select-none">
+          <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} className="mt-1 accent-[#E4572E]" />
+          <span>Have you read the terms and conditions? I accept them{terms ? ` (${terms.version})` : ''} on behalf of my firm, including the as-is-where-is sale basis and EMD forfeiture conditions.</span>
+        </label>
+        <div className="flex gap-2 mt-5">
+          <Button variant="ghost" className="flex-1" onClick={() => { setAgree(false); setTermsOpen(false) }}>Cancel</Button>
+          <Button className="flex-[2]" disabled={!agree} onClick={() => {
+            acceptTerms(cat.id)
+            setAgree(false)
+            setTermsOpen(false)
+            setOtpOpen(true)
+          }}>
+            Accept & continue
+          </Button>
+        </div>
+      </Modal>
+
+      {/* OTP verification — third popup, right before the payment method screen */}
       <MockOtpModal
         open={otpOpen}
         onClose={() => setOtpOpen(false)}
@@ -334,12 +443,120 @@ export default function ShortlistCatalogue() {
             pushToast({
               kind: 'success',
               title: `EMD funded for ${summary.unfundedLotIds.length} lot${summary.unfundedLotIds.length > 1 ? 's' : ''}`,
-              body: 'You can now bid on these lots in the bidding room.',
+              body: isTender ? 'Enter your tender amount below for each funded lot.' : 'You can now bid on these lots in the bidding room.',
             })
           }
           setPayOpen(false)
         }}
       />
-    </Page>
+
+      {/* sealed-tender offer — step 1: do you want to offer at all? */}
+      <Modal open={tenderFlow?.phase === 'ask'} onClose={() => setTenderFlow(null)} title="Submit an offer?">
+        {tenderFlow && (
+          <div className="space-y-4">
+            <p className="text-sm text-ink-muted">
+              Do you want to offer <b className="num text-ink">{inr(tenderFlow.rate)}/{tenderFlow.lot.uom}</b> on{' '}
+              <b className="num text-ink">{tenderFlow.lot.lotNo}</b>?
+            </p>
+            <div className="flex gap-2">
+              <Button variant="secondary" className="flex-1" onClick={() => setTenderFlow(null)}>No</Button>
+              <Button className="flex-1" onClick={() => setTenderFlow((f) => (f ? { ...f, phase: 'confirm' } : f))}>Yes</Button>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* step 2 — final confirm. Amount spelled out in words, same as the bidding
+          room's confirm step, so a mistyped digit is easy to catch before it locks. */}
+      <Modal open={tenderFlow?.phase === 'confirm'} onClose={() => setTenderFlow(null)} title="Confirm your offer">
+        {tenderFlow && (
+          <div className="space-y-4">
+            <p className="text-sm text-ink-muted">
+              Confirm offer of <b className="num text-ink">{inr(tenderFlow.rate)}/{tenderFlow.lot.uom}</b> for{' '}
+              <b className="num text-ink">{tenderFlow.lot.lotNo}</b>? This is final — it cannot be revised or resubmitted.
+            </p>
+            <div className="card bg-surface-2 border-0 px-3.5 py-2.5">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-ink-faint">Offer amount</div>
+              <div className="num text-xl font-bold mt-0.5">{inr(tenderFlow.rate)}<span className="text-sm text-ink-faint font-medium">/{tenderFlow.lot.uom}</span></div>
+              <div className="text-xs text-ink-muted mt-1 italic">{inrWords(tenderFlow.rate)} per {tenderFlow.lot.uom}</div>
+            </div>
+            <div className="flex gap-2">
+              <Button variant="secondary" className="flex-1" onClick={() => setTenderFlow(null)}>Cancel</Button>
+              <Button className="flex-1" onClick={() => {
+                const res = placeBid(tenderFlow.lot.id, tenderFlow.rate, undefined, 'tender')
+                pushToast(res.ok
+                  ? { kind: 'success', title: `Offer submitted — ${inr(tenderFlow.rate)}/${tenderFlow.lot.uom}`, body: `${tenderFlow.lot.lotNo} · sealed, cannot be revised` }
+                  : { kind: 'danger', title: 'Offer rejected', body: res.error })
+                setTenderFlow(null)
+              }}>Confirm</Button>
+            </div>
+          </div>
+        )}
+      </Modal>
+      </Page>
+
+      {/* --------------------- sticky selection summary bar ---------------------- */}
+      {hasSelection && (
+        <div className="fixed bottom-0 inset-x-0 z-40 border-t border-line bg-surface/95 backdrop-blur shadow-[0_-8px_30px_-16px_rgb(0_0_0/0.3)]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center gap-x-6 gap-y-2">
+            <div className="num text-sm">
+              <b>{summary.count}</b> lot{summary.count === 1 ? '' : 's'} selected
+              <span className="text-ink-faint"> · </span>Pre-bid EMD <b>{inr(scopeRequired)}</b>
+              <span className="text-ink-faint"> · </span>Funded <b className="text-success">{inr(summary.funded)}</b>
+              <span className="text-ink-faint"> · </span>Shortfall <b className={scopeShortfall > 0 ? 'text-ember-strong' : 'text-success'}>{inr(scopeShortfall)}</b>
+            </div>
+            <div className="ml-auto flex items-center gap-2 flex-wrap">
+              {scopeShortfall > 0 ? (
+                deadlinePassed ? (
+                  <EmdExemptionControl catalogueId={cat.id} />
+                ) : (
+                  <Button variant="steel" onClick={() => setConfirmOpen(true)}>
+                    <Lock size={15} /> Pay EMD for shortlisted lots {inr(scopeShortfall)}
+                  </Button>
+                )
+              ) : (
+                <Chip tone="success">EMD fully funded</Chip>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  )
+}
+
+/** Inline sealed-tender offer control for a funded lot — full-width so it wraps
+ *  onto its own line under the lot row (both tabs' rows are flex-wrap). Once
+ *  `myOffer` exists the input is gone for good: one sealed offer, no revisions. */
+function TenderOfferRow({ lot, myOffer, onSubmit }: {
+  lot: Lot
+  myOffer: Bid | undefined
+  onSubmit: (lot: Lot, rate: number) => void
+}) {
+  const [rate, setRate] = useState(lot.startRate)
+
+  if (myOffer) {
+    return (
+      <div className="w-full mt-1 pt-2.5 border-t border-line/70 flex items-center justify-end gap-2 text-sm">
+        <Lock size={13} className="text-ink-faint shrink-0" />
+        <span className="font-semibold text-success">Offer submitted {inr(myOffer.rate)}/{lot.uom}</span>
+        <span className="text-ink-faint text-xs">— sealed, cannot be revised</span>
+      </div>
+    )
+  }
+  if (lot.status !== 'live') return null
+
+  return (
+    <div className="w-full mt-1 pt-2.5 border-t border-line/70 flex flex-wrap items-center justify-end gap-2">
+      {rate < lot.startRate && (
+        <span className="text-xs font-semibold text-danger">Minimum offer is {inr(lot.startRate)}/{lot.uom}.</span>
+      )}
+      <span className="text-xs font-semibold text-ink-muted shrink-0">Tender amount (₹/{lot.uom})</span>
+      <Input inputMode="numeric" className="num h-8 w-32 text-right" value={rate.toLocaleString('en-IN')}
+        onChange={(e) => setRate(Number(e.target.value.replace(/[^\d]/g, '')) || 0)} />
+      <Button size="sm" disabled={rate < lot.startRate} onClick={() => onSubmit(lot, rate)}>
+        <Gavel size={13} /> Submit offer
+      </Button>
+    </div>
   )
 }

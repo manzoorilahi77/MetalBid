@@ -19,7 +19,8 @@ import { useNavigate } from 'react-router-dom'
 import { AlertTriangle, ArrowLeft, Check, Gavel, Lock, Wallet as WalletIcon } from 'lucide-react'
 import { Button, Chip, Countdown, Modal, StatusChip } from './ui'
 import { LotShortlistModal } from './LotShortlistModal'
-import { catalogueUiStatus, selectionSummary, useStore } from '../store/store'
+import { EmdExemptionControl } from './EmdExemption'
+import { catalogueUiStatus, latestEmdExemptionRequest, selectionSummary, useStore } from '../store/store'
 import { emdBlockedMessage, emdWindowClosed } from '../lib/emd'
 import { inr, inrWords } from '../lib/format'
 import type { Catalogue } from '../types'
@@ -242,6 +243,7 @@ function PendingEmdStep({ open, cat, onCancel, onPaid }: {
   const selections = useStore((s) => s.selections)
   const wallets = useStore((s) => s.wallets)
   const now = useStore((s) => s.now)
+  const emdExemptionRequests = useStore((s) => s.emdExemptionRequests)
   const fundEmd = useStore((s) => s.fundEmd)
   const pushToast = useStore((s) => s.pushToast)
   const [paying, setPaying] = useState(false)
@@ -250,8 +252,15 @@ function PendingEmdStep({ open, cat, onCancel, onPaid }: {
   const summary = selectionSummary({ selections, lots }, me?.id, cat.id)
   const pendingLots = lots.filter((l) => summary.unfundedLotIds.includes(l.id))
   const balance = wallets.find((w) => w.userId === me?.id)?.balance ?? 0
-  const closed = emdWindowClosed(cat, now)
+  // An approved exemption reopens funding despite the deadline — same rule
+  // fundEmd's own backstop enforces, surfaced here so the request button
+  // (not a dead-end banner) is what a locked-out buyer actually sees.
+  const exemption = me ? latestEmdExemptionRequest({ emdExemptionRequests }, me.id, cat.id) : undefined
+  const closed = emdWindowClosed(cat, now) && exemption?.status !== 'approved'
   const enough = balance >= summary.shortfall
+  // Frozen lots can't be paid, but lots funded before the cut-off are still
+  // good — don't hold the whole room hostage to the ones that can't recover.
+  const canContinueWithFunded = closed && summary.fundedLotIds.length > 0
 
   const pay = () => {
     setPaying(true)
@@ -277,9 +286,25 @@ function PendingEmdStep({ open, cat, onCancel, onPaid }: {
         <div className="space-y-4">
           <div className="card border-danger/40 bg-danger-soft p-4 flex gap-3">
             <AlertTriangle size={18} className="text-danger shrink-0 mt-0.5" />
-            <p className="text-sm text-danger font-semibold">{emdBlockedMessage(cat)}</p>
+            <div className="text-sm text-danger font-semibold space-y-1">
+              <p>{emdBlockedMessage(cat)}</p>
+              {canContinueWithFunded && (
+                <p className="font-normal">
+                  {pendingLots.length} lot{pendingLots.length > 1 ? 's' : ''} stay frozen — your{' '}
+                  {summary.fundedLotIds.length} already-funded lot{summary.fundedLotIds.length > 1 ? 's are' : ' is'} still good to bid on.
+                </p>
+              )}
+            </div>
           </div>
-          <Button variant="secondary" className="w-full" onClick={onCancel}>Close</Button>
+          <div className="flex gap-2">
+            <Button variant="ghost" className="flex-1" onClick={onCancel}>Close</Button>
+            <EmdExemptionControl catalogueId={cat.id} size="md" />
+          </div>
+          {canContinueWithFunded && (
+            <Button className="w-full" onClick={onPaid}>
+              <Gavel size={15} /> Continue with {summary.fundedLotIds.length} funded lot{summary.fundedLotIds.length > 1 ? 's' : ''}
+            </Button>
+          )}
         </div>
       ) : (
         <div className="space-y-4">

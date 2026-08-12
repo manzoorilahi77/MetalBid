@@ -10,7 +10,8 @@ import { Page } from '../../layout/Chrome'
 import { Button, Chip, Countdown, EmptyState, PageHeader, Stat, cx } from '../../components/ui'
 import { EmdReminderBanner } from '../../components/EmdReminder'
 import { useBidroomGate } from '../../components/BidroomGate'
-import { useStore, selectionSummary } from '../../store/store'
+import { useStore, selectionSummary, isCatalogueShortlisted, hasApprovedEmdExemption } from '../../store/store'
+import { emdDeadlineMs } from '../../lib/emd'
 import { fmtDate, inr, inrCompact, relTime } from '../../lib/format'
 import { useNow } from '../../lib/useTick'
 import type { Catalogue } from '../../types'
@@ -27,6 +28,10 @@ const TONE_DOT: Record<CalEventTone, string> = {
 function DashboardCalendar({ events }: { events: CalEvent[] }) {
   const now = useNow()
   const [monthOffset, setMonthOffset] = useState(0)
+  // Which day is picked, so the side panel can narrow from "everything
+  // upcoming" down to "just this day" — cleared whenever the month changes,
+  // since a day number from last month means nothing in the new one.
+  const [selectedDay, setSelectedDay] = useState<number | null>(null)
   const today = new Date(now)
   const viewDate = new Date(today.getFullYear(), today.getMonth() + monthOffset, 1)
   const year = viewDate.getFullYear()
@@ -46,10 +51,20 @@ function DashboardCalendar({ events }: { events: CalEvent[] }) {
   const cells: (number | null)[] = [...Array(firstDow).fill(null), ...Array.from({ length: daysInMonth }, (_, i) => i + 1)]
   const monthLabel = viewDate.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })
 
+  const changeMonth = (delta: number) => {
+    setMonthOffset((o) => o + delta)
+    setSelectedDay(null)
+  }
+
   const upcoming = [...events]
     .filter((e) => Date.parse(e.date) >= now)
     .sort((a, b) => Date.parse(a.date) - Date.parse(b.date))
     .slice(0, 6)
+
+  const selectedEvents = selectedDay != null ? (eventsByDay.get(selectedDay) ?? []) : null
+  const selectedLabel = selectedDay != null
+    ? new Date(year, month, selectedDay).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' })
+    : null
 
   return (
     <section className="mt-8">
@@ -57,60 +72,117 @@ function DashboardCalendar({ events }: { events: CalEvent[] }) {
         <CalendarDays size={16} className="text-ink-muted" />
         <h2 className="font-display text-lg font-bold">Calendar</h2>
       </div>
-      <div className="card p-4 grid md:grid-cols-[1fr_260px] gap-5">
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <button aria-label="Previous month" onClick={() => setMonthOffset((o) => o - 1)}
-              className="size-7 rounded-lg grid place-items-center text-ink-muted hover:bg-surface-2 hover:text-ink">
-              <ChevronLeft size={16} />
-            </button>
-            <span className="font-semibold text-sm">{monthLabel}</span>
-            <button aria-label="Next month" onClick={() => setMonthOffset((o) => o + 1)}
-              className="size-7 rounded-lg grid place-items-center text-ink-muted hover:bg-surface-2 hover:text-ink">
-              <ChevronRight size={16} />
-            </button>
-          </div>
-          <div className="grid grid-cols-7 gap-1 text-center text-[11px] font-semibold text-ink-faint mb-1">
-            {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => <div key={i}>{d}</div>)}
-          </div>
-          <div className="grid grid-cols-7 gap-1">
-            {cells.map((d, i) => {
-              if (d === null) return <div key={i} />
-              const isToday = monthOffset === 0 && d === today.getDate()
-              const dayEvents = eventsByDay.get(d) ?? []
-              return (
-                <div key={i}
-                  title={dayEvents.map((e) => e.label).join('\n') || undefined}
-                  className={cx('aspect-square rounded-lg border flex flex-col items-center justify-center gap-0.5 text-xs',
-                    isToday ? 'border-ember bg-ember-soft font-bold text-ember-strong' : 'border-line text-ink')}>
-                  {d}
-                  <span className="flex gap-0.5 h-1">
-                    {dayEvents.slice(0, 4).map((e, j) => (
-                      <span key={j} className={cx('size-1 rounded-full', TONE_DOT[e.tone])} />
-                    ))}
-                  </span>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-        <div>
-          <div className="text-[11px] font-bold uppercase tracking-wider text-ink-faint mb-2">Upcoming</div>
-          {upcoming.length === 0 ? (
-            <p className="text-sm text-ink-muted">Nothing on your calendar right now.</p>
-          ) : (
-            <div className="flex flex-col gap-2.5">
-              {upcoming.map((e, i) => (
-                <div key={i} className="flex items-start gap-2 text-sm">
-                  <span className={cx('size-1.5 rounded-full mt-1.5 shrink-0', TONE_DOT[e.tone])} />
-                  <div className="min-w-0">
-                    <div className="font-medium truncate">{e.label}</div>
-                    <div className="text-xs text-ink-faint">{fmtDate(e.date)}</div>
-                  </div>
-                </div>
-              ))}
+      <div className="card overflow-hidden">
+        <div className="flex flex-col sm:flex-row">
+          {/* month grid — a fixed-width pane so the day badges stay tidy
+              circles instead of stretching to fill the page */}
+          <div className="p-6 sm:w-[420px] sm:shrink-0">
+            <div className="flex items-center justify-between mb-5">
+              <button type="button" aria-label="Previous month" onClick={() => changeMonth(-1)}
+                className="size-9 rounded-lg grid place-items-center text-ink-muted hover:bg-surface-2 hover:text-ink transition-colors">
+                <ChevronLeft size={18} />
+              </button>
+              <span className="font-display font-bold text-base">{monthLabel}</span>
+              <button type="button" aria-label="Next month" onClick={() => changeMonth(1)}
+                className="size-9 rounded-lg grid place-items-center text-ink-muted hover:bg-surface-2 hover:text-ink transition-colors">
+                <ChevronRight size={18} />
+              </button>
             </div>
-          )}
+            <div className="grid grid-cols-7 text-center text-xs font-semibold text-ink-faint mb-2">
+              {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => <div key={i}>{d}</div>)}
+            </div>
+            <div className="grid grid-cols-7">
+              {cells.map((d, i) => {
+                if (d === null) return <div key={i} />
+                const isToday = monthOffset === 0 && d === today.getDate()
+                const isSelected = selectedDay === d
+                const dayEvents = eventsByDay.get(d) ?? []
+                return (
+                  <button key={i} type="button"
+                    aria-pressed={isSelected}
+                    aria-label={`${monthLabel.split(' ')[0]} ${d}${dayEvents.length ? `, ${dayEvents.length} deadline${dayEvents.length > 1 ? 's' : ''}` : ''}`}
+                    title={dayEvents.map((e) => e.label).join('\n') || undefined}
+                    onClick={() => setSelectedDay((prev) => (prev === d ? null : d))}
+                    className="group aspect-square w-full rounded-lg flex flex-col items-center justify-center gap-1.5 cursor-pointer">
+                    <span className={cx(
+                      'grid place-items-center size-10 rounded-full text-sm font-semibold transition-colors',
+                      isSelected
+                        ? 'bg-steel text-white'
+                        : isToday
+                          ? 'ring-2 ring-ember text-ember-strong font-bold group-hover:bg-ember-soft'
+                          : 'text-ink group-hover:bg-surface-2',
+                    )}>
+                      {d}
+                    </span>
+                    <span className="flex items-center gap-1 h-1.5">
+                      {dayEvents.slice(0, 3).map((e, j) => (
+                        <span key={j} className={cx('size-1.5 rounded-full', TONE_DOT[e.tone])} />
+                      ))}
+                      {dayEvents.length > 3 && <span className="size-1.5 rounded-full bg-ink-faint" />}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+          {/* agenda pane — everything upcoming by default, or just the picked
+              day's deadlines once one is clicked. Height-capped with its own
+              scroll so a busy day never stretches the whole card. */}
+          <div className="p-6 flex-1 min-w-0 flex flex-col border-t sm:border-t-0 sm:border-l border-line">
+            <div className="flex items-center justify-between mb-4 shrink-0">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-ink-faint">
+                  {selectedLabel ?? 'Upcoming'}
+                </span>
+                {!selectedEvents && upcoming.length > 0 && (
+                  <span className="text-[10px] font-bold text-ink-faint bg-surface-2 rounded-full size-4 grid place-items-center">
+                    {upcoming.length}
+                  </span>
+                )}
+              </div>
+              {selectedDay != null && (
+                <Button variant="ghost" size="sm" className="h-7 px-2.5 text-xs" onClick={() => setSelectedDay(null)}>
+                  Show all
+                </Button>
+              )}
+            </div>
+            <div className="flex-1 overflow-y-auto max-h-[22rem] -mr-1 pr-1">
+              {selectedEvents ? (
+                selectedEvents.length === 0 ? (
+                  <p className="text-sm text-ink-muted">No deadlines on this day.</p>
+                ) : (
+                  <div className="flex flex-col divide-y divide-line">
+                    {selectedEvents.map((e, i) => (
+                      <div key={i} className="flex items-start gap-2.5 text-sm py-2 first:pt-0 last:pb-0">
+                        <span className={cx('size-1.5 rounded-full mt-1.5 shrink-0', TONE_DOT[e.tone])} />
+                        <div className="font-medium">{e.label}</div>
+                      </div>
+                    ))}
+                  </div>
+                )
+              ) : upcoming.length === 0 ? (
+                <p className="text-sm text-ink-muted">Nothing on your calendar right now.</p>
+              ) : (
+                <div className="flex flex-col divide-y divide-line">
+                  {upcoming.map((e, i) => (
+                    <button key={i} type="button"
+                      onClick={() => {
+                        const d = new Date(e.date)
+                        setMonthOffset((d.getFullYear() - today.getFullYear()) * 12 + (d.getMonth() - today.getMonth()))
+                        setSelectedDay(d.getDate())
+                      }}
+                      className="flex items-start gap-2.5 text-sm w-full text-left py-2 first:pt-0 last:pb-0 hover:bg-surface-2 rounded-lg -mx-1.5 px-1.5 transition-colors">
+                      <span className={cx('size-1.5 rounded-full mt-1.5 shrink-0', TONE_DOT[e.tone])} />
+                      <div className="min-w-0">
+                        <div className="font-medium truncate">{e.label}</div>
+                        <div className="text-xs text-ink-faint">{fmtDate(e.date)}</div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -131,6 +203,8 @@ export default function Dashboard() {
   const selections = useStore((s) => s.selections)
   const notifications = useStore((s) => s.notifications)
   const deliveryOrders = useStore((s) => s.deliveryOrders)
+  const watchlist = useStore((s) => s.watchlist)
+  const emdExemptionRequests = useStore((s) => s.emdExemptionRequests)
   const { enterBidroom } = useBidroomGate()
   const now = useNow()
 
@@ -173,20 +247,37 @@ export default function Dashboard() {
 
   const totalShortfall = rows.reduce((sum, r) => sum + r.summary.shortfall, 0)
   const shortfallRows = rows.filter((r) => r.summary.shortfall > 0)
+  // Missed the EMD deadline, requested an exemption, and a sub-admin approved
+  // it — funding is reopened, so this is the buyer's cue to actually pay it.
+  const approvedExemptionRows = shortfallRows.filter((r) => hasApprovedEmdExemption({ emdExemptionRequests }, me.id, r.cat.id))
 
   const myNotifs = notifications.filter((n) => n.userId === me.id || n.userId === null).slice(0, 5)
 
   const attentionCount = (totalShortfall > 0 ? 1 : 0) + (outbidLots.length > 0 ? 1 : 0) + (pendingDos.length > 0 ? 1 : 0)
 
-  // Calendar: every date-bound thing this buyer is on the hook for — auction
-  // closes for shortlisted catalogues, per-lot closes for live bids (coloured
-  // by whether I'm leading), and lift-by deadlines on unpaid delivery orders.
+  // Calendar: strictly scoped to catalogues on this buyer's shortlist (the
+  // watchlist star, not just "has a lot selection") — auction start/close,
+  // the EMD funding deadline (flagged red if a starred lot is still unpaid),
+  // per-lot bid closes, and lift-by deadlines, all limited to that same set.
+  const shortlistedCats = catalogues.filter((cat) => isCatalogueShortlisted({ watchlist }, me.id, cat.id))
+  const shortlistedIds = new Set(shortlistedCats.map((c) => c.id))
+
   const calEvents: CalEvent[] = [
-    ...rows.map((r): CalEvent => ({ date: r.cat.endsAt, label: `${r.cat.code} auction closes`, tone: 'ember' })),
-    ...activeLots.map((l): CalEvent => ({
+    ...shortlistedCats.flatMap((cat): CalEvent[] => {
+      const summary = selectionSummary({ selections, lots }, me.id, cat.id)
+      const emdDate = new Date(emdDeadlineMs(cat)).toISOString()
+      return [
+        { date: cat.startsAt, label: `${cat.code} auction starts`, tone: 'steel' },
+        { date: cat.endsAt, label: `${cat.code} auction closes`, tone: 'ember' },
+        summary.count > 0 && summary.shortfall > 0
+          ? { date: emdDate, label: `${cat.code} EMD unpaid — fund ${inr(summary.shortfall)} by deadline`, tone: 'danger' }
+          : { date: emdDate, label: `${cat.code} EMD funding closes`, tone: 'steel' },
+      ]
+    }),
+    ...activeLots.filter((l) => shortlistedIds.has(l.catalogueId)).map((l): CalEvent => ({
       date: l.endsAt, label: `${l.lotNo} bid closes`, tone: l.leadingBidderId === me.id ? 'success' : 'danger',
     })),
-    ...pendingDos.map((d): CalEvent => {
+    ...pendingDos.filter((d) => shortlistedIds.has(d.catalogueId)).map((d): CalEvent => {
       const l = lotById.get(d.lotId)
       return { date: d.liftingBy, label: `${l?.lotNo ?? d.lotId} lift-by deadline`, tone: 'steel' }
     }),
@@ -226,6 +317,24 @@ export default function Dashboard() {
           </div>
         ) : (
           <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-3">
+            {approvedExemptionRows.length > 0 && (
+              <div className="card p-4 border-l-4 border-l-success flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 size={16} className="text-success" />
+                  <span className="font-semibold text-sm">EMD exemption approved</span>
+                </div>
+                <p className="text-sm text-ink-muted">
+                  A sub-admin approved reopening EMD funding for{' '}
+                  {approvedExemptionRows.map((r) => r.cat.code).join(', ')} — pay now to join the auction.
+                </p>
+                <div className="num text-xl font-bold text-success">
+                  {inr(approvedExemptionRows.reduce((sum, r) => sum + r.summary.shortfall, 0))}
+                </div>
+                <Link to="/buyer/emd-shortlisted-catalogue" className="mt-auto">
+                  <Button size="sm" variant="success" className="w-full">Pay EMD now</Button>
+                </Link>
+              </div>
+            )}
             {totalShortfall > 0 && (
               <div className="card p-4 border-l-4 border-l-warning flex flex-col gap-2">
                 <div className="flex items-center gap-2">

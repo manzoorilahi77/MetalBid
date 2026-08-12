@@ -97,5 +97,23 @@
       "lot-138",
       "lot-139"
     ]
+  },
+  {
+    "buyerId": "u-buyer-1",
+    "catalogueId": "cat-28",
+    "lotIds": [
+      "lot-384",
+      "lot-385",
+      "lot-386",
+      "lot-387",
+      "lot-388"
+    ],
+    "emdFundedLotIds": [
+      "lot-384",
+      "lot-385",
+      "lot-386",
+      "lot-387",
+      "lot-388"
+    ]
   }
 ]

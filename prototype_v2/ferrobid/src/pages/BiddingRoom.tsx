@@ -16,8 +16,10 @@ import {
   AmountGrid, AmountInput, Button, Chip, Countdown, EmptyState, Field, Input, Modal, Segmented, StatusChip, Toggle, cx,
 } from '../components/ui'
 import { useBidroomGate } from '../components/BidroomGate'
-import { ladderStandings, myBidTrail, selectionSummary, useStore } from '../store/store'
+import { EmdExemptionControl } from '../components/EmdExemption'
+import { ladderStandings, latestEmdExemptionRequest, myBidTrail, selectionSummary, useStore } from '../store/store'
 import { fireConfetti } from '../lib/confetti'
+import { emdBlockedMessage, emdWindowClosed } from '../lib/emd'
 import { countdown, inr, inrWords, num, relTime } from '../lib/format'
 import { useNow } from '../lib/useTick'
 import type { Lot } from '../types'
@@ -74,11 +76,18 @@ export default function BiddingRoom() {
   const lastWonLotId = useStore((s) => s.lastWonLotId)
   const clearWinFlag = useStore((s) => s.clearWinFlag)
   const termsAccepted = useStore((s) => s.termsAccepted)
+  const emdExemptionRequests = useStore((s) => s.emdExemptionRequests)
   const { enterBidroom } = useBidroomGate()
 
   const cat = catalogues.find((c) => c.id === catalogueId)
   const catLots = useMemo(() => lots.filter((l) => l.catalogueId === catalogueId), [lots, catalogueId])
   const summary = selectionSummary({ selections, lots }, me?.id, catalogueId ?? '')
+  // EMD deadline gone with no exemption approved — new funding is refused
+  // (store's fundEmd backstop), so lots that are already funded stay
+  // biddable but the room shouldn't hold entry hostage to ones that can't be
+  // paid anymore.
+  const exemption = cat && me ? latestEmdExemptionRequest({ emdExemptionRequests }, me.id, cat.id) : undefined
+  const frozen = !!cat && emdWindowClosed(cat, now) && exemption?.status !== 'approved'
 
   const [showAll, setShowAll] = useState(summary.count === 0)
   const [style, setStyle] = useState<Style>('classic')
@@ -158,49 +167,68 @@ export default function BiddingRoom() {
 
   // Entry rule: EMD on *every* shortlisted lot. Getting in with a partly-funded
   // shortlist is what put "EMD pending" badges on shortlisted lots inside the room.
-  if (summary.unfundedLotIds.length > 0) {
+  // Once the deadline's gone with nothing to fall back on, that rule can't be
+  // met at all — gate on "nothing funded" instead so a frozen catalogue with
+  // at least one already-funded lot still lets the buyer in for that lot.
+  if (summary.unfundedLotIds.length > 0 && !(frozen && summary.fundedLotIds.length > 0)) {
     const gateLots = catLots.filter((l) => summary.unfundedLotIds.includes(l.id))
     return (
       <Page>
         <div className="max-w-lg mx-auto mt-6 sm:mt-10 card p-6 sm:p-8">
-          <div className="flex flex-col items-center text-center gap-2">
-            <div className="size-12 rounded-2xl bg-warning-soft grid place-items-center text-warning"><Lock size={22} /></div>
-            <h1 className="text-lg font-bold mt-1">Fund EMD to enter the bidding room</h1>
-            <p className="text-sm text-ink-muted max-w-sm">
-              {gateLots.length} of your {summary.count} shortlisted lot{summary.count > 1 ? 's' : ''} in {cat.code}
-              {gateLots.length === 1 ? ' still needs' : ' still need'} pre-bid EMD. The room opens once every one is funded.
-            </p>
-          </div>
-          <div className="mt-5 divide-y divide-line border border-line rounded-xl overflow-hidden">
-            {gateLots.map((l) => (
-              <div key={l.id} className="flex items-center justify-between px-4 py-2.5">
-                <div>
-                  <div className="num text-sm font-bold">{l.lotNo}</div>
-                  <div className="text-xs text-ink-muted">{l.grade}</div>
-                </div>
-                <span className="num text-sm font-bold text-warning">{inr(l.preBidEmd)}</span>
+          {frozen ? (
+            <>
+              <div className="flex flex-col items-center text-center gap-2">
+                <div className="size-12 rounded-2xl bg-danger-soft grid place-items-center text-danger"><Lock size={22} /></div>
+                <h1 className="text-lg font-bold mt-1">EMD deadline passed</h1>
+                <p className="text-sm text-danger font-semibold max-w-sm">{emdBlockedMessage(cat)}</p>
               </div>
-            ))}
-          </div>
-          <div className="mt-3 card bg-surface-2 border-0 px-4 py-2.5">
-            <div className="flex items-baseline justify-between gap-3">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-ink-faint">Total payable</span>
-              <span className="num text-lg font-bold text-ember-strong">{inr(summary.shortfall)}</span>
-            </div>
-            <div className="text-xs text-ink-muted mt-1 text-right italic">{inrWords(summary.shortfall)}</div>
-          </div>
-          {me && (
-            <p className="text-xs text-ink-faint mt-3 text-center">
-              Wallet balance {inr(wallets.find((w) => w.userId === me.id)?.balance ?? 0)}. EMD is scoped per lot and auto-releases if you don't win.
-            </p>
+              <div className="mt-5 flex flex-col items-center gap-3">
+                <EmdExemptionControl catalogueId={cat.id} size="md" />
+                <Link to={`/catalogue/${cat.id}`} className="text-sm font-semibold text-ink-muted hover:text-ink">Back to catalogue</Link>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="flex flex-col items-center text-center gap-2">
+                <div className="size-12 rounded-2xl bg-warning-soft grid place-items-center text-warning"><Lock size={22} /></div>
+                <h1 className="text-lg font-bold mt-1">Fund EMD to enter the bidding room</h1>
+                <p className="text-sm text-ink-muted max-w-sm">
+                  {gateLots.length} of your {summary.count} shortlisted lot{summary.count > 1 ? 's' : ''} in {cat.code}
+                  {gateLots.length === 1 ? ' still needs' : ' still need'} pre-bid EMD. The room opens once every one is funded.
+                </p>
+              </div>
+              <div className="mt-5 divide-y divide-line border border-line rounded-xl overflow-hidden">
+                {gateLots.map((l) => (
+                  <div key={l.id} className="flex items-center justify-between px-4 py-2.5">
+                    <div>
+                      <div className="num text-sm font-bold">{l.lotNo}</div>
+                      <div className="text-xs text-ink-muted">{l.grade}</div>
+                    </div>
+                    <span className="num text-sm font-bold text-warning">{inr(l.preBidEmd)}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-3 card bg-surface-2 border-0 px-4 py-2.5">
+                <div className="flex items-baseline justify-between gap-3">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-ink-faint">Total payable</span>
+                  <span className="num text-lg font-bold text-ember-strong">{inr(summary.shortfall)}</span>
+                </div>
+                <div className="text-xs text-ink-muted mt-1 text-right italic">{inrWords(summary.shortfall)}</div>
+              </div>
+              {me && (
+                <p className="text-xs text-ink-faint mt-3 text-center">
+                  Wallet balance {inr(wallets.find((w) => w.userId === me.id)?.balance ?? 0)}. EMD is scoped per lot and auto-releases if you don't win.
+                </p>
+              )}
+              {/* Same gate as every other entry point — pending EMD, then terms. */}
+              <Button size="lg" className="w-full mt-5" onClick={() => enterBidroom(cat.id)}>
+                Fund {inr(summary.shortfall)} to enter
+              </Button>
+              <Link to={`/catalogue/${cat.id}`} className="block w-full text-center text-sm font-semibold text-ink-muted hover:text-ink mt-3">
+                Back to catalogue
+              </Link>
+            </>
           )}
-          {/* Same gate as every other entry point — pending EMD, then terms. */}
-          <Button size="lg" className="w-full mt-5" onClick={() => enterBidroom(cat.id)}>
-            Fund {inr(summary.shortfall)} to enter
-          </Button>
-          <Link to={`/catalogue/${cat.id}`} className="block w-full text-center text-sm font-semibold text-ink-muted hover:text-ink mt-3">
-            Back to catalogue
-          </Link>
         </div>
       </Page>
     )
@@ -843,39 +871,49 @@ export default function BiddingRoom() {
       </Modal>
 
       {/* EMD gate modal */}
-      <Modal open={!!emdGateLot} onClose={() => setEmdGateLot(null)} title="Fund EMD to bid">
+      <Modal open={!!emdGateLot} onClose={() => setEmdGateLot(null)} title={frozen ? 'EMD deadline passed' : 'Fund EMD to bid'}>
         {emdGateLot && (
-          <div className="space-y-4">
-            <p className="text-sm text-ink-muted">
-              Bidding on <b className="num text-ink">{emdGateLot.lotNo}</b> needs its pre-bid EMD of{' '}
-              <b className="num text-ink">{inr(emdGateLot.preBidEmd)}</b> locked from your wallet
-              {me && <> (balance {inr(wallets.find((w) => w.userId === me.id)?.balance ?? 0)})</>}.
-              EMD is scoped to this lot only and auto-releases if you don't win.
-            </p>
-            <div className="card bg-surface-2 border-0 px-3.5 py-2.5">
-              <div className="flex items-baseline justify-between gap-3">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-ink-faint">EMD payable</span>
-                <span className="num text-lg font-bold">{inr(emdGateLot.preBidEmd)}</span>
-              </div>
-              <div className="text-xs text-ink-muted mt-1 text-right italic">{inrWords(emdGateLot.preBidEmd)}</div>
+          frozen ? (
+            <div className="space-y-4">
+              <p className="text-sm text-danger font-semibold">{emdBlockedMessage(cat)}</p>
+              <p className="text-sm text-ink-muted">
+                Request an exemption to fund EMD and unlock bidding on <b className="num text-ink">{emdGateLot.lotNo}</b>.
+              </p>
+              <EmdExemptionControl catalogueId={cat.id} size="md" />
             </div>
-            <p className="text-xs text-ink-faint">
-              Funding it also adds {emdGateLot.lotNo} to your shortlist, so it appears in the
-              Shortlist list and gets a closing reminder in its last 3 minutes.
-            </p>
-            <Button className="w-full" size="lg" onClick={() => {
-              const ok = fundEmd(cat.id, [emdGateLot.id], 'Wallet')
-              if (ok) {
-                pushToast({ kind: 'success', title: 'EMD locked', body: `${emdGateLot.lotNo} added to your shortlist and unlocked for bidding.` })
-                setEmdGateLot(null)
-              } else {
-                pushToast({ kind: 'danger', title: 'Insufficient balance', body: 'Top up your wallet from Wallet & EMD ledger.' })
-              }
-            }}>
-              Lock {inr(emdGateLot.preBidEmd)} & unlock bidding
-            </Button>
-            <Link to="/buyer/wallet" className="block text-center text-sm font-semibold text-steel hover:underline">Top up wallet instead</Link>
-          </div>
+          ) : (
+            <div className="space-y-4">
+              <p className="text-sm text-ink-muted">
+                Bidding on <b className="num text-ink">{emdGateLot.lotNo}</b> needs its pre-bid EMD of{' '}
+                <b className="num text-ink">{inr(emdGateLot.preBidEmd)}</b> locked from your wallet
+                {me && <> (balance {inr(wallets.find((w) => w.userId === me.id)?.balance ?? 0)})</>}.
+                EMD is scoped to this lot only and auto-releases if you don't win.
+              </p>
+              <div className="card bg-surface-2 border-0 px-3.5 py-2.5">
+                <div className="flex items-baseline justify-between gap-3">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-ink-faint">EMD payable</span>
+                  <span className="num text-lg font-bold">{inr(emdGateLot.preBidEmd)}</span>
+                </div>
+                <div className="text-xs text-ink-muted mt-1 text-right italic">{inrWords(emdGateLot.preBidEmd)}</div>
+              </div>
+              <p className="text-xs text-ink-faint">
+                Funding it also adds {emdGateLot.lotNo} to your shortlist, so it appears in the
+                Shortlist list and gets a closing reminder in its last 3 minutes.
+              </p>
+              <Button className="w-full" size="lg" onClick={() => {
+                const ok = fundEmd(cat.id, [emdGateLot.id], 'Wallet')
+                if (ok) {
+                  pushToast({ kind: 'success', title: 'EMD locked', body: `${emdGateLot.lotNo} added to your shortlist and unlocked for bidding.` })
+                  setEmdGateLot(null)
+                } else {
+                  pushToast({ kind: 'danger', title: 'Insufficient balance', body: 'Top up your wallet from Wallet & EMD ledger.' })
+                }
+              }}>
+                Lock {inr(emdGateLot.preBidEmd)} & unlock bidding
+              </Button>
+              <Link to="/buyer/wallet" className="block text-center text-sm font-semibold text-steel hover:underline">Top up wallet instead</Link>
+            </div>
+          )
         )}
       </Modal>
     </Page>

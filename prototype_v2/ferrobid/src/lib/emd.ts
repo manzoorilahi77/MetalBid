@@ -4,11 +4,12 @@
    the Bid Now shortcut) asks the same question and gets the same answer.
 
    The rule: EMD has to be funded before the catalogue's `emdDeadline`, which
-   sits 1–2 days ahead of go-live. Funding is refused in the window between
-   that deadline and the auction actually starting — a buyer who missed the
-   cut-off can't slip into the sale at the last minute. Once the catalogue IS
-   live, per-lot funding stays open until the lot closes, which is what keeps
-   the bidding-room EMD gate and the Bid Now pay step meaningful.
+   sits 1–2 days ahead of go-live. Once that deadline passes, shortlisting and
+   funding new lots is refused — whether the catalogue is still upcoming or
+   has since gone live — until either a sub-admin approves an EMD exemption
+   request, or the auction closes. Lots already shortlisted-and-funded before
+   the cut-off stay usable (their own per-lot lock, not this one); this only
+   blocks picking up *new* lots after the window has shut.
 --------------------------------------------------------------------------- */
 import type { Catalogue } from '../types'
 
@@ -33,13 +34,15 @@ export function defaultEmdDeadline(startsAt: string, leadDays = EMD_LEAD_DAYS): 
   return new Date(Date.parse(startsAt) - leadDays * DAY_MS).toISOString()
 }
 
-/** True once the cut-off has passed and the auction hasn't started yet —
- *  the only state in which new EMD funding is refused. */
+/** True once the cut-off has passed for a catalogue that's still upcoming or
+ *  live — new EMD funding/shortlisting is refused from here (an approved
+ *  exemption reopens it). A closed or draft catalogue was never eligible for
+ *  this gate in the first place, so it's excluded rather than always-true. */
 export function emdWindowClosed(
   cat: Pick<Catalogue, 'emdDeadline' | 'startsAt' | 'status'>,
   now: number,
 ): boolean {
-  return cat.status === 'upcoming' && now > emdDeadlineMs(cat)
+  return (cat.status === 'upcoming' || cat.status === 'live') && now > emdDeadlineMs(cat)
 }
 
 /** Deadline is still ahead but inside the nag window, so a reminder is due. */

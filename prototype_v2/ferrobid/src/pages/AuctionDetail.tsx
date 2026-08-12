@@ -14,6 +14,7 @@ import {
   Button, Chip, Countdown, EmptyState, Modal, PhotoThumb,
   StatusChip, Tabs, Toggle, cx,
 } from '../components/ui'
+import { EmdExemptionControl } from '../components/EmdExemption'
 import { catalogueUiStatus, isCatalogueEmdLocked, selectionSummary, useStore } from '../store/store'
 import { emdDeadlineMs, emdWindowClosed } from '../lib/emd'
 import { fmtDate, fmtDateTime, inr, inrCompact, num } from '../lib/format'
@@ -62,6 +63,7 @@ export default function AuctionDetail() {
   }
 
   const catLots = lots.filter((l) => l.catalogueId === cat.id)
+  const totalEmd = catLots.reduce((sum, l) => sum + l.preBidEmd, 0)
   const seller = users.find((u) => u.id === cat.sellerId)
   const ui = catalogueUiStatus(cat, now, catLots)
   const terms = termsSets.find((t) => t.id === cat.termsSetId)
@@ -71,9 +73,13 @@ export default function AuctionDetail() {
   // Watchlist-only, not the isCatalogueShortlisted union with starred lots — this
   // button must be able to turn itself back off on click without also clearing lots.
   const watchlisted = !!me && watchlist.some((w) => w.buyerId === me.id && w.catalogueId === cat.id)
-  // EMD already funded for this catalogue — the shortlist star locks read-only
-  // from here; unshortlisting only happens by letting the lot close.
-  const emdLocked = watchlisted && isCatalogueEmdLocked({ selections, lots }, me?.id, cat.id)
+  // EMD already funded, or the funding deadline passed without full funding —
+  // both lock the shortlist star read-only (same rule the store's
+  // toggleWatchlist enforces), so a missed catalogue can't be quietly
+  // unshortlisted away.
+  const fundedLocked = watchlisted && isCatalogueEmdLocked({ selections, lots }, me?.id, cat.id)
+  const deadlinePassed = emdWindowClosed(cat, now)
+  const emdLocked = watchlisted && (fundedLocked || deadlinePassed)
   const catAnnouncements = announcements.filter((a) => a.catalogueId === cat.id)
   const mySlot = inspectionSlots.find((s) => s.catalogueId === cat.id && s.userId === me?.id)
 
@@ -90,7 +96,7 @@ export default function AuctionDetail() {
 
   return (
     <>
-      <Page className="pb-32">
+      <Page>
         {/* ------------------------------ header ------------------------------ */}
         <Link to={browseHref} className="inline-block mb-3">
           <Button variant="secondary" size="sm"><ArrowLeft size={15} /> Back to {browseLabel}</Button>
@@ -115,7 +121,11 @@ export default function AuctionDetail() {
               <div className="flex items-center gap-3">
                 {canBid && <Countdown endsAt={cat.endsAt} prefix="closes in" size="lg" />}
                 {isBuyer && (
-                  <span title={emdLocked ? 'EMD funded — this catalogue is read only until it closes' : undefined}>
+                  <span title={fundedLocked
+                    ? 'EMD funded — this catalogue is read only until it closes'
+                    : deadlinePassed
+                      ? 'EMD deadline passed — this catalogue is read only'
+                      : undefined}>
                     <Button
                       variant={watchlisted ? 'success' : 'secondary'}
                       size="md"
@@ -125,10 +135,11 @@ export default function AuctionDetail() {
                       aria-label={watchlisted ? 'Remove from shortlist' : 'Add to shortlist'}
                     >
                       {emdLocked ? <Lock size={14} /> : <Star size={14} fill={watchlisted ? 'currentColor' : 'none'} />}
-                      {emdLocked ? 'EMD funded' : watchlisted ? 'Shortlisted' : 'Add to shortlist'}
+                      {fundedLocked ? 'EMD funded' : deadlinePassed ? 'EMD deadline passed' : watchlisted ? 'Shortlisted' : 'Add to shortlist'}
                     </Button>
                   </span>
                 )}
+                {isBuyer && deadlinePassed && !fundedLocked && <EmdExemptionControl catalogueId={cat.id} />}
               </div>
             )}
             {ui === 'upcoming' && <Chip tone="steel" className="h-8 px-3 text-sm num">Starts {fmtDateTime(cat.startsAt)}</Chip>}
@@ -163,19 +174,20 @@ export default function AuctionDetail() {
         )}
 
         {/* --------------------------- key facts strip -------------------------- */}
-        <div className="card mt-5 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 overflow-hidden">
+        <div className="card mt-5 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 overflow-hidden">
           <div className={factCls}>
             <div className={factLabel}>Seller / principal</div>
             <div className={factVal}>{seller?.firm}</div>
           </div>
           <div className={factCls}>
-            <div className={factLabel}>E-auction date & time</div>
-            <div className={cx(factVal, 'num')}>{fmtDateTime(cat.startsAt)} → {fmtDateTime(cat.endsAt)}</div>
+            <div className={factLabel}>Inspection window</div>
+            <div className={cx(factVal, 'num')}>From: {fmtDate(cat.inspectionFrom)}</div>
+            <div className={cx(factVal, 'num')}>Till: {fmtDate(cat.inspectionTo)}</div>
+            <div className="text-xs text-ink-muted num">{cat.inspectionHours}</div>
           </div>
           <div className={factCls}>
-            <div className={factLabel}>Inspection window</div>
-            <div className={cx(factVal, 'num')}>{fmtDate(cat.inspectionFrom)} – {fmtDate(cat.inspectionTo)}</div>
-            <div className="text-xs text-ink-muted num">{cat.inspectionHours}</div>
+            <div className={factLabel}>E-auction date & time</div>
+            <div className={cx(factVal, 'num')}>{fmtDateTime(cat.startsAt)} → {fmtDateTime(cat.endsAt)}</div>
           </div>
           <div className={factCls}>
             <div className={factLabel}>Material location</div>
@@ -183,14 +195,8 @@ export default function AuctionDetail() {
             <div className="text-xs text-ink-muted">{cat.region}</div>
           </div>
           <div className={factCls}>
-            <div className={factLabel}>Bid validity</div>
-            <div className={cx(factVal, 'num')}>{cat.bidValidityDays} days</div>
-            <div className="text-xs text-ink-muted num">Anti-snipe +{cat.antiSnipeMinutes} min</div>
-          </div>
-          <div className={cx(factCls, 'bg-ember-soft/40')}>
-            <div className={factLabel}>Your selection EMD</div>
-            <div className={cx(factVal, 'num')}>{summary.count > 0 ? `${inrCompact(summary.funded)} / ${inrCompact(summary.required)}` : '—'}</div>
-            <div className="text-xs text-ink-muted num">{summary.count} lot{summary.count === 1 ? '' : 's'} shortlisted</div>
+            <div className={factLabel}>EMD value</div>
+            <div className={cx(factVal, 'num')}>{inrCompact(totalEmd)}</div>
           </div>
         </div>
 
@@ -424,35 +430,6 @@ export default function AuctionDetail() {
           </div>
         )}
       </Page>
-
-      {/* --------------------- sticky selection action bar ---------------------- */}
-      {isBuyer && summary.count > 0 && canBid && (
-        <div className="fixed bottom-0 inset-x-0 z-40 border-t border-line bg-surface/95 backdrop-blur shadow-[0_-8px_30px_-16px_rgb(0_0_0/0.3)]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center gap-x-6 gap-y-2">
-            <div className="num text-sm">
-              <b>{summary.count}</b> lot{summary.count === 1 ? '' : 's'} selected
-              <span className="text-ink-faint"> · </span>Pre-bid EMD <b>{inr(summary.required)}</b>
-              <span className="text-ink-faint"> · </span>Funded <b className="text-success">{inr(summary.funded)}</b>
-              <span className="text-ink-faint"> · </span>Shortfall <b className={summary.shortfall > 0 ? 'text-ember-strong' : 'text-success'}>{inr(summary.shortfall)}</b>
-            </div>
-            {/* EMD is only ever funded from the dedicated EMD & payments flow
-                (pages/buyer/ShortlistCatalogue.tsx) — this page just points
-                there. No bid entry here — bidding happens on the separate
-                bidding room page, not from Browse & Shortlist. */}
-            <div className="ml-auto flex items-center gap-2 flex-wrap">
-              {summary.shortfall > 0 ? (
-                <Link to={`/buyer/shortlist/${cat.id}`}>
-                  <Button variant="steel">
-                    <Lock size={15} /> Fund {inr(summary.shortfall)} EMD in EMD & payments
-                  </Button>
-                </Link>
-              ) : (
-                <Chip tone="success">EMD fully funded</Chip>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* ------------------------------- modals -------------------------------- */}
       <TermsGateModal open={termsOpen} onClose={() => setTermsOpen(false)} catalogueId={cat.id} onAccept={() => {

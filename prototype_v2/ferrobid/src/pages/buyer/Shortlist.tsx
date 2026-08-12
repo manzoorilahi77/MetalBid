@@ -2,14 +2,18 @@
    scoped pre-bid EMD funding. This page lists exactly the catalogues the
    buyer starred on Browse & Shortlist (the watchlist), soonest EMD deadline
    first; open one to pick lots and fund EMD. */
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AlertTriangle, ChevronRight, Clock, UserRound, Wallet } from 'lucide-react'
 import { Page } from '../../layout/Chrome'
-import { Button, Chip, Countdown, EmptyState, PageHeader, StatusChip } from '../../components/ui'
-import { useStore, selectionSummary, catalogueUiStatus } from '../../store/store'
+import { Button, Chip, Countdown, EmptyState, PageHeader, StatusChip, Tabs } from '../../components/ui'
+import { EmdExemptionControl } from '../../components/EmdExemption'
+import { useStore, selectionSummary, catalogueUiStatus, latestEmdExemptionRequest } from '../../store/store'
 import { emdDeadlineMs, emdDeadlineSoon, emdWindowClosed } from '../../lib/emd'
-import { countdown, inr, relTime } from '../../lib/format'
+import { countdown, inr } from '../../lib/format'
 import { useNow } from '../../lib/useTick'
+
+type Tab = 'live' | 'upcoming' | 'closed'
 
 export default function Shortlist() {
   const me = useStore((s) => s.currentUser)
@@ -18,7 +22,9 @@ export default function Shortlist() {
   const lots = useStore((s) => s.lots)
   const catalogues = useStore((s) => s.catalogues)
   const wallets = useStore((s) => s.wallets)
+  const emdExemptionRequests = useStore((s) => s.emdExemptionRequests)
   const now = useNow()
+  const [tab, setTab] = useState<Tab>('upcoming')
 
   if (!me) {
     return (
@@ -38,7 +44,7 @@ export default function Shortlist() {
   // Exactly the catalogues starred on Browse & Shortlist, soonest EMD deadline
   // first — the ones that need attention surface at the top instead of
   // getting lost in shortlist order.
-  const cards = watchlist
+  const allCards = watchlist
     .filter((w) => w.buyerId === me.id)
     .map((w) => catalogues.find((c) => c.id === w.catalogueId))
     .filter((cat): cat is NonNullable<typeof cat> => !!cat)
@@ -54,6 +60,12 @@ export default function Shortlist() {
     })
     .sort((a, b) => a.deadline - b.deadline)
 
+  // Every catalogue here is already shortlisted by definition — the only
+  // remaining facet worth splitting on is status, same as Browse & Shortlist.
+  const byTab: Record<Tab, typeof allCards> = { live: [], upcoming: [], closed: [] }
+  for (const card of allCards) byTab[card.ui === 'closing' ? 'live' : card.ui].push(card)
+  const cards = byTab[tab]
+
   return (
     <Page>
       <PageHeader
@@ -68,74 +80,102 @@ export default function Shortlist() {
         }
       />
 
-      {cards.length === 0 ? (
+      {allCards.length === 0 ? (
         <EmptyState
           title="Nothing shortlisted yet"
           body="Browse live catalogues and tap the star on a catalogue you're interested in — it'll collect here so you can pick lots and fund EMD in one go."
           action={<Link to="/buyermarketplace"><Button>Browse auctions</Button></Link>}
         />
       ) : (
-        <div className="space-y-3">
-          {cards.map(({ cat, catLots, summary, ui, deadline }) => {
-            const closed = emdWindowClosed(cat, now)
-            const needsAttention = emdDeadlineSoon(cat, now) && summary.shortfall > 0
-            // Every lot in the catalogue — not just the shortlisted subset — is
-            // shortlisted and funded: nothing left to fund, so the deadline
-            // countdown is no longer actionable. Fewer lots shortlisted than
-            // exist means the buyer may still want to add more before it closes.
-            const allLotsCovered = catLots.length > 0 && summary.count === catLots.length && summary.shortfall === 0
-            return (
-              <Link
-                key={cat.id}
-                to={`/buyer/shortlist/${cat.id}`}
-                className={`card card-hover flex flex-wrap items-center gap-4 px-5 py-4 ${needsAttention ? 'border-l-4 border-l-warning' : ''}`}
-              >
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="num text-[11px] font-semibold text-ink-faint">{cat.code}</span>
-                    <StatusChip status={ui} />
-                    {needsAttention && (
-                      <Chip tone="warning"><AlertTriangle size={12} /> Closing soon</Chip>
-                    )}
-                  </div>
-                  <div className="font-display font-bold text-lg leading-snug mt-0.5">{cat.title}</div>
-                </div>
+        <>
+          <Tabs<Tab>
+            tabs={[
+              { key: 'live', label: 'Live', count: byTab.live.length },
+              { key: 'upcoming', label: 'Upcoming', count: byTab.upcoming.length },
+              { key: 'closed', label: 'Closed', count: byTab.closed.length },
+            ]}
+            value={tab}
+            onChange={setTab}
+            className="mb-5"
+          />
+          {cards.length === 0 ? (
+            <EmptyState title="Nothing shortlisted in this status yet" body="Switch tabs to see your other shortlisted catalogues." />
+          ) : (
+            <div className="space-y-3">
+              {cards.map(({ cat, catLots, summary, ui, deadline }) => {
+                // A sub-admin-approved exemption reopens funding early, same as if the deadline hadn't passed.
+                const exemption = latestEmdExemptionRequest({ emdExemptionRequests }, me.id, cat.id)
+                const closed = emdWindowClosed(cat, now) && exemption?.status !== 'approved'
+                const needsAttention = emdDeadlineSoon(cat, now) && summary.shortfall > 0
+                // Every lot in the catalogue — not just the shortlisted subset — is
+                // shortlisted and funded: nothing left to fund, so the deadline
+                // countdown is no longer actionable. Fewer lots shortlisted than
+                // exist means the buyer may still want to add more before it closes.
+                const allLotsCovered = catLots.length > 0 && summary.count === catLots.length && summary.shortfall === 0
+                return (
+                  <Link
+                    key={cat.id}
+                    to={`/buyer/shortlist/${cat.id}`}
+                    className={`card card-hover flex flex-wrap items-center gap-4 px-5 py-4 ${needsAttention ? 'border-l-4 border-l-warning' : ''}`}
+                  >
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="num text-xs font-bold text-ember">{cat.code}</span>
+                        <StatusChip status={ui} />
+                        {needsAttention && (
+                          <Chip tone="warning"><AlertTriangle size={12} /> Closing soon</Chip>
+                        )}
+                      </div>
+                      <div className="font-display font-bold text-lg leading-snug mt-0.5">{cat.title}</div>
+                    </div>
 
-                {ui === 'live' || ui === 'closing' ? (
-                  <Countdown endsAt={cat.endsAt} prefix="ends" size="sm" />
-                ) : ui === 'upcoming' && !closed && needsAttention ? (
-                  <span className="inline-flex items-center gap-1.5 text-xs font-bold text-warning num whitespace-nowrap">
-                    <Clock size={13} /> {countdown(deadline - now)} left to fund
-                  </span>
-                ) : ui === 'upcoming' && !closed && allLotsCovered ? null : ui === 'upcoming' && !closed ? (
-                  <Countdown endsAt={new Date(deadline).toISOString()} prefix="fund EMD by" size="sm" />
-                ) : ui === 'upcoming' ? (
-                  <Chip tone="steel" className="num">starts {relTime(cat.startsAt, now)}</Chip>
-                ) : null}
+                    {ui === 'live' || ui === 'closing' ? (
+                      <Countdown endsAt={cat.endsAt} prefix="ends" size="sm" />
+                    ) : ui === 'upcoming' && !closed && needsAttention ? (
+                      <span className="inline-flex items-center gap-1.5 text-xs font-bold text-warning num whitespace-nowrap">
+                        <Clock size={13} /> {countdown(deadline - now)} left to fund
+                      </span>
+                    ) : ui === 'upcoming' && !closed && allLotsCovered ? null : ui === 'upcoming' && !closed ? (
+                      <Countdown endsAt={new Date(deadline).toISOString()} prefix="fund EMD by" size="sm" />
+                    ) : null}
 
-                <div className="flex items-center gap-x-5 gap-y-1 text-sm flex-wrap">
-                  <span>
-                    <span className="num font-bold">{summary.count}</span>
-                    <span className="text-ink-muted"> lot{summary.count === 1 ? '' : 's'} shortlisted</span>
-                  </span>
-                  {summary.count === 0 ? (
-                    <Chip tone="neutral">No lots shortlisted yet</Chip>
-                  ) : summary.shortfall > 0 ? (
-                    closed ? (
-                      <Chip tone="danger">EMD deadline passed</Chip>
-                    ) : (
-                      <Chip tone="warning">Shortfall {inr(summary.shortfall)}</Chip>
-                    )
-                  ) : (
-                    <Chip tone="success">EMD fully funded</Chip>
-                  )}
-                </div>
+                    <div className="flex items-center gap-x-5 gap-y-1 text-sm flex-wrap">
+                      <span>
+                        <span className="num font-bold">{summary.count}</span>
+                        <span className="text-ink-muted"> lot{summary.count === 1 ? '' : 's'} shortlisted</span>
+                      </span>
+                      {summary.count === 0 ? (
+                        closed ? (
+                          <Chip tone="danger">EMD deadline passed</Chip>
+                        ) : (
+                          <Chip tone="neutral">No lots shortlisted yet</Chip>
+                        )
+                      ) : summary.shortfall > 0 ? (
+                        closed ? (
+                          <Chip tone="danger">EMD deadline passed</Chip>
+                        ) : (
+                          <Chip tone="warning">Shortfall {inr(summary.shortfall)}</Chip>
+                        )
+                      ) : allLotsCovered ? (
+                        <Chip tone="success">EMD fully funded</Chip>
+                      ) : (
+                        <Chip tone="success">EMD funded</Chip>
+                      )}
+                      {/* Only worth a request when something's actually outstanding —
+                          fully funding a partial selection before the cut-off is a win,
+                          not a miss, even once the deadline (or go-live) has passed. */}
+                      {closed && (summary.count === 0 || summary.shortfall > 0) && (
+                        <EmdExemptionControl catalogueId={cat.id} />
+                      )}
+                    </div>
 
-                <ChevronRight size={18} className="text-ink-faint shrink-0" />
-              </Link>
-            )
-          })}
-        </div>
+                    <ChevronRight size={18} className="text-ink-faint shrink-0" />
+                  </Link>
+                )
+              })}
+            </div>
+          )}
+        </>
       )}
     </Page>
   )

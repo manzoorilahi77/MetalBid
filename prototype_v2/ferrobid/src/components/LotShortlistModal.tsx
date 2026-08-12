@@ -6,10 +6,13 @@
    surfaces can't drift into two different lot lists.
 --------------------------------------------------------------------------- */
 import type { ReactNode } from 'react'
-import { Star } from 'lucide-react'
+import { AlertTriangle, Star } from 'lucide-react'
 import { Chip, Modal } from './ui'
-import { selectionSummary, useStore } from '../store/store'
+import { EmdExemptionControl } from './EmdExemption'
+import { selectionSummary, latestEmdExemptionRequest, useStore } from '../store/store'
+import { emdWindowClosed } from '../lib/emd'
 import { inr, num } from '../lib/format'
+import { useNow } from '../lib/useTick'
 import type { Catalogue } from '../types'
 
 export function LotShortlistModal({ open, cat, onClose, footer }: {
@@ -23,24 +26,42 @@ export function LotShortlistModal({ open, cat, onClose, footer }: {
   const me = useStore((s) => s.currentUser)
   const lots = useStore((s) => s.lots)
   const selections = useStore((s) => s.selections)
+  const emdExemptionRequests = useStore((s) => s.emdExemptionRequests)
   const toggleShortlist = useStore((s) => s.toggleShortlist)
   const pushToast = useStore((s) => s.pushToast)
+  const now = useNow()
   if (!cat) return null
 
   const catLots = lots.filter((l) => l.catalogueId === cat.id)
   const summary = selectionSummary({ selections, lots }, me?.id, cat.id)
+  // Same freeze rule as the catalogue detail page: missed the pre-bid EMD
+  // cut-off while still upcoming — no more shortlisting or unshortlisting
+  // here either, until a sub-admin approves an exemption or it goes live.
+  const exemption = me ? latestEmdExemptionRequest({ emdExemptionRequests }, me.id, cat.id) : undefined
+  const deadlinePassed = emdWindowClosed(cat, now) && exemption?.status !== 'approved'
 
   return (
     <Modal open={open} onClose={onClose} wide
       title={<span className="flex items-center gap-2"><span className="num text-sm text-ink-faint">{cat.code}</span> Lots in this auction</span>}>
-      <p className="text-sm text-ink-muted">
-        Star the lots you want to bid on. Pre-bid EMD is locked per lot — only starred lots enter the room with you.
-      </p>
+      {deadlinePassed ? (
+        <div className="card border-danger/40 bg-danger-soft p-3 flex items-center gap-3">
+          <AlertTriangle size={18} className="text-danger shrink-0" />
+          <p className="text-sm text-danger font-semibold flex-1">
+            EMD deadline passed — this catalogue is frozen. Existing stars stay as-is; request an exemption to shortlist more.
+          </p>
+          <EmdExemptionControl catalogueId={cat.id} />
+        </div>
+      ) : (
+        <p className="text-sm text-ink-muted">
+          Star the lots you want to bid on. Pre-bid EMD is locked per lot — only starred lots enter the room with you.
+        </p>
+      )}
 
       <div className="mt-3 card bg-surface-2 border-0 divide-y divide-line max-h-[45vh] overflow-y-auto">
         {catLots.map((l) => {
           const shortlisted = summary.lotIds.includes(l.id)
           const funded = summary.fundedLotIds.includes(l.id)
+          const locked = funded || deadlinePassed
           return (
             <div key={l.id} className="flex items-center gap-3 px-3 py-2.5">
               <button
@@ -49,11 +70,16 @@ export function LotShortlistModal({ open, cat, onClose, footer }: {
                     pushToast({ kind: 'info', title: `${l.lotNo} stays shortlisted`, body: 'EMD is locked on this lot until the auction closes.' })
                     return
                   }
+                  if (deadlinePassed) {
+                    pushToast({ kind: 'warning', title: 'EMD deadline passed', body: 'Request an exemption to shortlist more lots in this catalogue.' })
+                    return
+                  }
                   toggleShortlist(cat.id, l.id)
                 }}
                 aria-label={shortlisted ? `Remove ${l.lotNo} from shortlist` : `Shortlist ${l.lotNo}`}
                 aria-pressed={shortlisted}
-                className={`p-1.5 rounded-lg shrink-0 transition-colors ${shortlisted ? 'text-ember' : 'text-ink-faint hover:text-ink'} ${funded ? 'cursor-default' : 'hover:bg-surface'}`}
+                title={deadlinePassed && !funded ? 'EMD deadline passed — this catalogue is frozen' : undefined}
+                className={`p-1.5 rounded-lg shrink-0 transition-colors ${shortlisted ? 'text-ember' : 'text-ink-faint hover:text-ink'} ${locked ? 'cursor-default' : 'hover:bg-surface'}`}
               >
                 <Star size={18} fill={shortlisted ? 'currentColor' : 'none'} />
               </button>

@@ -262,8 +262,28 @@
   .hairline-b { @apply border-b border-line; }
 }
 
-/* thin scrollbars for rails and tables */
+/* hidden scrollbars everywhere — scrolling still works, the OS scrollbar
+   chrome (arrow buttons + track) just never renders */
 * {
-  scrollbar-width: thin;
-  scrollbar-color: var(--line-strong) transparent;
+  scrollbar-width: none;
+}
+*::-webkit-scrollbar {
+  display: none;
+}
+
+/* Print: only #print-area (an auction's results, opted into via a page)
+   renders — nav chrome, footer and off-screen tabs never make it to paper. */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #print-area,
+  #print-area * {
+    visibility: visible;
+  }
+  #print-area {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+  }
 }

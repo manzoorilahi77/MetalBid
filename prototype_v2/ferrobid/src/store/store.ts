@@ -9,8 +9,9 @@ import { uid, inr, num } from '../lib/format'
 import { defaultEmdDeadline, emdWindowClosed } from '../lib/emd'
 import type {
   AppNotification, AuditEvent, AutoBidSetting, BankAccount, Bid, BidType, BuyerLotSelection,
-  Catalogue, CompanyBankAccount, DemandDraft, DeliveryOrder, DepositClaim, Dispute, InspectionReport,
-  LiftingChecklistItem, Lot, LotStatus, NotificationKind, Role, User, WatchlistEntry, WithdrawalRequest, WithdrawalWindowConfig,
+  Catalogue, CompanyBankAccount, DemandDraft, DeliveryOrder, DepositClaim, Dispute, EmdExemptionRequest,
+  InspectionReport, LiftingChecklistItem, Lot, LotStatus, NotificationKind, Role, User, WatchlistEntry,
+  WithdrawalRequest, WithdrawalWindowConfig,
 } from '../types'
 
 const seed = loadSeed()
@@ -139,6 +140,7 @@ interface State {
   withdrawalRequests: WithdrawalRequest[]
   companyBankAccounts: CompanyBankAccount[]
   withdrawalWindow: WithdrawalWindowConfig
+  emdExemptionRequests: EmdExemptionRequest[]
 
   termsAccepted: Record<string, string> // catalogueId → version accepted (per current session)
   toasts: Toast[]
@@ -172,6 +174,7 @@ interface State {
   submitDepositClaim: (amount: number, utr: string, transferDate: string, proofFilename?: string) => { ok: boolean; error?: string }
   requestWithdrawal: (amount: number, bankAccountId: string) => { ok: boolean; error?: string }
   cancelWithdrawal: (id: string) => void
+  requestEmdExemption: (catalogueId: string, reason: string) => { ok: boolean; error?: string }
 
   /* --- seller --- */
   createLot: (lot: Partial<Lot>) => void
@@ -197,6 +200,8 @@ interface State {
   approveWithdrawal: (id: string) => void
   processWithdrawal: (id: string) => void
   failWithdrawal: (id: string, reason?: string) => void
+  approveEmdExemption: (id: string) => void
+  rejectEmdExemption: (id: string, reason?: string) => void
   setWithdrawalWindow: (config: WithdrawalWindowConfig) => void
   setCompanyBankAccounts: (accounts: CompanyBankAccount[]) => void
 
@@ -246,6 +251,11 @@ export const useStore = create<State>((set, get) => {
   /* ---------- internal helpers (operate via set/get) ---------- */
 
   const wallet = (userId: string) => get().wallets.find((w) => w.userId === userId)
+
+  /** An approved exemption reopens EMD funding for that buyer on that
+   *  catalogue despite `emdWindowClosed` — the whole point of the request. */
+  const hasApprovedEmdExemption = (buyerId: string, catalogueId: string) =>
+    get().emdExemptionRequests.some((r) => r.buyerId === buyerId && r.catalogueId === catalogueId && r.status === 'approved')
 
   const ensureWallet = (userId: string) => {
     if (!wallet(userId)) {
@@ -442,6 +452,7 @@ export const useStore = create<State>((set, get) => {
     ...seed,
 
     withdrawalWindow: DEFAULT_WITHDRAWAL_WINDOW,
+    emdExemptionRequests: [],
     termsAccepted: {},
     toasts: [],
     lastWonLotId: null,
@@ -510,7 +521,8 @@ export const useStore = create<State>((set, get) => {
       const cat = get().catalogues.find((c) => c.id === catalogueId)
       // Cut-off guard, same rule fundEmd enforces. Callers pre-check
       // `emdWindowClosed` so they can show the deadline message; this is the backstop.
-      if (cat && emdWindowClosed(cat, get().now)) return
+      // An approved exemption request reopens this despite the deadline.
+      if (cat && emdWindowClosed(cat, get().now) && !hasApprovedEmdExemption(me.id, catalogueId)) return
       set((st) => {
         const existing = st.selections.find((x) => x.buyerId === me.id && x.catalogueId === catalogueId)
         if (!existing) {
@@ -537,9 +549,12 @@ export const useStore = create<State>((set, get) => {
       if (!me) return
       set((st) => {
         const has = st.watchlist.some((w) => w.buyerId === me.id && w.catalogueId === catalogueId)
-        // EMD already funded for this catalogue — it's read-only, stays
-        // watchlisted regardless of which surface tries to unshortlist it.
-        if (has && isCatalogueEmdLocked(st, me.id, catalogueId)) return st
+        const cat = st.catalogues.find((c) => c.id === catalogueId)
+        // Read-only once either EMD is funded, or the pre-bid EMD deadline has
+        // passed without full funding — the buyer missed the cut-off, so the
+        // entry stays put (visible, locked) as a record of what fell through,
+        // rather than letting them quietly unshortlist and lose that signal.
+        if (has && (isCatalogueEmdLocked(st, me.id, catalogueId) || (cat && emdWindowClosed(cat, st.now)))) return st
         return {
           watchlist: has
             ? st.watchlist.filter((w) => !(w.buyerId === me.id && w.catalogueId === catalogueId))
@@ -559,7 +574,8 @@ export const useStore = create<State>((set, get) => {
       const cat = s.catalogues.find((c) => c.id === catalogueId)!
       // Cut-off guard. Callers pre-check `emdWindowClosed` so they can show the
       // deadline message rather than the balance one; this is the backstop.
-      if (emdWindowClosed(cat, s.now)) return false
+      // An approved exemption request reopens this despite the deadline.
+      if (emdWindowClosed(cat, s.now) && !hasApprovedEmdExemption(me.id, catalogueId)) return false
       set((st) => ({
         wallets: st.wallets.map((x) =>
           x.userId === me.id
@@ -784,6 +800,30 @@ export const useStore = create<State>((set, get) => {
         ),
       }))
       get().audit('withdrawal.cancel', id, `Withdrawal of ${inr(req.amount)} cancelled by buyer — reversed`)
+    },
+
+    requestEmdExemption: (catalogueId, reason) => {
+      const s = get()
+      const me = s.currentUser
+      if (!me) return { ok: false, error: 'Sign in to request an exemption' }
+      const cat = s.catalogues.find((c) => c.id === catalogueId)
+      if (!cat) return { ok: false, error: 'Catalogue not found' }
+      if (!reason.trim()) return { ok: false, error: 'Enter a reason for missing the EMD deadline' }
+      const existing = s.emdExemptionRequests.find(
+        (r) => r.buyerId === me.id && r.catalogueId === catalogueId && r.status !== 'rejected',
+      )
+      if (existing) return { ok: false, error: 'A request is already pending or approved for this catalogue' }
+      const req: EmdExemptionRequest = {
+        id: uid('exm'), buyerId: me.id, catalogueId, reason: reason.trim(),
+        status: 'pending', createdAt: new Date(s.now).toISOString(),
+      }
+      set((st) => ({ emdExemptionRequests: [...st.emdExemptionRequests, req] }))
+      get().audit('emd_exemption.request', cat.code, `${me.firm} requested an EMD deadline exemption — ${req.reason}`, 'warning')
+      get().notify({
+        userId: me.id, kind: 'system', title: 'EMD exemption requested',
+        body: `Your request for ${cat.code} is awaiting sub-admin approval.`, href: '/buyer/emd-shortlisted-catalogue',
+      })
+      return { ok: true }
     },
 
     /* ------------------------------ seller ------------------------------ */
@@ -1080,6 +1120,44 @@ export const useStore = create<State>((set, get) => {
       get().notify({ userId: req.userId, kind: 'wallet', title: 'Withdrawal failed', body: `${inr(req.amount)} reversed to your wallet.${reason ? ` Reason: ${reason}` : ''}`, href: '/buyer/wallet' })
     },
 
+    approveEmdExemption: (id) => {
+      const role = get().role
+      if (role !== 'sub_admin' && role !== 'exec_manager') return
+      const me = get().currentUser
+      const req = get().emdExemptionRequests.find((r) => r.id === id)
+      if (!req || req.status !== 'pending') return
+      set((st) => ({
+        emdExemptionRequests: st.emdExemptionRequests.map((r) =>
+          r.id === id ? { ...r, status: 'approved' as const, decidedAt: new Date(st.now).toISOString(), decidedBy: me?.id } : r,
+        ),
+      }))
+      const cat = get().catalogues.find((c) => c.id === req.catalogueId)
+      get().audit('emd_exemption.approve', cat?.code ?? req.catalogueId, 'EMD deadline exemption approved for buyer', 'warning')
+      get().notify({
+        userId: req.buyerId, kind: 'system', title: 'EMD exemption approved',
+        body: `You can now fund EMD for ${cat?.code ?? 'this catalogue'} and join the auction.`, href: '/buyer/emd-shortlisted-catalogue',
+      })
+    },
+
+    rejectEmdExemption: (id, reason) => {
+      const role = get().role
+      if (role !== 'sub_admin' && role !== 'exec_manager') return
+      const me = get().currentUser
+      const req = get().emdExemptionRequests.find((r) => r.id === id)
+      if (!req || req.status !== 'pending') return
+      set((st) => ({
+        emdExemptionRequests: st.emdExemptionRequests.map((r) =>
+          r.id === id ? { ...r, status: 'rejected' as const, rejectionReason: reason, decidedAt: new Date(st.now).toISOString(), decidedBy: me?.id } : r,
+        ),
+      }))
+      const cat = get().catalogues.find((c) => c.id === req.catalogueId)
+      get().audit('emd_exemption.reject', cat?.code ?? req.catalogueId, `EMD deadline exemption rejected${reason ? ` — ${reason}` : ''}`, 'warning')
+      get().notify({
+        userId: req.buyerId, kind: 'system', title: 'EMD exemption rejected',
+        body: reason || `Your request for ${cat?.code ?? 'this catalogue'} was not approved.`, href: '/buyer/emd-shortlisted-catalogue',
+      })
+    },
+
     setWithdrawalWindow: (config) => {
       const role = get().role
       if (role !== 'super_admin') return
@@ -1170,6 +1248,25 @@ export function isCatalogueEmdLocked(
 ): boolean {
   const summary = selectionSummary(s, buyerId, catalogueId)
   return summary.count > 0 && summary.shortfall === 0
+}
+
+/** The buyer's most recent EMD exemption request for a catalogue, if any —
+ *  a rejected request doesn't block a fresh one, so only the latest matters. */
+export function latestEmdExemptionRequest(
+  s: Pick<State, 'emdExemptionRequests'>, buyerId: string | undefined, catalogueId: string,
+): EmdExemptionRequest | null {
+  if (!buyerId) return null
+  const mine = s.emdExemptionRequests.filter((r) => r.buyerId === buyerId && r.catalogueId === catalogueId)
+  if (mine.length === 0) return null
+  return mine.reduce((latest, r) => (Date.parse(r.createdAt) > Date.parse(latest.createdAt) ? r : latest))
+}
+
+/** True once a sub-admin has approved reopening EMD funding for this buyer on
+ *  this catalogue despite the deadline having passed. */
+export function hasApprovedEmdExemption(
+  s: Pick<State, 'emdExemptionRequests'>, buyerId: string | undefined, catalogueId: string,
+): boolean {
+  return latestEmdExemptionRequest(s, buyerId, catalogueId)?.status === 'approved'
 }
 
 /** A catalogue counts as "shortlisted" (Browse & Shortlist's scope filter) if the
