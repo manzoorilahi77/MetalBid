@@ -818,38 +818,128 @@
 }
 .auth-quickroles-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
 }
+
+/* Each role is a small card rather than a plain pill: an accent-tinted icon
+   chip carries the colour, the label sits beside it left-aligned so the two
+   lines of "Finance Administrator" stack under one another instead of centring
+   raggedly, and the accent itself comes from [data-tier] below. */
 .auth-quickrole-btn {
+  --role-accent: var(--primary);
+  /* Chip fill and card wash are mixed against the live surface token so both
+     stay correct when [data-theme="dark"] swaps --color-surface out. */
+  --role-tint: color-mix(in srgb, var(--role-accent) 12%, var(--color-surface));
+  --role-wash: color-mix(in srgb, var(--role-accent) 5%, var(--color-surface));
+
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 7px;
-  padding: 9px 8px;
+  gap: 8px;
+  /* Three across means the longest label ("Finance Administrator") wraps to two
+     lines; the min-height keeps every row the same height regardless. */
+  min-height: 52px;
+  padding: 8px 9px;
   background: var(--color-surface);
-  border: 1.5px solid var(--border);
-  border-radius: 10px;
-  font-size: 11px;
-  font-weight: 600;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  text-align: left;
   font-family: var(--font-body);
   color: var(--dark);
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  transition:
+    border-color 0.22s var(--ease-out),
+    background-color 0.22s var(--ease-out),
+    box-shadow 0.22s var(--ease-out),
+    transform 0.22s var(--ease-out);
+  box-shadow: var(--shadow-sm);
 }
+
+/* The icon chip is the piece doing the colour work — a filled rounded square
+   rather than a bare glyph, so the grid scans as nine cards and not nine
+   words. */
+.auth-quickrole-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  background: var(--role-tint);
+  color: var(--role-accent);
+  transition:
+    background-color 0.22s var(--ease-out),
+    color 0.22s var(--ease-out);
+}
+.auth-quickrole-label {
+  min-width: 0;
+  font-size: 10.5px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.005em;
+}
+
+/* Tier accents. Market-side is the brand ember, operations steel, Finance the
+   same green rupee figures use across the app, and the admin tiers maroon. */
+.auth-quickrole-btn[data-tier='market'] { --role-accent: var(--color-ember); }
+.auth-quickrole-btn[data-tier='ops']    { --role-accent: var(--color-steel); }
+.auth-quickrole-btn[data-tier='money']  { --role-accent: var(--color-success); }
+.auth-quickrole-btn[data-tier='admin']  { --role-accent: var(--accent-maroon); }
+/* --accent-maroon is a deep #7b2d20 tuned for light surfaces and has no
+   dark-mode value of its own; left alone the three admin icons sink into the
+   dark card. Lift it here rather than globally — the Market Intelligence
+   dashboard is the token's other consumer and isn't ours to retune. */
+:root[data-theme='dark'] .auth-quickrole-btn[data-tier='admin'] {
+  --role-accent: #d1735e;
+}
+
 .auth-quickrole-btn:hover:not(:disabled) {
-  border-color: var(--primary);
-  color: var(--primary);
+  border-color: color-mix(in srgb, var(--role-accent) 45%, var(--border));
+  background: var(--role-wash);
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(228, 87, 46, 0.1);
+  box-shadow:
+    0 8px 18px -8px color-mix(in srgb, var(--role-accent) 45%, transparent),
+    var(--shadow-sm);
+}
+.auth-quickrole-btn:hover:not(:disabled) .auth-quickrole-icon {
+  background: var(--role-accent);
+  color: var(--color-surface);
 }
 .auth-quickrole-btn:active:not(:disabled) {
   transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+/* Keyboard users got no affordance at all before — the pill only ever reacted
+   to :hover. */
+.auth-quickrole-btn:focus-visible {
+  outline: none;
+  border-color: var(--role-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--role-accent) 22%, transparent);
 }
 .auth-quickrole-btn:disabled {
-  opacity: 0.55;
+  opacity: 0.45;
   cursor: not-allowed;
+}
+/* Pressing one card disables all nine. The one being signed into keeps full
+   contrast and wears its accent, so the spinner reads as progress rather than
+   as another greyed-out control. */
+.auth-quickrole-btn.is-signing-in:disabled {
+  opacity: 1;
+  border-color: var(--role-accent);
+  background: var(--role-wash);
+}
+.auth-quickrole-btn.is-signing-in .auth-quickrole-icon {
+  background: var(--role-accent);
+  color: var(--color-surface);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-quickrole-btn,
+  .auth-quickrole-btn:hover:not(:disabled) {
+    transition-duration: 0.01ms;
+    transform: none;
+  }
 }
 
 /* ═══════════════════════════════════════════════
@@ -1134,6 +1224,10 @@
 }
 
 @media (max-width: 400px) {
+  /* Three role columns get too narrow to read on a phone — drop to two. */
+  .auth-quickroles-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
   .auth-left-title {
     font-size: 20px;
   }

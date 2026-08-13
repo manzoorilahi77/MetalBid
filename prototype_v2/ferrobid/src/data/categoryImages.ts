@@ -50,7 +50,10 @@ export const CATEGORY_IMAGES: Record<MetalCategory, string[]> = {
 }
 
 /** Deterministically pick one image for a category, varied by seed (e.g. a photo's hue). */
-export function categoryImageUrl(category: MetalCategory, seed: number): string {
-  const imgs = CATEGORY_IMAGES[category]
+/** Categories added at runtime from Master data have no curated photo set, so
+ *  the lookup falls back to the whole library rather than indexing undefined —
+ *  a new vocabulary entry must never be able to blank a screen. */
+export function categoryImageUrl(category: MetalCategory | string, seed: number): string {
+  const imgs = CATEGORY_IMAGES[category as MetalCategory] ?? Object.values(CATEGORY_IMAGES).flat()
   return imgs[Math.abs(Math.round(seed)) % imgs.length]
 }

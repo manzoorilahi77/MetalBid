@@ -8,97 +8,18 @@ import {
   Bell, Check, ChevronDown, Flame, Gavel, Globe, LogOut, Mail, Menu, Moon, Search, Sun, User as UserIcon,
   Wallet as WalletIcon, X, LifeBuoy, FileText, SlidersHorizontal,
 } from 'lucide-react'
-import { ROLE_HOME, ROLE_LABEL, useStore } from '../store/store'
+import { ROLE_HOME, ROLE_LABEL, topNavFrom, useStore } from '../store/store'
 import { inrCompact, relTime } from '../lib/format'
 import { useClientIp } from '../lib/useClientIp'
 import { AppComingSoonModal, Avatar, Chip, cx } from '../components/ui'
 import { useBidroomGate } from '../components/BidroomGate'
-import type { Role } from '../types'
 
-/** A single source of truth per role: which nav item(s) appear on the top
- *  nav and/or the contextual sub-nav, so the two surfaces can't drift apart. */
-export type NavItem = {
-  to: string
-  label: string
-  subLabel?: string
-  end?: boolean
-  locked?: boolean
-  in: ('top' | 'sub')[]
-  /** Extra path prefixes (besides `to`) that should also mark this item active —
-   *  for routes that conceptually belong to this item but live outside its own
-   *  path prefix (e.g. catalogue detail pages reached from a listing tab). */
-  activeMatch?: string[]
-}
-
-export const NAV_BY_ROLE: Record<Role, NavItem[]> = {
-  guest: [
-    { to: '/browse', label: 'Browse auctions', in: ['top'] },
-    { to: '/noticeboard', label: 'Noticeboard', in: ['top'] },
-    { to: '/help', label: 'How it works', in: ['top'] },
-  ],
-  // guest1 renders its own standalone app (Guest1App) outside this Chrome
-  // shell, so it needs no top/sub nav items here — the map only requires a key.
-  guest1: [],
-  // Guest 2 (public-site role) — uses the shared chrome like every other role.
-  // Lean top nav, no sub-nav (like the guest role); deeper content lives on the
-  // home page and the two solution pages.
-  guest2: [
-    { to: '/g2', label: 'Home', end: true, in: ['top'] },
-    { to: '/g2/solutions/buyers', label: 'For buyers', in: ['top'] },
-    { to: '/g2/solutions/sellers', label: 'For sellers', in: ['top'] },
-    { to: '/g2/how-it-works', label: 'How it works', in: ['top'] },
-    { to: '/g2/contact', label: 'Contact', in: ['top'] },
-  ],
-  buyer: [
-    { to: '/buyer', label: 'Home', subLabel: 'Dashboard', end: true, in: ['top', 'sub'] },
-    { to: '/buyermarketplace', label: 'Browse & Shortlist', in: ['sub'], activeMatch: ['/catalogue'] },
-    { to: '/buyer/emd-shortlisted-catalogue', label: 'EMD & payments', subLabel: 'EMD for shortlisted catalogues', in: ['sub'], activeMatch: ['/buyer/shortlist'] },
-    { to: '/buyer/bids', label: 'My bids', subLabel: 'Bid results', in: ['sub'] },
-    { to: '/buyer/auction-status', label: 'Auction status', in: ['sub'] },
-    { to: '/noticeboard', label: 'Noticeboard', in: ['top'] },
-    { to: '/buyer/wallet', label: 'Wallet & ledger', in: ['sub'] },
-    { to: '/buyer/kyc', label: 'Become a seller', in: ['sub'] },
-  ],
-  seller: [
-    { to: '/seller', label: 'Workspace', end: true, in: ['sub'] },
-    { to: '/seller/create-lot', label: 'Create lot', in: ['sub'] },
-    { to: '/seller/lots', label: 'My lots', subLabel: 'My lots & batches', in: ['sub'] },
-    { to: '/seller/monitor', label: 'Live monitor', in: ['sub'] },
-    { to: '/seller/settlement', label: 'Settlement', subLabel: 'Agree price & pay commission', in: ['sub'] },
-    { to: '/seller/reports', label: 'Results & reports', in: ['sub'] },
-  ],
-  field_exec: [
-    { to: '/field', label: 'Inspection queue', in: ['top'] },
-  ],
-  exec_manager: [
-    { to: '/exec', label: 'Pipeline', end: true, in: ['top', 'sub'] },
-    { to: '/exec/approvals', label: 'Lot approval', in: ['sub'] },
-    { to: '/exec/catalogue-builder', label: 'Catalogue builder', in: ['sub'] },
-    { to: '/exec/auction-setup', label: 'Auction setup', in: ['sub'] },
-    { to: '/exec/settlement', label: 'Settlement', in: ['sub'] },
-    { to: '/exec/logistics', label: 'Logistics', in: ['sub'] },
-    { to: '/exec/handover', label: 'Handover', in: ['sub'] },
-    { to: '/browse', label: 'Browse', in: ['top'] },
-  ],
-  sub_admin: [
-    { to: '/sub', label: 'Ops console', end: true, in: ['top', 'sub'] },
-    { to: '/sub/bid-monitor', label: 'Bid monitor', in: ['sub'] },
-    { to: '/sub/queue', label: 'Work queue', in: ['sub'] },
-    { to: '/sub/approvals', label: 'Approvals', in: ['sub'] },
-    { to: '/admin/finance', label: 'Financial config', locked: true, in: ['sub'] },
-    { to: '/admin/master-data', label: 'Master data', locked: true, in: ['sub'] },
-  ],
-  super_admin: [
-    { to: '/admin', label: 'Dashboard', end: true, in: ['top', 'sub'] },
-    { to: '/admin/control-tower', label: 'Control tower', in: ['sub'] },
-    { to: '/admin/users', label: 'Users', subLabel: 'User management', in: ['sub'] },
-    { to: '/admin/team', label: 'Team', subLabel: 'Team & permissions', in: ['sub'] },
-    { to: '/admin/blacklist', label: 'Blacklist & defaulters', in: ['sub'] },
-    { to: '/admin/finance', label: 'Financial config', in: ['sub'] },
-    { to: '/admin/master-data', label: 'Master data', in: ['sub'] },
-    { to: '/admin/audit', label: 'Audit trail', in: ['sub'] },
-  ],
-}
+/* The shipped menu now lives in ./nav, and the store seeds its page registry
+   from it. Chrome renders the registry — which the Super Admin's Page manager
+   edits — rather than the defaults, so the two can't drift. Re-exported here
+   because every existing caller imports NAV_BY_ROLE from this file. */
+export { NAV_BY_ROLE } from './nav'
+export type { NavItem } from './nav'
 
 function Logo() {
   const role = useStore((s) => s.role)
@@ -283,6 +204,7 @@ function SessionIp({ className }: { className?: string }) {
 
 function TopNav() {
   const role = useStore((s) => s.role)
+  const pages = useStore((s) => s.pageRegistry)
   const me = useStore((s) => s.currentUser)
   const wallets = useStore((s) => s.wallets)
   const theme = useStore((s) => s.theme)
@@ -295,7 +217,9 @@ function TopNav() {
 
   const { openBidNow } = useBidroomGate()
 
-  const links = NAV_BY_ROLE[role].filter((i) => i.in.includes('top'))
+  /* The registry, not the shipped defaults — a tab renamed or hidden in Page
+     manager changes this bar immediately. */
+  const links = topNavFrom(pages, role)
   const wallet = wallets.find((w) => w.userId === me?.id)
   const showWallet = role === 'buyer' || role === 'seller'
   /* The shortcut straight into a live auction — buyers only, wherever they are. */
@@ -527,7 +451,7 @@ function HomeFooter() {
 /** Roles whose entire section (dashboard + sub-pages) shows the home page's
  *  footer instead of the default one — per product decision, not every
  *  Chrome-wrapped page (login, catalogue, browse, g2, …) gets it. */
-const HOME_FOOTER_PATH_PREFIXES = ['/buyer', '/buyermarketplace', '/seller', '/exec', '/field', '/sub', '/admin']
+const HOME_FOOTER_PATH_PREFIXES = ['/buyer', '/buyermarketplace', '/seller', '/exec', '/auction', '/finance', '/field', '/sub', '/admin', '/ceo']
 
 function Footer() {
   const { pathname } = useLocation()

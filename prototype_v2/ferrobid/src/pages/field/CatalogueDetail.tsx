@@ -24,6 +24,11 @@ export default function FieldCatalogueDetail() {
 
   const seller = users.find((u) => u.id === cat.sellerId)
   const catLots = cat.lotIds.map((id) => lots.find((l) => l.id === id)).filter((l): l is Lot => !!l)
+  // A lot is still ours while it is pending, or after Operations sends it back.
+  const openLots = catLots.filter((l) => !l.inspectionWaived && ['pending_inspection', 'flagged', 'rejected'].includes(l.status))
+  const open = openLots.length
+  const inspected = catLots.length - open
+  const sentBack = openLots.filter((l) => l.status !== 'pending_inspection').length
 
   return (
     <Page className="max-w-xl pb-16">
@@ -35,6 +40,8 @@ export default function FieldCatalogueDetail() {
         <div className="flex items-center gap-2 flex-wrap">
           <span className="num font-bold text-ember">{cat.code}</span>
           <Chip tone="steel">Assigned</Chip>
+          {open === 0 && <Chip tone="success">All inspected</Chip>}
+          {sentBack > 0 && <Chip tone="warning" className="num">{sentBack} sent back</Chip>}
         </div>
         <h1 className="font-display text-xl font-bold mt-1">{cat.title}</h1>
         <div className="text-sm text-ink-muted mt-1">{seller?.firm ?? 'Seller'}</div>
@@ -57,14 +64,16 @@ export default function FieldCatalogueDetail() {
           </div>
           <div>
             <div className="text-[11px] font-bold uppercase tracking-wider text-ink-faint">Lots</div>
-            <div className="num text-sm font-semibold mt-0.5">{catLots.length} total</div>
+            <div className="num text-sm font-semibold mt-0.5">{inspected} of {catLots.length} inspected</div>
+            {open > 0 && <div className="num text-xs text-ember mt-0.5">{open} still to inspect</div>}
           </div>
         </div>
       </div>
 
       <h2 className="text-lg font-bold mt-6 mb-3">Lots to inspect</h2>
       <div className="space-y-2">
-        {catLots.map((l) => {
+        {/* outstanding work first — done and waived lots are context below it */}
+        {[...catLots].sort((a, b) => Number(openLots.includes(b)) - Number(openLots.includes(a))).map((l) => {
           const card = (
             <article className={cx('card p-3.5 flex items-center gap-3', !l.inspectionWaived && 'card-hover')}>
               <PhotoThumb hue={l.photos[0]?.hue ?? 24} category={l.category} className="w-16 h-12" />

@@ -1566,5 +1566,58 @@
     ],
     "termsSetId": "ts-standard",
     "description": "E-auction of off-spec HR coils and foundry scrap on as-is-where-is basis. Auction closed — results below are final H1 rates pending seller settlement."
+  },
+  {
+    "id": "cat-30",
+    "code": "AUC-2431",
+    "title": "Raigarh Yard — Ferrous Scrap & Rebar Cuttings",
+    "sellerId": "u-seller-2",
+    "type": "forward",
+    "status": "draft",
+    "assignedFieldExecId": "u-field-2",
+    "startsAt": "2026-07-19T05:00:00.000Z",
+    "endsAt": "2026-07-19T09:00:00.000Z",
+    "emdDeadline": "2026-07-18T05:00:00.000Z",
+    "inspectionFrom": "2026-07-12T08:30:00.000Z",
+    "inspectionTo": "2026-07-14T11:30:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "R. Mahanta",
+      "phone": "+91 94061 55210",
+      "role": "Yard In-charge (Inspection & Lifting)"
+    },
+    "yardName": "JSPL Raigarh Scrap Yard",
+    "yardAddress": "Gate 2, JSPL Works, Raigarh, Chhattisgarh 496001",
+    "region": "Raigarh, CG",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "lot-290",
+      "lot-291",
+      "lot-292",
+      "lot-293"
+    ],
+    "documents": [
+      {
+        "id": "cat-30-doc-1",
+        "name": "AUC-2431 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.9 MB"
+      },
+      {
+        "id": "cat-30-doc-2",
+        "name": "Inspection Reports (all lots).pdf",
+        "type": "pdf",
+        "size": "3.1 MB"
+      },
+      {
+        "id": "cat-30-doc-3",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "740 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of ferrous scrap and rebar cuttings on as-is-where-is basis. Every lot inspected and approved; one lot accepted directly under a trusted-seller bypass. Quantity indicative — final on weighment."
   }
 ]

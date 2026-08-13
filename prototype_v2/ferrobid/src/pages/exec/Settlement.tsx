@@ -47,8 +47,24 @@ export default function Settlement() {
   const firm = (id: string | null) => users.find((u) => u.id === id)?.firm ?? 'Unknown bidder'
   const catCode = (id: string) => catalogues.find((c) => c.id === id)?.code ?? id
 
-  const awaitingPayment = deliveryOrders.filter((d) => d.stage === 'payment_pending')
   const settledValue = deliveryOrders.filter((d) => d.stage === 'completed').reduce((s, d) => s + doTotal(d), 0)
+  /* A seller who refuses the cleared price ends the commercial chain — no
+     commission is charged and the material becomes an operational decision.
+     Nothing in the build handled that; this is where it lands. */
+  const refusedLots = lots.filter((l) => l.sellerDecision === 'rejected' && closedIds.includes(l.catalogueId))
+
+  const returnToPipeline = (id: string) => {
+    const l = lots.find((x) => x.id === id)
+    if (!l) return
+    setLotStatus(id, 'unsold')
+    audit('settlement.refused_price', l.lotNo,
+      `Seller refused ${inr(l.resultH1Rate ?? 0)}/${l.uom} — lot returned to the pipeline for re-auction (${catCode(l.catalogueId)})`, 'warning')
+    pushToast({
+      kind: 'info',
+      title: `${l.lotNo} returned to the pipeline`,
+      body: 'Marked unsold and available to catalogue again. Held EMD releases automatically.',
+    })
+  }
 
   const approveSale = (id: string) => {
     const l = lots.find((x) => x.id === id)!
@@ -72,11 +88,14 @@ export default function Settlement() {
 
   return (
     <Page>
-      <PageHeader title="Settlement" sub="Decide subject-to-approval results and track payments through delivery orders." />
+      <PageHeader
+        title="Post-auction exceptions"
+        sub="The two commercial calls a closed auction leaves with Operations: a lot that cleared below its reserve, and a price the seller refused. Confirming results belongs to the Auction Manager, and the money to Finance."
+      />
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
         <Stat label="Pending STA decisions" value={staLots.length} tone={staLots.length > 0 ? 'warning' : 'success'} sub="H1 below reserve — needs a call" />
-        <Stat label="DOs awaiting payment" value={awaitingPayment.length} tone="steel" sub="Material + GST + TCS due" />
+        <Stat label="Prices the seller refused" value={refusedLots.length} tone={refusedLots.length > 0 ? 'warning' : 'success'} sub="material needs a decision" />
         <Stat label="Settled value this week" value={inrCompact(settledValue)} tone="success" sub="Completed delivery orders" />
       </div>
 
@@ -117,7 +136,53 @@ export default function Settlement() {
         </div>
       )}
 
-      <h2 className="font-display text-lg font-bold mb-3 mt-8">Payments & delivery orders</h2>
+      {/* ------------------- prices the seller would not take ---------------- */}
+      <h2 className="font-display text-lg font-bold mb-3 mt-8">Prices the seller refused</h2>
+      {refusedLots.length === 0 ? (
+        <EmptyState title="No refused prices" body="When a seller rejects the price one of their lots cleared at, it lands here — no commission is charged and the material needs an operational decision." />
+      ) : (
+        <div className="space-y-3 mb-8">
+          {refusedLots.map((l) => {
+            const cleared = l.resultH1Rate ?? 0
+            return (
+              <div key={l.id} className="card p-4 flex flex-wrap items-center gap-x-5 gap-y-3">
+                <div className="min-w-52 flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="num text-xs font-bold text-ink-muted">{l.lotNo}</span>
+                    <Chip tone="neutral"><span className="num">{catCode(l.catalogueId)}</span></Chip>
+                    <Chip tone="warning">Seller refused</Chip>
+                  </div>
+                  <div className="font-semibold mt-0.5">{l.grade} · {l.metal}</div>
+                  <div className="text-xs text-ink-muted">
+                    <span className="num">{num(l.indicativeQty)} {l.uom}</span> · winning bidder <span className="font-semibold text-ink">{firm(l.leadingBidderId)}</span>
+                  </div>
+                </div>
+                <div className="text-sm">
+                  <div className="text-xs text-ink-faint">Cleared at</div>
+                  <div className="num font-bold">{inr(cleared)}/{l.uom}</div>
+                </div>
+                <div className="text-sm">
+                  <div className="text-xs text-ink-faint">Seller&apos;s reserve</div>
+                  <div className="num font-semibold text-ink-muted">{inr(l.reserveRate)}/{l.uom}</div>
+                </div>
+                <div className="flex gap-2 ml-auto">
+                  <Button size="sm" variant="secondary" onClick={() => returnToPipeline(l.id)}>Return for re-auction</Button>
+                </div>
+                <p className="w-full text-[12px] text-ink-muted border-t border-line pt-2.5">
+                  No commission is charged on a refused price. The buyer bid in good faith — whoever speaks to them should
+                  do it before the lot is relisted.
+                </p>
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      <h2 className="font-display text-lg font-bold mb-3 mt-8">Payments &amp; delivery orders</h2>
+      <p className="text-[13px] text-ink-muted -mt-1 mb-3">
+        Read-alongside. Chasing a buyer, confirming a receipt and issuing an invoice are the Finance Administrator&apos;s —
+        Operations watches this to know when it can schedule lifting.
+      </p>
       {!canIssueDd && (
         <div className="card bg-surface-2 p-3 flex items-center justify-between gap-3 mb-3">
           <span className="text-xs text-ink-muted">Issuing a Demand Draft record needs Sub-Admin or Exec Manager access.</span>

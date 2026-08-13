@@ -66,7 +66,24 @@ function DisputeRow({ d, lotNo }: { d: Dispute; lotNo?: string }) {
               {m.from === 'user' && me && <Avatar name={me.name} hue={me.avatarHue} size={28} />}
             </div>
           ))}
-          {d.status !== 'resolved' && (
+          {/* How it ended, said once and plainly. A ticket the desk has decided
+              but Finance has not yet paid is deliberately still open — from the
+              customer's side, money owed and not returned is not resolved. */}
+          {d.outcome && (
+            <div className={cx('card border-0 p-3.5 text-sm',
+              d.refundId && d.status !== 'resolved' ? 'bg-warning-soft/50' : 'bg-success-soft/50')}>
+              <div className="font-semibold">
+                {d.status === 'resolved' ? 'Resolved' : 'Decided — your refund is being processed'}
+              </div>
+              <p className="text-ink-muted mt-1 leading-relaxed">{d.resolution}</p>
+              {d.refundId && d.status !== 'resolved' && (
+                <p className="text-xs text-ink-faint mt-1.5">
+                  This ticket stays open until the money is back with you. It will close by itself once it has been paid.
+                </p>
+              )}
+            </div>
+          )}
+          {d.status !== 'resolved' && !d.outcome && (
             <p className="text-xs text-ink-faint pt-1">
               Support typically replies within 1 working day. You will be notified here and by email.
             </p>

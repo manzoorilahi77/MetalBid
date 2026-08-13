@@ -1,8 +1,20 @@
-/* Executive Manager — §8 catalogue builder: a 4-step full-width wizard that
-   assembles approved lots into a published auction catalogue. */
+/* ---------------------------------------------------------------------------
+   Operation Manager — catalogue builder: a 4-step wizard that assembles
+   submitted lots into a catalogue and routes it for inspection.
+
+   Two rules from the role architecture shape this screen:
+
+   · **Nothing built here is public.** A catalogue leaves this wizard as a
+     private draft. It becomes an auction on Auction schedule, when somebody
+     presses Publish — there is deliberately no publish button in the builder.
+   · **A bulk override changes the seller's own terms.** Setting an increment,
+     an EMD or a unit across every selected lot at once is fast and is exactly
+     the sort of edit that goes unnoticed, so the original value is kept beside
+     the new one on the lot, the change is audited, and the seller is told.
+--------------------------------------------------------------------------- */
 import { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { ArrowUp, ArrowDown, X, FileText, Paperclip, CheckCircle2 } from 'lucide-react'
+import { Link, useNavigate } from 'react-router-dom'
+import { AlertTriangle, ArrowUp, ArrowDown, EyeOff, X, FileText, Paperclip, CheckCircle2 } from 'lucide-react'
 import { Page } from '../../layout/Chrome'
 import {
   PageHeader, Tabs, Button, Chip, Field, Input, Select, EmptyState, PhotoThumb, cx,
@@ -42,8 +54,6 @@ export default function CatalogueBuilder() {
   const catalogues = useStore((s) => s.catalogues)
   const termsSets = useStore((s) => s.termsSets)
   const publishCatalogue = useStore((s) => s.publishCatalogue)
-  const waiveInspection = useStore((s) => s.waiveInspection)
-  const me = useStore((s) => s.currentUser)
   const pushToast = useStore((s) => s.pushToast)
 
   const sellers = users.filter((u) => u.role === 'seller')
@@ -136,8 +146,25 @@ export default function CatalogueBuilder() {
       }
       return next
     })
-    pushToast({ kind: 'success', title: 'Bulk settings applied', body: `Updated ${selected.length} selected lot${selected.length > 1 ? 's' : ''}.` })
+    pushToast({
+      kind: 'warning',
+      title: 'Seller terms overridden',
+      body: `${selected.length} lot${selected.length > 1 ? 's' : ''} changed. The originals are kept, and the seller is told when this catalogue is assigned.`,
+    })
   }
+
+  /** Every field this build has changed from what the seller submitted, with
+   *  the original beside it. Shown before the catalogue is assigned, because
+   *  after that it is disclosed to the seller and written to the audit trail. */
+  const overrideRows = selected.flatMap((l) => {
+    const o = overrides[l.id]
+    if (!o) return []
+    const rows: { key: string; lotNo: string; label: string; from: string; to: string }[] = []
+    if (o.increment != null && o.increment !== l.increment) rows.push({ key: `${l.id}-inc`, lotNo: l.lotNo, label: 'Bid increment', from: inr(l.increment), to: inr(o.increment) })
+    if (o.preBidEmd != null && o.preBidEmd !== l.preBidEmd) rows.push({ key: `${l.id}-emd`, lotNo: l.lotNo, label: 'Pre-bid EMD', from: inr(l.preBidEmd), to: inr(o.preBidEmd) })
+    if (o.uom && o.uom !== l.uom) rows.push({ key: `${l.id}-uom`, lotNo: l.lotNo, label: 'Unit of measure', from: l.uom, to: o.uom })
+    return rows
+  })
 
   const attach = (t: (typeof ATTACH_TILES)[number]) => {
     setAttached((prev) => [...prev, { id: uid('doc'), name: t.name, type: t.type, size: t.size }])
@@ -191,8 +218,13 @@ export default function CatalogueBuilder() {
     <Page>
       <PageHeader
         title="Catalogue builder"
-        sub="Bundle approved lots into an auction catalogue — sequence, schedule, documents, publish."
-        actions={<Chip tone="steel">Draft <span className="num">{code}</span></Chip>}
+        sub="Bundle submitted lots into a catalogue — sequence, schedule, documents, then assign it for inspection. Nothing you build here is visible to any buyer or seller until it is published on Auction schedule."
+        actions={
+          <>
+            <Chip tone="steel">Draft <span className="num">{code}</span></Chip>
+            <Chip tone="neutral"><EyeOff size={11} /> Private</Chip>
+          </>
+        }
       />
 
       <Tabs<Step>
@@ -242,23 +274,12 @@ export default function CatalogueBuilder() {
                           <span className="num">{num(l.indicativeQty)} {l.uom}</span> · {l.yard} · start <span className="num">{inr(l.startRate)}/{l.uom}</span>
                         </div>
                       </div>
-                      {l.knownSeller && (
-                        l.inspectionWaived ? (
-                          <Chip tone="success">Waived</Chip>
-                        ) : (
-                          <Button
-                            type="button" size="sm" variant="secondary"
-                            onClick={(e) => {
-                              e.preventDefault()
-                              e.stopPropagation()
-                              waiveInspection(l.id, me?.id ?? 'u-exec-1', 'Known seller — trusted, skipping field inspection')
-                              pushToast({ kind: 'success', title: `${l.lotNo} waived`, body: 'Approved without field inspection — known seller.' })
-                            }}
-                          >
-                            Waive — known seller
-                          </Button>
-                        )
-                      )}
+                      {/* Bypassing an inspection is a decision, not an assembly
+                          step, and it needs a typed reason — so it is made on
+                          Lot approval and only shown here as a state. */}
+                      {l.inspectionWaived
+                        ? <Chip tone="warning">Bypassed — no yard visit</Chip>
+                        : l.knownSeller && <Chip tone="success">Known seller</Chip>}
                       <span className="num text-xs text-ink-faint shrink-0">{l.lotNo}</span>
                     </label>
                   )
@@ -511,6 +532,35 @@ export default function CatalogueBuilder() {
             </div>
           </div>
 
+          {/* ---------------- what we changed on the seller's lots ------------- */}
+          {overrideRows.length > 0 && (
+            <div className="card border-l-4 border-l-warning overflow-hidden">
+              <div className="px-4 py-3 border-b border-line bg-warning-soft/40 flex flex-wrap items-center gap-2">
+                <AlertTriangle size={15} className="text-warning shrink-0" />
+                <span className="font-bold text-sm">You have changed {overrideRows.length} thing{overrideRows.length === 1 ? '' : 's'} the seller submitted</span>
+                <span className="text-[12px] text-ink-muted ml-auto">Disclosed to the seller · originals kept · written to the audit trail</span>
+              </div>
+              <div className="divide-y divide-line">
+                {overrideRows.map((r) => (
+                  <div key={r.key} className="px-4 py-2.5 flex flex-wrap items-baseline gap-x-3 gap-y-1 text-[13px]">
+                    <span className="num font-bold w-16 shrink-0">{r.lotNo}</span>
+                    <span className="font-medium">{r.label}</span>
+                    <span className="num ml-auto shrink-0">
+                      <span className="text-ink-muted line-through">{r.from}</span>
+                      <span className="text-ink-faint mx-2">→</span>
+                      <span className="font-bold text-ember-strong">{r.to}</span>
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <p className="px-4 py-3 border-t border-line text-[12px] text-ink-muted">
+                A bulk change is fast and easy to miss, which is why it is listed here rather than left in the annexure.
+                The seller keeps their original figures on the lot record and is notified of every line above the moment
+                this catalogue is assigned.
+              </p>
+            </div>
+          )}
+
           <div className="card p-4 flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-wrap items-end gap-3">
               <Field label="Assign to field executive" className="w-56">
@@ -520,7 +570,9 @@ export default function CatalogueBuilder() {
                 </Select>
               </Field>
               <div className="text-sm text-ink-muted max-w-sm">
-                Assigning locks lot numbering <span className="num">LOT-01…LOT-{String(selected.length).padStart(2, '0')}</span> and routes this catalogue to the field executive's inspection queue. Bidding stays closed until you publish it later from the pipeline.
+                Assigning locks lot numbering <span className="num">LOT-01…LOT-{String(selected.length).padStart(2, '0')}</span> and routes this
+                catalogue to the field executive&apos;s inspection queue. It stays private throughout — it only reaches
+                buyers when somebody publishes it on <Link to="/auction/schedule" className="text-ember font-semibold hover:underline">Auction schedule</Link>.
               </div>
             </div>
             <Button onClick={assign} disabled={!step2Done || !fieldExecId}>Save & assign for inspection</Button>

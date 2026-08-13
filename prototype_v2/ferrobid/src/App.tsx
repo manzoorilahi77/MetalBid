@@ -1,12 +1,12 @@
 import { lazy, Suspense } from 'react'
 import { HashRouter, Outlet, Route, Routes, useLocation } from 'react-router-dom'
-import Chrome, { NAV_BY_ROLE, Page, SubNav } from './layout/Chrome'
+import Chrome, { Page, SubNav } from './layout/Chrome'
 import ScrollToTop from './layout/ScrollToTop'
 import type { Role } from './types'
 import { ToastHost } from './components/ui'
 import { BidroomGateProvider } from './components/BidroomGate'
 import { useTick } from './lib/useTick'
-import { useStore } from './store/store'
+import { subNavFrom, useStore, visiblePages } from './store/store'
 
 /* public + shared */
 import Home from './pages/Home'
@@ -69,29 +69,80 @@ import Settlement from './pages/exec/Settlement'
 import Logistics from './pages/exec/Logistics'
 import Handover from './pages/exec/Handover'
 
-/* sub-admin */
+/* auction manager */
+import AuctionDashboard from './pages/auction/Dashboard'
+import AuctionSchedule from './pages/auction/Schedule'
+import EmdEligibility from './pages/auction/EmdEligibility'
+import LiveAuctions from './pages/auction/LiveAuctions'
+import BiddingRooms from './pages/auction/BiddingRooms'
+import BiddingRoomOperator from './pages/auction/BiddingRoomOperator'
+import AuctionBidMonitor from './pages/auction/BidMonitor'
+import AuctionAnnouncements from './pages/auction/Announcements'
+import AuctionResults from './pages/auction/Results'
+import AuctionHistory from './pages/auction/History'
+import AuctionReports from './pages/auction/Reports'
+
+/* finance administrator */
+import { ReadOnlyBanner } from './pages/finance/shared'
+import FinanceDashboard from './pages/finance/Dashboard'
+import ProfitLoss from './pages/finance/ProfitLoss'
+import FinanceDeposits from './pages/finance/Deposits'
+import FinancePayments from './pages/finance/Payments'
+import FinanceCommission from './pages/finance/Commission'
+import EmdLedger from './pages/finance/EmdLedger'
+import FinanceBankAccounts from './pages/finance/BankAccounts'
+import FinanceWithdrawals from './pages/finance/Withdrawals'
+import FinanceRefunds from './pages/finance/Refunds'
+import FinanceInvoices from './pages/finance/Invoices'
+import FinanceReconciliation from './pages/finance/Reconciliation'
+import FinanceReports from './pages/finance/Reports'
+
+/* CEO / MD */
+import CeoProfitLoss from './pages/ceo/ProfitLoss'
+import CeoGrowth from './pages/ceo/Growth'
+import CeoAuctionPerformance from './pages/ceo/AuctionPerformance'
+import CeoRisk from './pages/ceo/Risk'
+import CeoIssues from './pages/ceo/Issues'
+import CeoApprovals from './pages/ceo/Approvals'
+import CeoDelegate from './pages/ceo/Delegate'
+import CeoReports from './pages/ceo/Reports'
+
+/* sub-admin — head of operations. Only the screens no other role owns live
+   here; the pipeline, the auction floor and the accounts screen are the other
+   roles' own routes, worked by this one as well. */
 import OpsConsole from './pages/sub/OpsConsole'
-import BidMonitor from './pages/sub/BidMonitor'
 import WorkQueue from './pages/sub/WorkQueue'
 import SubApprovals from './pages/sub/Approvals'
+import SellerVerification from './pages/sub/SellerVerification'
+import FieldExecutives from './pages/sub/FieldExecutives'
+import BidMonitor from './pages/sub/BidMonitor'
+import PaymentActivity from './pages/sub/PaymentActivity'
+import SubDisputes from './pages/sub/Disputes'
+import ContentManagement from './pages/sub/Content'
+import SubReports from './pages/sub/Reports'
+import MyActivity from './pages/sub/MyActivity'
 
-/* super admin */
+/* super admin — structure → people → settings → exceptions → the record */
 import AdminDashboard from './pages/admin/Dashboard'
-import Team from './pages/admin/Team'
+import Roles from './pages/admin/Roles'
+import PageManager from './pages/admin/PageManager'
+import SubAdmins from './pages/admin/SubAdmins'
 import Users from './pages/admin/Users'
-import ControlTower from './pages/admin/ControlTower'
-import Blacklist from './pages/admin/Blacklist'
 import Finance from './pages/admin/Finance'
 import MasterData from './pages/admin/MasterData'
+import ContentPublishing from './pages/admin/Content'
+import Blacklist from './pages/admin/Blacklist'
+import ControlTower from './pages/admin/ControlTower'
+import ChangeHistory from './pages/admin/ChangeHistory'
 import Audit from './pages/admin/Audit'
 
 /* contextual module nav per area — tabs under the header, never a sidebar */
-/** Derives a role's sub-nav tabs from the same NAV_BY_ROLE config the top nav uses,
- *  so the two surfaces can't drift out of sync. */
-function subNavItems(role: Role) {
-  return NAV_BY_ROLE[role]
-    .filter((i) => i.in.includes('sub'))
-    .map((i) => ({ to: i.to, label: i.subLabel ?? i.label, end: i.end, locked: i.locked, activeMatch: i.activeMatch }))
+/** Derives a role's sub-nav tabs from the same page registry the top nav
+ *  renders, so the two surfaces can't drift out of sync — and so a tab renamed,
+ *  reordered or hidden in the Super Admin's Page manager moves both at once. */
+function useSubNavItems(role: Role) {
+  const pages = useStore((s) => s.pageRegistry)
+  return subNavFrom(pages, role)
 }
 
 /** Browse and Noticeboard are shared pages that live outside every role's own
@@ -101,9 +152,10 @@ function subNavItems(role: Role) {
  *  tab strip stays put across all of its top-level destinations. */
 function SharedLayout() {
   const role = useStore((s) => s.role)
+  const pages = useStore((s) => s.pageRegistry)
   const { pathname } = useLocation()
-  const items = subNavItems(role)
-  const fromTopNav = NAV_BY_ROLE[role].some((i) => i.in.includes('top') && i.to === pathname)
+  const items = useSubNavItems(role)
+  const fromTopNav = visiblePages(pages, role).some((p) => p.inTop && p.to === pathname)
   return (
     <>
       {items.length > 0 && fromTopNav && <SubNav items={items} />}
@@ -120,7 +172,7 @@ function SharedLayout() {
  *  sub-nav unconditionally rather than gating on a top-nav pathname match. */
 function CatalogueDetailLayout() {
   const role = useStore((s) => s.role)
-  const items = subNavItems(role)
+  const items = useSubNavItems(role)
   return (
     <>
       {items.length > 0 && <SubNav items={items} />}
@@ -129,10 +181,48 @@ function CatalogueDetailLayout() {
   )
 }
 
-function ExecLayout() {
+/** A workspace several roles hold between them.
+ *
+ *  The lot pipeline, lot approval, the catalogue builder, the auction schedule,
+ *  EMD eligibility, the live floor and the accounts screen are each **one**
+ *  screen worked by more than one role — the Operation Manager and the Sub
+ *  Admin share the pipeline, the Auction Manager and the Sub Admin share the
+ *  floor, the Sub Admin and the Super Admin share accounts — rather than a copy
+ *  per role, so whoever acts is simply named in the audit entry.
+ *
+ *  Which means the tab strip cannot belong to the route. When the viewer's own
+ *  menu links to where they are, they keep their own strip; only a visitor with
+ *  no claim on the page falls back to the role that owns it. */
+function SharedWorkspaceLayout({ owner }: { owner: Role }) {
+  const role = useStore((s) => s.role)
+  const pages = useStore((s) => s.pageRegistry)
+  const { pathname } = useLocation()
+  const theirs = visiblePages(pages, role).some((p) => p.to === pathname)
   return (
     <>
-      <SubNav items={subNavItems('exec_manager')} />
+      <SubNav items={useSubNavItems(theirs ? role : owner)} />
+      <Outlet />
+    </>
+  )
+}
+
+function FinanceLayout() {
+  return (
+    <>
+      <SubNav items={useSubNavItems('finance_admin')} />
+      {/* Other roles can read the books — that is the point of the Sub Admin and
+          CEO views — but only Finance can move money. Saying so once here beats
+          each page discovering it button by button. */}
+      <ReadOnlyBanner />
+      <Outlet />
+    </>
+  )
+}
+
+function CeoLayout() {
+  return (
+    <>
+      <SubNav items={useSubNavItems('ceo')} />
       <Outlet />
     </>
   )
@@ -141,16 +231,7 @@ function ExecLayout() {
 function SubAdminLayout() {
   return (
     <>
-      <SubNav items={subNavItems('sub_admin')} />
-      <Outlet />
-    </>
-  )
-}
-
-function AdminLayout() {
-  return (
-    <>
-      <SubNav items={subNavItems('super_admin')} />
+      <SubNav items={useSubNavItems('sub_admin')} />
       <Outlet />
     </>
   )
@@ -159,7 +240,7 @@ function AdminLayout() {
 function BuyerLayout() {
   return (
     <>
-      <SubNav items={subNavItems('buyer')} />
+      <SubNav items={useSubNavItems('buyer')} />
       <Outlet />
     </>
   )
@@ -168,7 +249,7 @@ function BuyerLayout() {
 function SellerLayout() {
   return (
     <>
-      <SubNav items={subNavItems('seller')} />
+      <SubNav items={useSubNavItems('seller')} />
       <Outlet />
     </>
   )
@@ -273,7 +354,7 @@ export default function App() {
           <Route path="/field/lot/:lotId" element={<FieldLotDetail />} />
           <Route path="/field/inspect/:lotId" element={<InspectLot />} />
 
-          <Route element={<ExecLayout />}>
+          <Route element={<SharedWorkspaceLayout owner="exec_manager" />}>
             <Route path="/exec" element={<Pipeline />} />
             <Route path="/exec/approvals" element={<LotApproval />} />
             <Route path="/exec/catalogue-builder" element={<CatalogueBuilder />} />
@@ -283,22 +364,88 @@ export default function App() {
             <Route path="/exec/handover" element={<Handover />} />
           </Route>
 
-          <Route element={<SubAdminLayout />}>
-            <Route path="/sub" element={<OpsConsole />} />
-            <Route path="/sub/bid-monitor" element={<BidMonitor />} />
-            <Route path="/sub/queue" element={<WorkQueue />} />
-            <Route path="/sub/approvals" element={<SubApprovals />} />
+          <Route element={<SharedWorkspaceLayout owner="auction_manager" />}>
+            <Route path="/auction" element={<AuctionDashboard />} />
+            <Route path="/auction/schedule" element={<AuctionSchedule />} />
+            <Route path="/auction/emd-eligibility" element={<EmdEligibility />} />
+            <Route path="/auction/live" element={<LiveAuctions />} />
+            <Route path="/auction/rooms" element={<BiddingRooms />} />
+            <Route path="/auction/rooms/:catalogueId" element={<BiddingRoomOperator />} />
+            <Route path="/auction/bid-monitor" element={<AuctionBidMonitor />} />
+            <Route path="/auction/announcements" element={<AuctionAnnouncements />} />
+            <Route path="/auction/results" element={<AuctionResults />} />
+            <Route path="/auction/history" element={<AuctionHistory />} />
+            <Route path="/auction/reports" element={<AuctionReports />} />
           </Route>
 
-          <Route element={<AdminLayout />}>
+          {/* Finance — money in → held → out → records, in that order */}
+          <Route element={<FinanceLayout />}>
+            <Route path="/finance" element={<FinanceDashboard />} />
+            <Route path="/finance/pnl" element={<ProfitLoss />} />
+            <Route path="/finance/deposits" element={<FinanceDeposits />} />
+            <Route path="/finance/payments" element={<FinancePayments />} />
+            <Route path="/finance/commission" element={<FinanceCommission />} />
+            <Route path="/finance/emd" element={<EmdLedger />} />
+            <Route path="/finance/bank-accounts" element={<FinanceBankAccounts />} />
+            <Route path="/finance/withdrawals" element={<FinanceWithdrawals />} />
+            <Route path="/finance/refunds" element={<FinanceRefunds />} />
+            <Route path="/finance/invoices" element={<FinanceInvoices />} />
+            <Route path="/finance/reconciliation" element={<FinanceReconciliation />} />
+            <Route path="/finance/reports" element={<FinanceReports />} />
+          </Route>
+
+          {/* CEO — are we making money · are we growing · is anything at risk ·
+              what needs me. Only the approvals screen has buttons. */}
+          <Route element={<CeoLayout />}>
+            <Route path="/ceo" element={<CeoProfitLoss />} />
+            <Route path="/ceo/growth" element={<CeoGrowth />} />
+            <Route path="/ceo/auctions" element={<CeoAuctionPerformance />} />
+            <Route path="/ceo/risk" element={<CeoRisk />} />
+            <Route path="/ceo/issues" element={<CeoIssues />} />
+            <Route path="/ceo/approvals" element={<CeoApprovals />} />
+            <Route path="/ceo/delegate" element={<CeoDelegate />} />
+            <Route path="/ceo/reports" element={<CeoReports />} />
+          </Route>
+
+          {/* Sub Admin — head of operations, in the order of the roles they
+              oversee: their own desk, the pre-auction pipeline, the sale, what
+              they watch rather than execute, then accounts and admin. The
+              pipeline and floor screens are not repeated here — this role works
+              the Operation Manager's and the Auction Manager's own routes. */}
+          <Route element={<SubAdminLayout />}>
+            <Route path="/sub" element={<OpsConsole />} />
+            <Route path="/sub/queue" element={<WorkQueue />} />
+            <Route path="/sub/approvals" element={<SubApprovals />} />
+            <Route path="/sub/seller-verification" element={<SellerVerification />} />
+            <Route path="/sub/field-executives" element={<FieldExecutives />} />
+            <Route path="/sub/bid-monitor" element={<BidMonitor />} />
+            <Route path="/sub/payments" element={<PaymentActivity />} />
+            <Route path="/sub/disputes" element={<SubDisputes />} />
+            <Route path="/sub/content" element={<ContentManagement />} />
+            <Route path="/sub/reports" element={<SubReports />} />
+            <Route path="/sub/activity" element={<MyActivity />} />
+          </Route>
+
+          {/* Super Admin — our support role. Structure first (a role must exist
+              before anyone can hold it), then people, then settings, then the
+              exceptions only we can clear, then the record and the undo.
+              `User accounts` is shared with the Sub Admin, so this group uses
+              the shared layout: a Sub Admin who opens it keeps their own tabs. */}
+          <Route element={<SharedWorkspaceLayout owner="super_admin" />}>
             <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/admin/team" element={<Team />} />
+            <Route path="/admin/roles" element={<Roles />} />
+            <Route path="/admin/pages" element={<PageManager />} />
+            <Route path="/admin/sub-admins" element={<SubAdmins />} />
             <Route path="/admin/users" element={<Users />} />
-            <Route path="/admin/control-tower" element={<ControlTower />} />
-            <Route path="/admin/blacklist" element={<Blacklist />} />
             <Route path="/admin/finance" element={<Finance />} />
             <Route path="/admin/master-data" element={<MasterData />} />
+            <Route path="/admin/content" element={<ContentPublishing />} />
+            <Route path="/admin/blacklist" element={<Blacklist />} />
+            <Route path="/admin/control-tower" element={<ControlTower />} />
+            <Route path="/admin/change-history" element={<ChangeHistory />} />
             <Route path="/admin/audit" element={<Audit />} />
+            {/* the old route, kept so bookmarks and older links still land */}
+            <Route path="/admin/team" element={<Roles />} />
           </Route>
 
           <Route path="*" element={<NotFound />} />

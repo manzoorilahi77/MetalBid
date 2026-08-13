@@ -1,6 +1,8 @@
 /* Executive Manager — lifting & logistics board across delivery orders. */
 import { Truck } from 'lucide-react'
 import { Page } from '../../layout/Chrome'
+import { Link } from 'react-router-dom'
+import { ArrowRight, Lock } from 'lucide-react'
 import { PageHeader, Button, Chip, Stat, cx } from '../../components/ui'
 import { useStore } from '../../store/store'
 import { num, relTime, fmtDate } from '../../lib/format'
@@ -116,6 +118,20 @@ export default function Logistics() {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Operations moves the material; Finance owns the money that releases it.
+          Stating the boundary here stops a truck being scheduled against an
+          unpaid order, which is the expensive version of this mistake. */}
+      <div className="card bg-surface-2/60 border-dashed px-4 py-3 flex flex-wrap items-start gap-2.5 text-[13px] text-ink-muted mt-6">
+        <Lock size={14} className="mt-0.5 shrink-0 text-ink-faint" />
+        <p className="flex-1 min-w-56 max-w-3xl">
+          A delivery order only reaches this board once <strong>Finance has confirmed the buyer&apos;s payment</strong>. If a
+          lot is missing here, the money has not landed yet — chase it there rather than advancing the stage by hand.
+        </p>
+        <Link to="/finance/payments" className="text-[13px] font-bold text-ember hover:underline inline-flex items-center gap-1 shrink-0">
+          Buyer payments <ArrowRight size={13} />
+        </Link>
       </div>
     </Page>
   )

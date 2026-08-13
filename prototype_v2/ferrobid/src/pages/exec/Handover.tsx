@@ -1,25 +1,62 @@
-/* Executive Manager — handover records for completed DOs and the approvals inbox. */
+/* ---------------------------------------------------------------------------
+   Operation Manager — handover & closure.
+
+   The last operational act on a sale: the material has been weighed and lifted,
+   and Operations records that it actually left the yard against the
+   weighment-final quantity. Until that is confirmed the delivery stays open
+   however finished it looks, and Finance has nothing to book against.
+
+   The approvals inbox below it used to be theatre — approving a KYC ticked a
+   local array and changed nothing about the account. It now goes through the
+   store, so a verified seller can genuinely submit lots.
+--------------------------------------------------------------------------- */
 import { useState } from 'react'
-import { FileCheck2, BadgeCheck } from 'lucide-react'
+import { FileCheck2, BadgeCheck, PackageCheck } from 'lucide-react'
 import { Page } from '../../layout/Chrome'
-import { PageHeader, Button, Chip, Avatar, EmptyState } from '../../components/ui'
+import { PageHeader, Button, Chip, Avatar, EmptyState, Modal, Field, Textarea } from '../../components/ui'
 import { useStore } from '../../store/store'
-import { inr, num, fmtDate } from '../../lib/format'
+import { inr, num, fmtDate, relTime } from '../../lib/format'
+import { useNow } from '../../lib/useTick'
+import type { DeliveryOrder } from '../../types'
 
 export default function Handover() {
+  const now = useNow()
   const deliveryOrders = useStore((s) => s.deliveryOrders)
   const lots = useStore((s) => s.lots)
   const users = useStore((s) => s.users)
   const catalogues = useStore((s) => s.catalogues)
   const extendCatalogue = useStore((s) => s.extendCatalogue)
+  const confirmHandover = useStore((s) => s.confirmHandover)
+  const decideSellerKyc = useStore((s) => s.decideSellerKyc)
   const pushToast = useStore((s) => s.pushToast)
 
   const [handled, setHandled] = useState<string[]>([])
   const done = (key: string) => handled.includes(key)
   const mark = (key: string) => setHandled((p) => [...p, key])
 
+  const [closing, setClosing] = useState<DeliveryOrder | null>(null)
+  const [note, setNote] = useState('')
+  const [rejecting, setRejecting] = useState<string | null>(null)
+  const [kycReason, setKycReason] = useState('')
+
   const completed = deliveryOrders.filter((d) => d.stage === 'completed')
+  const open = completed.filter((d) => !d.handoverConfirmedAt)
   const firm = (id: string) => users.find((u) => u.id === id)?.firm ?? '—'
+
+  const closeHandover = () => {
+    if (!closing) return
+    const res = confirmHandover(closing.id, note.trim() || undefined)
+    if (!res.ok) {
+      pushToast({ kind: 'danger', title: 'Not closed', body: res.error })
+      return
+    }
+    pushToast({
+      kind: 'success',
+      title: 'Handover closed',
+      body: 'The buyer has their closure certificate and Finance can book the sale.',
+    })
+    setClosing(null); setNote('')
+  }
 
   const kycQueue = users.filter((u) => u.kycStatus === 'pending' && !done(`kyc-${u.id}`))
   const liveCat = catalogues.find((c) => c.status === 'live')
@@ -29,7 +66,13 @@ export default function Handover() {
 
   return (
     <Page>
-      <PageHeader title="Handover & closure" sub="Completed delivery orders with weighment-final quantities, plus your pending approvals inbox." />
+      <PageHeader
+        title="Handover &amp; closure"
+        sub="Lifted deliveries at their weighment-final quantity. Confirming the handover is what closes a sale operationally — and what lets Finance book it."
+        actions={open.length > 0
+          ? <Chip tone="warning"><span className="num">{open.length}</span> awaiting your confirmation</Chip>
+          : <Chip tone="success">Every delivery is closed</Chip>}
+      />
 
       <h2 className="font-display text-lg font-bold mb-3">Handover records</h2>
       {completed.length === 0 ? (
@@ -43,9 +86,11 @@ export default function Handover() {
             return (
               <div key={d.id} className="card p-4 flex flex-wrap items-center gap-x-5 gap-y-3">
                 <div className="min-w-52 flex-1">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span className="num text-xs font-bold">{d.id.toUpperCase()}</span>
-                    <Chip tone="success"><BadgeCheck size={12} /> Handover complete</Chip>
+                    {d.handoverConfirmedAt
+                      ? <Chip tone="success"><BadgeCheck size={12} /> Handover closed</Chip>
+                      : <Chip tone="warning">Lifted — not yet closed</Chip>}
                   </div>
                   <div className="font-semibold mt-0.5">{l ? `${l.lotNo} · ${l.grade} · ${l.metal}` : d.lotId}</div>
                   <div className="text-xs text-ink-muted">{firm(d.buyerId)}</div>
@@ -63,11 +108,29 @@ export default function Handover() {
                 <div className="text-sm">
                   <div className="text-xs text-ink-faint">Handover date</div>
                   <div className="num font-semibold">{fmtDate(handover)}</div>
+                  {d.handoverConfirmedAt && (
+                    <div className="text-[11px] text-ink-faint">
+                      closed by {users.find((u) => u.id === d.handoverConfirmedBy)?.name ?? 'Operations'} · {relTime(d.handoverConfirmedAt, now)}
+                    </div>
+                  )}
                 </div>
-                <Button size="sm" variant="ghost" className="ml-auto"
-                  onClick={() => pushToast({ kind: 'info', title: 'Closure certificate ready', body: `${d.id.toUpperCase()} — certificate PDF downloaded (demo).` })}>
-                  <FileCheck2 size={14} /> Download closure certificate
-                </Button>
+                <div className="ml-auto flex flex-wrap items-center gap-2">
+                  {d.handoverConfirmedAt ? (
+                    <Button size="sm" variant="ghost"
+                      onClick={() => pushToast({ kind: 'info', title: 'Closure certificate ready', body: `${d.id.toUpperCase()} — certificate PDF downloaded (demo).` })}>
+                      <FileCheck2 size={14} /> Download closure certificate
+                    </Button>
+                  ) : (
+                    <Button size="sm" variant="success" onClick={() => { setClosing(d); setNote('') }}>
+                      <PackageCheck size={14} /> Confirm handover
+                    </Button>
+                  )}
+                </div>
+                {d.handoverNote && (
+                  <div className="w-full text-[12px] text-ink-muted border-t border-line pt-2.5">
+                    &ldquo;{d.handoverNote}&rdquo;
+                  </div>
+                )}
               </div>
             )
           })}
@@ -94,12 +157,18 @@ export default function Handover() {
                   <Chip tone="warning">KYC pending</Chip>
                   <div className="flex gap-2">
                     <Button size="sm" variant="success"
-                      onClick={() => { mark(`kyc-${u.id}`); pushToast({ kind: 'success', title: 'KYC approved (demo)', body: `${u.firm} can now participate fully on the platform.` }) }}>
+                      onClick={() => {
+                        const res = decideSellerKyc(u.id, true)
+                        pushToast(res.ok
+                          ? { kind: 'success', title: `${u.firm} verified`, body: 'They can submit lots for inspection now.' }
+                          : { kind: 'danger', title: 'Not verified', body: res.error })
+                        if (res.ok) mark(`kyc-${u.id}`)
+                      }}>
                       Approve
                     </Button>
                     <Button size="sm" variant="ghost" className="text-danger hover:text-danger"
-                      onClick={() => { mark(`kyc-${u.id}`); pushToast({ kind: 'warning', title: 'KYC denied (demo)', body: `${u.firm} has been asked to resubmit documents.` }) }}>
-                      Deny
+                      onClick={() => { setRejecting(u.id); setKycReason('') }}>
+                      Reject
                     </Button>
                   </div>
                 </div>
@@ -145,6 +214,61 @@ export default function Handover() {
           )}
         </div>
       </div>
+
+      {/* --------------------------- close a handover ----------------------- */}
+      <Modal open={!!closing} onClose={() => { setClosing(null); setNote('') }} title={`Confirm handover — ${closing?.id.toUpperCase() ?? ''}`}>
+        {closing && (
+          <div className="space-y-4">
+            <div className="card bg-success-soft border-0 p-4 text-sm">
+              <div className="font-bold text-ink">
+                {lots.find((l) => l.id === closing.lotId)?.lotNo ?? closing.lotId} · {firm(closing.buyerId)}
+              </div>
+              <p className="text-ink-muted mt-1">
+                Closing at <span className="num font-semibold text-ink">{num(closing.weighedQty ?? closing.awardedQty)} {closing.uom}</span>{' '}
+                weighment-final, against <span className="num">{num(closing.awardedQty)} {closing.uom}</span> awarded. The buyer gets their
+                closure certificate and Finance can book the sale.
+              </p>
+            </div>
+            <Field label="Note" hint="Optional. Recorded against the delivery and on the audit trail — use it for anything the weighbridge slip does not say.">
+              <Textarea value={note} onChange={(e) => setNote(e.target.value)}
+                placeholder="e.g. Lifted across two vehicles on consecutive days; gate passes GP-4471 and GP-4489." />
+            </Field>
+            <div className="flex justify-end gap-2">
+              <Button variant="ghost" onClick={() => { setClosing(null); setNote('') }}>Cancel</Button>
+              <Button variant="success" onClick={closeHandover}><PackageCheck size={15} /> Confirm handover</Button>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* ----------------------------- reject KYC --------------------------- */}
+      <Modal open={!!rejecting} onClose={() => { setRejecting(null); setKycReason('') }} title="What has to be resubmitted?">
+        <div className="space-y-4">
+          <p className="text-[13px] text-ink-muted">
+            A rejection is never a dead end — the seller sees this word for word and can resubmit, or appeal to the
+            Operation Manager.
+          </p>
+          <Field label="Reason" hint="Shown to the applicant, and kept on the audit trail under your name.">
+            <Textarea value={kycReason} onChange={(e) => setKycReason(e.target.value)}
+              placeholder="e.g. The GSTIN on the certificate does not match the firm name on the bank letter — resubmit both from the same entity." />
+          </Field>
+          <div className="flex justify-end gap-2">
+            <Button variant="ghost" onClick={() => { setRejecting(null); setKycReason('') }}>Cancel</Button>
+            <Button variant="danger" disabled={kycReason.trim().length < 4}
+              onClick={() => {
+                if (!rejecting) return
+                const res = decideSellerKyc(rejecting, false, kycReason.trim())
+                pushToast(res.ok
+                  ? { kind: 'info', title: 'Sent back to the applicant', body: 'They have been told exactly what to resubmit.' }
+                  : { kind: 'danger', title: 'Not recorded', body: res.error })
+                if (res.ok) mark(`kyc-${rejecting}`)
+                setRejecting(null); setKycReason('')
+              }}>
+              Send it back
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </Page>
   )
 }

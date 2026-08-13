@@ -2,7 +2,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { Check, ChevronLeft, ClipboardCheck, MapPin, Phone } from 'lucide-react'
 import { Page } from '../../layout/Chrome'
-import { Button, Chip, EmptyState, PhotoThumb, StatusChip } from '../../components/ui'
+import { Button, Chip, EmptyState, PhotoThumb, StatusChip, cx } from '../../components/ui'
 import { useStore } from '../../store/store'
 import { fmtDate, num } from '../../lib/format'
 
@@ -31,8 +31,13 @@ export default function FieldLotDetail() {
   }
   const cat = catalogues.find((c) => c.id === lot.catalogueId)
   const seller = users.find((u) => u.id === cat?.sellerId)
-  const canInspect = ['pending_inspection', 'flagged', 'rejected'].includes(lot.status)
-  const report = inspectionReports.find((r) => r.id === lot.inspectionReportId)
+  const canInspect = !lot.inspectionWaived && ['pending_inspection', 'flagged', 'rejected'].includes(lot.status)
+  // Reports are immutable — corrections append a version, so the lot can hold
+  // several. Oldest first, so the version number is the position in the list.
+  const history = inspectionReports
+    .filter((r) => r.lotId === lot.id)
+    .sort((a, b) => Date.parse(a.date) - Date.parse(b.date))
+  const report = inspectionReports.find((r) => r.id === lot.inspectionReportId) ?? history[history.length - 1]
 
   return (
     <Page className="max-w-xl pb-28">
@@ -94,27 +99,50 @@ export default function FieldLotDetail() {
           <div className="font-semibold text-success">Inspection waived</div>
           <div className="text-xs text-ink-muted mt-1">Approved as a known seller{lot.waivedReason ? ` — ${lot.waivedReason}` : ''}. No field inspection needed.</div>
         </div>
-      ) : canInspect ? (
+      ) : null}
+
+      {history.length > 0 && (
+        <div className="mt-5">
+          <div className="flex items-end justify-between mb-2">
+            <span className="text-[13px] font-semibold">Filed reports</span>
+            <span className="text-[11px] text-ink-faint">Immutable — a correction files a new version</span>
+          </div>
+          <div className="space-y-2">
+            {history.map((r, i) => (
+              <div key={r.id} className={cx('card p-4', r.id === report?.id ? 'bg-success-soft border-success/25' : 'opacity-80')}>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="num text-xs font-bold">v{i + 1}</span>
+                  <Chip tone={r.status === 'verified' ? 'success' : r.status === 'flagged' ? 'warning' : 'danger'} className="capitalize">{r.status}</Chip>
+                  <Chip tone="steel" className="capitalize">{r.condition}</Chip>
+                  {r.id !== report?.id && <span className="text-[11px] text-ink-faint">superseded</span>}
+                </div>
+                <div className="num text-sm font-semibold mt-2">Measured {num(r.measuredQty)} {r.uom}</div>
+                <div className="num text-[11px] text-ink-faint mt-0.5">
+                  {fmtDate(r.date)} · {r.photoCount} photo{r.photoCount === 1 ? '' : 's'} · {r.checklist.filter((c) => c.ok).length}/{r.checklist.length} checks
+                </div>
+                {r.notes && <div className="text-xs text-ink-muted mt-2 italic">{r.notes}</div>}
+              </div>
+            ))}
+          </div>
+          {!canInspect && !lot.inspectionWaived && (
+            <div className="text-xs text-ink-muted mt-3">
+              This lot is <b className="text-ink">{lot.status}</b> — Operations sends it back if a re-inspection is needed.
+            </div>
+          )}
+        </div>
+      )}
+
+      {canInspect && (
         <div className="fixed bottom-0 inset-x-0 z-40 border-t border-line bg-surface/95 backdrop-blur">
           <div className="max-w-xl mx-auto px-4 py-3">
             <Link to={`/field/inspect/${lot.id}`} className="block">
-              <Button className="w-full" size="lg"><ClipboardCheck size={17} /> Start inspection</Button>
+              <Button className="w-full" size="lg">
+                <ClipboardCheck size={17} /> {history.length > 0 ? `Re-inspect — files v${history.length + 1}` : 'Start inspection'}
+              </Button>
             </Link>
           </div>
         </div>
-      ) : report ? (
-        <div className="card p-4 mt-5 bg-success-soft border-success/25">
-          <div className="font-semibold text-success">Inspection complete — read only</div>
-          <div className="text-xs text-ink-muted mt-1">
-            This lot is <b className="text-ink">{lot.status}</b> and can no longer be re-inspected from here.
-          </div>
-          <div className="flex items-center gap-2 flex-wrap mt-3">
-            <Chip tone="steel" className="capitalize">{report.condition}</Chip>
-            <span className="num text-sm font-semibold">Measured {num(report.measuredQty)} {report.uom}</span>
-          </div>
-          {report.notes && <div className="text-xs text-ink-muted mt-2 italic">{report.notes}</div>}
-        </div>
-      ) : null}
+      )}
     </Page>
   )
 }

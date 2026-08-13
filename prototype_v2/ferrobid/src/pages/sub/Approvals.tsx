@@ -1,233 +1,403 @@
-/* Sub-admin approvals inbox — what you can clear yourself, what needs Super
-   Admin, and a visual map of this role's module permissions. */
+/* ---------------------------------------------------------------------------
+   Sub Admin — Approvals, all roles.
+
+   One inbox of everything any operational role has done that a Sub Admin may
+   want to confirm, question or reverse.
+
+   Read the next sentence before changing anything on this screen, because it is
+   the whole design: **this is not a gate on daily work.** The Field Executive,
+   the Operation Manager and the Auction Manager act first and their action
+   takes effect immediately. This is the supervisory review afterwards. Nothing
+   here is holding anybody up, no queue here delays a sale, and a verdict does
+   not rewind what was done — the roles that hold the levers do that.
+
+   The screen this replaces had it backwards: a hardcoded list of things
+   "awaiting approval", and a permission grid showing this role as a narrower
+   one, locked out of the Control Tower and master data. Both were wrong. Every
+   Sub Admin account is identical, with the same full menu and the same powers,
+   and the three genuine limits — a void, a permanent ban, a money movement —
+   are handed on at the bottom of this page rather than shown as a table of
+   padlocks.
+--------------------------------------------------------------------------- */
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import {
-  BadgeCheck, Ban, CheckCircle2, Gavel, Landmark, Lock, Megaphone, Radar,
-  Database, Users2, Activity, ListTodo, Inbox, LayoutDashboard,
+  ArrowUpRight, Ban, CheckCircle2, Gavel, HelpCircle, Inbox, Landmark, RotateCcw, Undo2,
 } from 'lucide-react'
 import { Page } from '../../layout/Chrome'
-import { Avatar, Button, Chip, LockChip, PageHeader } from '../../components/ui'
-import { useStore } from '../../store/store'
-import { inr } from '../../lib/format'
+import {
+  Avatar, Button, Chip, EmptyState, Field, Modal, PageHeader, Segmented, Select, Stat, Textarea, cx,
+} from '../../components/ui'
+import { ROLE_LABEL, useStore } from '../../store/store'
+import { fmtDateTime, inr, num, relTime } from '../../lib/format'
+import { useNow } from '../../lib/useTick'
+import { useReviewFeed } from './shared'
+import type { ActionVerdict, AuditEvent } from '../../types'
 
-/* ------------------------- hardcoded demo rows ---------------------------- */
+type Tab = 'unreviewed' | 'reviewed' | 'escalated'
 
-const DRAFT_ANNOUNCEMENTS = [
-  {
-    id: 'draft-1',
-    title: 'Scheduled maintenance — Sunday 02:00–04:00 IST',
-    body: 'Bidding and wallet services will be briefly unavailable. Live catalogues are paused automatically and countdowns freeze for the window.',
-    tone: 'info' as const,
-  },
-  {
-    id: 'draft-2',
-    title: 'Revised lifting hours at Jamshedpur yard',
-    body: 'From next week, material lifting at the SAIL Jamshedpur yard moves to 09:00–17:00 IST. Gate passes issued for earlier slots remain valid.',
-    tone: 'warning' as const,
-  },
-]
+const VERDICT_LABEL: Record<ActionVerdict, string> = {
+  confirmed: 'Confirmed — this stands',
+  questioned: 'Questioned — asked them about it',
+  reversed: 'Sent back — this should not stand',
+}
 
-const VOID_REQUESTS = [
-  {
-    id: 'void-1',
-    lot: 'LOT-07 · AUC-2412',
-    firm: 'Shree Balaji Metals',
-    rate: 47_800,
-    uom: 'MT',
-    reason: 'Rapid-fire pattern — 4 bids in 20s at exact minimum increment',
-  },
-  {
-    id: 'void-2',
-    lot: 'LOT-11 · AUC-2418',
-    firm: 'Kanchan Ispat Udyog',
-    rate: 52_150,
-    uom: 'MT',
-    reason: 'Bid retraction request — buyer cites fat-finger rate entry',
-  },
-]
+const VERDICT_TONE: Record<ActionVerdict, 'success' | 'warning' | 'danger'> = {
+  confirmed: 'success', questioned: 'warning', reversed: 'danger',
+}
 
-const MODULES_LOCKED = [
-  { name: 'Control Tower', icon: Radar, access: 'Read-only', note: 'Pause / extend / cancel auctions' },
-  { name: 'Financial Config', icon: Landmark, access: 'No access', note: 'EMD %, TCS, settlement rules' },
-  { name: 'Master Data', icon: Database, access: 'Read-only', note: 'Categories, yards, terms sets' },
-  { name: 'User Management', icon: Users2, access: 'Read-only', note: 'Roles, resets, deactivation' },
-  { name: 'Blacklist', icon: Ban, access: 'No access', note: 'Defaulter marking & EMD forfeit' },
-]
+/** Plain English for an audit action key. The desk reviewing this should not
+ *  have to read `lot.send_back` and translate it. */
+const ACTION_LABEL: Record<string, string> = {
+  'lot.approved': 'Approved a lot into a catalogue',
+  'lot.rejected': 'Rejected a lot',
+  'lot.send_back': 'Sent a lot back for re-inspection',
+  // Older keys still on the seeded record — see OPERATIONAL_ACTIONS.
+  'lot.approve': 'Approved a lot into a catalogue',
+  'lot.flag': 'Flagged a lot at inspection',
+  'kyc.review': 'Looked at a seller\'s documents',
+  'settlement.approve': 'Approved a settlement',
+  'inspection.bypass': 'Bypassed the yard visit',
+  'inspection.submit': 'Filed an inspection report',
+  'catalogue.publish': 'Published a catalogue',
+  'catalogue.assign': 'Assigned a catalogue to a field executive',
+  'catalogue.override': 'Overrode a catalogue detail',
+  'auction.pause': 'Paused a live auction',
+  'auction.resume': 'Resumed a live auction',
+  'auction.extend': 'Extended a live auction',
+  'auction.reschedule': 'Rescheduled an auction',
+  'auction.results_confirm': 'Confirmed the results',
+  'auction.return_to_ops': 'Sent a catalogue back to Operations',
+  'auction.sta_refer': 'Referred a below-reserve lot to the seller',
+  'auction.cancel_request': 'Asked for an auction to be cancelled',
+  'emd_exemption.approve': 'Let a buyer in after the EMD deadline',
+  'emd_exemption.reject': 'Refused an EMD exemption',
+  'kyc.approve': 'Verified a seller',
+  'kyc.reject': 'Rejected a seller',
+  'delivery.handover': 'Closed a handover',
+  'do.complete': 'Completed a lifting',
+  'bid.flag': 'Flagged a bid',
+  'bid.void': 'Voided a bid',
+  'bid.void_request': 'Asked for a bid to be voided',
+  'announcement.send': 'Broadcast an announcement',
+  'user.standing': 'Changed an account\'s standing',
+  'account.status': 'Changed an account\'s status',
+}
 
-const MODULES_FULL = [
-  { name: 'Ops Console', icon: LayoutDashboard, note: 'Shift overview & audit feed' },
-  { name: 'Bid Monitor', icon: Activity, note: 'Live surveillance & flagging' },
-  { name: 'Work Queue', icon: ListTodo, note: 'SLA-tracked triage desk' },
-  { name: 'Approvals', icon: Inbox, note: 'This inbox' },
-]
+/** The handful of actions worth a second look by default — an auction that went
+ *  public, material that skipped the yard, a buyer let in late. Not a rule, a
+ *  starting point: the filter is right there. */
+const NOTABLE = new Set([
+  'inspection.bypass', 'catalogue.publish', 'auction.cancel_request', 'auction.extend',
+  'emd_exemption.approve', 'lot.rejected', 'bid.void', 'account.status',
+])
 
 export default function Approvals() {
+  const now = useNow()
   const users = useStore((s) => s.users)
-  const notify = useStore((s) => s.notify)
-  const audit = useStore((s) => s.audit)
+  const bidVoidRequests = useStore((s) => s.bidVoidRequests)
+  const cancellationRequests = useStore((s) => s.cancellationRequests)
+  const refundRequests = useStore((s) => s.refundRequests)
+  const contentDrafts = useStore((s) => s.contentDrafts)
+  const reviewAction = useStore((s) => s.reviewAction)
+  const setUserStanding = useStore((s) => s.setUserStanding)
   const pushToast = useStore((s) => s.pushToast)
 
-  const [kycHandled, setKycHandled] = useState<Record<string, 'approved' | 'rejected'>>({})
-  const [published, setPublished] = useState<Set<string>>(new Set())
-  const [escalated, setEscalated] = useState<Set<string>>(new Set())
+  const feed = useReviewFeed()
 
-  const pendingKyc = users.filter((u) => u.kycStatus === 'pending')
-  const watchlisted = users.find((u) => u.id === 'u-buyer-3')
+  const [tab, setTab] = useState<Tab>('unreviewed')
+  const [who, setWho] = useState('all')
+  const [notableOnly, setNotableOnly] = useState(false)
+  const [deciding, setDeciding] = useState<AuditEvent | null>(null)
+  const [verdict, setVerdict] = useState<ActionVerdict>('confirmed')
+  const [note, setNote] = useState('')
 
-  const decideKyc = (userId: string, firm: string, decision: 'approved' | 'rejected') => {
-    setKycHandled((prev) => ({ ...prev, [userId]: decision }))
-    if (decision === 'approved') {
-      audit('kyc.approve', firm, 'Seller KYC verified from Approvals inbox')
-      pushToast({ kind: 'success', title: 'KYC approved — user notified', body: firm })
-    } else {
-      audit('kyc.reject', firm, 'Seller KYC rejected — documents did not match GSTIN', 'warning')
-      pushToast({ kind: 'warning', title: 'KYC rejected', body: `${firm} asked to resubmit documents.` })
-    }
+  const unreviewed = feed.filter((r) => !r.review)
+  const reviewed = feed.filter((r) => r.review)
+  const escalated = feed.filter((r) => r.review?.escalatedTo)
+
+  const base = tab === 'unreviewed' ? unreviewed : tab === 'reviewed' ? reviewed : escalated
+  const rows = base
+    .filter((r) => who === 'all' || r.actor?.role === who)
+    .filter((r) => !notableOnly || NOTABLE.has(r.event.action))
+
+  const rolesInFeed = Array.from(new Set(feed.map((r) => r.actor?.role).filter(Boolean))) as string[]
+
+  /* --- what genuinely is not this desk's to do, and where it went --------- */
+  const voidsWithSuper = bidVoidRequests.filter((r) => r.stage === 'requested' && r.status === 'pending')
+  const cancelsWithSuper = cancellationRequests.filter((r) => r.status === 'pending')
+  const refundsWithFinance = refundRequests.filter((r) => r.status === 'pending' || r.status === 'awaiting_ceo')
+  const contentWithSuper = contentDrafts.filter((d) => d.status === 'submitted')
+  const banCandidates = users.filter((u) => u.standing === 'watchlist')
+
+  const submit = () => {
+    if (!deciding) return
+    const r = reviewAction(deciding.id, verdict, note)
+    if (!r.ok) { pushToast({ kind: 'danger', title: 'Not recorded', body: r.error }); return }
+    setDeciding(null)
+    pushToast({
+      kind: verdict === 'confirmed' ? 'success' : 'info',
+      title: VERDICT_LABEL[verdict],
+      body: r.escalatedTo
+        ? 'Recorded, and handed to the Super Admin — reversing this one is their lever, not ours.'
+        : 'Recorded against the entry, and the person who did it has been told.',
+    })
   }
 
-  const publish = (draft: (typeof DRAFT_ANNOUNCEMENTS)[number]) => {
-    notify({ userId: null, kind: 'system', title: draft.title, body: draft.body })
-    setPublished((prev) => new Set(prev).add(draft.id))
-    pushToast({ kind: 'success', title: 'Announcement published', body: 'Broadcast to all users via the notification bell.' })
-  }
-
-  const escalate = (id: string, what: string, detail: string) => {
-    audit('approval.escalate', what, detail, 'warning')
-    setEscalated((prev) => new Set(prev).add(id))
-    pushToast({ kind: 'info', title: 'Sent to Super Admin', body: what })
+  const propose = (userId: string, firm: string) => {
+    // A Sub Admin proposes a ban; a Super Admin executes it and the CEO
+    // approves it. What this desk can do on its own is move the account to
+    // defaulter standing, which is reversible.
+    const r = setUserStanding(userId, 'defaulter', 'Proposed for permanent ban by a Sub Admin — repeated failures on the operational side')
+    pushToast({
+      kind: 'info',
+      title: 'Proposed to Super Admin',
+      body: `${firm} moved to defaulter and put forward for a permanent ban. A ban is executed by a Super Admin and approved by the CEO.`,
+    })
+    return r
   }
 
   return (
     <Page>
       <PageHeader
-        title="Approvals"
-        sub="Clear what sits inside your scope, package the rest for Super Admin sign-off."
-        actions={<Chip tone="steel">{pendingKyc.filter((u) => !kycHandled[u.id]).length + DRAFT_ANNOUNCEMENTS.filter((d) => !published.has(d.id)).length} awaiting you</Chip>}
+        title="Approvals — all roles"
+        sub="Everything the operational roles have done, in one place. They act first and it takes effect immediately — this is the review afterwards."
+        actions={
+          <Segmented<Tab>
+            options={[
+              { key: 'unreviewed', label: `To review (${unreviewed.length})` },
+              { key: 'reviewed', label: `Reviewed (${reviewed.length})` },
+              { key: 'escalated', label: `Handed on (${escalated.length})` },
+            ]}
+            value={tab}
+            onChange={setTab}
+          />
+        }
       />
 
-      {/* --------------------- section 1: awaiting my approval ------------------ */}
-      <section className="mb-8">
-        <h2 className="font-display font-bold text-lg mb-3 flex items-center gap-2">
-          <BadgeCheck size={18} className="text-success" /> Awaiting my approval
-        </h2>
-        <div className="card overflow-hidden">
+      <div className="card bg-steel-soft/40 border-0 p-4 mb-6 text-sm text-ink-muted">
+        <strong className="text-ink">Nothing here is waiting on you to happen.</strong> A lot approved by the Operation
+        Manager is already in a catalogue; an auction the Auction Manager published is already public. Confirming an
+        entry says it stands, questioning it asks the person about it, and sending one back says it should not stand —
+        which, for a bid, a ban or a live auction, means handing it to the Super Admin who holds that lever.
+      </div>
+
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+        <Stat label="Waiting for a look" value={num(unreviewed.length)} tone={unreviewed.length ? 'ember' : undefined} sub="Across every operational role" />
+        <Stat label="Confirmed" value={num(reviewed.filter((r) => r.review?.verdict === 'confirmed').length)} tone="success" sub="Reviewed and left standing" />
+        <Stat label="Questioned or sent back" value={num(reviewed.filter((r) => r.review?.verdict !== 'confirmed').length)} tone="warning" sub="Someone was asked about it" />
+        <Stat label="With the Super Admin" value={num(voidsWithSuper.length + cancelsWithSuper.length + contentWithSuper.length)} sub="Voids, cancellations, content" to="/admin/control-tower" />
+      </div>
+
+      {/* -------------------------------- filters ---------------------------- */}
+      <div className="card p-4 mb-4 flex flex-wrap items-end gap-x-6 gap-y-3">
+        <Field label="Who did it" className="w-56">
+          <Select value={who} onChange={(e) => setWho(e.target.value)}>
+            <option value="all">Every operational role</option>
+            {rolesInFeed.map((r) => (
+              <option key={r} value={r}>{ROLE_LABEL[r as keyof typeof ROLE_LABEL] ?? r}</option>
+            ))}
+          </Select>
+        </Field>
+        <div className="pb-2.5">
+          <Button
+            variant={notableOnly ? 'steel' : 'ghost'}
+            size="sm"
+            onClick={() => setNotableOnly(!notableOnly)}>
+            Worth a second look
+          </Button>
+        </div>
+      </div>
+
+      {/* --------------------------------- feed ------------------------------ */}
+      {rows.length === 0 ? (
+        <EmptyState
+          icon={<Inbox size={26} />}
+          title={tab === 'unreviewed' ? 'Everything has been looked at' : 'Nothing here'}
+          body={tab === 'unreviewed'
+            ? 'Every operational action on the record has a verdict against it. New ones appear the moment they happen.'
+            : 'Change the filters above, or switch tab.'}
+        />
+      ) : (
+        <div className="card overflow-hidden mb-8">
           <ul>
-            {pendingKyc.map((u) => (
-              <li key={u.id} className="flex flex-wrap items-center gap-3 px-4 sm:px-5 py-3.5 border-b border-line">
-                <Avatar name={u.name} hue={u.avatarHue} size={34} />
-                <div className="flex-1 min-w-52">
-                  <div className="font-semibold text-sm">Seller KYC — {u.firm}</div>
-                  <div className="text-xs text-ink-muted mt-0.5">
-                    {u.name} · {u.city} · GSTIN <span className="num">{u.gstin}</span>
+            {rows.map(({ event, actor, review }) => (
+              <li key={event.id} className={cx('px-4 sm:px-5 py-4 border-b border-line last:border-0',
+                NOTABLE.has(event.action) && !review && 'bg-warning-soft/20')}>
+                <div className="flex flex-wrap items-start gap-3">
+                  {actor
+                    ? <Avatar name={actor.name} hue={actor.avatarHue} size={34} />
+                    : <span className="size-[34px] rounded-full bg-surface-2 border border-line grid place-items-center text-xs font-bold text-ink-faint">SYS</span>}
+                  <div className="flex-1 min-w-52">
+                    <div className="font-semibold text-sm">
+                      {ACTION_LABEL[event.action] ?? event.action} — <span className="num">{event.target}</span>
+                    </div>
+                    <div className="text-sm text-ink-muted mt-0.5">{event.detail}</div>
+                    <div className="text-xs text-ink-faint mt-1">
+                      {actor ? `${actor.name} · ${ROLE_LABEL[actor.role as keyof typeof ROLE_LABEL] ?? actor.role}` : 'System'}
+                      {' · '}<span title={fmtDateTime(event.at)}>{relTime(event.at, now)}</span>
+                    </div>
                   </div>
+                  {review ? (
+                    <div className="text-right">
+                      <Chip tone={VERDICT_TONE[review.verdict]}>{review.verdict}</Chip>
+                      {review.escalatedTo && (
+                        <div className="text-xs text-ink-faint mt-1">
+                          with {ROLE_LABEL[review.escalatedTo as keyof typeof ROLE_LABEL] ?? review.escalatedTo}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="flex gap-2">
+                      <Button variant="ghost" size="sm" onClick={() => { setDeciding(event); setVerdict('questioned'); setNote('') }}>
+                        <HelpCircle size={13} /> Question
+                      </Button>
+                      <Button variant="secondary" size="sm" onClick={() => { setDeciding(event); setVerdict('reversed'); setNote('') }}>
+                        <Undo2 size={13} /> Send back
+                      </Button>
+                      <Button variant="success" size="sm" onClick={() => { setDeciding(event); setVerdict('confirmed'); setNote('') }}>
+                        <CheckCircle2 size={13} /> Confirm
+                      </Button>
+                    </div>
+                  )}
                 </div>
-                {kycHandled[u.id] ? (
-                  <Chip tone={kycHandled[u.id] === 'approved' ? 'success' : 'danger'}>
-                    {kycHandled[u.id] === 'approved' ? 'Approved' : 'Rejected'}
-                  </Chip>
-                ) : (
-                  <div className="flex gap-2">
-                    <Button variant="ghost" size="sm" onClick={() => decideKyc(u.id, u.firm, 'rejected')}>Reject</Button>
-                    <Button variant="success" size="sm" onClick={() => decideKyc(u.id, u.firm, 'approved')}>Approve</Button>
-                  </div>
+                {review?.note && (
+                  <p className="text-sm text-ink-muted mt-2.5 pl-[46px] border-l-2 border-line ml-[16px]">
+                    <span className="font-semibold text-ink">Your note:</span> {review.note}
+                  </p>
                 )}
               </li>
             ))}
-            {DRAFT_ANNOUNCEMENTS.map((d) => (
-              <li key={d.id} className="flex flex-wrap items-center gap-3 px-4 sm:px-5 py-3.5 border-b border-line last:border-0">
-                <span className="size-9 rounded-xl bg-steel-soft text-steel-strong border border-line flex items-center justify-center shrink-0">
-                  <Megaphone size={16} />
-                </span>
-                <div className="flex-1 min-w-52">
-                  <div className="font-semibold text-sm">Announcement draft — {d.title}</div>
-                  <div className="text-xs text-ink-muted mt-0.5 max-w-xl">{d.body}</div>
-                </div>
-                <Chip tone={d.tone === 'warning' ? 'warning' : 'steel'}>{d.tone}</Chip>
-                {published.has(d.id)
-                  ? <Chip tone="success">Published</Chip>
-                  : <Button variant="steel" size="sm" onClick={() => publish(d)}>Publish</Button>}
-              </li>
-            ))}
           </ul>
         </div>
-      </section>
+      )}
 
-      {/* --------------------- section 2: requires super admin ------------------ */}
-      <section className="mb-8">
-        <h2 className="font-display font-bold text-lg mb-3 flex items-center gap-2">
-          <Gavel size={18} className="text-warning" /> Requires Super Admin
-        </h2>
-        <div className="card overflow-hidden">
-          <ul>
-            {VOID_REQUESTS.map((r) => (
-              <li key={r.id} className="flex flex-wrap items-center gap-3 px-4 sm:px-5 py-3.5 border-b border-line">
-                <span className="size-9 rounded-xl bg-warning-soft text-warning border border-line flex items-center justify-center shrink-0">
-                  <Gavel size={16} />
-                </span>
-                <div className="flex-1 min-w-52">
-                  <div className="font-semibold text-sm">
-                    Void bid — <span className="num">{r.lot}</span> · {r.firm} at <span className="num">{inr(r.rate)}/{r.uom}</span>
-                  </div>
-                  <div className="text-xs text-ink-muted mt-0.5">From your flag: {r.reason}</div>
-                </div>
-                <LockChip label="Void requires Super Admin" />
-                {escalated.has(r.id)
-                  ? <Chip tone="steel">Sent</Chip>
-                  : <Button variant="secondary" size="sm" onClick={() => escalate(r.id, `Void bid — ${r.lot}`, `${r.firm} · ${r.reason}`)}>Send to Super Admin</Button>}
-              </li>
-            ))}
-            {watchlisted && (
-              <li className="flex flex-wrap items-center gap-3 px-4 sm:px-5 py-3.5">
-                <span className="size-9 rounded-xl bg-danger-soft text-danger border border-line flex items-center justify-center shrink-0">
-                  <Ban size={16} />
-                </span>
-                <div className="flex-1 min-w-52">
-                  <div className="font-semibold text-sm">Blacklist proposal — {watchlisted.firm}</div>
-                  <div className="text-xs text-ink-muted mt-0.5">
-                    Currently <Chip tone="warning" className="mx-1">watchlist</Chip> · propose moving to defaulter after repeated lifting delays.
-                  </div>
-                </div>
-                <LockChip label="Blacklist requires Super Admin" />
-                {escalated.has('blk-1')
-                  ? <Chip tone="steel">Sent</Chip>
-                  : <Button variant="secondary" size="sm" onClick={() => escalate('blk-1', `Blacklist proposal — ${watchlisted.firm}`, 'Watchlist → defaulter proposed: repeated lifting delays across 2 catalogues')}>Send to Super Admin</Button>}
-              </li>
+      {/* --------------------- what this desk hands on ------------------------ */}
+      <h2 className="font-display font-bold text-lg mb-1">Things this desk hands on</h2>
+      <p className="text-sm text-ink-muted mb-3">
+        Three levers a Sub Admin does not hold, and where each one went. Not a permission grid — every Sub Admin
+        account is identical, and these are the same three for all of them.
+      </p>
+      <div className="grid md:grid-cols-3 gap-3 mb-8">
+        <section className="card p-5">
+          <div className="flex items-center justify-between mb-2">
+            <Gavel size={18} className="text-warning" />
+            <Chip tone={voidsWithSuper.length ? 'warning' : 'neutral'} className="num">{num(voidsWithSuper.length)}</Chip>
+          </div>
+          <div className="font-semibold text-sm">Voiding a bid</div>
+          <p className="text-xs text-ink-muted mt-1 leading-relaxed">
+            This desk flags a bid and asks for the void with the evidence; the Super Admin decides. A cancellation is
+            the same shape{cancelsWithSuper.length > 0 && <> — {num(cancelsWithSuper.length)} waiting</>}.
+          </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Link to="/sub/bid-monitor" className="text-xs font-semibold text-ember hover:underline">Bid monitor →</Link>
+            <Link to="/admin/control-tower" className="text-xs font-semibold text-ink-faint hover:underline">
+              Where it lands <ArrowUpRight size={11} className="inline" />
+            </Link>
+          </div>
+        </section>
+
+        <section className="card p-5">
+          <div className="flex items-center justify-between mb-2">
+            <Landmark size={18} className="text-ember" />
+            <Chip tone={refundsWithFinance.length ? 'warning' : 'neutral'} className="num">{num(refundsWithFinance.length)}</Chip>
+          </div>
+          <div className="font-semibold text-sm">Moving money</div>
+          <p className="text-xs text-ink-muted mt-1 leading-relaxed">
+            Every deposit, withdrawal, payment and commission is visible here and decided by Finance. Refunds this desk
+            raised from a dispute sit in their queue
+            {refundsWithFinance.length > 0 && <> — {inr(refundsWithFinance.reduce((t, r) => t + r.amount, 0))} in total</>}.
+          </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Link to="/sub/payments" className="text-xs font-semibold text-ember hover:underline">Payment activity →</Link>
+            <Link to="/finance/refunds" className="text-xs font-semibold text-ink-faint hover:underline">
+              Finance refunds <ArrowUpRight size={11} className="inline" />
+            </Link>
+          </div>
+        </section>
+
+        <section className="card p-5">
+          <div className="flex items-center justify-between mb-2">
+            <Ban size={18} className="text-danger" />
+            <Chip tone={banCandidates.length ? 'warning' : 'neutral'} className="num">{num(banCandidates.length)}</Chip>
+          </div>
+          <div className="font-semibold text-sm">Banning an account permanently</div>
+          <p className="text-xs text-ink-muted mt-1 leading-relaxed">
+            This desk can move an account to defaulter, which is reversible. A permanent ban is executed by a Super
+            Admin and approved by the CEO — an account is never deleted.
+          </p>
+          {banCandidates.length > 0 ? (
+            <ul className="mt-3 space-y-1.5">
+              {banCandidates.slice(0, 2).map((u) => (
+                <li key={u.id} className="flex items-center gap-2 text-xs">
+                  <span className="flex-1 truncate">{u.firm}</span>
+                  <Button variant="ghost" size="sm" onClick={() => propose(u.id, u.firm)}>Propose</Button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="mt-3">
+              <Link to="/admin/users" className="text-xs font-semibold text-ember hover:underline">User accounts →</Link>
+            </div>
+          )}
+        </section>
+      </div>
+
+      {/* ------------------------------ the verdict --------------------------- */}
+      <Modal open={!!deciding} onClose={() => setDeciding(null)} title="Review this action">
+        {deciding && (
+          <div className="space-y-4">
+            <div className="card bg-surface-2 p-3.5 text-sm">
+              <div className="font-semibold">{ACTION_LABEL[deciding.action] ?? deciding.action}</div>
+              <div className="text-ink-muted mt-1">
+                <span className="num font-semibold">{deciding.target}</span> — {deciding.detail}
+              </div>
+              <div className="text-xs text-ink-faint mt-1.5">
+                {users.find((u) => u.id === deciding.actorId)?.name ?? 'System'} · {fmtDateTime(deciding.at)}
+              </div>
+            </div>
+
+            <Field label="Your verdict">
+              <Select value={verdict} onChange={(e) => setVerdict(e.target.value as ActionVerdict)}>
+                {(Object.keys(VERDICT_LABEL) as ActionVerdict[]).map((k) => (
+                  <option key={k} value={k}>{VERDICT_LABEL[k]}</option>
+                ))}
+              </Select>
+            </Field>
+
+            {verdict === 'reversed' && (
+              <div className="card bg-warning-soft/50 border-0 p-3.5 text-sm text-ink-muted">
+                <RotateCcw size={14} className="inline mr-1.5 -mt-0.5" />
+                Sending it back records your finding and tells the person who did it. It does not itself undo the
+                action — a bid, a ban or a live auction is the Super Admin's lever, and this hands it to them with your
+                note attached.
+              </div>
             )}
-          </ul>
-        </div>
-      </section>
 
-      {/* ------------------------ section 3: module access ---------------------- */}
-      <section>
-        <h2 className="font-display font-bold text-lg mb-1 flex items-center gap-2">
-          <Lock size={16} className="text-ink-muted" /> Module access
-        </h2>
-        <p className="text-sm text-ink-muted mb-3">Your permission template — Sub-Admin (Ops). Changes to this template are made by Super Admin.</p>
-        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3 mb-3">
-          {MODULES_FULL.map((m) => (
-            <div key={m.name} className="card p-4">
-              <div className="flex items-center justify-between mb-2">
-                <m.icon size={18} className="text-success" />
-                <Chip tone="success"><CheckCircle2 size={11} /> Full access</Chip>
-              </div>
-              <div className="font-semibold text-sm">{m.name}</div>
-              <div className="text-xs text-ink-faint mt-0.5">{m.note}</div>
+            <Field
+              label={verdict === 'confirmed' ? 'Note' : 'What is wrong with it'}
+              hint={verdict === 'confirmed'
+                ? 'Optional — say why you looked, if it is worth saying.'
+                : 'Required. The person who did it is shown this word for word.'}>
+              <Textarea
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                rows={3}
+                placeholder={verdict === 'confirmed'
+                  ? 'e.g. checked against the inspection photos — the grade call is right.'
+                  : 'e.g. this lot was bypassed for a seller who is not on the trusted list…'}
+              />
+            </Field>
+
+            <div className="flex justify-end gap-2">
+              <Button variant="ghost" onClick={() => setDeciding(null)}>Cancel</Button>
+              <Button variant={verdict === 'confirmed' ? 'success' : 'primary'} onClick={submit}>
+                Record this
+              </Button>
             </div>
-          ))}
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3">
-          {MODULES_LOCKED.map((m) => (
-            <div key={m.name} className="card p-4 opacity-80">
-              <div className="flex items-center justify-between mb-2">
-                <m.icon size={18} className="text-ink-faint" />
-                <LockChip label={m.access} />
-              </div>
-              <div className="font-semibold text-sm">{m.name}</div>
-              <div className="text-xs text-ink-faint mt-0.5">{m.note}</div>
-            </div>
-          ))}
-        </div>
-      </section>
+          </div>
+        )}
+      </Modal>
     </Page>
   )
 }

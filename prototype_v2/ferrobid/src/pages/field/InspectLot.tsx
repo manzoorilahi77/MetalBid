@@ -21,6 +21,7 @@ export default function InspectLot() {
   const nav = useNavigate()
   const me = useStore((s) => s.currentUser)
   const lots = useStore((s) => s.lots)
+  const reports = useStore((s) => s.inspectionReports)
   const submitInspection = useStore((s) => s.submitInspection)
   const pushToast = useStore((s) => s.pushToast)
 
@@ -29,17 +30,40 @@ export default function InspectLot() {
   const [condition, setCondition] = useState<'good' | 'fair' | 'mixed' | 'poor'>('good')
   const [notes, setNotes] = useState('')
   const [shots, setShots] = useState<boolean[]>([false, false, false, false])
-  const [checks, setChecks] = useState<boolean[]>([true, true, true, true, false])
+  // Nothing is ticked for the inspector: the checklist is the evidence that the
+  // check was actually made at the yard.
+  const [checks, setChecks] = useState<boolean[]>([false, false, false, false, false])
 
   if (!lot) {
     return <Page className="max-w-xl"><EmptyState title="Lot not found" action={<Link to="/field"><Button variant="secondary">Back to queue</Button></Link>} /></Page>
   }
 
+  // A filed report is never edited. The form only opens while the lot is still
+  // ours — pending, or sent back by Operations for a re-inspection.
+  const openForInspection = !lot.inspectionWaived && ['pending_inspection', 'flagged', 'rejected'].includes(lot.status)
+  if (!openForInspection) {
+    return (
+      <Page className="max-w-xl">
+        <EmptyState
+          title={lot.inspectionWaived ? 'Inspection waived' : 'Report already filed'}
+          body={lot.inspectionWaived
+            ? `${lot.lotNo} was accepted as a known seller and needs no field inspection.`
+            : `${lot.lotNo} is ${lot.status} — the submitted report is evidence and cannot be edited. Operations sends the lot back if a re-inspection is needed.`}
+          action={<Link to={`/field/lot/${lot.id}`}><Button variant="secondary">View lot</Button></Link>}
+        />
+      </Page>
+    )
+  }
+
+  const version = reports.filter((r) => r.lotId === lot.id).length + 1
   const photoCount = shots.filter(Boolean).length
   const measuredNum = Number(measured) || 0
   const variance = lot.indicativeQty > 0 ? ((measuredNum - lot.indicativeQty) / lot.indicativeQty) * 100 : 0
   const checklist = CHECK_ITEMS.map((item, i) => ({ item, ok: i === 4 ? photoCount > 0 : checks[i] }))
-  const canVerify = photoCount > 0 && measuredNum > 0
+  // Verify says every check passed, so it cannot be pressed while one is open.
+  // Flag and Reject exist precisely for the case where one did not.
+  const checksDone = checks.slice(0, 4).every(Boolean)
+  const canVerify = photoCount > 0 && measuredNum > 0 && checksDone
   const canFlag = photoCount > 0 && notes.trim().length > 0
 
   const submit = (outcome: 'verified' | 'flagged' | 'rejected') => {
@@ -56,8 +80,10 @@ export default function InspectLot() {
     submitInspection(lot.id, report, outcome)
     pushToast({
       kind: outcome === 'verified' ? 'success' : outcome === 'flagged' ? 'warning' : 'danger',
-      title: `${lot.lotNo} ${outcome}`,
-      body: outcome === 'verified' ? 'Report sent to Executive Manager for approval.' : 'Escalated with your notes.',
+      title: `${lot.lotNo} ${outcome}${version > 1 ? ` · report v${version}` : ''}`,
+      body: outcome === 'verified'
+        ? 'Report filed. The Operation Manager and the seller have been notified.'
+        : 'Escalated with your notes — the Operation Manager and the seller have been notified.',
     })
     nav(lot.catalogueId ? `/field/catalogue/${lot.catalogueId}` : '/field')
   }
@@ -78,6 +104,11 @@ export default function InspectLot() {
         <div className="num text-xs text-ink-muted mt-1">
           Declared {num(lot.indicativeQty)} {lot.uom} · {lot.yard}
         </div>
+        {version > 1 && (
+          <div className="text-[11px] text-warning font-semibold mt-1.5">
+            Re-inspection — this files report v{version}. The earlier report stays on record.
+          </div>
+        )}
       </div>
 
       <div className="mt-5 space-y-6">
@@ -134,7 +165,7 @@ export default function InspectLot() {
           </div>
         </div>
 
-        <Field label="Notes" hint="Required for Flag / Reject. Buyers see verified notes on the lot.">
+        <Field label="Notes" hint="Required for Flag / Reject. Buyers see verified notes on the lot. Once submitted, the report cannot be edited.">
           <Textarea placeholder="Stack verified against yard register. Access for 20 ft trucks confirmed…" value={notes} onChange={(e) => setNotes(e.target.value)} />
         </Field>
       </div>
@@ -156,7 +187,9 @@ export default function InspectLot() {
         </div>
         {(!canVerify || !canFlag) && (
           <p className="text-center text-[11px] text-ink-faint pb-2 -mt-1">
-            {photoCount === 0 ? 'Capture at least one photo. ' : ''}{!canFlag && photoCount > 0 ? 'Notes are required to flag or reject.' : ''}
+            {photoCount === 0 ? 'Capture at least one photo. ' : ''}
+            {photoCount > 0 && !checksDone ? 'Tick every checklist item to verify. ' : ''}
+            {!canFlag && photoCount > 0 ? 'Notes are required to flag or reject.' : ''}
           </p>
         )}
       </div>

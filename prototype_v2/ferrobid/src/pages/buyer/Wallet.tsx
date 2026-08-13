@@ -605,7 +605,7 @@ export default function Wallet() {
             <div className="flex justify-between"><span className="text-ink-muted">Transfer date</span><span className="num font-semibold">{depDate}</span></div>
             {depProof && <div className="flex justify-between"><span className="text-ink-muted">Proof</span><span className="font-semibold truncate ml-2">{depProof}</span></div>}
           </div>
-          <p className="text-xs text-ink-faint">A sub-admin manually verifies this reference against the bank statement before crediting your wallet.</p>
+          <p className="text-xs text-ink-faint">ferroBid Finance matches this reference against the credit on our own bank statement before your wallet is topped up.</p>
           <div className="flex gap-2">
             <Button variant="secondary" className="flex-1" onClick={() => setDepConfirm(false)}>Cancel</Button>
             <Button className="flex-1" onClick={() => {
@@ -663,7 +663,7 @@ export default function Wallet() {
             <div className="flex justify-between"><span className="text-ink-muted">Account</span><span className="num font-semibold">•••• {accountNumber.slice(-4)}</span></div>
             <div className="flex justify-between"><span className="text-ink-muted">IFSC</span><span className="num font-semibold">{ifsc}</span></div>
           </div>
-          <p className="text-xs text-ink-faint">A sub-admin will verify this account before it can receive withdrawals.</p>
+          <p className="text-xs text-ink-faint">ferroBid Finance verifies this account against your registered firm name before it can receive a withdrawal.</p>
           <div className="flex gap-2">
             <Button variant="secondary" className="flex-1" onClick={() => setBankConfirm(false)}>Cancel</Button>
             <Button className="flex-1" onClick={() => {

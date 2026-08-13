@@ -1,7 +1,7 @@
 /* Domain components shared across Home, Browse and role pages. */
 import { Link } from 'react-router-dom'
 import { Download, Layers, Lock, MapPin, Star } from 'lucide-react'
-import type { Catalogue, MetalCategory } from '../types'
+import type { Catalogue } from '../types'
 import { useStore, catalogueUiStatus, isCatalogueShortlisted, selectionSummary } from '../store/store'
 import { inrCompact, relTime } from '../lib/format'
 import { emdDeadlineMs, emdDeadlineSoon, emdOpensAtMs, emdWindowClosed, emdWindowNotOpen } from '../lib/emd'
@@ -123,17 +123,11 @@ export function CatalogueCard({ cat, className, showBuyerActions }: { cat: Catal
   )
 }
 
-export const CATEGORY_META: { key: MetalCategory; label: string; hue: number }[] = [
-  { key: 'assets', label: 'Assets & Machinery', hue: 210 },
-  { key: 'scrap', label: 'Scrap', hue: 20 },
-  { key: 'flat-products', label: 'Flat Products', hue: 200 },
-  { key: 'long-products', label: 'Long Products', hue: 30 },
-  { key: 'melting-products', label: 'Melting Products', hue: 10 },
-  { key: 'coal', label: 'Coal', hue: 260 },
-  { key: 'chemicals', label: 'Chemicals', hue: 150 },
-  { key: 'minerals', label: 'Minerals', hue: 90 },
-  { key: 'ferro-alloys', label: 'Ferro Alloys', hue: 330 },
-]
+/* Lives in data/categoryMeta so the store can seed Master data from the same
+   list without importing a component module. Re-exported here because every
+   existing caller imports it from this file. */
+export { CATEGORY_META } from '../data/categoryMeta'
+import { CATEGORY_META } from '../data/categoryMeta'
 
 export function CategoryTile({ category }: { category: (typeof CATEGORY_META)[number] }) {
   const lots = useStore((s) => s.lots)

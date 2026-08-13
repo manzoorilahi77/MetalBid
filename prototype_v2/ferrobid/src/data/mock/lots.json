@@ -13765,5 +13765,217 @@
     "waivedReason": null,
     "waivedAt": null,
     "sellerDecision": null
+  },
+  {
+    "id": "lot-290",
+    "lotNo": "LOT-01",
+    "catalogueId": "cat-30",
+    "metal": "MS",
+    "category": "scrap",
+    "grade": "HMS 1 & 2 (80:20)",
+    "indicativeQty": 62,
+    "uom": "MT",
+    "yard": "JSPL Raigarh Scrap Yard",
+    "description": "HMS 1 & 2 (80:20) — inspected and approved for auction. Quantity indicative, final on weighment.",
+    "startRate": 26400,
+    "increment": 150,
+    "reserveRate": 28900,
+    "preBidEmd": 70000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-290-p0",
+        "label": "Overview",
+        "hue": 24
+      },
+      {
+        "id": "lot-290-p1",
+        "label": "Close-up",
+        "hue": 28
+      },
+      {
+        "id": "lot-290-p2",
+        "label": "Stack view",
+        "hue": 32
+      },
+      {
+        "id": "lot-290-p3",
+        "label": "Weighbridge",
+        "hue": 36
+      }
+    ],
+    "inspectionReportId": null,
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-19T09:00:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null,
+    "knownSeller": true,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
+  },
+  {
+    "id": "lot-291",
+    "lotNo": "LOT-02",
+    "catalogueId": "cat-30",
+    "metal": "MS",
+    "category": "scrap",
+    "grade": "Turnings & Borings",
+    "indicativeQty": 41,
+    "uom": "MT",
+    "yard": "JSPL Raigarh Scrap Yard",
+    "description": "Turnings & Borings — inspected and approved for auction. Quantity indicative, final on weighment.",
+    "startRate": 21800,
+    "increment": 100,
+    "reserveRate": 23600,
+    "preBidEmd": 45000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-291-p0",
+        "label": "Overview",
+        "hue": 24
+      },
+      {
+        "id": "lot-291-p1",
+        "label": "Close-up",
+        "hue": 28
+      },
+      {
+        "id": "lot-291-p2",
+        "label": "Stack view",
+        "hue": 32
+      },
+      {
+        "id": "lot-291-p3",
+        "label": "Weighbridge",
+        "hue": 36
+      }
+    ],
+    "inspectionReportId": null,
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-19T09:00:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null,
+    "knownSeller": true,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
+  },
+  {
+    "id": "lot-292",
+    "lotNo": "LOT-03",
+    "catalogueId": "cat-30",
+    "metal": "SS 304",
+    "category": "melting-products",
+    "grade": "Melting Scrap",
+    "indicativeQty": 18,
+    "uom": "MT",
+    "yard": "JSPL Raigarh Scrap Yard",
+    "description": "Melting Scrap — inspected and approved for auction. Quantity indicative, final on weighment.",
+    "startRate": 92000,
+    "increment": 500,
+    "reserveRate": 98500,
+    "preBidEmd": 120000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-292-p0",
+        "label": "Overview",
+        "hue": 24
+      },
+      {
+        "id": "lot-292-p1",
+        "label": "Close-up",
+        "hue": 28
+      },
+      {
+        "id": "lot-292-p2",
+        "label": "Stack view",
+        "hue": 32
+      },
+      {
+        "id": "lot-292-p3",
+        "label": "Weighbridge",
+        "hue": 36
+      }
+    ],
+    "inspectionReportId": null,
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-19T09:00:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null,
+    "knownSeller": true,
+    "inspectionWaived": true,
+    "waivedBy": "u-exec-1",
+    "waivedReason": "Known seller — JSPL material accepted directly, yard visit skipped",
+    "waivedAt": "2026-07-14T09:15:00.000Z"
+  },
+  {
+    "id": "lot-293",
+    "lotNo": "LOT-04",
+    "catalogueId": "cat-30",
+    "metal": "MS",
+    "category": "long-products",
+    "grade": "Rebar End Cuttings",
+    "indicativeQty": 34,
+    "uom": "MT",
+    "yard": "JSPL Raigarh Scrap Yard",
+    "description": "Rebar End Cuttings — inspected and approved for auction. Quantity indicative, final on weighment.",
+    "startRate": 30200,
+    "increment": 200,
+    "reserveRate": 32400,
+    "preBidEmd": 55000,
+    "saleBasis": "as-is-where-is",
+    "hazardous": false,
+    "photos": [
+      {
+        "id": "lot-293-p0",
+        "label": "Overview",
+        "hue": 24
+      },
+      {
+        "id": "lot-293-p1",
+        "label": "Close-up",
+        "hue": 28
+      },
+      {
+        "id": "lot-293-p2",
+        "label": "Stack view",
+        "hue": 32
+      },
+      {
+        "id": "lot-293-p3",
+        "label": "Weighbridge",
+        "hue": 36
+      }
+    ],
+    "inspectionReportId": null,
+    "status": "approved",
+    "currentRate": null,
+    "leadingBidderId": null,
+    "bidCount": 0,
+    "endsAt": "2026-07-19T09:00:00.000Z",
+    "extensions": 0,
+    "resultH1Rate": null,
+    "knownSeller": true,
+    "inspectionWaived": false,
+    "waivedBy": null,
+    "waivedReason": null,
+    "waivedAt": null
   }
 ]

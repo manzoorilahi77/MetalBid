@@ -55,10 +55,7 @@ export function useBidroomGate(): GateApi {
 
 export function BidroomGateProvider({ children }: { children: ReactNode }) {
   const [flow, setFlow] = useState<Flow | null>(null)
-  const me = useStore((s) => s.currentUser)
-  const lots = useStore((s) => s.lots)
   const catalogues = useStore((s) => s.catalogues)
-  const selections = useStore((s) => s.selections)
   const nav = useNavigate()
 
   const enterBidroom = useCallback<GateApi['enterBidroom']>((catalogueId, opts) => {
@@ -97,7 +94,6 @@ export function BidroomGateProvider({ children }: { children: ReactNode }) {
 
   const close = () => setFlow(null)
   const cat = flow ? catalogues.find((c) => c.id === flow.catalogueId) ?? null : null
-  const summary = selectionSummary({ selections, lots }, me?.id, flow?.catalogueId ?? '')
 
   /** Cancelling out of EMD/terms started from "Bid Now" returns to that
    *  catalogue's lot-review page instead of just closing. */

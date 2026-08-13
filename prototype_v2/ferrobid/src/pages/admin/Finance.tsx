@@ -1,17 +1,47 @@
-/* Super Admin — financial configuration. */
+/* ---------------------------------------------------------------------------
+   Super Admin — financial configuration.
+
+   Every rate and threshold the platform charges or enforces, in one place. This
+   page used to hold its own local copy of the numbers and a Save button that
+   did nothing; now it reads and writes the store's `financeConfig`, which is
+   what the seller's Settlement page, the Finance workspace, every tax
+   calculation and every CEO threshold actually consume.
+
+   That is the point of it being one screen: a rate is stated once and shown
+   many times. A commission that could be typed in two places would eventually
+   mean two different things.
+--------------------------------------------------------------------------- */
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { ArrowRight, Signature } from 'lucide-react'
 import { Page } from '../../layout/Chrome'
 import { Button, Chip, Input, LockChip, PageHeader, Toggle, cx } from '../../components/ui'
 import { useStore, WEEKDAY_LABELS } from '../../store/store'
-import { uid } from '../../lib/format'
-import type { CompanyBankAccount } from '../../types'
+import { inr, relTime, uid } from '../../lib/format'
+import type { CompanyBankAccount, FinanceConfig } from '../../types'
 
-const DEFAULTS = {
-  emdPct: '5', emdMin: '10000', emdCap: '500000', emdRelease: '24',
-  gst: '18', tcs: '1',
-  bidValidity: '7', payWindow: '7', groundRent: '50',
-  buyerPremium: '1.0', sellerCommission: '2.5', listingFee: '0',
-}
+/** The store's config as the string-shaped form this page edits. Kept as a
+ *  projection rather than a second source of truth — the store is authoritative
+ *  and this is only what the inputs hold while they are being typed in. */
+const toForm = (c: FinanceConfig) => ({
+  emdPct: String(c.emdPct), emdMin: String(c.emdMin), emdCap: String(c.emdCap), emdRelease: String(c.emdReleaseHours),
+  gst: String(c.gstPct), tcs: String(c.tcsPct),
+  bidValidity: String(c.bidValidityDays), payWindow: String(c.paymentWindowDays), groundRent: String(c.groundRentPerDayPerMt),
+  buyerPremium: String(c.buyerPremiumPct), sellerCommission: String(c.sellerCommissionPct), listingFee: String(c.listingFeePerLot),
+  ceoForfeiture: String(c.ceoForfeitureFrom), ceoRefund: String(c.ceoRefundFrom),
+  ceoPublish: String(c.ceoPublishValueFrom), secondSignature: String(c.withdrawalSecondSignatureFrom),
+})
+
+const n = (v: string) => Number(v.replace(/[^\d.]/g, '')) || 0
+
+const fromForm = (f: ReturnType<typeof toForm>): Partial<FinanceConfig> => ({
+  emdPct: n(f.emdPct), emdMin: n(f.emdMin), emdCap: n(f.emdCap), emdReleaseHours: n(f.emdRelease),
+  gstPct: n(f.gst), tcsPct: n(f.tcs),
+  bidValidityDays: n(f.bidValidity), paymentWindowDays: n(f.payWindow), groundRentPerDayPerMt: n(f.groundRent),
+  buyerPremiumPct: n(f.buyerPremium), sellerCommissionPct: n(f.sellerCommission), listingFeePerLot: n(f.listingFee),
+  ceoForfeitureFrom: n(f.ceoForfeiture), ceoRefundFrom: n(f.ceoRefund),
+  ceoPublishValueFrom: n(f.ceoPublish), withdrawalSecondSignatureFrom: n(f.secondSignature),
+})
 
 function Row({ label, suffix, value, onChange, hint }: {
   label: string; suffix?: string; value: string; onChange: (v: string) => void; hint?: string
@@ -31,6 +61,13 @@ function Row({ label, suffix, value, onChange, hint }: {
   )
 }
 
+/** The three rates a CEO signature governs, in the words the request will use. */
+const FEE_LABELS: [keyof FinanceConfig, string, string][] = [
+  ['buyerPremiumPct', 'Buyer premium', '%'],
+  ['sellerCommissionPct', 'Seller commission', '%'],
+  ['listingFeePerLot', 'Listing fee', '₹/lot'],
+]
+
 const pad2 = (n: number) => String(n).padStart(2, '0')
 
 export default function Finance() {
@@ -40,12 +77,17 @@ export default function Finance() {
   const setCompanyBankAccounts = useStore((s) => s.setCompanyBankAccounts)
   const withdrawalWindow = useStore((s) => s.withdrawalWindow)
   const setWithdrawalWindow = useStore((s) => s.setWithdrawalWindow)
+  const financeConfig = useStore((s) => s.financeConfig)
+  const setFinanceConfig = useStore((s) => s.setFinanceConfig)
+  const requestCeoSignoff = useStore((s) => s.requestCeoSignoff)
+  const ceoApprovals = useStore((s) => s.ceoApprovals)
 
-  const [cfg, setCfg] = useState(DEFAULTS)
+  const saved = toForm(financeConfig)
+  const [cfg, setCfg] = useState(saved)
   const [tdsNote, setTdsNote] = useState(true)
   const [accounts, setAccounts] = useState<CompanyBankAccount[]>(companyBankAccounts)
-  const set = (k: keyof typeof DEFAULTS) => (v: string) => setCfg({ ...cfg, [k]: v })
-  const dirty = JSON.stringify(cfg) !== JSON.stringify(DEFAULTS)
+  const set = (k: keyof typeof cfg) => (v: string) => setCfg({ ...cfg, [k]: v })
+  const dirty = JSON.stringify(cfg) !== JSON.stringify(saved)
   const accountsDirty = JSON.stringify(accounts) !== JSON.stringify(companyBankAccounts)
   const canEdit = role === 'super_admin'
 
@@ -54,6 +96,54 @@ export default function Finance() {
 
   const updateAccount = (id: string, patch: Partial<CompanyBankAccount>) =>
     setAccounts((prev) => prev.map((a) => (a.id === id ? { ...a, ...patch } : a)))
+
+  /* What we charge is the one part of this screen the Super Admin cannot simply
+     set: a fee change is signed by the CEO before it takes effect. So a save
+     splits in two — everything else applies now, and the proposed rates travel
+     to the CEO's queue as a request carrying the new numbers. Nothing here
+     re-prices a published auction either way. */
+  const FEE_FIELDS = ['buyerPremiumPct', 'sellerCommissionPct', 'listingFeePerLot'] as const
+  const proposed = fromForm(cfg)
+  const feeChange = FEE_FIELDS.reduce<Partial<FinanceConfig>>((acc, k) => {
+    if (proposed[k] !== undefined && proposed[k] !== financeConfig[k]) acc[k] = proposed[k]
+    return acc
+  }, {})
+  const hasFeeChange = Object.keys(feeChange).length > 0
+  const pendingFeeRequest = ceoApprovals.find(
+    (a) => a.kind === 'fee_change' && (a.status === 'pending' || a.status === 'info_requested'),
+  )
+
+  const save = () => {
+    const rest = { ...proposed }
+    for (const k of FEE_FIELDS) delete rest[k]
+    setFinanceConfig(rest)
+
+    if (!hasFeeChange) {
+      pushToast({
+        kind: 'success',
+        title: 'Financial configuration saved',
+        body: `GST ${cfg.gst}% · TCS ${cfg.tcs}%. Applied everywhere immediately.`,
+      })
+      return
+    }
+    const described = FEE_LABELS
+      .filter(([k]) => feeChange[k] !== undefined)
+      .map(([k, label, unit]) => `${label} ${financeConfig[k]}${unit} → ${feeChange[k]}${unit}`)
+      .join(' · ')
+    requestCeoSignoff({
+      kind: 'fee_change',
+      refId: 'financeConfig',
+      amount: 0,
+      summary: described,
+      reason: 'Proposed from Financial configuration. Rates are unchanged until this is signed, and every auction already published keeps the rate it was listed under.',
+      payload: feeChange,
+    })
+    pushToast({
+      kind: 'info',
+      title: 'Sent to the CEO',
+      body: `${described}. Nothing is charged at the new rate until it is signed.`,
+    })
+  }
 
   const toggleDay = (d: number) => {
     const days = withdrawalWindow.days.includes(d) ? withdrawalWindow.days.filter((x) => x !== d) : [...withdrawalWindow.days, d].sort((a, b) => a - b)
@@ -91,10 +181,47 @@ export default function Finance() {
             <Row label="Ground rent" suffix="₹/day/MT" value={cfg.groundRent} onChange={set('groundRent')} hint="after the lifting window lapses" />
           </div>
           <div className={groupCls}>
-            <h2 className={h}>Platform fees</h2>
-            <Row label="Buyer premium" suffix="%" value={cfg.buyerPremium} onChange={set('buyerPremium')} />
-            <Row label="Seller commission" suffix="%" value={cfg.sellerCommission} onChange={set('sellerCommission')} />
+            <div className="flex items-center justify-between pb-2">
+              <h2 className="font-bold">Platform fees</h2>
+              <Chip tone="warning"><Signature size={11} /> CEO approves</Chip>
+            </div>
+            <Row label="Buyer premium" suffix="%" value={cfg.buyerPremium} onChange={set('buyerPremium')} hint="charged on the material value of every paid delivery order" />
+            <Row label="Seller commission" suffix="%" value={cfg.sellerCommission} onChange={set('sellerCommission')} hint="of the seller's upside over their own reserve, on accepted lots" />
             <Row label="Listing fee" suffix="₹/lot" value={cfg.listingFee} onChange={set('listingFee')} />
+            {pendingFeeRequest && (
+              <div className="card bg-steel-soft/50 border-0 p-3 mt-2 text-xs text-ink">
+                <strong>With the CEO for signature.</strong> {pendingFeeRequest.summary} — proposed{' '}
+                {relTime(pendingFeeRequest.requestedAt, Date.now())}. Rates stay as they are until it is signed.
+              </div>
+            )}
+            <p className="text-xs text-ink-faint pt-2">
+              These are the platform's entire income, and the one part of this screen you cannot simply set: a change is
+              sent to the CEO and takes effect when they sign it. They are read live by the seller's{' '}
+              <Link to="/seller/settlement" className="text-ember font-semibold hover:underline">Settlement</Link> page and by
+              every figure on the{' '}
+              <Link to="/finance/pnl" className="text-ember font-semibold hover:underline">profit &amp; loss</Link> —
+              change one here and both move together.
+            </p>
+          </div>
+
+          {/* ------------------------ CEO thresholds ------------------------- */}
+          <div className={cx(groupCls, 'sm:col-span-2')}>
+            <div className="flex items-center justify-between pb-2">
+              <h2 className="font-bold">Decisions that leave the desk</h2>
+              {!canEdit && <LockChip label="Editable by Super Admin only" />}
+            </div>
+            <Row label="EMD forfeiture needs the CEO from" suffix="₹" value={cfg.ceoForfeiture} onChange={set('ceoForfeiture')}
+              hint="below this, Finance forfeits with a typed reason and an audit entry" />
+            <Row label="Refund needs the CEO from" suffix="₹" value={cfg.ceoRefund} onChange={set('ceoRefund')}
+              hint="returning money is the safer direction, so this sits higher than it looks" />
+            <Row label="Auction publish needs the CEO from" suffix="₹" value={cfg.ceoPublish} onChange={set('ceoPublish')}
+              hint="total reserve value of the catalogue being published" />
+            <Row label="Withdrawal needs a second Finance user from" suffix="₹" value={cfg.secondSignature} onChange={set('secondSignature')}
+              hint="below this one Finance user may review and release; the audit still names them at each step" />
+            <p className="text-xs text-ink-faint pt-2">
+              Set these to the business's own risk appetite. Start conservative and raise them once the queue proves
+              manageable — they are here rather than in code precisely so they can be tuned without a release.
+            </p>
           </div>
 
           {/* -------------------------- Withdrawal window -------------------------- */}
@@ -195,17 +322,39 @@ export default function Finance() {
 
       {dirty && (
         <div className="fixed bottom-0 inset-x-0 z-40 border-t border-line bg-surface/95 backdrop-blur">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-3">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center gap-3">
             <span className="text-sm font-semibold text-warning">Unsaved changes</span>
+            <span className="text-xs text-ink-muted hidden sm:block">
+              {hasFeeChange
+                ? 'Everything but the fees applies immediately. The fee change goes to the CEO and is charged to nobody until it is signed.'
+                : 'Saving moves every screen that reads these figures at once, and writes a before-and-after entry to the audit trail.'}
+            </span>
             <div className="ml-auto flex gap-2">
-              <Button variant="ghost" onClick={() => setCfg(DEFAULTS)}>Discard</Button>
-              <Button onClick={() => { pushToast({ kind: 'success', title: 'Financial config saved', body: 'Applies to catalogues published from now on.' }); setCfg(DEFAULTS) }}>
-                Save configuration
+              <Button variant="ghost" onClick={() => setCfg(saved)}>Discard</Button>
+              <Button disabled={!canEdit} onClick={save}>
+                {feeChange ? 'Save, and send the fees to the CEO' : 'Save configuration'}
               </Button>
             </div>
           </div>
         </div>
       )}
+
+      {/* ------------------------- where these are read ---------------------- */}
+      <div className="card border-l-4 border-l-steel p-4 mt-6 flex flex-wrap items-center gap-3">
+        <div className="text-[13px] text-ink-muted flex-1 min-w-64">
+          <strong className="text-ink">One set of numbers, read in many places.</strong> Commission at{' '}
+          <span className="num font-bold text-ink">{financeConfig.sellerCommissionPct}%</span>, buyer premium at{' '}
+          <span className="num font-bold text-ink">{financeConfig.buyerPremiumPct}%</span>, GST at{' '}
+          <span className="num font-bold text-ink">{financeConfig.gstPct}%</span> and TCS at{' '}
+          <span className="num font-bold text-ink">{financeConfig.tcsPct}%</span> are charged on every sale; a forfeiture
+          above <span className="num font-bold text-ink">{inr(financeConfig.ceoForfeitureFrom)}</span> and a withdrawal above{' '}
+          <span className="num font-bold text-ink">{inr(financeConfig.withdrawalSecondSignatureFrom)}</span> both need a
+          second person. Nothing recomputes a rate locally.
+        </div>
+        <Link to="/finance/pnl" className="text-[13px] font-bold text-ember hover:underline inline-flex items-center gap-1 shrink-0">
+          See it in the P&amp;L <ArrowRight size={13} />
+        </Link>
+      </div>
     </Page>
   )
 }

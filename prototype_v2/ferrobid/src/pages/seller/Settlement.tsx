@@ -10,8 +10,12 @@ import { Page } from '../../layout/Chrome'
 import { Button, Chip, EmptyState, Input, PageHeader, Segmented, Stat, StatusChip, Tabs, cx } from '../../components/ui'
 import { useStore } from '../../store/store'
 import { inr, inrCompact, num, fmtDate } from '../../lib/format'
+// The commission rate lives in Financial configuration, and the arithmetic lives
+// in one place — so what a seller is charged here is exactly what Finance sees
+// on its own Commission settlements screen. See src/lib/money.ts.
+import { clearedValue, commissionFor as commissionOf, reserveValue, upsideValue } from '../../lib/money'
 import { TransferPaymentModal, EmdSettleModal } from './SettlementPayment'
-import type { Catalogue, CommissionSettlement, CompanyBankAccount, Lot } from '../../types'
+import type { Catalogue, CommissionSettlement, CompanyBankAccount, FinanceConfig, Lot } from '../../types'
 
 type TabKey = 'upcoming' | 'live' | 'pending' | 'history'
 type SettleMode = 'transfer' | 'emd'
@@ -27,28 +31,15 @@ interface SettlementInfo {
 }
 type CatalogueGroup = { cat: Catalogue; lots: Lot[]; info: SettlementInfo }
 
-const COMMISSION_RATE = 0.1
 const FINISHED_STATUSES: Lot['status'][] = ['sold', 'sta', 'unsold']
 
-/** Total expected/sold value for a lot — rate is ₹ per UOM, so the payable
- *  amount is rate × indicative quantity (mirrors how realised value is
- *  computed elsewhere, e.g. seller Reports). */
-function expectedAmount(l: Lot) {
-  return l.reserveRate * l.indicativeQty
-}
-function soldAmount(l: Lot) {
-  return l.resultH1Rate != null ? l.resultH1Rate * l.indicativeQty : null
-}
-/** Upside over the seller's own reserve, in total ₹ — the base the
- *  commission is cut from. null while there's no cleared price yet. */
-function upperValue(l: Lot) {
-  const sold = soldAmount(l)
-  return sold != null ? sold - expectedAmount(l) : null
-}
-function commissionFor(l: Lot) {
-  const uv = upperValue(l)
-  return uv != null ? Math.max(0, uv) * COMMISSION_RATE : null
-}
+/* Aliases onto the shared money model — the seller's wording for the same
+   figures Finance reads. Rate × indicative quantity throughout, because a rate
+   is ₹ per UOM everywhere in this app. */
+const expectedAmount = reserveValue
+const soldAmount = clearedValue
+const upperValue = upsideValue
+const commissionFor = (l: Lot, cfg: FinanceConfig) => commissionOf(l, cfg)
 function matchesLot(l: Lot, query: string) {
   return l.lotNo.toLowerCase().includes(query) || l.grade.toLowerCase().includes(query) || l.metal.toLowerCase().includes(query)
 }
@@ -56,24 +47,27 @@ function matchesLot(l: Lot, query: string) {
 /** A closed auction is "done" — belongs in History — once every sold/STA lot
  *  has a seller decision, and any commission owed on the accepted lots has a
  *  matching settlement record (owing nothing at all also counts as done). */
-function computeSettlementInfo(catalogueId: string, lots: Lot[], settlements: CommissionSettlement[]): SettlementInfo {
+function computeSettlementInfo(catalogueId: string, lots: Lot[], settlements: CommissionSettlement[], cfg: FinanceConfig): SettlementInfo {
   const sold = lots.filter((l) => l.status === 'sold' || l.status === 'sta')
   const accepted = sold.filter((l) => l.sellerDecision === 'accepted')
   const undecided = sold.filter((l) => !l.sellerDecision)
-  const totalCommission = accepted.reduce((s, l) => s + (commissionFor(l) ?? 0), 0)
+  const totalCommission = accepted.reduce((s, l) => s + (commissionFor(l, cfg) ?? 0), 0)
   const grossAccepted = accepted.reduce((s, l) => s + (soldAmount(l) ?? 0), 0)
   const record = settlements.find((s) => s.catalogueId === catalogueId)
-  const settled = sold.length === 0 || (undecided.length === 0 && (totalCommission <= 0 || !!record))
+  // Finance querying a settlement reopens it: the seller was asked for a better
+  // reference, so the auction stays in Pending settlement rather than History.
+  const confirmedOrRecorded = !!record && record.status !== 'queried'
+  const settled = sold.length === 0 || (undecided.length === 0 && (totalCommission <= 0 || confirmedOrRecorded))
   return { sold, accepted, undecided, totalCommission, grossAccepted, settled, record }
 }
 
-function groupByCatalogue(lots: Lot[], catalogues: Catalogue[], settlements: CommissionSettlement[]): CatalogueGroup[] {
+function groupByCatalogue(lots: Lot[], catalogues: Catalogue[], settlements: CommissionSettlement[], cfg: FinanceConfig): CatalogueGroup[] {
   const map = new Map<string, Lot[]>()
   for (const l of lots) map.set(l.catalogueId, [...(map.get(l.catalogueId) ?? []), l])
   return [...map.entries()]
     .map(([catId, ls]) => {
       const cat = catalogues.find((c) => c.id === catId)
-      return cat ? { cat, lots: ls, info: computeSettlementInfo(catId, ls, settlements) } : null
+      return cat ? { cat, lots: ls, info: computeSettlementInfo(catId, ls, settlements, cfg) } : null
     })
     .filter((g): g is CatalogueGroup => !!g)
     .sort((a, b) => (a.cat.code < b.cat.code ? 1 : -1))
@@ -87,6 +81,7 @@ export default function SellerSettlement() {
   const lots = useStore((s) => s.lots)
   const companyBankAccounts = useStore((s) => s.companyBankAccounts)
   const commissionSettlements = useStore((s) => s.commissionSettlements)
+  const cfg = useStore((s) => s.financeConfig)
   const setSellerLotDecision = useStore((s) => s.setSellerLotDecision)
   const recordCommissionSettlement = useStore((s) => s.recordCommissionSettlement)
   const pushToast = useStore((s) => s.pushToast)
@@ -103,20 +98,20 @@ export default function SellerSettlement() {
   }, [catalogues, lots, me?.id])
 
   const allGroups = useMemo(() => {
-    const upcoming = groupByCatalogue(mine.filter((l) => !FINISHED_STATUSES.includes(l.status) && l.status !== 'live'), catalogues, commissionSettlements)
-    const live = groupByCatalogue(mine.filter((l) => l.status === 'live'), catalogues, commissionSettlements)
-    const finishedAll = groupByCatalogue(mine.filter((l) => FINISHED_STATUSES.includes(l.status)), catalogues, commissionSettlements)
+    const upcoming = groupByCatalogue(mine.filter((l) => !FINISHED_STATUSES.includes(l.status) && l.status !== 'live'), catalogues, commissionSettlements, cfg)
+    const live = groupByCatalogue(mine.filter((l) => l.status === 'live'), catalogues, commissionSettlements, cfg)
+    const finishedAll = groupByCatalogue(mine.filter((l) => FINISHED_STATUSES.includes(l.status)), catalogues, commissionSettlements, cfg)
     return {
       upcoming, live,
       pending: finishedAll.filter((g) => !g.info.settled),
       history: finishedAll.filter((g) => g.info.settled),
     }
-  }, [mine, catalogues, commissionSettlements])
+  }, [mine, catalogues, commissionSettlements, cfg])
 
   const pendingSold = allGroups.pending.flatMap((g) => g.info.sold)
   const pendingUndecided = pendingSold.filter((l) => !l.sellerDecision)
   const pendingAccepted = pendingSold.filter((l) => l.sellerDecision === 'accepted')
-  const pendingCommission = pendingAccepted.reduce((s, l) => s + (commissionFor(l) ?? 0), 0)
+  const pendingCommission = pendingAccepted.reduce((s, l) => s + (commissionFor(l, cfg) ?? 0), 0)
 
   const catalogueGroups = allGroups[tab]
 
@@ -199,7 +194,13 @@ export default function SellerSettlement() {
             settlementAccount={settlementAccount}
             onDecide={setSellerLotDecision}
             onSettle={(amount, mode) => {
-              recordCommissionSettlement(openGroup.cat.id, amount, mode)
+              // The reference is what Finance matches against the bank on their
+              // side. An EMD-netted settlement never touches the bank, so the
+              // store stamps its own internal reference instead.
+              recordCommissionSettlement(
+                openGroup.cat.id, amount, mode,
+                mode === 'transfer' ? `${openGroup.cat.code}-${me?.sellerId ?? 'S'}-${Math.round(amount)}` : undefined,
+              )
               pushToast({
                 kind: 'success',
                 title: mode === 'emd' ? 'Settled from EMD' : 'Payment successful',
@@ -334,6 +335,7 @@ function SettlementGroup({ cat, lots, info, tab, sellerPhone, settlementAccount,
   onDecide: (lotId: string, d: 'accepted' | 'rejected' | null) => void
   onSettle: (amount: number, mode: SettleMode) => void
 }) {
+  const cfg = useStore((s) => s.financeConfig)
   const { sold, accepted, totalCommission, grossAccepted, record } = info
   const readOnly = tab === 'history'
 
@@ -374,7 +376,7 @@ function SettlementGroup({ cat, lots, info, tab, sellerPhone, settlementAccount,
             <tbody className="divide-y divide-line">
               {lots.map((l) => {
                 const uv = upperValue(l)
-                const cm = commissionFor(l)
+                const cm = commissionFor(l, cfg)
                 return (
                   <tr key={l.id} className="hover:bg-surface-2/60">
                     <td className="px-5 py-3">
@@ -459,11 +461,35 @@ function SettlementGroup({ cat, lots, info, tab, sellerPhone, settlementAccount,
                     {inrCompact(record.amount)} {record.mode === 'emd' ? 'netted from your EMD' : 'paid to ferroBid by transfer'}
                   </div>
                   <div className="text-xs text-ink-muted mt-0.5">Settled {fmtDate(record.at)} · {accepted.length} of {sold.length} sold lot{sold.length !== 1 ? 's' : ''} accepted</div>
+                  {/* Finance sees the other side of this record. Until they have
+                      matched it against the bank it is a claim, not a receipt —
+                      so say so rather than implying it is closed. */}
+                  <div className="text-xs mt-1">
+                    {record.status === 'confirmed'
+                      ? <span className="text-success font-semibold">Confirmed by ferroBid Finance on {fmtDate(record.confirmedAt ?? record.at)}.</span>
+                      : <span className="text-ink-faint">Awaiting confirmation from ferroBid Finance against our bank.</span>}
+                  </div>
                 </>
               ) : (
                 <div className="text-sm text-ink-muted mt-0.5">No commission owed — {accepted.length} of {sold.length} sold lot{sold.length !== 1 ? 's' : ''} accepted, all decisions final.</div>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Finance could not match what was recorded. The auction stays here
+          rather than moving to History, and the seller is told exactly why. */}
+      {record?.status === 'queried' && (
+        <div className="card border-l-4 border-l-warning bg-warning-soft/40 p-4 mt-4 flex items-start gap-3">
+          <X size={16} className="text-warning shrink-0 mt-0.5" />
+          <div className="text-[13px]">
+            <div className="font-bold text-ink">ferroBid Finance has queried this settlement</div>
+            <p className="text-ink-muted mt-0.5">{record.queryNote}</p>
+            <p className="text-ink-faint mt-1">
+              Nothing has been written off — {inrCompact(record.amount)} is still recorded against {cat.code}. Send the
+              correct bank reference and it will be confirmed.
+            </p>
           </div>
         </div>
       )}

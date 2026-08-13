@@ -5,7 +5,7 @@ import {
   Eye, EyeOff, Mail, Lock, User, Phone, Building2,
   ArrowLeft, ShieldCheck, CheckCircle, AlertCircle,
   Loader2, ArrowRight, Globe, Gavel, TrendingUp,
-  Award, Users, Zap, ShoppingBag, Package, ClipboardCheck, BarChart3, Crown
+  Award, Users, Zap, ShoppingBag, Package, ClipboardCheck, BarChart3, Crown, IndianRupee
 } from 'lucide-react';
 import { useStore, ROLE_HOME, ROLE_LABEL, DEMO_LOGINS, DEMO_PASSWORD } from '../../store/store';
 import { asset } from '../utils/asset';
@@ -13,13 +13,25 @@ import { asset } from '../utils/asset';
 /* Quick demo sign-in — one click fills + submits the matching demo account so
    every role's portal is reachable straight from this page without anyone
    needing to know the credentials in store.ts. */
+/* Laid out 3-per-row: the two market-side roles plus their manager, then the
+   three operating roles, then the three admin tiers.
+
+   `tier` is what the card is coloured by. Nine identically-styled pills made
+   the grid read as one undifferentiated block; colouring by which side of the
+   business a role sits on lets you find the one you want without reading all
+   nine labels. Market-side is ember (the brand), operations steel, Finance the
+   money green used everywhere else for rupee figures, and the admin tiers
+   maroon. The accents themselves are defined in auth.css under [data-tier]. */
 const QUICK_LOGIN_ROLES = [
-  { role: 'buyer', icon: ShoppingBag },
-  { role: 'seller', icon: Package },
-  { role: 'field_exec', icon: ClipboardCheck },
-  { role: 'exec_manager', icon: BarChart3 },
-  { role: 'sub_admin', icon: ShieldCheck },
-  { role: 'super_admin', icon: Crown },
+  { role: 'buyer', icon: ShoppingBag, tier: 'market' },
+  { role: 'seller', icon: Package, tier: 'market' },
+  { role: 'exec_manager', icon: BarChart3, tier: 'ops' },
+  { role: 'field_exec', icon: ClipboardCheck, tier: 'ops' },
+  { role: 'auction_manager', icon: Gavel, tier: 'ops' },
+  { role: 'finance_admin', icon: IndianRupee, tier: 'money' },
+  { role: 'ceo', icon: TrendingUp, tier: 'admin' },
+  { role: 'super_admin', icon: Crown, tier: 'admin' },
+  { role: 'sub_admin', icon: ShieldCheck, tier: 'admin' },
 ];
 const DEMO_EMAIL_BY_ROLE = Object.fromEntries(
   Object.entries(DEMO_LOGINS).map(([email, role]) => [role, email])
@@ -796,16 +808,22 @@ export const Auth = () => {
             <div className="auth-quickroles">
               <div className="auth-divider"><span>Quick demo access</span></div>
               <div className="auth-quickroles-grid">
-                {QUICK_LOGIN_ROLES.map(({ role, icon: Icon }) => (
+                {QUICK_LOGIN_ROLES.map(({ role, icon: Icon, tier }) => (
                   <button
                     key={role}
                     type="button"
-                    className="auth-quickrole-btn"
+                    /* is-signing-in marks the one card actually being used, so the
+                       dimming applied to the other eight doesn't also grey out the
+                       card you just pressed — the spinner has to stay legible. */
+                    className={`auth-quickrole-btn ${quickRole === role ? 'is-signing-in' : ''}`}
+                    data-tier={tier}
                     disabled={quickRole !== null}
                     onClick={() => quickLogin(role)}
                   >
-                    {quickRole === role ? <Loader2 size={14} className="auth-spin" /> : <Icon size={14} />}
-                    <span>{ROLE_LABEL[role]}</span>
+                    <span className="auth-quickrole-icon">
+                      {quickRole === role ? <Loader2 size={15} className="auth-spin" /> : <Icon size={15} />}
+                    </span>
+                    <span className="auth-quickrole-label">{ROLE_LABEL[role]}</span>
                   </button>
                 ))}
               </div>

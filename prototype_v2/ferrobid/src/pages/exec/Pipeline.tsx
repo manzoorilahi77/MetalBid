@@ -1,5 +1,11 @@
-/* Executive Manager — lot pipeline as a horizontal Kanban board. */
+/* Operation Manager — lot pipeline as a horizontal Kanban board.
+
+   Six columns from pending inspection through to resolved, plus an attention
+   column for anything flagged or rejected. The board decides lots; it no longer
+   publishes catalogues — that moved to Auction schedule, which is the only
+   screen with the buyer preview and the CEO value threshold on it. */
 import { Link } from 'react-router-dom'
+import { ArrowRight, ShieldOff } from 'lucide-react'
 import { Page } from '../../layout/Chrome'
 import { PageHeader, Button, Chip, StatusChip, Stat, cx } from '../../components/ui'
 import { useStore } from '../../store/store'
@@ -25,7 +31,7 @@ export default function Pipeline() {
   const users = useStore((s) => s.users)
   const reports = useStore((s) => s.inspectionReports)
   const setLotStatus = useStore((s) => s.setLotStatus)
-  const publishDraftCatalogue = useStore((s) => s.publishDraftCatalogue)
+  const decideLot = useStore((s) => s.decideLot)
   const pushToast = useStore((s) => s.pushToast)
 
   const draftCatalogues = catalogues.filter((c) => c.status === 'draft')
@@ -36,17 +42,32 @@ export default function Pipeline() {
 
   const actions = (col: ColKey, l: Lot) => {
     switch (col) {
+      case 'pending':
+        // Bypass is the only decision available before a yard visit, and it
+        // needs a typed reason — so the board hands off to the approval desk
+        // rather than offering a one-click skip from a Kanban card.
+        return l.knownSeller ? (
+          <Link to="/exec/approvals" className="block">
+            <Button size="sm" variant="ghost" className="w-full text-warning hover:text-warning">
+              <ShieldOff size={13} /> Bypass inspection
+            </Button>
+          </Link>
+        ) : null
       case 'inspected':
         return (
           <div className="flex gap-1.5">
             <Button size="sm" variant="success" className="flex-1"
-              onClick={() => { setLotStatus(l.id, 'approved'); pushToast({ kind: 'success', title: `${l.lotNo} approved`, body: 'Cleared for auction, pending the rest of its catalogue.' }) }}>
+              onClick={() => {
+                const res = decideLot(l.id, 'approved')
+                pushToast(res.ok
+                  ? { kind: 'success', title: `${l.lotNo} approved`, body: 'Cleared for auction, pending the rest of its catalogue.' }
+                  : { kind: 'danger', title: 'Not approved', body: res.error })
+              }}>
               Approve
             </Button>
-            <Button size="sm" variant="ghost" className="flex-1"
-              onClick={() => { setLotStatus(l.id, 'flagged'); pushToast({ kind: 'warning', title: `${l.lotNo} flagged`, body: 'Moved to the attention column for review.' }) }}>
-              Flag
-            </Button>
+            <Link to="/exec/approvals" className="flex-1">
+              <Button size="sm" variant="ghost" className="w-full">Review</Button>
+            </Link>
           </div>
         )
       case 'approved':
@@ -61,7 +82,7 @@ export default function Pipeline() {
           </Link>
         ) : null
       case 'attention':
-        return (
+        return l.status === 'rejected' ? null : (
           <Button size="sm" variant="secondary" className="w-full"
             onClick={() => { setLotStatus(l.id, 'inspected'); pushToast({ kind: 'success', title: `${l.lotNo} resolved`, body: 'Returned to the inspected queue for approval.' }) }}>
             Resolve
@@ -78,7 +99,9 @@ export default function Pipeline() {
 
       {draftCatalogues.length > 0 && (
         <div className="mb-6 space-y-2">
-          <div className="text-xs font-semibold uppercase tracking-wider text-ink-faint">Draft catalogues awaiting publish</div>
+          <div className="text-xs font-semibold uppercase tracking-wider text-ink-faint">
+            Private catalogues — not visible to any buyer or seller
+          </div>
           {draftCatalogues.map((c) => {
             const catLots = lots.filter((l) => l.catalogueId === c.id)
             const resolved = catLots.filter((l) => l.status === 'approved').length
@@ -90,22 +113,22 @@ export default function Pipeline() {
                   <div className="flex items-center gap-2">
                     <span className="num text-sm font-bold text-ember">{c.code}</span>
                     <span className="font-semibold text-sm">{c.title}</span>
+                    {ready && <Chip tone="success">Ready for market</Chip>}
                   </div>
                   <div className="text-xs text-ink-muted mt-0.5">
-                    Assigned to {exec?.name ?? 'unassigned'} · <span className="num">{resolved}/{catLots.length}</span> lots approved
+                    Assigned to {exec?.name ?? 'unassigned'} · <span className="num">{resolved}/{catLots.length}</span> lots decided
                   </div>
                 </div>
-                <Button
-                  size="sm" variant={ready ? 'success' : 'secondary'} disabled={!ready}
-                  onClick={() => {
-                    const res = publishDraftCatalogue(c.id, 'now')
-                    pushToast(res.ok
-                      ? { kind: 'success', title: `${c.code} is live`, body: `${catLots.length} lots are open for bidding.` }
-                      : { kind: 'warning', title: 'Cannot publish yet', body: res.error })
-                  }}
-                >
-                  {ready ? 'Publish catalogue' : `${resolved}/${catLots.length} lots approved`}
-                </Button>
+                {/* Publish deliberately does not live here any more. It is one
+                    press on Auction schedule, where the buyer preview, the
+                    schedule and the CEO value threshold all sit together —
+                    publishing from a pipeline board skipped every one of them. */}
+                <Link to="/auction/schedule">
+                  <Button size="sm" variant={ready ? 'success' : 'secondary'}>
+                    {ready ? 'Take to Auction schedule' : `${resolved}/${catLots.length} lots decided`}
+                    <ArrowRight size={14} />
+                  </Button>
+                </Link>
               </div>
             )
           })}
@@ -142,7 +165,16 @@ export default function Pipeline() {
                   <div key={l.id} className="card p-3 space-y-2">
                     <div className="flex items-center justify-between gap-2">
                       <span className="num text-xs font-bold text-ink">{l.lotNo}</span>
-                      <StatusChip status={l.status} />
+                      <div className="flex items-center gap-1">
+                        {/* The bypass marker travels with the lot everywhere it
+                            appears — Ops, Auction and Finance all see it. */}
+                        {l.inspectionWaived && (
+                          <span title={l.waivedReason ?? 'Accepted without a yard visit'}>
+                            <Chip tone="warning"><ShieldOff size={10} /> Bypassed</Chip>
+                          </span>
+                        )}
+                        <StatusChip status={l.status} />
+                      </div>
                     </div>
                     <div className="text-sm font-semibold leading-tight">{l.grade} <span className="text-ink-muted font-normal">· {l.metal}</span></div>
                     <div className="text-xs text-ink-muted">
