@@ -24,27 +24,49 @@ const between = (a, b) => a + rnd() * (b - a)
 const round = (n, step) => Math.round(n / step) * step
 
 /* ------------------------------- users ---------------------------------- */
+// Permanent account identifiers — assigned once, here at "account creation"
+// time. Random rather than sequential on purpose: a sequential code
+// (B0001, B0002…) would let anyone in the bid room count how many distinct
+// bidders have ever signed up just by watching IDs go by. Charset skips
+// 0/O/1/I so a code never looks ambiguous read aloud. Uses the seeded RNG
+// above so mock output stays deterministic across runs. Mirrors
+// src/lib/format.ts genBidderId/genSellerId (kept in sync by hand since
+// this script runs standalone under plain `node`, not through Vite/tsc).
+const ID_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+const usedBidderIds = new Set()
+const usedSellerIds = new Set()
+const randomId = (prefix, used) => {
+  let code
+  do {
+    code = prefix + Array.from({ length: 4 }, () => ID_CHARS[Math.floor(rnd() * ID_CHARS.length)]).join('')
+  } while (used.has(code))
+  used.add(code)
+  return code
+}
+const bidderId = () => randomId('B', usedBidderIds)
+const sellerId = () => randomId('S', usedSellerIds)
+
 const users = [
-  { id: 'u-buyer-1', name: 'Arvind Mehta', firm: 'Mehta Metals & Alloys', phone: '+91 98200 41775', email: 'arvind@mehtametals.in', role: 'buyer', kycStatus: 'verified', sellerVerified: false, standing: 'good', city: 'Mumbai', gstin: '27AAECM4321Q1ZP', avatarHue: 18, joinedAt: iso(-260 * DAY) },
-  { id: 'u-buyer-2', name: 'Kavitha Rao', firm: 'Sree Lakshmi Alloys', phone: '+91 90000 22814', email: 'kavitha@slalloys.in', role: 'buyer', kycStatus: 'verified', sellerVerified: false, standing: 'good', city: 'Hyderabad', gstin: '36AABCS9812K1Z3', avatarHue: 210, joinedAt: iso(-410 * DAY) },
-  { id: 'u-buyer-3', name: 'Imran Shaikh', firm: 'Al-Noor Metal Trading', phone: '+91 99670 55211', email: 'imran@alnoormetal.in', role: 'buyer', kycStatus: 'verified', sellerVerified: false, standing: 'watchlist', city: 'Bhiwandi', gstin: '27AAKFA0921L1Z6', avatarHue: 140, joinedAt: iso(-150 * DAY) },
-  { id: 'u-buyer-4', name: 'Deepak Jindal', firm: 'Jindal Ispat Udyog', phone: '+91 98140 77320', email: 'deepak@jindalispat.in', role: 'buyer', kycStatus: 'verified', sellerVerified: false, standing: 'defaulter', city: 'Ludhiana', gstin: '03AABCJ7710M1ZR', avatarHue: 0, joinedAt: iso(-520 * DAY), blacklistReason: 'EMD forfeited twice — failed to lift material within validity (AUC-2381, AUC-2394)' },
-  { id: 'u-buyer-5', name: 'Ganesh Iyer', firm: 'Ganesh Steel Traders', phone: '+91 98844 10293', email: 'ganesh@gstraders.in', role: 'buyer', kycStatus: 'verified', sellerVerified: false, standing: 'good', city: 'Chennai', gstin: '33AADCG5541P1Z8', avatarHue: 260, joinedAt: iso(-300 * DAY) },
-  { id: 'u-buyer-6', name: 'Ritu Agarwal', firm: 'OmShakti Metal Corp', phone: '+91 93300 84712', email: 'ritu@omshakti.in', role: 'buyer', kycStatus: 'verified', sellerVerified: false, standing: 'good', city: 'Kolkata', gstin: '19AAFCO2231R1Z4', avatarHue: 300, joinedAt: iso(-190 * DAY) },
-  { id: 'u-buyer-7', name: 'Sandeep Patil', firm: 'Deccan Ferro Works', phone: '+91 97640 31556', email: 'sandeep@deccanferro.in', role: 'buyer', kycStatus: 'verified', sellerVerified: false, standing: 'good', city: 'Pune', gstin: '27AAGCD8812T1Z1', avatarHue: 45, joinedAt: iso(-95 * DAY) },
-  { id: 'u-buyer-8', name: 'Harpreet Gill', firm: 'Punjab Rolling Mills', phone: '+91 98722 60148', email: 'harpreet@punjabrolling.in', role: 'buyer', kycStatus: 'pending', sellerVerified: false, standing: 'good', city: 'Mandi Gobindgarh', gstin: '03AACCP1190B1ZS', avatarHue: 175, joinedAt: iso(-20 * DAY) },
-  { id: 'u-seller-1', name: 'R. K. Verma', firm: 'SAIL — Bhilai Steel Plant', phone: '+91 78802 11430', email: 'rk.verma@sail.in', role: 'seller', kycStatus: 'verified', sellerVerified: true, standing: 'good', city: 'Bhilai', gstin: '22AAACS7062F1Z7', avatarHue: 220, joinedAt: iso(-700 * DAY) },
-  { id: 'u-seller-2', name: 'S. Banerjee', firm: 'Tata Steel — Jamshedpur Works', phone: '+91 65722 41190', email: 's.banerjee@tatasteel.com', role: 'seller', kycStatus: 'verified', sellerVerified: true, standing: 'good', city: 'Jamshedpur', gstin: '20AAACT2803M1Z9', avatarHue: 235, joinedAt: iso(-800 * DAY) },
-  { id: 'u-seller-3', name: 'A. K. Mishra', firm: 'East Coast Railway — Stores Dept', phone: '+91 67122 30871', email: 'akmishra@ecor.gov.in', role: 'seller', kycStatus: 'verified', sellerVerified: true, standing: 'good', city: 'Bhubaneswar', gstin: '21AAAGE0123F1ZD', avatarHue: 120, joinedAt: iso(-560 * DAY) },
-  { id: 'u-seller-4', name: 'P. Nagaraj', firm: 'JSW Steel — Vijayanagar Works', phone: '+91 83952 50617', email: 'p.nagaraj@jsw.in', role: 'seller', kycStatus: 'verified', sellerVerified: true, standing: 'good', city: 'Bellary', gstin: '29AAACJ4323N1ZW', avatarHue: 25, joinedAt: iso(-450 * DAY) },
-  { id: 'u-seller-5', name: 'V. Ramesh', firm: 'NTPC — Ramagundam STPS', phone: '+91 87242 72218', email: 'v.ramesh@ntpc.co.in', role: 'seller', kycStatus: 'verified', sellerVerified: true, standing: 'good', city: 'Ramagundam', gstin: '36AAACN0255D1Z1', avatarHue: 55, joinedAt: iso(-380 * DAY) },
-  { id: 'u-seller-6', name: 'D. Chatterjee', firm: 'MSTC — Eastern Region Yard', phone: '+91 33224 40911', email: 'd.chatterjee@mstc.in', role: 'seller', kycStatus: 'verified', sellerVerified: true, standing: 'good', city: 'Kolkata', gstin: '19AAACM0954J1Z2', avatarHue: 200, joinedAt: iso(-900 * DAY) },
-  { id: 'u-seller-7', name: 'K. Sundaram', firm: 'BHEL — Tiruchirappalli Unit', phone: '+91 43122 57703', email: 'k.sundaram@bhel.in', role: 'seller', kycStatus: 'verified', sellerVerified: true, standing: 'good', city: 'Tiruchirappalli', gstin: '33AAACB4146P1ZN', avatarHue: 280, joinedAt: iso(-640 * DAY) },
-  { id: 'u-field-1', name: 'Ravi Kumar', firm: 'ferroBid Field Ops', phone: '+91 97313 48802', email: 'ravi.kumar@ferrobid.in', role: 'field_exec', kycStatus: 'verified', sellerVerified: false, standing: 'good', city: 'Raipur', gstin: '—', avatarHue: 90, joinedAt: iso(-330 * DAY) },
-  { id: 'u-field-2', name: 'Sunita Devi', firm: 'ferroBid Field Ops', phone: '+91 91626 55917', email: 'sunita.devi@ferrobid.in', role: 'field_exec', kycStatus: 'verified', sellerVerified: false, standing: 'good', city: 'Jamshedpur', gstin: '—', avatarHue: 330, joinedAt: iso(-210 * DAY) },
-  { id: 'u-exec-1', name: 'Meera Nair', firm: 'ferroBid Operations', phone: '+91 98450 27384', email: 'meera.nair@ferrobid.in', role: 'exec_manager', kycStatus: 'verified', sellerVerified: false, standing: 'good', city: 'Bengaluru', gstin: '—', avatarHue: 245, joinedAt: iso(-540 * DAY) },
-  { id: 'u-sub-1', name: 'Ankit Sharma', firm: 'ferroBid Operations', phone: '+91 99105 63421', email: 'ankit.sharma@ferrobid.in', role: 'sub_admin', kycStatus: 'verified', sellerVerified: false, standing: 'good', city: 'New Delhi', gstin: '—', avatarHue: 160, joinedAt: iso(-280 * DAY) },
-  { id: 'u-super-1', name: 'Priya Venkatesan', firm: 'ferroBid HQ', phone: '+91 98410 90112', email: 'priya.v@ferrobid.in', role: 'super_admin', kycStatus: 'verified', sellerVerified: false, standing: 'good', city: 'Chennai', gstin: '—', avatarHue: 15, joinedAt: iso(-1000 * DAY) },
+  { id: 'u-buyer-1', name: 'Arvind Mehta', firm: 'Mehta Metals & Alloys', phone: '+91 98200 41775', email: 'arvind@mehtametals.in', role: 'buyer', kycStatus: 'verified', sellerVerified: false, standing: 'good', city: 'Mumbai', gstin: '27AAECM4321Q1ZP', avatarHue: 18, joinedAt: iso(-260 * DAY), bidderId: bidderId(), sellerId: null },
+  { id: 'u-buyer-2', name: 'Kavitha Rao', firm: 'Sree Lakshmi Alloys', phone: '+91 90000 22814', email: 'kavitha@slalloys.in', role: 'buyer', kycStatus: 'verified', sellerVerified: false, standing: 'good', city: 'Hyderabad', gstin: '36AABCS9812K1Z3', avatarHue: 210, joinedAt: iso(-410 * DAY), bidderId: bidderId(), sellerId: null },
+  { id: 'u-buyer-3', name: 'Imran Shaikh', firm: 'Al-Noor Metal Trading', phone: '+91 99670 55211', email: 'imran@alnoormetal.in', role: 'buyer', kycStatus: 'verified', sellerVerified: false, standing: 'watchlist', city: 'Bhiwandi', gstin: '27AAKFA0921L1Z6', avatarHue: 140, joinedAt: iso(-150 * DAY), bidderId: bidderId(), sellerId: null },
+  { id: 'u-buyer-4', name: 'Deepak Jindal', firm: 'Jindal Ispat Udyog', phone: '+91 98140 77320', email: 'deepak@jindalispat.in', role: 'buyer', kycStatus: 'verified', sellerVerified: false, standing: 'defaulter', city: 'Ludhiana', gstin: '03AABCJ7710M1ZR', avatarHue: 0, joinedAt: iso(-520 * DAY), blacklistReason: 'EMD forfeited twice — failed to lift material within validity (AUC-2381, AUC-2394)', bidderId: bidderId(), sellerId: null },
+  { id: 'u-buyer-5', name: 'Ganesh Iyer', firm: 'Ganesh Steel Traders', phone: '+91 98844 10293', email: 'ganesh@gstraders.in', role: 'buyer', kycStatus: 'verified', sellerVerified: false, standing: 'good', city: 'Chennai', gstin: '33AADCG5541P1Z8', avatarHue: 260, joinedAt: iso(-300 * DAY), bidderId: bidderId(), sellerId: null },
+  { id: 'u-buyer-6', name: 'Ritu Agarwal', firm: 'OmShakti Metal Corp', phone: '+91 93300 84712', email: 'ritu@omshakti.in', role: 'buyer', kycStatus: 'verified', sellerVerified: false, standing: 'good', city: 'Kolkata', gstin: '19AAFCO2231R1Z4', avatarHue: 300, joinedAt: iso(-190 * DAY), bidderId: bidderId(), sellerId: null },
+  { id: 'u-buyer-7', name: 'Sandeep Patil', firm: 'Deccan Ferro Works', phone: '+91 97640 31556', email: 'sandeep@deccanferro.in', role: 'buyer', kycStatus: 'verified', sellerVerified: false, standing: 'good', city: 'Pune', gstin: '27AAGCD8812T1Z1', avatarHue: 45, joinedAt: iso(-95 * DAY), bidderId: bidderId(), sellerId: null },
+  { id: 'u-buyer-8', name: 'Harpreet Gill', firm: 'Punjab Rolling Mills', phone: '+91 98722 60148', email: 'harpreet@punjabrolling.in', role: 'buyer', kycStatus: 'pending', sellerVerified: false, standing: 'good', city: 'Mandi Gobindgarh', gstin: '03AACCP1190B1ZS', avatarHue: 175, joinedAt: iso(-20 * DAY), bidderId: bidderId(), sellerId: null },
+  { id: 'u-seller-1', name: 'R. K. Verma', firm: 'SAIL — Bhilai Steel Plant', phone: '+91 78802 11430', email: 'rk.verma@sail.in', role: 'seller', kycStatus: 'verified', sellerVerified: true, standing: 'good', city: 'Bhilai', gstin: '22AAACS7062F1Z7', avatarHue: 220, joinedAt: iso(-700 * DAY), bidderId: null, sellerId: sellerId() },
+  { id: 'u-seller-2', name: 'S. Banerjee', firm: 'Tata Steel — Jamshedpur Works', phone: '+91 65722 41190', email: 's.banerjee@tatasteel.com', role: 'seller', kycStatus: 'verified', sellerVerified: true, standing: 'good', city: 'Jamshedpur', gstin: '20AAACT2803M1Z9', avatarHue: 235, joinedAt: iso(-800 * DAY), bidderId: null, sellerId: sellerId() },
+  { id: 'u-seller-3', name: 'A. K. Mishra', firm: 'East Coast Railway — Stores Dept', phone: '+91 67122 30871', email: 'akmishra@ecor.gov.in', role: 'seller', kycStatus: 'verified', sellerVerified: true, standing: 'good', city: 'Bhubaneswar', gstin: '21AAAGE0123F1ZD', avatarHue: 120, joinedAt: iso(-560 * DAY), bidderId: null, sellerId: sellerId() },
+  { id: 'u-seller-4', name: 'P. Nagaraj', firm: 'JSW Steel — Vijayanagar Works', phone: '+91 83952 50617', email: 'p.nagaraj@jsw.in', role: 'seller', kycStatus: 'verified', sellerVerified: true, standing: 'good', city: 'Bellary', gstin: '29AAACJ4323N1ZW', avatarHue: 25, joinedAt: iso(-450 * DAY), bidderId: null, sellerId: sellerId() },
+  { id: 'u-seller-5', name: 'V. Ramesh', firm: 'NTPC — Ramagundam STPS', phone: '+91 87242 72218', email: 'v.ramesh@ntpc.co.in', role: 'seller', kycStatus: 'verified', sellerVerified: true, standing: 'good', city: 'Ramagundam', gstin: '36AAACN0255D1Z1', avatarHue: 55, joinedAt: iso(-380 * DAY), bidderId: null, sellerId: sellerId() },
+  { id: 'u-seller-6', name: 'D. Chatterjee', firm: 'MSTC — Eastern Region Yard', phone: '+91 33224 40911', email: 'd.chatterjee@mstc.in', role: 'seller', kycStatus: 'verified', sellerVerified: true, standing: 'good', city: 'Kolkata', gstin: '19AAACM0954J1Z2', avatarHue: 200, joinedAt: iso(-900 * DAY), bidderId: null, sellerId: sellerId() },
+  { id: 'u-seller-7', name: 'K. Sundaram', firm: 'BHEL — Tiruchirappalli Unit', phone: '+91 43122 57703', email: 'k.sundaram@bhel.in', role: 'seller', kycStatus: 'verified', sellerVerified: true, standing: 'good', city: 'Tiruchirappalli', gstin: '33AAACB4146P1ZN', avatarHue: 280, joinedAt: iso(-640 * DAY), bidderId: null, sellerId: sellerId() },
+  { id: 'u-field-1', name: 'Ravi Kumar', firm: 'ferroBid Field Ops', phone: '+91 97313 48802', email: 'ravi.kumar@ferrobid.in', role: 'field_exec', kycStatus: 'verified', sellerVerified: false, standing: 'good', city: 'Raipur', gstin: '—', avatarHue: 90, joinedAt: iso(-330 * DAY), bidderId: null, sellerId: null },
+  { id: 'u-field-2', name: 'Sunita Devi', firm: 'ferroBid Field Ops', phone: '+91 91626 55917', email: 'sunita.devi@ferrobid.in', role: 'field_exec', kycStatus: 'verified', sellerVerified: false, standing: 'good', city: 'Jamshedpur', gstin: '—', avatarHue: 330, joinedAt: iso(-210 * DAY), bidderId: null, sellerId: null },
+  { id: 'u-exec-1', name: 'Meera Nair', firm: 'ferroBid Operations', phone: '+91 98450 27384', email: 'meera.nair@ferrobid.in', role: 'exec_manager', kycStatus: 'verified', sellerVerified: false, standing: 'good', city: 'Bengaluru', gstin: '—', avatarHue: 245, joinedAt: iso(-540 * DAY), bidderId: null, sellerId: null },
+  { id: 'u-sub-1', name: 'Ankit Sharma', firm: 'ferroBid Operations', phone: '+91 99105 63421', email: 'ankit.sharma@ferrobid.in', role: 'sub_admin', kycStatus: 'verified', sellerVerified: false, standing: 'good', city: 'New Delhi', gstin: '—', avatarHue: 160, joinedAt: iso(-280 * DAY), bidderId: null, sellerId: null },
+  { id: 'u-super-1', name: 'Priya Venkatesan', firm: 'ferroBid HQ', phone: '+91 98410 90112', email: 'priya.v@ferrobid.in', role: 'super_admin', kycStatus: 'verified', sellerVerified: false, standing: 'good', city: 'Chennai', gstin: '—', avatarHue: 15, joinedAt: iso(-1000 * DAY), bidderId: null, sellerId: null },
 ]
 const BOTS = ['u-buyer-2', 'u-buyer-3', 'u-buyer-5', 'u-buyer-6', 'u-buyer-7']
 
@@ -128,11 +150,16 @@ const YARDS = {
 }
 
 /* ------------------------------ catalogues -------------------------------
-   `emdLead` = minutes before `start` that pre-bid EMD funding closes (see
-   src/lib/emd.ts). Defaults to one day. cat-4 deliberately sits PAST its
-   cut-off and cat-5 deliberately sits just inside the 24h reminder window, so
-   both the "deadline passed" refusal and the reminder banner are visible the
-   moment the prototype loads. */
+   `emdLead` = minutes before `start` that pre-bid EMD funding closes, and
+   `emdOpen` = minutes before `start` that it opens (both see src/lib/emd.ts).
+   `emdOpen` defaults to unset, which reads as "already open" — only set it
+   where the EMD-not-open phase should actually be demoed, and keep it
+   greater than `emdLead` so the window has positive length. cat-4
+   deliberately sits PAST its cut-off and cat-5 deliberately sits just inside
+   the 24h reminder window, so both the "deadline passed" refusal and the
+   reminder banner are visible the moment the prototype loads; cat-20/21/22
+   deliberately sit BEFORE their `emdOpen`, so the "EMD not open yet" phase
+   is visible too. */
 const EMD_LEAD_DEFAULT = 1 * DAY
 const cataloguesDef = [
   { id: 'cat-1', code: 'AUC-2412', title: 'SAIL Bhilai — Mixed MS Scrap, Turnings & TMT Rejects', sellerId: 'u-seller-1', status: 'live', start: -3 * DAY, end: 42, pool: 'msScrap', count: 18, insp: [-6 * DAY, -2 * DAY], contact: { name: 'S. K. Sahu', phone: '+91 94252 10883', role: 'Yard In-charge (Inspection & Lifting)' }, antiSnipe: 3, validity: 7 },
@@ -156,9 +183,9 @@ const cataloguesDef = [
   { id: 'cat-17', code: 'AUC-2457', title: 'NTPC Ramagundam — Washery Rejects & Bottom Ash', sellerId: 'u-seller-5', status: 'upcoming', start: 6 * DAY, end: 6 * DAY + 220, pool: 'coal', count: 9, insp: [4 * DAY, 6 * DAY - 720], contact: { name: 'G. Srinivas', phone: '+91 87903 55240', role: 'AGM (Fuel Handling)' }, antiSnipe: 5, validity: 10 },
   { id: 'cat-18', code: 'AUC-2460', title: 'MSTC Eastern Region — Cu Armature & Brass Shell Scrap', sellerId: 'u-seller-6', status: 'upcoming', start: 6 * DAY + 280, end: 6 * DAY + 520, pool: 'copperBrass', count: 11, insp: [4 * DAY + 280, 6 * DAY - 440], contact: { name: 'T. Ghosh', phone: '+91 90070 18836', role: 'Yard Supervisor' }, antiSnipe: 3, validity: 7 },
   { id: 'cat-19', code: 'AUC-2463', title: 'BHEL Trichy — EOT Crane Parts & Storage Tanks', sellerId: 'u-seller-7', status: 'upcoming', start: 7 * DAY, end: 7 * DAY + 200, pool: 'assets', count: 8, insp: [5 * DAY, 7 * DAY - 720], contact: { name: 'R. Elango', phone: '+91 94430 20951', role: 'Sr. Engineer (Disposals)' }, antiSnipe: 5, validity: 15 },
-  { id: 'cat-20', code: 'AUC-2466', title: 'SAIL Bhilai — CRC End Cuts & 304 Turnings', sellerId: 'u-seller-1', status: 'upcoming', start: 7 * DAY + 260, end: 7 * DAY + 520, pool: 'ssOffcuts', count: 13, insp: [5 * DAY + 260, 7 * DAY - 460], contact: { name: 'S. K. Sahu', phone: '+91 94252 10883', role: 'Yard In-charge (Inspection & Lifting)' }, antiSnipe: 3, validity: 7 },
-  { id: 'cat-21', code: 'AUC-2469', title: 'Tata Steel Jamshedpur — Rejected TMT & Plate Cuttings', sellerId: 'u-seller-2', status: 'upcoming', start: 8 * DAY, end: 8 * DAY + 300, pool: 'msScrap', count: 16, insp: [6 * DAY, 8 * DAY - 720], contact: { name: 'M. Oraon', phone: '+91 82102 44561', role: 'Dy. Manager, By-products' }, antiSnipe: 5, validity: 10 },
-  { id: 'cat-22', code: 'AUC-2472', title: 'JSW Vijayanagar — Compressors & DG Sets', sellerId: 'u-seller-4', status: 'upcoming', start: 8 * DAY + 340, end: 8 * DAY + 560, pool: 'assets', count: 7, insp: [6 * DAY + 340, 8 * DAY - 380], contact: { name: 'H. Kulkarni', phone: '+91 90360 71182', role: 'Manager, Commercial (Disposals)' }, antiSnipe: 5, validity: 7 },
+  { id: 'cat-20', code: 'AUC-2466', title: 'SAIL Bhilai — CRC End Cuts & 304 Turnings', sellerId: 'u-seller-1', status: 'upcoming', start: 7 * DAY + 260, end: 7 * DAY + 520, pool: 'ssOffcuts', count: 13, insp: [5 * DAY + 260, 7 * DAY - 460], contact: { name: 'S. K. Sahu', phone: '+91 94252 10883', role: 'Yard In-charge (Inspection & Lifting)' }, antiSnipe: 3, validity: 7, emdOpen: 4 * DAY },
+  { id: 'cat-21', code: 'AUC-2469', title: 'Tata Steel Jamshedpur — Rejected TMT & Plate Cuttings', sellerId: 'u-seller-2', status: 'upcoming', start: 8 * DAY, end: 8 * DAY + 300, pool: 'msScrap', count: 16, insp: [6 * DAY, 8 * DAY - 720], contact: { name: 'M. Oraon', phone: '+91 82102 44561', role: 'Dy. Manager, By-products' }, antiSnipe: 5, validity: 10, emdOpen: 5 * DAY },
+  { id: 'cat-22', code: 'AUC-2472', title: 'JSW Vijayanagar — Compressors & DG Sets', sellerId: 'u-seller-4', status: 'upcoming', start: 8 * DAY + 340, end: 8 * DAY + 560, pool: 'assets', count: 7, insp: [6 * DAY + 340, 8 * DAY - 380], contact: { name: 'H. Kulkarni', phone: '+91 90360 71182', role: 'Manager, Commercial (Disposals)' }, antiSnipe: 5, validity: 7, emdOpen: 5 * DAY },
 ]
 
 const PHOTO_LABELS = ['Overview', 'Close-up', 'Stack view', 'Weighbridge', 'Condition detail']
@@ -571,6 +598,7 @@ const catalogues = cataloguesDef.map((c) => ({
   id: c.id, code: c.code, title: c.title, sellerId: c.sellerId, type: c.type ?? 'forward',
   status: c.status, assignedFieldExecId: c.assignedFieldExecId ?? null, startsAt: iso(c.start), endsAt: iso(c.end),
   emdDeadline: iso(c.start - (c.emdLead ?? EMD_LEAD_DEFAULT)),
+  ...(c.emdOpen != null ? { emdOpensAt: iso(c.start - c.emdOpen) } : {}),
   inspectionFrom: iso(c.insp[0]), inspectionTo: iso(c.insp[1]),
   inspectionHours: '10:00–16:00 IST', inspectionContact: c.contact,
   yardName: YARDS[c.id].name, yardAddress: YARDS[c.id].addr, region: YARDS[c.id].region,

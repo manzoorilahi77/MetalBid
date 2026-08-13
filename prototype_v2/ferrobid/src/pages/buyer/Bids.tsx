@@ -6,7 +6,7 @@ import { Page } from '../../layout/Chrome'
 import { Button, Chip, Countdown, EmptyState, PageHeader, PhotoThumb, Tabs, cx } from '../../components/ui'
 import { useBidroomGate } from '../../components/BidroomGate'
 import { myLotResult, useStore } from '../../store/store'
-import { fmtDate, inr, inrCompact, num } from '../../lib/format'
+import { fmtDate, inr, inrCompact } from '../../lib/format'
 
 type TabKey = 'active' | 'won' | 'all'
 
@@ -34,15 +34,21 @@ export default function Bids() {
   const bids = useStore((s) => s.bids)
   const { enterBidroom } = useBidroomGate()
   // Tab lives in the URL so other pages can deep-link into one — e.g. the buyer
-  // dashboard's "Active Auctions" tile. Active is the default, so it stays bare.
+  // dashboard's "outbid" and "active auctions" links still land on ?tab=active,
+  // a view kept alive for those deep links even though it's no longer a visible tab.
   const [params, setParams] = useSearchParams()
   const urlTab = params.get('tab')
-  const tab: TabKey = isTabKey(urlTab) ? urlTab : 'active'
-  const selectTab = (key: TabKey) => setParams(key === 'active' ? {} : { tab: key }, { replace: true })
+  const tab: TabKey = isTabKey(urlTab) ? urlTab : 'won'
 
   // Active / Results tabs: pick an auction first, then drill into its lots.
   const [openActiveCatId, setOpenActiveCatId] = useState<string | null>(null)
   const [openCatId, setOpenCatId] = useState<string | null>(null)
+  // Switching top-level tabs should always land back on that tab's auction list,
+  // not keep whatever auction was drilled into on the previous tab.
+  const selectTab = (key: TabKey) => {
+    setOpenCatId(null)
+    setParams(key === 'won' ? {} : { tab: key }, { replace: true })
+  }
   const [resultFilter, setResultFilter] = useState<'all' | 'won' | 'lost'>('all')
 
   if (!me) {
@@ -80,9 +86,6 @@ export default function Bids() {
     .filter((g) => !!g.cat)
     .sort((a, b) => Date.parse(a.lots[0].endsAt) - Date.parse(b.lots[0].endsAt))
 
-  // Won: sold + I'm H1 (all time)
-  const wonLots = lots.filter((l) => l.status === 'sold' && l.leadingBidderId === me.id)
-
   // Results: every closed catalogue where I placed ≥1 valid bid, grouped, with
   // my rank/outcome/best-bid/closing-H1 per lot (myLotResult reuses the same
   // ranking logic as the live bid ladder).
@@ -98,21 +101,22 @@ export default function Bids() {
     .filter((g) => g.rows.length > 0)
     .sort((a, b) => Date.parse(b.cat.endsAt) - Date.parse(a.cat.endsAt))
   const resultsCount = resultCatalogues.reduce((sum, g) => sum + g.rows.length, 0)
+  const wonCatalogues = resultCatalogues.filter((g) => g.rows.some((r) => r.result.outcome === 'won'))
+  const wonCount = resultCatalogues.reduce((sum, g) => sum + g.rows.filter((r) => r.result.outcome === 'won').length, 0)
 
   return (
     <Page>
       <PageHeader
-        title="My bids & results"
-        sub="Every rate you've quoted — live positions first, then confirmed wins and your outcome/rank on every closed lot."
+        title="Bid results"
+        sub="Confirmed wins and your outcome/rank on every closed lot — grouped by auction."
       />
 
       <Tabs<TabKey>
         tabs={[
-          { key: 'active', label: 'Active', count: activeLots.length },
-          { key: 'won', label: 'Won', count: wonLots.length },
+          { key: 'won', label: 'Won', count: wonCount },
           { key: 'all', label: 'All history', count: resultsCount },
         ]}
-        value={tab}
+        value={tab === 'active' ? 'won' : tab}
         onChange={selectTab}
         className="mb-5"
       />
@@ -144,7 +148,7 @@ export default function Bids() {
                     >
                       <div className="min-w-0 flex-1 basis-52">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="num text-sm font-bold">{cat.code}</span>
+                          <span className="num text-sm font-bold text-ember">{cat.code}</span>
                           {cat.type === 'tender' && <Chip tone="steel">Tender</Chip>}
                         </div>
                         <div className="text-sm text-ink-muted mt-0.5 line-clamp-1">{cat.title}</div>
@@ -172,7 +176,7 @@ export default function Bids() {
               </button>
               <div className="flex items-center justify-between gap-2 mb-4 px-1">
                 <div>
-                  <span className="num text-base font-bold">{cat.code}</span>
+                  <span className="num text-base font-bold text-ember">{cat.code}</span>
                   <span className="text-sm text-ink-muted ml-2">{cat.title}</span>
                 </div>
               </div>
@@ -205,111 +209,76 @@ export default function Bids() {
         })()
       )}
 
-      {/* -------------------------------- Won --------------------------------- */}
-      {tab === 'won' && (
-        wonLots.length === 0 ? (
-          <EmptyState
-            icon={<Trophy size={32} strokeWidth={1.5} />}
-            title="No wins yet"
-            body="When you finish as confirmed H1 on a lot, it lands here with a link to auction status."
-          />
-        ) : (
-          <div className="space-y-3">
-            {wonLots.map((lot) => {
-              const cat = catById.get(lot.catalogueId)
-              const isTender = cat?.type === 'tender'
-              const rate = lot.resultH1Rate ?? lot.currentRate ?? 0
-              return (
-                <div key={lot.id} className="card p-4 flex flex-wrap items-center gap-3">
-                  <PhotoThumb hue={lot.photos[0]?.hue ?? 24} category={lot.category} className="w-16 h-12" />
-                  <div className="min-w-0 flex-1 basis-52">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="num text-sm font-bold">{lot.lotNo}</span>
-                      <span className="num text-xs text-ink-faint">{cat?.code}</span>
-                      <Chip tone="success">{isTender ? 'Offer accepted' : 'Won · H1'}</Chip>
-                    </div>
-                    <div className="text-sm text-ink-muted mt-0.5 line-clamp-1">{lot.description}</div>
-                    <div className="text-xs text-ink-faint mt-0.5">
-                      <span className="num">{num(lot.indicativeQty)} {lot.uom}</span> · indicative — final on weighment
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-[11px] uppercase tracking-wider text-ink-faint">{isTender ? 'Accepted rate' : 'H1 rate'}</div>
-                    <div className="num text-sm font-bold text-success">{inr(rate)}<span className="text-xs text-ink-faint">/{lot.uom}</span></div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-[11px] uppercase tracking-wider text-ink-faint">Est. value</div>
-                    <div className="num text-sm font-bold">{inrCompact(rate * lot.indicativeQty)}</div>
-                  </div>
-                  <Link to="/buyer/auction-status">
-                    <Button size="sm" variant="success">Track auction status <ArrowRight size={14} /></Button>
-                  </Link>
-                </div>
-              )
-            })}
-          </div>
-        )
-      )}
+      {/* ------------------------- Won / All history ------------------------- */}
+      {(tab === 'won' || tab === 'all') && (() => {
+        const groups = tab === 'won' ? wonCatalogues : resultCatalogues
 
-      {/* ----------------------------- All history ----------------------------- */}
-      {tab === 'all' && (
-        resultCatalogues.length === 0 ? (
-          <EmptyState
-            title="No history yet"
-            body="Once a catalogue you bid in closes, your outcome, rank and closing H1 on every lot appear here — win or lose."
-          />
-        ) : (() => {
-          const openGroup = resultCatalogues.find((g) => g.cat.id === openCatId)
+        if (groups.length === 0) {
+          return tab === 'won' ? (
+            <EmptyState
+              icon={<Trophy size={32} strokeWidth={1.5} />}
+              title="No wins yet"
+              body="When you finish as confirmed H1 on a lot, it lands here — grouped by auction, with a link to auction status."
+            />
+          ) : (
+            <EmptyState
+              title="No history yet"
+              body="Once a catalogue you bid in closes, your outcome, rank and closing H1 on every lot appear here — win or lose."
+            />
+          )
+        }
 
-          // -------- Auction list: one card per closed catalogue you bid in --------
-          if (!openGroup) {
-            return (
-              <div className="space-y-3">
-                {resultCatalogues.map(({ cat, rows }) => {
-                  const wonCount = rows.filter((r) => r.result.outcome === 'won').length
-                  const wonValue = rows
-                    .filter((r) => r.result.outcome === 'won')
-                    .reduce((sum, r) => sum + r.result.myBestRate * r.lot.indicativeQty, 0)
-                  return (
-                    <button
-                      key={cat.id}
-                      onClick={() => { setOpenCatId(cat.id); setResultFilter('all') }}
-                      className="card p-4 w-full flex flex-wrap items-center gap-3 text-left hover:border-ink/40 transition-colors"
-                    >
-                      <div className="min-w-0 flex-1 basis-52">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="num text-sm font-bold">{cat.code}</span>
-                          {cat.type === 'tender' && <Chip tone="steel">Tender</Chip>}
-                        </div>
-                        <div className="text-sm text-ink-muted mt-0.5 line-clamp-1">{cat.title}</div>
-                        <div className="text-xs text-ink-faint mt-0.5">Closed {fmtDate(cat.endsAt)}</div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-[11px] uppercase tracking-wider text-ink-faint">Won</div>
-                        <div className="num text-sm font-bold text-success">{wonCount} <span className="text-ink-faint font-normal">/ {rows.length}</span></div>
-                      </div>
-                      {wonCount > 0 && (
-                        <div className="text-right">
-                          <div className="text-[11px] uppercase tracking-wider text-ink-faint">Won value</div>
-                          <div className="num text-sm font-bold">{inrCompact(wonValue)}</div>
-                        </div>
-                      )}
-                      <ArrowRight size={16} className="text-ink-faint shrink-0" />
-                    </button>
-                  )
-                })}
-              </div>
-            )
-          }
+        const openGroup = groups.find((g) => g.cat.id === openCatId)
 
-          // -------- Auction detail: won | lost lots for the selected auction --------
-          const { cat, rows } = openGroup
-          const isTender = cat.type === 'tender'
-          const wonRows = rows.filter((r) => r.result.outcome === 'won')
-          const lostRows = rows.filter((r) => r.result.outcome !== 'won')
-          const shownRows = resultFilter === 'won' ? wonRows : resultFilter === 'lost' ? lostRows : rows
-
+        // -------- Auction list: one card per matching closed catalogue --------
+        if (!openGroup) {
           return (
+            <div className="space-y-3">
+              {groups.map(({ cat, rows }) => {
+                const catWonCount = rows.filter((r) => r.result.outcome === 'won').length
+                const wonValue = rows
+                  .filter((r) => r.result.outcome === 'won')
+                  .reduce((sum, r) => sum + r.result.myBestRate * r.lot.indicativeQty, 0)
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() => { setOpenCatId(cat.id); setResultFilter(tab === 'won' ? 'won' : 'all') }}
+                    className="card p-4 w-full flex flex-wrap items-center gap-3 text-left hover:border-ink/40 transition-colors"
+                  >
+                    <div className="min-w-0 flex-1 basis-52">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="num text-sm font-bold text-ember">{cat.code}</span>
+                        {cat.type === 'tender' && <Chip tone="steel">Tender</Chip>}
+                      </div>
+                      <div className="text-sm text-ink-muted mt-0.5 line-clamp-1">{cat.title}</div>
+                      <div className="text-xs text-ink-faint mt-0.5">Closed {fmtDate(cat.endsAt)}</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-[11px] uppercase tracking-wider text-ink-faint">Won</div>
+                      <div className="num text-sm font-bold text-success">{catWonCount} <span className="text-ink-faint font-normal">/ {rows.length}</span></div>
+                    </div>
+                    {catWonCount > 0 && (
+                      <div className="text-right">
+                        <div className="text-[11px] uppercase tracking-wider text-ink-faint">Won value</div>
+                        <div className="num text-sm font-bold">{inrCompact(wonValue)}</div>
+                      </div>
+                    )}
+                    <ArrowRight size={16} className="text-ink-faint shrink-0" />
+                  </button>
+                )
+              })}
+            </div>
+          )
+        }
+
+        // -------- Auction detail: won | lost lots for the selected auction --------
+        const { cat, rows } = openGroup
+        const isTender = cat.type === 'tender'
+        const wonRows = rows.filter((r) => r.result.outcome === 'won')
+        const lostRows = rows.filter((r) => r.result.outcome !== 'won')
+        const shownRows = resultFilter === 'won' ? wonRows : resultFilter === 'lost' ? lostRows : rows
+
+        return (
             <div>
               <div className="flex flex-wrap items-center justify-between gap-3 mb-4 print:hidden">
                 <button onClick={() => setOpenCatId(null)} className="inline-flex items-center gap-1.5 text-sm font-semibold text-ink-muted hover:text-ink">
@@ -323,7 +292,7 @@ export default function Bids() {
               <div id="print-area">
                 <div className="flex items-center justify-between gap-2 mb-1 px-1 print:px-0">
                   <div>
-                    <span className="num text-base font-bold">{cat.code}</span>
+                    <span className="num text-base font-bold text-ember">{cat.code}</span>
                     <span className="text-sm text-ink-muted ml-2">{cat.title}</span>
                   </div>
                   <span className="text-xs text-ink-faint">Closed {fmtDate(cat.endsAt)}</span>
@@ -380,7 +349,7 @@ export default function Bids() {
                           </div>
                         </div>
                         {result.outcome === 'won' ? (
-                          <Link to="/buyer/auction-status" className="print:hidden">
+                          <Link to={`/buyer/auction-status?auction=${cat.id}`} className="print:hidden">
                             <Button size="sm" variant="success">Track auction status <ArrowRight size={14} /></Button>
                           </Link>
                         ) : (
@@ -396,8 +365,7 @@ export default function Bids() {
             </div>
           )
         })()
-      )}
-
+      }
     </Page>
   )
 }

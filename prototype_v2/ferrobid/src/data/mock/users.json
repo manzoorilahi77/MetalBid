@@ -12,7 +12,9 @@
     "city": "Mumbai",
     "gstin": "27AAECM4321Q1ZP",
     "avatarHue": 18,
-    "joinedAt": "2025-10-29T06:30:00.000Z"
+    "joinedAt": "2025-10-29T06:30:00.000Z",
+    "bidderId": "BUS7Y",
+    "sellerId": null
   },
   {
     "id": "u-buyer-2",
@@ -27,7 +29,9 @@
     "city": "Hyderabad",
     "gstin": "36AABCS9812K1Z3",
     "avatarHue": 210,
-    "joinedAt": "2025-06-01T06:30:00.000Z"
+    "joinedAt": "2025-06-01T06:30:00.000Z",
+    "bidderId": "B2YSE",
+    "sellerId": null
   },
   {
     "id": "u-buyer-3",
@@ -42,7 +46,9 @@
     "city": "Bhiwandi",
     "gstin": "27AAKFA0921L1Z6",
     "avatarHue": 140,
-    "joinedAt": "2026-02-16T06:30:00.000Z"
+    "joinedAt": "2026-02-16T06:30:00.000Z",
+    "bidderId": "BBHK9",
+    "sellerId": null
   },
   {
     "id": "u-buyer-4",
@@ -58,7 +64,9 @@
     "gstin": "03AABCJ7710M1ZR",
     "avatarHue": 0,
     "joinedAt": "2025-02-11T06:30:00.000Z",
-    "blacklistReason": "EMD forfeited twice — failed to lift material within validity (AUC-2381, AUC-2394)"
+    "blacklistReason": "EMD forfeited twice — failed to lift material within validity (AUC-2381, AUC-2394)",
+    "bidderId": "BYXMJ",
+    "sellerId": null
   },
   {
     "id": "u-buyer-5",
@@ -73,7 +81,9 @@
     "city": "Chennai",
     "gstin": "33AADCG5541P1Z8",
     "avatarHue": 260,
-    "joinedAt": "2025-09-19T06:30:00.000Z"
+    "joinedAt": "2025-09-19T06:30:00.000Z",
+    "bidderId": "BD654",
+    "sellerId": null
   },
   {
     "id": "u-buyer-6",
@@ -88,7 +98,9 @@
     "city": "Kolkata",
     "gstin": "19AAFCO2231R1Z4",
     "avatarHue": 300,
-    "joinedAt": "2026-01-07T06:30:00.000Z"
+    "joinedAt": "2026-01-07T06:30:00.000Z",
+    "bidderId": "BQJ4B",
+    "sellerId": null
   },
   {
     "id": "u-buyer-7",
@@ -103,7 +115,9 @@
     "city": "Pune",
     "gstin": "27AAGCD8812T1Z1",
     "avatarHue": 45,
-    "joinedAt": "2026-04-12T06:30:00.000Z"
+    "joinedAt": "2026-04-12T06:30:00.000Z",
+    "bidderId": "B283D",
+    "sellerId": null
   },
   {
     "id": "u-buyer-8",
@@ -118,7 +132,9 @@
     "city": "Mandi Gobindgarh",
     "gstin": "03AACCP1190B1ZS",
     "avatarHue": 175,
-    "joinedAt": "2026-06-26T06:30:00.000Z"
+    "joinedAt": "2026-06-26T06:30:00.000Z",
+    "bidderId": "BLWBJ",
+    "sellerId": null
   },
   {
     "id": "u-seller-1",
@@ -133,7 +149,9 @@
     "city": "Bhilai",
     "gstin": "22AAACS7062F1Z7",
     "avatarHue": 220,
-    "joinedAt": "2024-08-15T06:30:00.000Z"
+    "joinedAt": "2024-08-15T06:30:00.000Z",
+    "bidderId": null,
+    "sellerId": "SS2JS"
   },
   {
     "id": "u-seller-2",
@@ -148,7 +166,9 @@
     "city": "Jamshedpur",
     "gstin": "20AAACT2803M1Z9",
     "avatarHue": 235,
-    "joinedAt": "2024-05-07T06:30:00.000Z"
+    "joinedAt": "2024-05-07T06:30:00.000Z",
+    "bidderId": null,
+    "sellerId": "SAUTW"
   },
   {
     "id": "u-seller-3",
@@ -163,7 +183,9 @@
     "city": "Bhubaneswar",
     "gstin": "21AAAGE0123F1ZD",
     "avatarHue": 120,
-    "joinedAt": "2025-01-02T06:30:00.000Z"
+    "joinedAt": "2025-01-02T06:30:00.000Z",
+    "bidderId": null,
+    "sellerId": "SY54H"
   },
   {
     "id": "u-seller-4",
@@ -178,7 +200,9 @@
     "city": "Bellary",
     "gstin": "29AAACJ4323N1ZW",
     "avatarHue": 25,
-    "joinedAt": "2025-04-22T06:30:00.000Z"
+    "joinedAt": "2025-04-22T06:30:00.000Z",
+    "bidderId": null,
+    "sellerId": "S4P7E"
   },
   {
     "id": "u-seller-5",
@@ -193,7 +217,9 @@
     "city": "Ramagundam",
     "gstin": "36AAACN0255D1Z1",
     "avatarHue": 55,
-    "joinedAt": "2025-07-01T06:30:00.000Z"
+    "joinedAt": "2025-07-01T06:30:00.000Z",
+    "bidderId": null,
+    "sellerId": "S5KAR"
   },
   {
     "id": "u-seller-6",
@@ -208,7 +234,9 @@
     "city": "Kolkata",
     "gstin": "19AAACM0954J1Z2",
     "avatarHue": 200,
-    "joinedAt": "2024-01-28T06:30:00.000Z"
+    "joinedAt": "2024-01-28T06:30:00.000Z",
+    "bidderId": null,
+    "sellerId": "SAE7H"
   },
   {
     "id": "u-seller-7",
@@ -223,7 +251,9 @@
     "city": "Tiruchirappalli",
     "gstin": "33AAACB4146P1ZN",
     "avatarHue": 280,
-    "joinedAt": "2024-10-14T06:30:00.000Z"
+    "joinedAt": "2024-10-14T06:30:00.000Z",
+    "bidderId": null,
+    "sellerId": "SLVZU"
   },
   {
     "id": "u-field-1",
@@ -238,7 +268,9 @@
     "city": "Raipur",
     "gstin": "—",
     "avatarHue": 90,
-    "joinedAt": "2025-08-20T06:30:00.000Z"
+    "joinedAt": "2025-08-20T06:30:00.000Z",
+    "bidderId": null,
+    "sellerId": null
   },
   {
     "id": "u-field-2",
@@ -253,7 +285,9 @@
     "city": "Jamshedpur",
     "gstin": "—",
     "avatarHue": 330,
-    "joinedAt": "2025-12-18T06:30:00.000Z"
+    "joinedAt": "2025-12-18T06:30:00.000Z",
+    "bidderId": null,
+    "sellerId": null
   },
   {
     "id": "u-exec-1",
@@ -268,7 +302,9 @@
     "city": "Bengaluru",
     "gstin": "—",
     "avatarHue": 245,
-    "joinedAt": "2025-01-22T06:30:00.000Z"
+    "joinedAt": "2025-01-22T06:30:00.000Z",
+    "bidderId": null,
+    "sellerId": null
   },
   {
     "id": "u-sub-1",
@@ -283,7 +319,9 @@
     "city": "New Delhi",
     "gstin": "—",
     "avatarHue": 160,
-    "joinedAt": "2025-10-09T06:30:00.000Z"
+    "joinedAt": "2025-10-09T06:30:00.000Z",
+    "bidderId": null,
+    "sellerId": null
   },
   {
     "id": "u-super-1",
@@ -298,6 +336,8 @@
     "city": "Chennai",
     "gstin": "—",
     "avatarHue": 15,
-    "joinedAt": "2023-10-20T06:30:00.000Z"
+    "joinedAt": "2023-10-20T06:30:00.000Z",
+    "bidderId": null,
+    "sellerId": null
   }
 ]

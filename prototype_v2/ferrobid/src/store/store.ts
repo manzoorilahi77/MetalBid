@@ -5,11 +5,11 @@
 --------------------------------------------------------------------------- */
 import { create } from 'zustand'
 import { loadSeed } from './seed'
-import { uid, inr, num } from '../lib/format'
-import { defaultEmdDeadline, emdWindowClosed } from '../lib/emd'
+import { uid, inr, num, genBidderId, genSellerId } from '../lib/format'
+import { defaultEmdDeadline, emdWindowClosed, emdWindowNotOpen } from '../lib/emd'
 import type {
   AppNotification, AuditEvent, AutoBidSetting, BankAccount, Bid, BidType, BuyerLotSelection,
-  Catalogue, CompanyBankAccount, DemandDraft, DeliveryOrder, DepositClaim, Dispute, EmdExemptionRequest,
+  Catalogue, CommissionSettlement, CompanyBankAccount, DemandDraft, DeliveryOrder, DepositClaim, Dispute, EmdExemptionRequest,
   InspectionReport, LiftingChecklistItem, Lot, LotStatus, NotificationKind, Role, User, WatchlistEntry,
   WithdrawalRequest, WithdrawalWindowConfig,
 } from '../types'
@@ -143,6 +143,7 @@ interface State {
   emdExemptionRequests: EmdExemptionRequest[]
 
   termsAccepted: Record<string, string> // catalogueId → version accepted (per current session)
+  commissionSettlements: CommissionSettlement[]
   toasts: Toast[]
   lastWonLotId: string | null // confetti trigger
 
@@ -155,6 +156,12 @@ interface State {
   signIn: (username: string, password: string) => { ok: boolean; role?: Role; error?: string }
   login: (phone: string) => void
   logout: () => void
+  /** Creates a brand-new account and signs it in — the only place a `bidderId`
+   *  (role 'buyer') or `sellerId` (role 'seller') is ever assigned, once, for
+   *  the lifetime of the account. */
+  registerAccount: (input: {
+    name: string; email: string; phone: string; firm: string; role: 'buyer' | 'seller'; city?: string; gstin?: string
+  }) => User
 
   /* --- buyer --- */
   toggleShortlist: (catalogueId: string, lotId: string) => void
@@ -182,6 +189,8 @@ interface State {
   /* --- ops / admin --- */
   submitInspection: (lotId: string, report: Omit<InspectionReport, 'id' | 'lotId' | 'date'>, outcome: 'verified' | 'flagged' | 'rejected') => void
   setLotStatus: (lotId: string, status: LotStatus) => void
+  setSellerLotDecision: (lotId: string, decision: 'accepted' | 'rejected' | null) => void
+  recordCommissionSettlement: (catalogueId: string, amount: number, mode: 'transfer' | 'emd') => void
   publishCatalogue: (cat: Catalogue, lotIds: string[], overrides: Record<string, Partial<Lot>>) => void
   assignCatalogue: (catalogueId: string, fieldExecId: string) => void
   waiveInspection: (lotId: string, managerId: string, reason: string) => void
@@ -454,6 +463,7 @@ export const useStore = create<State>((set, get) => {
     withdrawalWindow: DEFAULT_WITHDRAWAL_WINDOW,
     emdExemptionRequests: [],
     termsAccepted: {},
+    commissionSettlements: [],
     toasts: [],
     lastWonLotId: null,
 
@@ -513,6 +523,27 @@ export const useStore = create<State>((set, get) => {
       rememberRole('guest')
       set({ role: 'guest', currentUser: null })
     },
+    registerAccount: ({ name, email, phone, firm, role, city = '', gstin = '' }) => {
+      const s = get()
+      const existingBidderIds = s.users.map((u) => u.bidderId).filter((v): v is string => !!v)
+      const existingSellerIds = s.users.map((u) => u.sellerId).filter((v): v is string => !!v)
+      const user: User = {
+        id: uid('u'),
+        name, email, phone, firm, role,
+        kycStatus: 'none',
+        sellerVerified: false,
+        standing: 'good',
+        city, gstin,
+        avatarHue: Math.floor(Math.random() * 360),
+        joinedAt: new Date(s.now).toISOString(),
+        bidderId: role === 'buyer' ? genBidderId(existingBidderIds) : null,
+        sellerId: role === 'seller' ? genSellerId(existingSellerIds) : null,
+      }
+      set((st) => ({ users: [...st.users, user], wallets: [...st.wallets, { userId: user.id, balance: 0, emdLocked: 0, ledger: [] }] }))
+      rememberRole(role)
+      set({ role, currentUser: user })
+      return user
+    },
 
     /* ------------------------------- buyer ------------------------------ */
     toggleShortlist: (catalogueId, lotId) => {
@@ -523,6 +554,8 @@ export const useStore = create<State>((set, get) => {
       // `emdWindowClosed` so they can show the deadline message; this is the backstop.
       // An approved exemption request reopens this despite the deadline.
       if (cat && emdWindowClosed(cat, get().now) && !hasApprovedEmdExemption(me.id, catalogueId)) return
+      // Symmetric guard on the other side of the window — nothing to fund yet.
+      if (cat && emdWindowNotOpen(cat, get().now)) return
       set((st) => {
         const existing = st.selections.find((x) => x.buyerId === me.id && x.catalogueId === catalogueId)
         if (!existing) {
@@ -555,6 +588,8 @@ export const useStore = create<State>((set, get) => {
         // entry stays put (visible, locked) as a record of what fell through,
         // rather than letting them quietly unshortlist and lose that signal.
         if (has && (isCatalogueEmdLocked(st, me.id, catalogueId) || (cat && emdWindowClosed(cat, st.now)))) return st
+        // Can't shortlist before the EMD window has even opened — nothing to fund yet.
+        if (!has && cat && emdWindowNotOpen(cat, st.now)) return st
         return {
           watchlist: has
             ? st.watchlist.filter((w) => !(w.buyerId === me.id && w.catalogueId === catalogueId))
@@ -576,6 +611,8 @@ export const useStore = create<State>((set, get) => {
       // deadline message rather than the balance one; this is the backstop.
       // An approved exemption request reopens this despite the deadline.
       if (emdWindowClosed(cat, s.now) && !hasApprovedEmdExemption(me.id, catalogueId)) return false
+      // Symmetric guard on the other side of the window — nothing to fund yet.
+      if (emdWindowNotOpen(cat, s.now)) return false
       set((st) => ({
         wallets: st.wallets.map((x) =>
           x.userId === me.id
@@ -864,6 +901,24 @@ export const useStore = create<State>((set, get) => {
 
     setLotStatus: (lotId, status) => {
       set((st) => ({ lots: st.lots.map((l) => (l.id === lotId ? { ...l, status } : l)) }))
+    },
+
+    setSellerLotDecision: (lotId, decision) => {
+      set((st) => ({ lots: st.lots.map((l) => (l.id === lotId ? { ...l, sellerDecision: decision } : l)) }))
+      const lot = get().lots.find((l) => l.id === lotId)
+      get().audit('lot.seller_decision', lot?.lotNo ?? lotId,
+        decision ? `Seller ${decision} the cleared price` : 'Seller decision reset to pending')
+    },
+
+    recordCommissionSettlement: (catalogueId, amount, mode) => {
+      const me = get().currentUser
+      const record: CommissionSettlement = {
+        id: uid('settle'), catalogueId, sellerId: me?.id ?? '', amount, mode, at: new Date(get().now).toISOString(),
+      }
+      set((st) => ({ commissionSettlements: [...st.commissionSettlements, record] }))
+      const cat = get().catalogues.find((c) => c.id === catalogueId)
+      get().audit('lot.commission_settled', cat?.code ?? catalogueId,
+        `Commission ${mode === 'emd' ? 'netted from EMD' : 'paid by transfer'} — ${amount}`)
     },
 
     publishCatalogue: (cat, lotIds, overrides) => {

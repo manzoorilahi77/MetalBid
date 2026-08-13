@@ -71,7 +71,7 @@ export const CatalogueDetail = () => {
         <div className="max-w-3xl">
           <div className="flex items-center gap-2.5 flex-wrap">
             <StatusChip status={ui} />
-            <span className="num text-sm font-bold text-ink-muted">{cat.code}</span>
+            <span className="num text-sm font-bold text-ember">{cat.code}</span>
             {cat.type === 'forward' ? <Chip tone="neutral">Forward e-auction</Chip> : <Chip tone="steel">Sealed tender</Chip>}
           </div>
           <h1 className="text-2xl sm:text-4xl font-bold mt-2">{cat.title}</h1>

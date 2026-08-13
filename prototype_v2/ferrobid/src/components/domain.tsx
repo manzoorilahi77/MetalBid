@@ -4,7 +4,7 @@ import { Download, Layers, Lock, MapPin, Star } from 'lucide-react'
 import type { Catalogue, MetalCategory } from '../types'
 import { useStore, catalogueUiStatus, isCatalogueShortlisted, selectionSummary } from '../store/store'
 import { inrCompact, relTime } from '../lib/format'
-import { emdDeadlineMs, emdDeadlineSoon, emdWindowClosed } from '../lib/emd'
+import { emdDeadlineMs, emdDeadlineSoon, emdOpensAtMs, emdWindowClosed, emdWindowNotOpen } from '../lib/emd'
 import { categoryImageUrl } from '../data/categoryImages'
 import { useNow } from '../lib/useTick'
 import { Button, Chip, Countdown, PhotoThumb, StatusChip, cx } from './ui'
@@ -32,10 +32,6 @@ export function CatalogueCard({ cat, className, showBuyerActions }: { cat: Catal
   const covers = catLots.slice(0, 3).flatMap((l) => l.photos.slice(0, 1).map((p) => ({ photo: p, category: l.category })))
   const shortlisted = isCatalogueShortlisted({ watchlist }, me?.id, cat.id)
   const summary = selectionSummary({ selections, lots }, me?.id, cat.id)
-  // Every lot in the catalogue — not just the shortlisted subset — is
-  // shortlisted and funded: matches the "EMD fully funded" wording used on
-  // the EMD & payments list, vs. "EMD funded" for a partial selection.
-  const allLotsCovered = catLots.length > 0 && summary.count === catLots.length && summary.shortfall === 0
   // EMD already funded, or the funding deadline passed without full funding —
   // both freeze the star read-only (mirrors the store's toggleWatchlist
   // guard) so a missed catalogue stays visible instead of being unshortlisted
@@ -44,19 +40,10 @@ export function CatalogueCard({ cat, className, showBuyerActions }: { cat: Catal
   const fundedLocked = shortlisted && summary.count > 0 && summary.shortfall === 0
   const deadlinePassed = emdWindowClosed(cat, now)
   const emdLocked = shortlisted && (fundedLocked || deadlinePassed)
-  const emdBadge = !showBuyerActions || !shortlisted ? null
-    // Only flag the deadline when something's actually left outstanding —
-    // fully funding a partial selection before the cut-off is still a win,
-    // not a miss, even once the deadline (or go-live) has since passed.
-    : deadlinePassed && (summary.count === 0 || summary.shortfall > 0)
-      ? <span className="font-bold text-danger">EMD deadline passed</span>
-      : summary.count === 0
-        ? null
-        : summary.shortfall > 0
-          ? <span className="font-bold text-warning">Shortfall {inrCompact(summary.shortfall)}</span>
-          : (allLotsCovered
-            ? <span className="font-bold text-success">EMD fully funded</span>
-            : <span className="font-bold text-success">EMD funded</span>)
+  // EMD hasn't opened yet — nothing to shortlist against, so the star stays
+  // locked the same way it does once the deadline's passed (mirrors the
+  // store's toggleWatchlist guard).
+  const notOpen = emdWindowNotOpen(cat, now)
 
   return (
     <div className={cx('card card-hover flex flex-col min-w-[290px]',
@@ -65,22 +52,22 @@ export function CatalogueCard({ cat, className, showBuyerActions }: { cat: Catal
       <Link to={`/catalogue/${cat.id}`} className="p-4 flex flex-col gap-3 flex-1 focus-visible:outline-2 focus-visible:outline-ember">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-1.5">
-            <StatusChip status={ui} />
-            {showBuyerActions && (cat.type === 'tender' ? <Chip tone="steel">Sealed tender</Chip> : <Chip tone="neutral">Forward</Chip>)}
+            <StatusChip status={ui} className="font-bold!" />
+            {showBuyerActions && (cat.type === 'tender' ? <Chip tone="steel" className="font-bold!">Sealed tender</Chip> : <Chip tone="neutral" className="font-bold!">Forward</Chip>)}
           </div>
           {ui === 'live' || ui === 'closing'
-            ? <Countdown endsAt={cat.endsAt} prefix="ends" size="sm" />
+            ? <Countdown endsAt={cat.endsAt} prefix="auction ends" size="sm" className="font-bold!" />
             : ui === 'upcoming'
-              ? (
-                <div className="flex flex-col items-end gap-1">
-                  <Chip tone="steel" className="num">starts {relTime(cat.startsAt, now)}</Chip>
-                  <span className={cx('text-[11px] num font-semibold whitespace-nowrap',
-                    emdWindowClosed(cat, now) ? 'text-danger' : emdDeadlineSoon(cat, now) ? 'text-warning' : 'text-ink-faint')}>
-                    EMD {emdWindowClosed(cat, now) ? 'closed' : 'closes'} {relTime(new Date(emdDeadlineMs(cat)).toISOString(), now)}
-                  </span>
-                </div>
-              )
-              : <span className="text-xs text-ink-faint">{relTime(cat.endsAt, now)}</span>}
+              ? (notOpen
+                ? <Chip tone="neutral" className="num font-bold!">EMD starts {relTime(new Date(emdOpensAtMs(cat)).toISOString(), now)}</Chip>
+                : emdWindowClosed(cat, now)
+                  ? <Chip tone="steel" className="num font-bold!">auction starts {relTime(cat.startsAt, now)}</Chip>
+                  : (
+                    <Chip tone={emdDeadlineSoon(cat, now) ? 'warning' : 'steel'} className="num font-bold!">
+                      EMD ends {relTime(new Date(emdDeadlineMs(cat)).toISOString(), now)}
+                    </Chip>
+                  ))
+              : <span className="text-xs text-ink-faint font-bold">Closed</span>}
         </div>
         <div className="flex gap-1.5">
           {covers.map((c, i) => <PhotoThumb key={i} hue={c.photo.hue} category={c.category} className="h-20 flex-1" />)}
@@ -88,17 +75,16 @@ export function CatalogueCard({ cat, className, showBuyerActions }: { cat: Catal
         <div>
           <div className="text-xs num font-bold text-ember">{cat.code}</div>
           <div className="font-display font-bold leading-snug line-clamp-2 mt-0.5">{cat.title}</div>
-          <div className="text-xs text-ink-muted mt-1 line-clamp-1">{seller?.firm}</div>
+          <div className="text-xs text-ink-muted mt-1 line-clamp-1 font-bold">{seller?.firm}</div>
         </div>
         <div className="mt-auto pt-2 border-t border-line flex items-center justify-between text-xs text-ink-muted">
-          <span className="inline-flex items-center gap-1"><Layers size={12} /> {catLots.length} lots</span>
-          <span className="inline-flex items-center gap-1"><MapPin size={12} /> {cat.region}</span>
-          <span className="num font-semibold text-ink">EMD from {inrCompact(emdFrom)}</span>
+          <span className="inline-flex items-center gap-1 font-bold"><Layers size={12} /> {catLots.length} lots</span>
+          <span className="inline-flex items-center gap-1 font-bold"><MapPin size={12} /> {cat.region}</span>
+          <span className="num font-bold text-ink">EMD from {inrCompact(emdFrom)}</span>
         </div>
         {showBuyerActions && (
           <div className="flex items-center justify-between gap-2 text-[11px] text-ink-faint">
-            <span className="num">EMD {inrCompact(emdFrom)}–{inrCompact(emdTo)}</span>
-            {emdBadge}
+            <span className="num font-bold">EMD {inrCompact(emdFrom)}–{inrCompact(emdTo)}</span>
           </div>
         )}
       </Link>
@@ -107,27 +93,29 @@ export function CatalogueCard({ cat, className, showBuyerActions }: { cat: Catal
         <div className="flex items-center gap-1 px-3 pb-3 pt-1 border-t border-line">
           {ui === 'upcoming' && (
             <button
-              onClick={() => { if (!emdLocked) toggleWatchlist(cat.id) }}
-              disabled={emdLocked}
+              onClick={() => { if (!emdLocked && !notOpen) toggleWatchlist(cat.id) }}
+              disabled={emdLocked || notOpen}
               aria-label={shortlisted ? 'Remove from watchlist' : 'Add to watchlist'}
               aria-pressed={shortlisted}
-              title={fundedLocked
-                ? 'EMD funded — this catalogue is read only until it closes'
-                : deadlinePassed
-                  ? 'EMD deadline passed — this catalogue is read only'
-                  : 'Watchlist this catalogue'}
+              title={notOpen
+                ? `EMD funding opens ${relTime(new Date(emdOpensAtMs(cat)).toISOString(), now)}`
+                : fundedLocked
+                  ? 'EMD funded — this catalogue is read only until it closes'
+                  : deadlinePassed
+                    ? 'EMD deadline passed — this catalogue is read only'
+                    : 'Watchlist this catalogue'}
               className={cx('p-2 rounded-lg transition-colors', shortlisted ? 'text-ember' : 'text-ink-faint hover:text-ink hover:bg-surface-2',
                 'disabled:opacity-70 disabled:pointer-events-none')}
             >
-              {emdLocked ? <Lock size={16} /> : <Star size={16} fill={shortlisted ? 'currentColor' : 'none'} />}
+              {emdLocked || notOpen ? <Lock size={16} /> : <Star size={16} fill={shortlisted ? 'currentColor' : 'none'} />}
             </button>
           )}
-          <Button size="sm" variant="ghost"
+          <Button size="sm" variant="ghost" className="font-bold!"
             onClick={() => pushToast({ kind: 'info', title: 'Catalogue PDF downloading', body: `${cat.code} Catalogue & Annexure.pdf (demo)` })}>
             <Download size={14} /> PDF
           </Button>
           <Link to={`/catalogue/${cat.id}`} className="ml-auto">
-            <Button size="sm" variant="ghost">View details</Button>
+            <Button size="sm" variant="ghost" className="font-bold!">View details</Button>
           </Link>
         </div>
       )}

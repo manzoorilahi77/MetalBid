@@ -64,7 +64,7 @@ export default function Users() {
         <table className="w-full text-sm min-w-[860px]">
           <thead>
             <tr className="text-left text-[11px] uppercase tracking-wider text-ink-faint border-b border-line">
-              <th className="px-5 py-2.5">User</th><th className="px-4 py-2.5">Role</th><th className="px-4 py-2.5">City</th>
+              <th className="px-5 py-2.5">User</th><th className="px-4 py-2.5">Role</th><th className="px-4 py-2.5">Bidder / Seller ID</th><th className="px-4 py-2.5">City</th>
               <th className="px-4 py-2.5">KYC</th><th className="px-4 py-2.5">Standing</th><th className="px-4 py-2.5">Joined</th>
               <th className="px-4 py-2.5 text-right">Wallet</th><th className="px-4 py-2.5" />
             </tr>
@@ -84,6 +84,7 @@ export default function Users() {
                     </div>
                   </td>
                   <td className="px-4 py-2.5"><Chip tone="steel">{ROLE_LABEL[u.role]}</Chip></td>
+                  <td className="px-4 py-2.5 num text-ink-muted">{u.bidderId ?? u.sellerId ?? '—'}</td>
                   <td className="px-4 py-2.5 text-ink-muted">{u.city}</td>
                   <td className="px-4 py-2.5"><Chip tone={kycTone[u.kycStatus]}>{u.kycStatus}</Chip></td>
                   <td className="px-4 py-2.5"><Chip tone={standingTone[u.standing]}>{u.standing}</Chip></td>
@@ -105,6 +106,8 @@ export default function Users() {
             <div className="card bg-surface-2 border-0 p-4 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
               <span className="text-ink-muted">Contact</span><span className="font-semibold">{managed.name} · <span className="num">{managed.phone}</span></span>
               <span className="text-ink-muted">GSTIN</span><span className="num font-semibold">{managed.gstin}</span>
+              <span className="text-ink-muted">{managed.role === 'seller' ? 'Seller ID' : 'Bidder ID'}</span>
+              <span className="num font-semibold">{managed.bidderId ?? managed.sellerId ?? '—'}</span>
               <span className="text-ink-muted">KYC</span><Chip tone={kycTone[managed.kycStatus]} className="w-fit">{managed.kycStatus}</Chip>
               <span className="text-ink-muted">Seller</span><span className="font-semibold">{managed.sellerVerified ? 'Verified seller' : '—'}</span>
             </div>

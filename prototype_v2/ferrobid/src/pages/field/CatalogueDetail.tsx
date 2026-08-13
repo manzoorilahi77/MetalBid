@@ -33,7 +33,7 @@ export default function FieldCatalogueDetail() {
 
       <div className="card p-4">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="num font-bold">{cat.code}</span>
+          <span className="num font-bold text-ember">{cat.code}</span>
           <Chip tone="steel">Assigned</Chip>
         </div>
         <h1 className="font-display text-xl font-bold mt-1">{cat.title}</h1>

@@ -46,7 +46,7 @@ export default function FieldQueue() {
             <Link key={c.id} to={`/field/catalogue/${c.id}`} className="block">
               <article className="card card-hover p-4">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="num font-bold">{c.code}</span>
+                  <span className="num font-bold text-ember">{c.code}</span>
                   <span className="font-semibold text-sm">{c.title}</span>
                 </div>
                 <div className="text-xs text-ink-muted mt-1 flex items-center gap-1">

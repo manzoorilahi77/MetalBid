@@ -88,7 +88,7 @@ export default function Pipeline() {
               <div key={c.id} className="card p-4 flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="num text-sm font-bold">{c.code}</span>
+                    <span className="num text-sm font-bold text-ember">{c.code}</span>
                     <span className="font-semibold text-sm">{c.title}</span>
                   </div>
                   <div className="text-xs text-ink-muted mt-0.5">

@@ -7,30 +7,31 @@
 
      shortlist check → pending EMD → terms & conditions → navigate
 
-   "Bid Now" prepends two more steps (pick a live auction, review its lots)
-   before joining the same sequence. Cancelling out of the EMD step returns to
-   the auction list when the flow started there, and simply closes otherwise.
+   "Bid Now" is two full pages (pick a live auction, review its lots — see
+   pages/buyer/BidNowAuctions.tsx and BidNowLots.tsx) that feed into this same
+   gate once a catalogue is picked. Cancelling out of the EMD/terms steps
+   returns to the lot-review page when the flow started from "Bid Now", and
+   simply closes otherwise.
 
    Terms are confirmed on EVERY entry, even when `termsAccepted` already has a
    version recorded for the catalogue — one rule, no branches.
 --------------------------------------------------------------------------- */
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { AlertTriangle, ArrowLeft, Check, Gavel, Lock, Wallet as WalletIcon } from 'lucide-react'
-import { Button, Chip, Countdown, Modal, StatusChip } from './ui'
-import { LotShortlistModal } from './LotShortlistModal'
+import { AlertTriangle, Check, Gavel, Lock, Wallet as WalletIcon } from 'lucide-react'
+import { Button, Chip, Modal } from './ui'
 import { EmdExemptionControl } from './EmdExemption'
-import { catalogueUiStatus, latestEmdExemptionRequest, selectionSummary, useStore } from '../store/store'
+import { latestEmdExemptionRequest, selectionSummary, useStore } from '../store/store'
 import { emdBlockedMessage, emdWindowClosed } from '../lib/emd'
 import { inr, inrWords } from '../lib/format'
 import type { Catalogue } from '../types'
 
-type Step = 'auctions' | 'lots' | 'emd' | 'terms'
+type Step = 'emd' | 'terms'
 
 interface Flow {
   step: Step
-  catalogueId: string | null
-  /** Started from the "Bid Now" shortcut, so Cancel/Back go to the auction list. */
+  catalogueId: string
+  /** Started from the "Bid Now" shortcut, so Cancel goes back to the lot-review page. */
   fromBidNow: boolean
   /** Preserved through the gate so "Go to bidding room" still lands on its lot. */
   lotId?: string
@@ -38,8 +39,8 @@ interface Flow {
 
 interface GateApi {
   /** Run the gate for one catalogue and, if it clears, enter its bidroom. */
-  enterBidroom: (catalogueId: string, opts?: { lotId?: string }) => void
-  /** Open the "Bid Now" shortcut at the my-live-auctions step. */
+  enterBidroom: (catalogueId: string, opts?: { lotId?: string; fromBidNow?: boolean }) => void
+  /** Open the "Bid Now" shortcut — the full-page live-auction picker. */
   openBidNow: () => void
 }
 
@@ -58,6 +59,7 @@ export function BidroomGateProvider({ children }: { children: ReactNode }) {
   const lots = useStore((s) => s.lots)
   const catalogues = useStore((s) => s.catalogues)
   const selections = useStore((s) => s.selections)
+  const nav = useNavigate()
 
   const enterBidroom = useCallback<GateApi['enterBidroom']>((catalogueId, opts) => {
     const s = useStore.getState()
@@ -78,7 +80,7 @@ export function BidroomGateProvider({ children }: { children: ReactNode }) {
     }
     setFlow({
       step: summary.unfundedLotIds.length > 0 ? 'emd' : 'terms',
-      catalogueId, fromBidNow: false, lotId: opts?.lotId,
+      catalogueId, fromBidNow: opts?.fromBidNow ?? false, lotId: opts?.lotId,
     })
   }, [])
 
@@ -88,22 +90,21 @@ export function BidroomGateProvider({ children }: { children: ReactNode }) {
       s.pushToast({ kind: 'warning', title: 'Sign in to bid', body: 'Use the demo role switcher or the login screen.' })
       return
     }
-    setFlow({ step: 'auctions', catalogueId: null, fromBidNow: true })
-  }, [])
+    nav('/buyer/bid-now')
+  }, [nav])
 
   const api = useMemo<GateApi>(() => ({ enterBidroom, openBidNow }), [enterBidroom, openBidNow])
 
   const close = () => setFlow(null)
-  const cat = flow?.catalogueId ? catalogues.find((c) => c.id === flow.catalogueId) ?? null : null
+  const cat = flow ? catalogues.find((c) => c.id === flow.catalogueId) ?? null : null
   const summary = selectionSummary({ selections, lots }, me?.id, flow?.catalogueId ?? '')
 
-  /* Live catalogues the buyer has shortlisted at least one lot in — step (a). */
-  const myLiveAuctions = useMemo(() => {
-    if (!me) return []
-    return catalogues.filter((c) =>
-      c.status === 'live' &&
-      selections.some((x) => x.buyerId === me.id && x.catalogueId === c.id && x.lotIds.length > 0))
-  }, [catalogues, selections, me])
+  /** Cancelling out of EMD/terms started from "Bid Now" returns to that
+   *  catalogue's lot-review page instead of just closing. */
+  const cancelToOrigin = () => {
+    if (flow?.fromBidNow) nav(`/buyer/bid-now/${flow.catalogueId}`)
+    else close()
+  }
 
   /** Called when the EMD step clears (or was skipped) — terms are always next. */
   const toTerms = () => setFlow((f) => (f ? { ...f, step: 'terms' } : f))
@@ -112,125 +113,21 @@ export function BidroomGateProvider({ children }: { children: ReactNode }) {
     <Ctx.Provider value={api}>
       {children}
 
-      <AuctionPickerStep
-        open={flow?.step === 'auctions'}
-        auctions={myLiveAuctions}
-        onClose={close}
-        onPick={(id) => setFlow({ step: 'lots', catalogueId: id, fromBidNow: true })}
-      />
-
-      <LotPickerStep
-        open={flow?.step === 'lots' && !!cat}
-        cat={cat}
-        onBack={() => setFlow({ step: 'auctions', catalogueId: null, fromBidNow: true })}
-        onClose={close}
-        onContinue={() => {
-          if (!cat) return
-          setFlow((f) => (f ? { ...f, step: summary.unfundedLotIds.length > 0 ? 'emd' : 'terms' } : f))
-        }}
-      />
-
       <PendingEmdStep
         open={flow?.step === 'emd' && !!cat}
         cat={cat}
-        onCancel={() => {
-          if (flow?.fromBidNow) setFlow({ step: 'auctions', catalogueId: null, fromBidNow: true })
-          else close()
-        }}
+        onCancel={cancelToOrigin}
         onPaid={toTerms}
       />
 
       <TermsStep
         open={flow?.step === 'terms' && !!cat}
         cat={cat}
-        onCancel={() => {
-          if (flow?.fromBidNow) setFlow({ step: 'auctions', catalogueId: null, fromBidNow: true })
-          else close()
-        }}
+        onCancel={cancelToOrigin}
         lotId={flow?.lotId}
         onDone={close}
       />
     </Ctx.Provider>
-  )
-}
-
-/* --------------------- (a) pick one of my live auctions -------------------- */
-function AuctionPickerStep({ open, auctions, onClose, onPick }: {
-  open: boolean; auctions: Catalogue[]; onClose: () => void; onPick: (catalogueId: string) => void
-}) {
-  const me = useStore((s) => s.currentUser)
-  const lots = useStore((s) => s.lots)
-  const selections = useStore((s) => s.selections)
-  const now = useStore((s) => s.now)
-
-  return (
-    <Modal open={open} onClose={onClose} title="Bid now — pick an auction">
-      {auctions.length === 0 ? (
-        <div className="py-6 text-center">
-          <div className="mx-auto size-12 rounded-2xl bg-surface-2 grid place-items-center text-ink-faint"><Gavel size={22} /></div>
-          <div className="font-bold mt-3">No live auctions on your shortlist</div>
-          <p className="text-sm text-ink-muted mt-1 max-w-sm mx-auto">
-            Shortlist lots in a catalogue and it shows up here the moment that auction goes live.
-          </p>
-        </div>
-      ) : (
-        <div className="space-y-2">
-          <p className="text-sm text-ink-muted">
-            These are the live auctions you have shortlisted lots in. Pick one to review its lots and enter the room.
-          </p>
-          {auctions.map((c) => {
-            const s = selectionSummary({ selections, lots }, me?.id, c.id)
-            const catLots = lots.filter((l) => l.catalogueId === c.id)
-            return (
-              <button key={c.id} onClick={() => onPick(c.id)}
-                className="w-full text-left card card-hover p-4 flex flex-wrap items-center gap-3">
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="num text-[11px] font-bold text-ink-faint">{c.code}</span>
-                    <StatusChip status={catalogueUiStatus(c, now, catLots)} />
-                  </div>
-                  <div className="font-semibold text-sm mt-1 line-clamp-1">{c.title}</div>
-                  <div className="text-xs text-ink-muted mt-0.5">
-                    <span className="num font-semibold">{s.count}</span> shortlisted
-                    {s.shortfall > 0
-                      ? <> · <span className="text-warning font-semibold">EMD pending {inr(s.shortfall)}</span></>
-                      : <> · <span className="text-success font-semibold">EMD funded</span></>}
-                  </div>
-                </div>
-                <Countdown endsAt={c.endsAt} prefix="ends" size="sm" />
-              </button>
-            )
-          })}
-        </div>
-      )}
-    </Modal>
-  )
-}
-
-/* ------------- (b) every lot in the catalogue, star to shortlist ----------- */
-function LotPickerStep({ open, cat, onBack, onClose, onContinue }: {
-  open: boolean; cat: Catalogue | null; onBack: () => void; onClose: () => void; onContinue: () => void
-}) {
-  return (
-    <LotShortlistModal open={open} cat={cat} onClose={onClose} footer={(summary) => (
-      <>
-        <div className="flex flex-wrap items-center gap-2 mt-4">
-          <Button variant="ghost" onClick={onBack}><ArrowLeft size={15} /> Auctions</Button>
-          <span className="text-sm text-ink-muted ml-auto">
-            <span className="num font-bold text-ink">{summary.count}</span> shortlisted
-            {summary.shortfall > 0 && <> · EMD due <span className="num font-bold text-warning">{inr(summary.shortfall)}</span></>}
-          </span>
-          <span title={summary.count === 0 ? 'Shortlist at least one lot to continue' : undefined}>
-            <Button disabled={summary.count === 0} onClick={onContinue}>
-              <Gavel size={15} /> Enter bidding room
-            </Button>
-          </span>
-        </div>
-        {summary.count === 0 && (
-          <p className="text-xs font-semibold text-ink-faint mt-2 text-right">Shortlist at least one lot to continue.</p>
-        )}
-      </>
-    )} />
   )
 }
 
@@ -309,7 +206,7 @@ function PendingEmdStep({ open, cat, onCancel, onPaid }: {
       ) : (
         <div className="space-y-4">
           <p className="text-sm text-ink-muted">
-            {pendingLots.length} shortlisted lot{pendingLots.length > 1 ? 's' : ''} in <span className="num font-semibold text-ink">{cat.code}</span>
+            {pendingLots.length} shortlisted lot{pendingLots.length > 1 ? 's' : ''} in <span className="num font-semibold text-ember">{cat.code}</span>
             {pendingLots.length === 1 ? ' still needs' : ' still need'} pre-bid EMD before you can enter the room.
           </p>
           <div className="card bg-surface-2 border-0 divide-y divide-line">

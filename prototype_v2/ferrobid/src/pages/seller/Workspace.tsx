@@ -7,16 +7,18 @@ import { catalogueUiStatus, useStore } from '../../store/store'
 import { inr, inrCompact, num, relTime } from '../../lib/format'
 import { useNow } from '../../lib/useTick'
 
-/** Stable bidder pseudonym — sellers never see buyer identities. */
-const mask = (bidderId: string) =>
-  `Bidder #${(bidderId.split('').reduce((s, c) => s + c.charCodeAt(0), 0) % 89) + 10}`
-
 export default function SellerWorkspace() {
   const now = useNow()
   const me = useStore((s) => s.currentUser)
   const catalogues = useStore((s) => s.catalogues)
   const lots = useStore((s) => s.lots)
   const bids = useStore((s) => s.bids)
+  const users = useStore((s) => s.users)
+  // Sellers never see a bidder's real name/firm — only their permanent Bidder ID.
+  const mask = (bidderId: string): string => {
+    const code = users.find((u) => u.id === bidderId)?.bidderId
+    return code ? `Bidder ${code}` : 'Bidder —'
+  }
 
   const myCats = catalogues.filter((c) => c.sellerId === me?.id)
   const myLots = lots.filter((l) => myCats.some((c) => c.id === l.catalogueId))
@@ -39,7 +41,7 @@ export default function SellerWorkspace() {
   return (
     <Page>
       <PageHeader
-        title={<>Seller workspace</>}
+        title={<>Namaste, {me?.name.split(' ')[0] ?? 'Seller'}{me?.sellerId && <Chip tone="steel" className="num ml-2 align-middle text-xs">{me.sellerId}</Chip>}</>}
         sub={`${me?.firm ?? 'Your firm'} · lots are inspected & catalogued by the ferroBid ops team before auction.`}
         actions={<Link to="/seller/create-lot"><button className="h-10 px-4 rounded-xl bg-ember text-white text-sm font-semibold hover:bg-ember-strong">+ Create lot</button></Link>}
       />
@@ -64,7 +66,7 @@ export default function SellerWorkspace() {
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
                   <StatusChip status={ui} />
-                  <span className="num text-xs font-bold text-ink-faint">{c.code}</span>
+                  <span className="num text-xs font-bold text-ember">{c.code}</span>
                 </div>
                 {(ui === 'live' || ui === 'closing') && <Countdown endsAt={c.endsAt} size="sm" />}
               </div>

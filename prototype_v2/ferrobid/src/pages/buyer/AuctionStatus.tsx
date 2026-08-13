@@ -111,7 +111,7 @@ export default function AuctionStatus() {
           sub={`${open.dos.length} won lot${open.dos.length > 1 ? 's' : ''} in this auction. ${INTRO}`}
         />
         <div className="flex flex-wrap items-center gap-2 -mt-2 mb-5">
-          <span className="num text-sm font-bold">{open.cat.code}</span>
+          <span className="num text-sm font-bold text-ember">{open.cat.code}</span>
           <span className="text-sm text-ink-muted inline-flex items-center gap-1">
             <MapPin size={13} className="text-ink-faint" /> {open.cat.yardName} · {open.cat.region}
           </span>
@@ -160,7 +160,7 @@ function AuctionCard({ cat, dos }: { cat: Catalogue; dos: DeliveryOrder[] }) {
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="num text-sm font-bold">{cat.code}</span>
+            <span className="num text-sm font-bold text-ember">{cat.code}</span>
             {allDone
               ? <Chip tone="success"><Check size={12} /> All fulfilled</Chip>
               : s.awaitingPayment > 0

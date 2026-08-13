@@ -10,7 +10,14 @@ export default function SellerReports() {
   const me = useStore((s) => s.currentUser)
   const catalogues = useStore((s) => s.catalogues)
   const lots = useStore((s) => s.lots)
+  const users = useStore((s) => s.users)
   const pushToast = useStore((s) => s.pushToast)
+  // The only identity a seller is ever shown for who won a lot — permanent,
+  // and the same code that bidder saw of themselves in the bid room.
+  const winnerBidderId = (l: (typeof lots)[number]) =>
+    l.status === 'sold' && l.leadingBidderId
+      ? (users.find((u) => u.id === l.leadingBidderId)?.bidderId ?? '—')
+      : '—'
 
   const closed = catalogues.filter((c) => c.sellerId === me?.id && c.status === 'closed')
   const allClosedLots = lots.filter((l) => closed.some((c) => c.id === l.catalogueId))
@@ -67,7 +74,7 @@ export default function SellerReports() {
               <div key={c.id} className="card mt-6 overflow-hidden">
                 <div className="px-5 py-4 border-b border-line flex flex-wrap items-center gap-3">
                   <div className="flex-1 min-w-60">
-                    <span className="num text-xs font-bold text-ink-faint">{c.code}</span>
+                    <span className="num text-xs font-bold text-ember">{c.code}</span>
                     <div className="font-display font-bold">{c.title}</div>
                   </div>
                   <div className="w-48">
@@ -89,6 +96,7 @@ export default function SellerReports() {
                         <th className="px-5 py-2.5">Lot</th><th className="px-4 py-2.5">Grade</th>
                         <th className="px-4 py-2.5 text-right">Start rate</th><th className="px-4 py-2.5 text-right">H1 rate</th>
                         <th className="px-4 py-2.5 text-right">Uplift</th><th className="px-4 py-2.5">Result</th>
+                        <th className="px-4 py-2.5">Winning Bidder ID</th>
                         <th className="px-5 py-2.5 text-right">Realised value</th>
                       </tr>
                     </thead>
@@ -105,6 +113,7 @@ export default function SellerReports() {
                               {uplift != null ? `+${uplift.toFixed(1)}%` : '—'}
                             </td>
                             <td className="px-4 py-2.5"><StatusChip status={l.status} /></td>
+                            <td className="px-4 py-2.5 num font-semibold text-ink-muted">{winnerBidderId(l)}</td>
                             <td className="px-5 py-2.5 num text-right font-semibold">
                               {l.status === 'sold' && l.resultH1Rate ? inrCompact(l.resultH1Rate * l.indicativeQty) : '—'}
                             </td>

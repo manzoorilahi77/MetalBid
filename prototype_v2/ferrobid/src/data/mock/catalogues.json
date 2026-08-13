@@ -143,11 +143,11 @@
     "type": "tender",
     "status": "live",
     "assignedFieldExecId": null,
-    "startsAt": "2026-07-14T06:30:00.000Z",
-    "endsAt": "2026-07-26T06:51:00.000Z",
-    "emdDeadline": "2026-07-18T06:30:00.000Z",
-    "inspectionFrom": "2026-07-09T06:30:00.000Z",
-    "inspectionTo": "2026-07-13T06:30:00.000Z",
+    "startsAt": "2026-07-15T06:30:00.000Z",
+    "endsAt": "2026-07-16T06:51:00.000Z",
+    "emdDeadline": "2026-07-14T06:30:00.000Z",
+    "inspectionFrom": "2026-07-12T06:30:00.000Z",
+    "inspectionTo": "2026-07-15T06:30:00.000Z",
     "inspectionHours": "10:00–16:00 IST",
     "inspectionContact": {
       "name": "B. Pradhan",
@@ -815,7 +815,7 @@
     "assignedFieldExecId": null,
     "startsAt": "2026-07-20T11:30:00.000Z",
     "endsAt": "2026-07-20T15:50:00.000Z",
-    "emdDeadline": "2026-07-16T03:30:00.000Z",
+    "emdDeadline": "2026-07-19T11:30:00.000Z",
     "inspectionFrom": "2026-07-18T11:30:00.000Z",
     "inspectionTo": "2026-07-19T23:30:00.000Z",
     "inspectionHours": "10:00–16:00 IST",
@@ -1187,6 +1187,7 @@
     "startsAt": "2026-07-23T10:50:00.000Z",
     "endsAt": "2026-07-23T15:10:00.000Z",
     "emdDeadline": "2026-07-22T10:50:00.000Z",
+    "emdOpensAt": "2026-07-19T10:50:00.000Z",
     "inspectionFrom": "2026-07-21T10:50:00.000Z",
     "inspectionTo": "2026-07-22T22:50:00.000Z",
     "inspectionHours": "10:00–16:00 IST",
@@ -1255,6 +1256,7 @@
     "startsAt": "2026-07-24T06:30:00.000Z",
     "endsAt": "2026-07-24T11:30:00.000Z",
     "emdDeadline": "2026-07-23T06:30:00.000Z",
+    "emdOpensAt": "2026-07-19T06:30:00.000Z",
     "inspectionFrom": "2026-07-22T06:30:00.000Z",
     "inspectionTo": "2026-07-23T18:30:00.000Z",
     "inspectionHours": "10:00–16:00 IST",
@@ -1320,6 +1322,7 @@
     "startsAt": "2026-07-24T12:10:00.000Z",
     "endsAt": "2026-07-24T15:50:00.000Z",
     "emdDeadline": "2026-07-23T12:10:00.000Z",
+    "emdOpensAt": "2026-07-19T12:10:00.000Z",
     "inspectionFrom": "2026-07-22T12:10:00.000Z",
     "inspectionTo": "2026-07-24T00:10:00.000Z",
     "inspectionHours": "10:00–16:00 IST",
@@ -1367,27 +1370,28 @@
   },
   {
     "id": "cat-23",
-    "code": "2400",
-    "title": "QA Test Auction 2400 — 100 Dummy Lots",
-    "sellerId": "u-seller-1",
+    "code": "AUC-2473",
+    "title": "Tata Steel Jamshedpur — SS Turnings, CRC & Copper Scrap (Closed)",
+    "sellerId": "u-seller-2",
     "type": "forward",
-    "status": "live",
+    "status": "closed",
     "assignedFieldExecId": null,
-    "startsAt": "2026-07-16T06:25:00.000Z",
-    "endsAt": "2026-07-16T12:30:00.000Z",
-    "inspectionFrom": "2026-07-14T06:30:00.000Z",
-    "inspectionTo": "2026-07-16T05:30:00.000Z",
-    "inspectionHours": "10:00-16:00 IST",
+    "startsAt": "2026-07-02T06:30:00.000Z",
+    "endsAt": "2026-07-04T10:15:00.000Z",
+    "emdDeadline": "2026-07-01T06:30:00.000Z",
+    "inspectionFrom": "2026-06-29T06:30:00.000Z",
+    "inspectionTo": "2026-07-03T06:30:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
     "inspectionContact": {
-      "name": "QA Bot",
-      "phone": "+91 90000 00000",
-      "role": "Test Coordinator"
+      "name": "M. Oraon",
+      "phone": "+91 82102 44561",
+      "role": "Dy. Manager, By-products"
     },
-    "yardName": "QA Test Yard",
-    "yardAddress": "Plot 14, Test Industrial Estate, Bengaluru, Karnataka 560099",
-    "region": "Bengaluru, KA",
-    "antiSnipeMinutes": 1,
-    "bidValidityDays": 7,
+    "yardName": "Burma Mines Yard",
+    "yardAddress": "Burma Mines, Tata Steel Works, Jamshedpur, Jharkhand 831007",
+    "region": "Jamshedpur, JH",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 10,
     "lotIds": [
       "lot-264",
       "lot-265",
@@ -1396,433 +1400,171 @@
       "lot-268",
       "lot-269",
       "lot-270",
-      "lot-271",
+      "lot-271"
+    ],
+    "documents": [
+      {
+        "id": "cat-23-doc-1",
+        "name": "AUC-2473 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.2 MB"
+      },
+      {
+        "id": "cat-23-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "810 KB"
+      },
+      {
+        "id": "cat-23-doc-3",
+        "name": "Payment Schedule & Bank Details.xlsx",
+        "type": "xlsx",
+        "size": "96 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of SS Turnings, CRC End Cuts & Copper Scrap on as-is-where-is basis. Auction closed — results below are final H1 rates pending seller settlement."
+  },
+  {
+    "id": "cat-24",
+    "code": "AUC-2481",
+    "title": "Tata Steel Jamshedpur — Mixed HMS & Braided Wire Scrap",
+    "sellerId": "u-seller-2",
+    "type": "forward",
+    "status": "upcoming",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-07-22T06:30:00.000Z",
+    "endsAt": "2026-07-23T10:30:00.000Z",
+    "emdDeadline": "2026-07-21T06:30:00.000Z",
+    "emdOpensAt": "2026-07-18T06:30:00.000Z",
+    "inspectionFrom": "2026-07-19T06:30:00.000Z",
+    "inspectionTo": "2026-07-21T18:30:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "M. Oraon",
+      "phone": "+91 82102 44561",
+      "role": "Dy. Manager, By-products"
+    },
+    "yardName": "Burma Mines Yard",
+    "yardAddress": "Burma Mines, Tata Steel Works, Jamshedpur, Jharkhand 831007",
+    "region": "Jamshedpur, JH",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 10,
+    "lotIds": [
       "lot-272",
       "lot-273",
       "lot-274",
       "lot-275",
       "lot-276",
-      "lot-277",
-      "lot-278",
-      "lot-279",
-      "lot-280",
-      "lot-281",
-      "lot-282",
-      "lot-283",
-      "lot-284",
-      "lot-285",
-      "lot-286",
-      "lot-287",
-      "lot-288",
-      "lot-289",
-      "lot-290",
-      "lot-291",
-      "lot-292",
-      "lot-293",
-      "lot-294",
-      "lot-295",
-      "lot-296",
-      "lot-297",
-      "lot-298",
-      "lot-299",
-      "lot-300",
-      "lot-301",
-      "lot-302",
-      "lot-303",
-      "lot-304",
-      "lot-305",
-      "lot-306",
-      "lot-307",
-      "lot-308",
-      "lot-309",
-      "lot-310",
-      "lot-311",
-      "lot-312",
-      "lot-313",
-      "lot-314",
-      "lot-315",
-      "lot-316",
-      "lot-317",
-      "lot-318",
-      "lot-319",
-      "lot-320",
-      "lot-321",
-      "lot-322",
-      "lot-323",
-      "lot-324",
-      "lot-325",
-      "lot-326",
-      "lot-327",
-      "lot-328",
-      "lot-329",
-      "lot-330",
-      "lot-331",
-      "lot-332",
-      "lot-333",
-      "lot-334",
-      "lot-335",
-      "lot-336",
-      "lot-337",
-      "lot-338",
-      "lot-339",
-      "lot-340",
-      "lot-341",
-      "lot-342",
-      "lot-343",
-      "lot-344",
-      "lot-345",
-      "lot-346",
-      "lot-347",
-      "lot-348",
-      "lot-349",
-      "lot-350",
-      "lot-351",
-      "lot-352",
-      "lot-353",
-      "lot-354",
-      "lot-355",
-      "lot-356",
-      "lot-357",
-      "lot-358",
-      "lot-359",
-      "lot-360",
-      "lot-361",
-      "lot-362",
-      "lot-363"
-    ],
-    "documents": [
-      {
-        "id": "cat-23-doc-1",
-        "name": "2400 Catalogue & Annexure.pdf",
-        "type": "pdf",
-        "size": "1.1 MB"
-      }
-    ],
-    "termsSetId": "ts-standard",
-    "description": "QA dummy auction with 100 lots for testing the bidding room. 12 lots inside LOT-01..LOT-30 close 2-4 minutes after the catalogue goes live -- shortlist a mix from that range to test countdowns and anti-snipe quickly."
-  },
-  {
-    "id": "cat-24",
-    "code": "AUC-2475",
-    "title": "NTPC Ramagundam — Coal Rejects, Fly Ash & FGD Gypsum",
-    "sellerId": "u-seller-5",
-    "type": "forward",
-    "status": "live",
-    "assignedFieldExecId": null,
-    "startsAt": "2026-07-14T18:30:00.000Z",
-    "endsAt": "2026-07-16T10:30:00.000Z",
-    "emdDeadline": "2026-07-13T18:30:00.000Z",
-    "inspectionFrom": "2026-07-12T18:30:00.000Z",
-    "inspectionTo": "2026-07-14T14:30:00.000Z",
-    "inspectionHours": "10:00–16:00 IST",
-    "inspectionContact": {
-      "name": "B. Reddy",
-      "phone": "+91 90142 33871",
-      "role": "Yard In-charge (Inspection & Lifting)"
-    },
-    "yardName": "NTPC Ramagundam Yard",
-    "yardAddress": "Ash Handling Plant Road, NTPC Ramagundam STPS, Peddapalli, Telangana 505215",
-    "region": "Ramagundam, TS",
-    "antiSnipeMinutes": 3,
-    "bidValidityDays": 7,
-    "lotIds": [
-      "lot-364",
-      "lot-365",
-      "lot-366",
-      "lot-367",
-      "lot-368"
+      "lot-277"
     ],
     "documents": [
       {
         "id": "cat-24-doc-1",
-        "name": "AUC-2475 Catalogue & Annexure.pdf",
+        "name": "AUC-2481 Catalogue & Annexure.pdf",
         "type": "pdf",
-        "size": "2.3 MB"
+        "size": "2.1 MB"
       },
       {
         "id": "cat-24-doc-2",
         "name": "Yard Map & Gate Directions.pdf",
         "type": "pdf",
-        "size": "790 KB"
-      },
-      {
-        "id": "cat-24-doc-3",
-        "name": "Payment Schedule & Bank Details.xlsx",
-        "type": "xlsx",
-        "size": "94 KB"
+        "size": "810 KB"
       }
     ],
     "termsSetId": "ts-standard",
-    "description": "E-auction of Coal Rejects, Fly Ash & FGD Gypsum on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Quantity indicative — final on weighment."
+    "description": "Upcoming e-auction of mixed HMS, braided wire and turnings on as-is-where-is basis. Inspection window opens ahead of go-live."
   },
   {
     "id": "cat-25",
-    "code": "AUC-2478",
-    "title": "BHEL Trichy — EOT Crane Parts, Compressors & Storage Tanks",
-    "sellerId": "u-seller-7",
-    "type": "tender",
+    "code": "AUC-2482",
+    "title": "Tata Steel Jamshedpur — SS 316L Coil Scrap & MS Turnings",
+    "sellerId": "u-seller-2",
+    "type": "forward",
     "status": "live",
     "assignedFieldExecId": null,
-    "startsAt": "2026-07-15T00:30:00.000Z",
-    "endsAt": "2026-07-16T08:30:00.000Z",
-    "emdDeadline": "2026-07-14T00:30:00.000Z",
-    "inspectionFrom": "2026-07-13T00:30:00.000Z",
-    "inspectionTo": "2026-07-14T20:30:00.000Z",
+    "startsAt": "2026-07-15T06:30:00.000Z",
+    "endsAt": "2026-07-17T11:15:00.000Z",
+    "emdDeadline": "2026-07-14T06:30:00.000Z",
+    "inspectionFrom": "2026-07-12T06:30:00.000Z",
+    "inspectionTo": "2026-07-14T18:30:00.000Z",
     "inspectionHours": "10:00–16:00 IST",
     "inspectionContact": {
-      "name": "R. Kannan",
-      "phone": "+91 90031 55214",
-      "role": "Yard Supervisor"
+      "name": "M. Oraon",
+      "phone": "+91 82102 44561",
+      "role": "Dy. Manager, By-products"
     },
-    "yardName": "BHEL Tiruchirappalli Unit",
-    "yardAddress": "Scrap Yard, BHEL Tiruchirappalli Unit, Tiruchirappalli, Tamil Nadu 620014",
-    "region": "Trichy, TN",
-    "antiSnipeMinutes": 3,
-    "bidValidityDays": 7,
+    "yardName": "Burma Mines Yard",
+    "yardAddress": "Burma Mines, Tata Steel Works, Jamshedpur, Jharkhand 831007",
+    "region": "Jamshedpur, JH",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 10,
     "lotIds": [
-      "lot-369",
-      "lot-370",
-      "lot-371",
-      "lot-372",
-      "lot-373"
+      "lot-278",
+      "lot-279",
+      "lot-280",
+      "lot-281",
+      "lot-282",
+      "lot-283"
     ],
     "documents": [
       {
         "id": "cat-25-doc-1",
-        "name": "AUC-2478 Catalogue & Annexure.pdf",
+        "name": "AUC-2482 Catalogue & Annexure.pdf",
         "type": "pdf",
         "size": "2.3 MB"
       },
       {
         "id": "cat-25-doc-2",
-        "name": "Yard Map & Gate Directions.pdf",
-        "type": "pdf",
-        "size": "790 KB"
-      },
-      {
-        "id": "cat-25-doc-3",
-        "name": "Payment Schedule & Bank Details.xlsx",
-        "type": "xlsx",
-        "size": "94 KB"
+        "name": "Sample Test Certificates.zip",
+        "type": "zip",
+        "size": "4.8 MB"
       }
     ],
     "termsSetId": "ts-standard",
-    "description": "Sealed-tender sale of EOT Crane Parts, Compressors & Storage Tanks on as-is-where-is basis. Physical inspection completed and reports attached against each lot."
+    "description": "Live e-auction of SS 316L coil scrap and MS turnings on as-is-where-is basis. Bidding is open now."
   },
   {
     "id": "cat-26",
-    "code": "AUC-2481",
-    "title": "JSW Vijayanagar — Ferro Alloys, Zinc Dross & Red Mud",
-    "sellerId": "u-seller-4",
+    "code": "AUC-2461",
+    "title": "Tata Steel Jamshedpur — Off-Spec HR Coils & Foundry Scrap (Closed)",
+    "sellerId": "u-seller-2",
     "type": "forward",
-    "status": "live",
+    "status": "closed",
     "assignedFieldExecId": null,
-    "startsAt": "2026-07-15T12:30:00.000Z",
-    "endsAt": "2026-07-16T11:30:00.000Z",
-    "emdDeadline": "2026-07-14T12:30:00.000Z",
-    "inspectionFrom": "2026-07-13T12:30:00.000Z",
-    "inspectionTo": "2026-07-15T08:30:00.000Z",
+    "startsAt": "2026-07-05T06:30:00.000Z",
+    "endsAt": "2026-07-07T10:00:00.000Z",
+    "emdDeadline": "2026-07-04T06:30:00.000Z",
+    "inspectionFrom": "2026-07-01T06:30:00.000Z",
+    "inspectionTo": "2026-07-04T18:30:00.000Z",
     "inspectionHours": "10:00–16:00 IST",
     "inspectionContact": {
-      "name": "M. Naik",
-      "phone": "+91 90352 47710",
-      "role": "Yard In-charge (Inspection & Lifting)"
+      "name": "M. Oraon",
+      "phone": "+91 82102 44561",
+      "role": "Dy. Manager, By-products"
     },
-    "yardName": "JSW Vijayanagar Works",
-    "yardAddress": "Slag Yard Gate 4, JSW Steel Vijayanagar Works, Toranagallu, Bellary, Karnataka 583275",
-    "region": "Bellary, KA",
-    "antiSnipeMinutes": 3,
-    "bidValidityDays": 7,
+    "yardName": "Burma Mines Yard",
+    "yardAddress": "Burma Mines, Tata Steel Works, Jamshedpur, Jharkhand 831007",
+    "region": "Jamshedpur, JH",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 10,
     "lotIds": [
-      "lot-374",
-      "lot-375",
-      "lot-376",
-      "lot-377",
-      "lot-378"
+      "lot-284",
+      "lot-285",
+      "lot-286",
+      "lot-287",
+      "lot-288",
+      "lot-289"
     ],
     "documents": [
       {
         "id": "cat-26-doc-1",
-        "name": "AUC-2481 Catalogue & Annexure.pdf",
+        "name": "AUC-2461 Catalogue & Annexure.pdf",
         "type": "pdf",
-        "size": "2.3 MB"
-      },
-      {
-        "id": "cat-26-doc-2",
-        "name": "Yard Map & Gate Directions.pdf",
-        "type": "pdf",
-        "size": "790 KB"
-      },
-      {
-        "id": "cat-26-doc-3",
-        "name": "Payment Schedule & Bank Details.xlsx",
-        "type": "xlsx",
-        "size": "94 KB"
+        "size": "2.0 MB"
       }
     ],
     "termsSetId": "ts-standard",
-    "description": "E-auction of Ferro Alloys, Zinc Dross & Bauxite Residue on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Quantity indicative — final on weighment."
-  },
-  {
-    "id": "cat-27",
-    "code": "AUC-2484",
-    "title": "Tata Steel Jamshedpur — TMT Rebar, Structural & Long Products",
-    "sellerId": "u-seller-2",
-    "type": "forward",
-    "status": "live",
-    "assignedFieldExecId": null,
-    "startsAt": "2026-07-15T18:30:00.000Z",
-    "endsAt": "2026-07-16T14:30:00.000Z",
-    "emdDeadline": "2026-07-14T18:30:00.000Z",
-    "inspectionFrom": "2026-07-13T18:30:00.000Z",
-    "inspectionTo": "2026-07-15T14:30:00.000Z",
-    "inspectionHours": "10:00–16:00 IST",
-    "inspectionContact": {
-      "name": "A. Verma",
-      "phone": "+91 90441 62038",
-      "role": "Yard Supervisor"
-    },
-    "yardName": "Tata Steel Jamshedpur Works",
-    "yardAddress": "Long Products Yard, Tata Steel Jamshedpur Works, Jamshedpur, Jharkhand 831001",
-    "region": "Jamshedpur, JH",
-    "antiSnipeMinutes": 3,
-    "bidValidityDays": 7,
-    "lotIds": [
-      "lot-379",
-      "lot-380",
-      "lot-381",
-      "lot-382",
-      "lot-383"
-    ],
-    "documents": [
-      {
-        "id": "cat-27-doc-1",
-        "name": "AUC-2484 Catalogue & Annexure.pdf",
-        "type": "pdf",
-        "size": "2.3 MB"
-      },
-      {
-        "id": "cat-27-doc-2",
-        "name": "Yard Map & Gate Directions.pdf",
-        "type": "pdf",
-        "size": "790 KB"
-      },
-      {
-        "id": "cat-27-doc-3",
-        "name": "Payment Schedule & Bank Details.xlsx",
-        "type": "xlsx",
-        "size": "94 KB"
-      }
-    ],
-    "termsSetId": "ts-standard",
-    "description": "E-auction of TMT Rebar, Structural & Long Products on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Quantity indicative — final on weighment."
-  },
-  {
-    "id": "cat-28",
-    "code": "AUC-2487",
-    "title": "SAIL Bhilai — CRC End Cuts, 304 Turnings & Melting Scrap",
-    "sellerId": "u-seller-1",
-    "type": "forward",
-    "status": "closed",
-    "assignedFieldExecId": null,
-    "startsAt": "2026-07-12T06:30:00.000Z",
-    "endsAt": "2026-07-13T06:30:00.000Z",
-    "emdDeadline": "2026-07-11T06:30:00.000Z",
-    "inspectionFrom": "2026-07-10T06:30:00.000Z",
-    "inspectionTo": "2026-07-12T02:30:00.000Z",
-    "inspectionHours": "10:00–16:00 IST",
-    "inspectionContact": {
-      "name": "S. K. Sahu",
-      "phone": "+91 94252 10883",
-      "role": "Yard In-charge (Inspection & Lifting)"
-    },
-    "yardName": "BSP Scrap Yard 3",
-    "yardAddress": "Gate 7, SAIL Bhilai Steel Plant, Bhilai, Chhattisgarh 490001",
-    "region": "Bhilai, CG",
-    "antiSnipeMinutes": 3,
-    "bidValidityDays": 7,
-    "lotIds": [
-      "lot-384",
-      "lot-385",
-      "lot-386",
-      "lot-387",
-      "lot-388"
-    ],
-    "documents": [
-      {
-        "id": "cat-28-doc-1",
-        "name": "AUC-2487 Catalogue & Annexure.pdf",
-        "type": "pdf",
-        "size": "2.3 MB"
-      },
-      {
-        "id": "cat-28-doc-2",
-        "name": "Yard Map & Gate Directions.pdf",
-        "type": "pdf",
-        "size": "790 KB"
-      },
-      {
-        "id": "cat-28-doc-3",
-        "name": "Payment Schedule & Bank Details.xlsx",
-        "type": "xlsx",
-        "size": "94 KB"
-      }
-    ],
-    "termsSetId": "ts-standard",
-    "description": "E-auction of CRC End Cuts, 304 Turnings & Melting Scrap on as-is-where-is basis. Auction closed — H1 results declared against each lot."
-  },
-  {
-    "id": "cat-29",
-    "code": "AUC-2490",
-    "title": "MSTC Kolkata — Iron Ore Fines, Mn Ore & Industrial Chemicals",
-    "sellerId": "u-seller-6",
-    "type": "forward",
-    "status": "closed",
-    "assignedFieldExecId": null,
-    "startsAt": "2026-07-13T18:30:00.000Z",
-    "endsAt": "2026-07-14T18:30:00.000Z",
-    "emdDeadline": "2026-07-12T18:30:00.000Z",
-    "inspectionFrom": "2026-07-11T18:30:00.000Z",
-    "inspectionTo": "2026-07-13T14:30:00.000Z",
-    "inspectionHours": "10:00–16:00 IST",
-    "inspectionContact": {
-      "name": "D. Banerjee",
-      "phone": "+91 90073 61245",
-      "role": "Yard Supervisor"
-    },
-    "yardName": "MSTC Kolkata Yard",
-    "yardAddress": "MSTC Stockyard, Taratala Road, Kolkata, West Bengal 700088",
-    "region": "Kolkata, WB",
-    "antiSnipeMinutes": 3,
-    "bidValidityDays": 7,
-    "lotIds": [
-      "lot-389",
-      "lot-390",
-      "lot-391",
-      "lot-392",
-      "lot-393"
-    ],
-    "documents": [
-      {
-        "id": "cat-29-doc-1",
-        "name": "AUC-2490 Catalogue & Annexure.pdf",
-        "type": "pdf",
-        "size": "2.3 MB"
-      },
-      {
-        "id": "cat-29-doc-2",
-        "name": "Yard Map & Gate Directions.pdf",
-        "type": "pdf",
-        "size": "790 KB"
-      },
-      {
-        "id": "cat-29-doc-3",
-        "name": "Payment Schedule & Bank Details.xlsx",
-        "type": "xlsx",
-        "size": "94 KB"
-      }
-    ],
-    "termsSetId": "ts-standard",
-    "description": "E-auction of Iron Ore Fines, Manganese Ore & Industrial Chemicals on as-is-where-is basis. Auction closed — H1 results declared against each lot."
+    "description": "E-auction of off-spec HR coils and foundry scrap on as-is-where-is basis. Auction closed — results below are final H1 rates pending seller settlement."
   }
 ]

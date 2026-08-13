@@ -55,6 +55,33 @@ export function emdDeadlineSoon(
   return left > 0 && left <= EMD_REMINDER_WINDOW_MS
 }
 
+/** Default EMD-window length when a catalogue doesn't set `emdOpensAt`
+ *  explicitly — long enough that, for every lead time this app actually
+ *  seeds, EMD reads as already open. Catalogues that want to demo the
+ *  "EMD hasn't opened yet" phase set `emdOpensAt` explicitly instead of
+ *  relying on this fallback. */
+export const EMD_WINDOW_FALLBACK_DAYS = 30
+
+/** EMD window open instant, as epoch ms. Falls back to well before
+ *  `emdDeadline` for catalogues that don't set `emdOpensAt` — i.e. reads as
+ *  already open. */
+export function emdOpensAtMs(cat: Pick<Catalogue, 'emdOpensAt' | 'emdDeadline' | 'startsAt'>): number {
+  const explicit = cat.emdOpensAt ? Date.parse(cat.emdOpensAt) : NaN
+  return Number.isNaN(explicit) ? emdDeadlineMs(cat) - EMD_WINDOW_FALLBACK_DAYS * DAY_MS : explicit
+}
+
+/** True before the EMD window has opened for a catalogue that's still
+ *  upcoming — shortlisting and funding are refused the same way they are
+ *  after `emdWindowClosed`, just on the other side of the window. Once a
+ *  catalogue goes live its window has necessarily already opened (opening
+ *  always precedes `startsAt`), so this only ever applies while upcoming. */
+export function emdWindowNotOpen(
+  cat: Pick<Catalogue, 'emdOpensAt' | 'emdDeadline' | 'startsAt' | 'status'>,
+  now: number,
+): boolean {
+  return cat.status === 'upcoming' && now < emdOpensAtMs(cat)
+}
+
 /** One wording for the refusal, wherever it surfaces. */
 export function emdBlockedMessage(cat: Pick<Catalogue, 'code' | 'emdDeadline' | 'startsAt'>): string {
   const d = new Date(emdDeadlineMs(cat))

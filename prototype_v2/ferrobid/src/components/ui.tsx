@@ -70,22 +70,22 @@ export function Chip({ tone = 'neutral', children, className, pulse }: {
 }
 
 /** Status system: Live = ember pulse · Upcoming = steel · Closing = amber · Closed = neutral. */
-export function StatusChip({ status }: { status: CatalogueStatus | 'closing' | LotStatus }) {
+export function StatusChip({ status, className }: { status: CatalogueStatus | 'closing' | LotStatus; className?: string }) {
   switch (status) {
-    case 'live': return <Chip tone="ember" pulse>Live</Chip>
-    case 'closing': return <Chip tone="warning" pulse>Closing soon</Chip>
-    case 'upcoming': return <Chip tone="steel">Upcoming</Chip>
-    case 'closed': return <Chip tone="neutral">Closed</Chip>
-    case 'draft': return <Chip tone="neutral">Draft</Chip>
-    case 'sold': return <Chip tone="success">Sold</Chip>
-    case 'sta': return <Chip tone="warning">STA</Chip>
-    case 'unsold': return <Chip tone="neutral">Unsold</Chip>
-    case 'pending_inspection': return <Chip tone="steel">Pending inspection</Chip>
-    case 'inspected': return <Chip tone="steel">Inspected</Chip>
-    case 'approved': return <Chip tone="success">Approved</Chip>
-    case 'flagged': return <Chip tone="warning">Flagged</Chip>
-    case 'rejected': return <Chip tone="danger">Rejected</Chip>
-    default: return <Chip>{status}</Chip>
+    case 'live': return <Chip tone="ember" pulse className={className}>Live</Chip>
+    case 'closing': return <Chip tone="warning" pulse className={className}>Closing soon</Chip>
+    case 'upcoming': return <Chip tone="steel" className={className}>Upcoming</Chip>
+    case 'closed': return <Chip tone="neutral" className={className}>Closed</Chip>
+    case 'draft': return <Chip tone="neutral" className={className}>Draft</Chip>
+    case 'sold': return <Chip tone="success" className={className}>Sold</Chip>
+    case 'sta': return <Chip tone="warning" className={className}>STA</Chip>
+    case 'unsold': return <Chip tone="neutral" className={className}>Unsold</Chip>
+    case 'pending_inspection': return <Chip tone="steel" className={className}>Pending inspection</Chip>
+    case 'inspected': return <Chip tone="steel" className={className}>Inspected</Chip>
+    case 'approved': return <Chip tone="success" className={className}>Approved</Chip>
+    case 'flagged': return <Chip tone="warning" className={className}>Flagged</Chip>
+    case 'rejected': return <Chip tone="danger" className={className}>Rejected</Chip>
+    default: return <Chip className={className}>{status}</Chip>
   }
 }
 
@@ -160,9 +160,9 @@ export function Segmented<T extends string>({ options, value, onChange, classNam
     `md+` keeps `md`'s compact box and only grows the numerals — the rungs and the
     amount were the unreadable part, not the controls. */
 const STEPPER_SIZES = {
-  md: { chip: 'h-8 text-[11px]', arrow: 'w-9', icon: 14, input: 'h-9 w-24 text-sm' },
-  'md+': { chip: 'h-9 text-[13px]', arrow: 'w-10', icon: 16, input: 'h-10 w-28 text-lg' },
-  lg: { chip: 'h-9 text-xs', arrow: 'w-12', icon: 18, input: 'h-12 w-32 text-xl' },
+  md: { chip: 'h-10 text-sm', arrow: 'w-9', icon: 14, input: 'h-9 w-24 text-sm' },
+  'md+': { chip: 'h-11 text-[15px]', arrow: 'w-10', icon: 16, input: 'h-10 w-28 text-lg' },
+  lg: { chip: 'h-11 text-base', arrow: 'w-12', icon: 18, input: 'h-12 w-32 text-xl' },
 }
 
 /** The grid of the next 8 valid bid amounts, standalone so callers can place the
@@ -174,7 +174,7 @@ export function AmountGrid({ minNext, increment, value, onChange, size = 'md', c
   const options = useMemo(() => Array.from({ length: 8 }, (_, i) => minNext + i * increment), [minNext, increment])
   const s = STEPPER_SIZES[size]
   return (
-    <div className={cx('grid grid-cols-4 gap-1.5', className)} role="radiogroup" aria-label="Bid amount">
+    <div className={cx('grid grid-cols-4 gap-2', className)} role="radiogroup" aria-label="Bid amount">
       {options.map((n) => (
         <button key={n} type="button" role="radio" aria-checked={n === value} onClick={() => onChange(n)}
           className={cx('num rounded-lg border font-bold transition-colors', s.chip,

@@ -52,7 +52,7 @@ export default function ControlTower() {
                   <div className="flex items-center gap-2 flex-wrap">
                     <StatusChip status={ui} />
                     {isPaused && <Chip tone="danger" pulse>PAUSED</Chip>}
-                    <span className="num text-xs font-bold text-ink-faint">{c.code}</span>
+                    <span className="num text-xs font-bold text-ember">{c.code}</span>
                     {extensions > 0 && <Chip tone="warning" className="num"><Zap size={11} /> {extensions} anti-snipe ext</Chip>}
                   </div>
                   <div className="font-display font-bold text-lg mt-1">{c.title}</div>

@@ -4,7 +4,7 @@
     "userId": "u-buyer-1",
     "kind": "bid",
     "title": "You have been outbid",
-    "body": "OmShakti Metal Corp is leading LOT-02 (AUC-2412) at ₹26,400/MT.",
+    "body": "OmShakti Metal Corp is leading LOT-02 (AUC-2412) at ₹25,000/MT.",
     "at": "2026-07-16T06:27:00.000Z",
     "read": false,
     "href": "/bidding/cat-1?lot=lot-002"
@@ -24,7 +24,7 @@
     "userId": "u-buyer-1",
     "kind": "wallet",
     "title": "EMD locked for 3 lots",
-    "body": "₹3,35,000 locked against AUC-2412 shortlist. 2 lots still unfunded.",
+    "body": "₹2,90,000 locked against AUC-2412 shortlist. 2 lots still unfunded.",
     "at": "2026-07-15T08:05:00.000Z",
     "read": true,
     "href": "/buyer/emd-shortlisted-catalogue"

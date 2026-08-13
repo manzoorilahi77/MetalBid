@@ -14,10 +14,9 @@ import {
   Button, Chip, Countdown, EmptyState, Modal, PhotoThumb,
   StatusChip, Tabs, Toggle, cx,
 } from '../components/ui'
-import { EmdExemptionControl } from '../components/EmdExemption'
 import { catalogueUiStatus, isCatalogueEmdLocked, selectionSummary, useStore } from '../store/store'
-import { emdDeadlineMs, emdWindowClosed } from '../lib/emd'
-import { fmtDate, fmtDateTime, inr, inrCompact, num } from '../lib/format'
+import { emdDeadlineMs, emdOpensAtMs, emdWindowClosed, emdWindowNotOpen } from '../lib/emd'
+import { fmtDate, fmtDateTime, inr, inrCompact, num, relTime } from '../lib/format'
 import { useNow } from '../lib/useTick'
 
 type TabKey = 'lots' | 'terms' | 'inspection' | 'documents'
@@ -80,6 +79,9 @@ export default function AuctionDetail() {
   const fundedLocked = watchlisted && isCatalogueEmdLocked({ selections, lots }, me?.id, cat.id)
   const deadlinePassed = emdWindowClosed(cat, now)
   const emdLocked = watchlisted && (fundedLocked || deadlinePassed)
+  // EMD hasn't opened yet — same freeze as the deadline case, mirrored from
+  // the store's toggleWatchlist guard.
+  const notOpen = emdWindowNotOpen(cat, now)
   const catAnnouncements = announcements.filter((a) => a.catalogueId === cat.id)
   const mySlot = inspectionSlots.find((s) => s.catalogueId === cat.id && s.userId === me?.id)
 
@@ -110,7 +112,7 @@ export default function AuctionDetail() {
           <div className="max-w-3xl">
             <div className="flex items-center gap-2.5 flex-wrap">
               <StatusChip status={ui} />
-              <span className="num text-sm font-bold text-ink-muted">{cat.code}</span>
+              <span className="num text-sm font-bold text-ember">{cat.code}</span>
               {cat.type === 'forward' ? <Chip tone="neutral">Forward e-auction</Chip> : <Chip tone="steel">Sealed tender</Chip>}
             </div>
             <h1 className="text-2xl sm:text-4xl font-bold mt-2">{cat.title}</h1>
@@ -121,34 +123,37 @@ export default function AuctionDetail() {
               <div className="flex items-center gap-3">
                 {canBid && <Countdown endsAt={cat.endsAt} prefix="closes in" size="lg" />}
                 {isBuyer && (
-                  <span title={fundedLocked
-                    ? 'EMD funded — this catalogue is read only until it closes'
-                    : deadlinePassed
-                      ? 'EMD deadline passed — this catalogue is read only'
-                      : undefined}>
+                  <span title={notOpen
+                    ? `EMD funding opens ${relTime(new Date(emdOpensAtMs(cat)).toISOString(), now)}`
+                    : fundedLocked
+                      ? 'EMD funded — this catalogue is read only until it closes'
+                      : deadlinePassed
+                        ? 'EMD deadline passed — this catalogue is read only'
+                        : undefined}>
                     <Button
                       variant={watchlisted ? 'success' : 'secondary'}
                       size="md"
-                      disabled={emdLocked}
+                      disabled={emdLocked || notOpen}
                       onClick={() => watchlisted ? setUnshortlistConfirm(true) : toggleWatchlist(cat.id)}
                       aria-pressed={watchlisted}
                       aria-label={watchlisted ? 'Remove from shortlist' : 'Add to shortlist'}
                     >
-                      {emdLocked ? <Lock size={14} /> : <Star size={14} fill={watchlisted ? 'currentColor' : 'none'} />}
-                      {fundedLocked ? 'EMD funded' : deadlinePassed ? 'EMD deadline passed' : watchlisted ? 'Shortlisted' : 'Add to shortlist'}
+                      {emdLocked || notOpen ? <Lock size={14} /> : <Star size={14} fill={watchlisted ? 'currentColor' : 'none'} />}
+                      {watchlisted ? 'Shortlisted' : 'Add to shortlist'}
                     </Button>
                   </span>
                 )}
-                {isBuyer && deadlinePassed && !fundedLocked && <EmdExemptionControl catalogueId={cat.id} />}
               </div>
             )}
             {ui === 'upcoming' && <Chip tone="steel" className="h-8 px-3 text-sm num">Starts {fmtDateTime(cat.startsAt)}</Chip>}
             {/* The cut-off buyers actually have to hit — funding closes well
                 before the sale opens (src/lib/emd.ts). */}
             {ui === 'upcoming' && (
-              emdWindowClosed(cat, now)
-                ? <Chip tone="danger" className="h-8 px-3 text-sm num">EMD closed {fmtDateTime(new Date(emdDeadlineMs(cat)).toISOString())}</Chip>
-                : <Chip tone="warning" className="h-8 px-3 text-sm num">Fund EMD by {fmtDateTime(new Date(emdDeadlineMs(cat)).toISOString())}</Chip>
+              notOpen
+                ? <Chip tone="neutral" className="h-8 px-3 text-sm num">EMD opens {fmtDateTime(new Date(emdOpensAtMs(cat)).toISOString())}</Chip>
+                : emdWindowClosed(cat, now)
+                  ? <Chip tone="danger" className="h-8 px-3 text-sm num">EMD closed {fmtDateTime(new Date(emdDeadlineMs(cat)).toISOString())}</Chip>
+                  : <Chip tone="warning" className="h-8 px-3 text-sm num">Fund EMD by {fmtDateTime(new Date(emdDeadlineMs(cat)).toISOString())}</Chip>
             )}
             <div className="flex gap-2">
               <Button variant="secondary" size="md" onClick={() => pushToast({ kind: 'info', title: 'Catalogue PDF downloading', body: `${cat.code} Catalogue & Annexure.pdf (demo)` })}>

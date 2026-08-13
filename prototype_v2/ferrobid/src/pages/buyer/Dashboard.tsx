@@ -286,7 +286,7 @@ export default function Dashboard() {
   return (
     <Page>
       <PageHeader
-        title={`Namaste, ${me.name.split(' ')[0]}`}
+        title={<>Namaste, {me.name.split(' ')[0]}{me.bidderId && <Chip tone="steel" className="num ml-2 align-middle text-xs">{me.bidderId}</Chip>}</>}
         sub={`${me.firm} · ${me.city}. Here's where your money and bids stand right now.`}
         actions={<Link to="/buyermarketplace"><Button variant="steel">Browse auctions</Button></Link>}
       />
@@ -373,7 +373,7 @@ export default function Dashboard() {
                     </div>
                   ))}
                   {outbidLots.length > 3 && (
-                    <Link to="/buyer/bids" className="text-xs text-steel hover:underline">+{outbidLots.length - 3} more in My bids →</Link>
+                    <Link to="/buyer/bids?tab=active" className="text-xs text-steel hover:underline">+{outbidLots.length - 3} more in My bids →</Link>
                   )}
                 </div>
               </div>

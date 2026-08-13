@@ -39,6 +39,8 @@ import BuyerDashboard from './pages/buyer/Dashboard'
 import BuyerMarketplace from './pages/buyer/Marketplace'
 import Shortlist from './pages/buyer/Shortlist'
 import ShortlistCatalogue from './pages/buyer/ShortlistCatalogue'
+import BidNowAuctions from './pages/buyer/BidNowAuctions'
+import BidNowLots from './pages/buyer/BidNowLots'
 import BuyerBids from './pages/buyer/Bids'
 import AuctionStatus from './pages/buyer/AuctionStatus'
 import Wallet from './pages/buyer/Wallet'
@@ -50,6 +52,7 @@ import CreateLot from './pages/seller/CreateLot'
 import MyLots from './pages/seller/MyLots'
 import LiveMonitor from './pages/seller/LiveMonitor'
 import SellerReports from './pages/seller/Reports'
+import SellerSettlement from './pages/seller/Settlement'
 
 /* field executive */
 import FieldQueue from './pages/field/Queue'
@@ -248,6 +251,8 @@ export default function App() {
             <Route path="/buyer/emd-shortlisted-catalogue" element={<Shortlist />} />
             <Route path="/buyer/shortlist" element={<Shortlist />} />
             <Route path="/buyer/shortlist/:catalogueId" element={<ShortlistCatalogue />} />
+            <Route path="/buyer/bid-now" element={<BidNowAuctions />} />
+            <Route path="/buyer/bid-now/:catalogueId" element={<BidNowLots />} />
             <Route path="/buyer/bids" element={<BuyerBids />} />
             <Route path="/buyer/auction-status" element={<AuctionStatus />} />
             <Route path="/buyer/wallet" element={<Wallet />} />
@@ -260,6 +265,7 @@ export default function App() {
             <Route path="/seller/lots" element={<MyLots />} />
             <Route path="/seller/monitor" element={<LiveMonitor />} />
             <Route path="/seller/reports" element={<SellerReports />} />
+            <Route path="/seller/settlement" element={<SellerSettlement />} />
           </Route>
 
           <Route path="/field" element={<FieldQueue />} />

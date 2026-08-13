@@ -135,12 +135,13 @@ export default function BidMonitor() {
                         <span className="num font-semibold mr-2">{lot?.lotNo ?? b.lotId}</span>
                         {cat && (
                           <Link to={`/catalogue/${cat.id}`}>
-                            <Chip tone="steel" className="hover:opacity-80">{cat.code}</Chip>
+                            <Chip tone="ember" className="hover:opacity-80">{cat.code}</Chip>
                           </Link>
                         )}
                       </td>
                       <td className="px-3 py-2.5">
                         <span className="font-medium">{bidder?.firm ?? b.bidderId}</span>
+                        {bidder?.bidderId && <Chip tone="steel" className="num ml-2">{bidder.bidderId}</Chip>}
                         {lot && lot.bidCount > 6 && <Chip tone="warning" className="ml-2">{num(lot.bidCount)} bids</Chip>}
                       </td>
                       <td className="px-3 py-2.5 text-right num font-bold whitespace-nowrap">
@@ -177,6 +178,9 @@ export default function BidMonitor() {
               <span>
                 <span className="num font-semibold">{lotById.get(flagging.lotId)?.lotNo ?? flagging.lotId}</span>
                 <span className="text-ink-muted"> · {users.find((u) => u.id === flagging.bidderId)?.firm ?? flagging.bidderId}</span>
+                {users.find((u) => u.id === flagging.bidderId)?.bidderId && (
+                  <span className="num text-ink-faint"> ({users.find((u) => u.id === flagging.bidderId)?.bidderId})</span>
+                )}
               </span>
               <span className="num font-bold">{inr(flagging.rate)}/{lotById.get(flagging.lotId)?.uom ?? 'MT'}</span>
             </div>

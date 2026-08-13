@@ -15,6 +15,7 @@ export default function MyLots() {
   const catalogues = useStore((s) => s.catalogues)
   const lots = useStore((s) => s.lots)
   const reports = useStore((s) => s.inspectionReports)
+  const users = useStore((s) => s.users)
   const [tab, setTab] = useState<TabKey>('pipeline')
 
   const myCatIds = catalogues.filter((c) => c.sellerId === me?.id).map((c) => c.id)
@@ -55,6 +56,9 @@ export default function MyLots() {
                     <span className="font-semibold text-sm">{l.grade}</span>
                     <StatusChip status={l.status} />
                     {cat && <Link to={`/catalogue/${cat.id}`}><Chip tone="ember" className="num hover:opacity-80">{cat.code}</Chip></Link>}
+                    {l.status === 'sold' && l.leadingBidderId && (
+                      <Chip tone="steel" className="num">Won by Bidder {users.find((u) => u.id === l.leadingBidderId)?.bidderId ?? '—'}</Chip>
+                    )}
                   </div>
                   <p className="text-sm text-ink-muted mt-1 line-clamp-1">{l.description}</p>
                   {rep && (

@@ -41,7 +41,7 @@ export function EmdReminderBanner({ className }: { className?: string }) {
           {due.map(({ cat, summary }) => (
             <div key={cat.id} className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm">
               <span className="min-w-0 flex-1">
-                <span className="num font-semibold">{cat.code}</span>
+                <span className="num font-semibold text-ember">{cat.code}</span>
                 <span className="text-ink-muted"> · {summary.unfundedLotIds.length} of {summary.count} lots unfunded · </span>
                 <span className="num font-semibold text-warning">{inr(summary.shortfall)}</span>
               </span>

@@ -119,7 +119,7 @@ export default function Handover() {
                 <div key={r.key} className="p-4 flex flex-wrap items-center gap-3">
                   <div className="flex-1 min-w-48">
                     <div className="flex items-center gap-2">
-                      <span className="num text-xs font-bold text-ink-muted">{r.cat.code}</span>
+                      <span className="num text-xs font-bold text-ember">{r.cat.code}</span>
                       <Chip tone="ember" pulse>Live</Chip>
                     </div>
                     <div className="text-sm font-semibold mt-0.5">{r.cat.title}</div>

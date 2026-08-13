@@ -6,9 +6,7 @@ import { Chip, Countdown, EmptyState, PageHeader, Segmented, StatusChip, cx } fr
 import { catalogueUiStatus, useStore } from '../../store/store'
 import { inr, num } from '../../lib/format'
 import { useNow } from '../../lib/useTick'
-
-const mask = (bidderId: string | null) =>
-  bidderId ? `Bidder #${(bidderId.split('').reduce((s, c) => s + c.charCodeAt(0), 0) % 89) + 10}` : '—'
+import type { User } from '../../types'
 
 export default function LiveMonitor() {
   const now = useNow()
@@ -16,6 +14,14 @@ export default function LiveMonitor() {
   const catalogues = useStore((s) => s.catalogues)
   const lots = useStore((s) => s.lots)
   const bids = useStore((s) => s.bids)
+  const users = useStore((s) => s.users)
+  // Sellers never see a bidder's real name/firm — only their permanent Bidder ID,
+  // which doubles as post-close proof of who won a lot (see Reports.tsx).
+  const mask = (bidderId: string | null): string => {
+    if (!bidderId) return '—'
+    const code = users.find((u: User) => u.id === bidderId)?.bidderId
+    return code ? `Bidder ${code}` : '—'
+  }
 
   const liveCats = catalogues.filter((c) => c.sellerId === me?.id && c.status === 'live')
   const [sel, setSel] = useState<string>(liveCats[0]?.id ?? '')
@@ -46,7 +52,7 @@ export default function LiveMonitor() {
         <div className="flex-1 min-w-60">
           <div className="flex items-center gap-2">
             <StatusChip status={ui} />
-            <span className="num text-xs font-bold text-ink-faint">{cat.code}</span>
+            <span className="num text-xs font-bold text-ember">{cat.code}</span>
           </div>
           <div className="font-display font-bold text-lg mt-1">{cat.title}</div>
         </div>

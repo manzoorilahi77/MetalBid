@@ -90,3 +90,23 @@ export const fmtTime = (iso: string): string =>
 
 let _uid = 0
 export const uid = (prefix: string): string => `${prefix}-${Date.now().toString(36)}-${++_uid}`
+
+/* --------------------------- bidder / seller IDs ---------------------------
+   Permanent account identifiers — assigned once at account creation, never
+   reassigned or reused. Random rather than sequential on purpose: a
+   sequential code (B0001, B0002…) would let anyone in the bid room count
+   how many distinct bidders have ever signed up just by watching IDs go by.
+   Charset skips 0/O/1/I so a code never looks ambiguous read aloud. */
+const ID_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+
+const randomId = (prefix: string, existingIds: Iterable<string>): string => {
+  const taken = existingIds instanceof Set ? existingIds : new Set(existingIds)
+  let code: string
+  do {
+    code = prefix + Array.from({ length: 4 }, () => ID_CHARS[Math.floor(Math.random() * ID_CHARS.length)]).join('')
+  } while (taken.has(code))
+  return code
+}
+
+export const genBidderId = (existingBidderIds: Iterable<string>): string => randomId('B', existingBidderIds)
+export const genSellerId = (existingSellerIds: Iterable<string>): string => randomId('S', existingSellerIds)

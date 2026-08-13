@@ -62,6 +62,11 @@ export interface Catalogue {
   /** Pre-bid EMD funding cut-off — 1–2 days ahead of `startsAt`. Funding is
    *  refused between this instant and go-live (see src/lib/emd.ts). */
   emdDeadline: string
+  /** EMD funding/shortlisting opens at this instant, ahead of `emdDeadline`.
+   *  Optional — catalogues without it are treated as always-open (see
+   *  `emdOpensAtMs` in src/lib/emd.ts), which is every catalogue except the
+   *  handful seeded far enough out to demo the "not open yet" phase. */
+  emdOpensAt?: string
   inspectionFrom: string
   inspectionTo: string
   inspectionHours: string // e.g. "10:00–16:00 IST"
@@ -110,6 +115,9 @@ export interface Lot {
   waivedBy: string | null // exec_manager user id
   waivedReason: string | null
   waivedAt: string | null // ISO timestamp
+  /** Seller's post-sale call on the cleared price — only meaningful once
+   *  `resultH1Rate` exists (status 'sold' or 'sta'). null/undefined = undecided. */
+  sellerDecision?: 'accepted' | 'rejected' | null
 }
 
 export interface LotPhoto {
@@ -149,6 +157,14 @@ export interface User {
   avatarHue: number
   joinedAt: string
   blacklistReason?: string
+  /** Permanent bidder identity assigned once, at account creation, for role 'buyer'
+   *  only — never reassigned or reused. This is the ID shown in the bid room / bid
+   *  ladder in place of the buyer's real name, and the only identifier a seller is
+   *  ever shown for who won a lot. null for non-buyer accounts. */
+  bidderId: string | null
+  /** Permanent seller identity assigned once, at account creation, for role 'seller'
+   *  only — never reassigned or reused. null for non-seller accounts. */
+  sellerId: string | null
 }
 
 export type LedgerType =
@@ -382,6 +398,19 @@ export interface Dispute {
   status: 'open' | 'in_review' | 'resolved'
   createdAt: string
   messages: { from: 'user' | 'support'; body: string; at: string }[]
+}
+
+/** Seller's commission settlement for one auction — recorded once the seller
+ *  pays ferroBid's commission (by transfer) or has it netted out of the EMD.
+ *  A catalogue with sold/STA lots is only "done" (History) once every such
+ *  lot has a decision and, if commission is owed, a matching record here. */
+export interface CommissionSettlement {
+  id: string
+  catalogueId: string
+  sellerId: string
+  amount: number
+  mode: 'transfer' | 'emd'
+  at: string
 }
 
 export interface AuditEvent {

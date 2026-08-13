@@ -10,8 +10,8 @@ import {
 } from '../../components/ui'
 import { EmdExemptionControl } from '../../components/EmdExemption'
 import { useStore, selectionSummary, catalogueUiStatus, latestEmdExemptionRequest } from '../../store/store'
-import { emdBlockedMessage, emdDeadlineMs, emdWindowClosed } from '../../lib/emd'
-import { fmtDate, fmtDateTime, inr, inrCompact, inrWords, num } from '../../lib/format'
+import { emdBlockedMessage, emdDeadlineMs, emdOpensAtMs, emdWindowClosed, emdWindowNotOpen } from '../../lib/emd'
+import { fmtDate, fmtDateTime, inr, inrCompact, inrWords, num, relTime } from '../../lib/format'
 import { useNow } from '../../lib/useTick'
 import type { Bid, Lot } from '../../types'
 
@@ -85,6 +85,11 @@ export default function ShortlistCatalogue() {
   // A sub-admin-approved exemption request reopens it early, same as going live would.
   const exemption = latestEmdExemptionRequest({ emdExemptionRequests }, me.id, cat.id)
   const deadlinePassed = emdWindowClosed(cat, now) && exemption?.status !== 'approved'
+  // EMD hasn't opened yet — mutually exclusive with deadlinePassed (the
+  // window has to open before it can close). Same freeze as the deadline
+  // case, just on the other side of it: no shortlisting or funding here
+  // either, direct URL nav to this page notwithstanding.
+  const notOpen = emdWindowNotOpen(cat, now)
 
   // Full-catalogue funded state (every lot, not just what's shortlisted) — used
   // only for the "read only" badge below.
@@ -105,8 +110,8 @@ export default function ShortlistCatalogue() {
   // same as the individual star (they're locked until the lot closes). Once the
   // catalogue is truly read-only, or the EMD deadline has passed, this naturally
   // comes out empty anyway.
-  const selectableLotIds = deadlinePassed ? [] : catLots.filter((l) => !summary.lotIds.includes(l.id) && !summary.fundedLotIds.includes(l.id)).map((l) => l.id)
-  const clearableLotIds = deadlinePassed ? [] : catLots.filter((l) => summary.lotIds.includes(l.id) && !summary.fundedLotIds.includes(l.id)).map((l) => l.id)
+  const selectableLotIds = deadlinePassed || notOpen ? [] : catLots.filter((l) => !summary.lotIds.includes(l.id) && !summary.fundedLotIds.includes(l.id)).map((l) => l.id)
+  const clearableLotIds = deadlinePassed || notOpen ? [] : catLots.filter((l) => summary.lotIds.includes(l.id) && !summary.fundedLotIds.includes(l.id)).map((l) => l.id)
   const selectAllLots = () => {
     selectableLotIds.forEach((id) => toggleShortlist(cat.id, id))
     pushToast({ kind: 'info', title: `Added ${selectableLotIds.length} lot${selectableLotIds.length === 1 ? '' : 's'} to shortlist` })
@@ -125,11 +130,12 @@ export default function ShortlistCatalogue() {
 
       <PageHeader
         title={cat.title}
-        sub={cat.code}
+        sub={<span className="num text-ember font-bold">{cat.code}</span>}
         actions={
           <div className="flex items-center gap-2">
             <StatusChip status={ui} />
             {readOnly && <Chip tone="success"><Lock size={12} /> EMD funded — read only</Chip>}
+            {!readOnly && notOpen && <Chip tone="neutral"><Lock size={12} /> EMD not open yet</Chip>}
             {!readOnly && deadlinePassed && (
               <>
                 <Chip tone="danger"><AlertTriangle size={12} /> EMD deadline passed</Chip>
@@ -148,9 +154,11 @@ export default function ShortlistCatalogue() {
       {ui === 'upcoming' && (
         <div className="flex flex-wrap items-center gap-2 mt-3">
           <Chip tone="steel" className="num h-8 px-3 text-sm">Starts {fmtDateTime(cat.startsAt)}</Chip>
-          {deadlinePassed
-            ? <Chip tone="danger" className="num h-8 px-3 text-sm">EMD closed {fmtDateTime(new Date(emdDeadlineMs(cat)).toISOString())}</Chip>
-            : <Chip tone="warning" className="num h-8 px-3 text-sm">Fund EMD by {fmtDateTime(new Date(emdDeadlineMs(cat)).toISOString())}</Chip>}
+          {notOpen
+            ? <Chip tone="neutral" className="num h-8 px-3 text-sm">EMD opens {fmtDateTime(new Date(emdOpensAtMs(cat)).toISOString())}</Chip>
+            : deadlinePassed
+              ? <Chip tone="danger" className="num h-8 px-3 text-sm">EMD closed {fmtDateTime(new Date(emdDeadlineMs(cat)).toISOString())}</Chip>
+              : <Chip tone="warning" className="num h-8 px-3 text-sm">Fund EMD by {fmtDateTime(new Date(emdDeadlineMs(cat)).toISOString())}</Chip>}
         </div>
       )}
 
@@ -312,10 +320,11 @@ export default function ShortlistCatalogue() {
               <button
                 aria-label={selected ? 'Remove from shortlist' : 'Add to shortlist'}
                 onClick={() => toggleShortlist(cat.id, lot.id)}
-                disabled={funded || deadlinePassed}
+                disabled={funded || deadlinePassed || notOpen}
                 title={
                   funded ? 'EMD is locked — stays on shortlist until the lot closes'
                     : deadlinePassed ? 'EMD deadline passed — this catalogue is frozen'
+                    : notOpen ? `EMD opens ${relTime(new Date(emdOpensAtMs(cat)).toISOString(), now)} — nothing to shortlist yet`
                     : selected ? 'Remove from shortlist' : 'Add to shortlist'
                 }
                 className={cx('size-9 rounded-xl border grid place-items-center shrink-0 transition-colors',

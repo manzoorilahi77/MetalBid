@@ -8,12 +8,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import {
-  Bot, ChevronLeft, Gavel, Lock, Monitor,
+  BellRing, Bot, ChevronLeft, Crown, Gavel, Lock, Monitor,
   PanelRightClose, PanelRightOpen, Rows3, ShieldAlert, Sparkles, TrendingUp, Zap,
 } from 'lucide-react'
 import { Page } from '../layout/Chrome'
 import {
-  AmountGrid, AmountInput, Button, Chip, Countdown, EmptyState, Field, Input, Modal, Segmented, StatusChip, Toggle, cx,
+  AmountGrid, AmountInput, Button, Chip, Countdown, EmptyState, Field, Input, Modal, Segmented, StatusChip, cx,
 } from '../components/ui'
 import { useBidroomGate } from '../components/BidroomGate'
 import { EmdExemptionControl } from '../components/EmdExemption'
@@ -24,35 +24,13 @@ import { countdown, inr, inrWords, num, relTime } from '../lib/format'
 import { useNow } from '../lib/useTick'
 import type { Lot } from '../types'
 
-type Style = 'classic' | 'normal'
+type Style = 'classic' | 'normal' | 'quick'
 
 /** Normal view stays quiet until a shortlisted lot enters its last 3 minutes. */
 const URGENT_MS = 3 * 60_000
 /** Market ticker shows this many lots before it starts scrolling. */
 const MARKET_ROWS = 15
 const MARKET_ROW_PX = 38
-
-/** Chars a bidder code is drawn from — no 0/O/1/I, so codes never look ambiguous read aloud. */
-const BIDDER_CODE_LETTERS = 'ABCDEFGHJKLMNPQRSTUVWXYZ'
-const BIDDER_CODE_DIGITS = '23456789'
-
-/** Deterministic per-seed "random" bidder code (2 letters + 2 digits) — same seed
- * always yields the same code within a render, but an unrelated seed (e.g. a
- * different auction) yields an unrelated one. */
-function bidderCode(seed: string): string {
-  let h = 2166136261
-  for (let i = 0; i < seed.length; i++) {
-    h ^= seed.charCodeAt(i)
-    h = Math.imul(h, 16777619)
-  }
-  h >>>= 0
-  const next = () => { h = Math.imul(h ^ (h >>> 15), 2246822519) >>> 0; return h }
-  const l1 = BIDDER_CODE_LETTERS[next() % BIDDER_CODE_LETTERS.length]
-  const l2 = BIDDER_CODE_LETTERS[next() % BIDDER_CODE_LETTERS.length]
-  const d1 = BIDDER_CODE_DIGITS[next() % BIDDER_CODE_DIGITS.length]
-  const d2 = BIDDER_CODE_DIGITS[next() % BIDDER_CODE_DIGITS.length]
-  return `${l1}${l2}${d1}${d2}`
-}
 
 export default function BiddingRoom() {
   const { catalogueId } = useParams()
@@ -64,6 +42,7 @@ export default function BiddingRoom() {
   const catalogues = useStore((s) => s.catalogues)
   const lots = useStore((s) => s.lots)
   const bids = useStore((s) => s.bids)
+  const users = useStore((s) => s.users)
   const auditEvents = useStore((s) => s.auditEvents)
   const selections = useStore((s) => s.selections)
   const autoBids = useStore((s) => s.autoBids)
@@ -92,10 +71,13 @@ export default function BiddingRoom() {
   const [showAll, setShowAll] = useState(summary.count === 0)
   const [style, setStyle] = useState<Style>('classic')
   const [bidAmount, setBidAmount] = useState(0)
-  const [autoOpen, setAutoOpen] = useState(false)
+  // whichever lot the auto-bid / confirm modals are open for — Quick view's
+  // cards each trigger these independently, without becoming "the" active lot
+  const [autoBidLot, setAutoBidLot] = useState<Lot | null>(null)
   const [emdGateLot, setEmdGateLot] = useState<Lot | null>(null)
   const [preConfirmOpen, setPreConfirmOpen] = useState(false)
   const [confirmOpen, setConfirmOpen] = useState(false)
+  const [confirmLot, setConfirmLot] = useState<Lot | null>(null)
   const [confirmRate, setConfirmRate] = useState(0)
   const [ladderView, setLadderView] = useState<'ladder' | 'mine'>('ladder')
   // open on arrival so the ladder is discoverable; closing it sticks for the session
@@ -103,13 +85,23 @@ export default function BiddingRoom() {
   // sealed-tender single offer input — reset to the lot's floor whenever the lot changes
   const [tenderOffer, setTenderOffer] = useState(0)
 
-  // cockpit lots: shortlisted first (funded first within), else all
+  // cockpit lots: the buyer's shortlist only — the room has nothing else to show.
+  // Closing-soon (< 3 min) lots lead, then plain lot-number order, closed last.
   const cockpitLots = useMemo(() => {
     const mine = catLots.filter((l) => summary.lotIds.includes(l.id))
-    const sorted = [...mine].sort((a, b) =>
-      Number(summary.fundedLotIds.includes(b.id)) - Number(summary.fundedLotIds.includes(a.id)))
-    return showAll || sorted.length === 0 ? catLots : sorted
-  }, [catLots, summary.lotIds, summary.fundedLotIds, showAll])
+    return [...mine].sort((a, b) => {
+      const aClosed = a.status !== 'live'
+      const bClosed = b.status !== 'live'
+      if (aClosed !== bClosed) return aClosed ? 1 : -1
+      const aLeft = Date.parse(a.endsAt) - now
+      const bLeft = Date.parse(b.endsAt) - now
+      const aUrgent = !aClosed && aLeft > 0 && aLeft <= URGENT_MS
+      const bUrgent = !bClosed && bLeft > 0 && bLeft <= URGENT_MS
+      if (aUrgent !== bUrgent) return aUrgent ? -1 : 1
+      if (aUrgent && bUrgent) return aLeft - bLeft
+      return a.lotNo.localeCompare(b.lotNo, undefined, { numeric: true })
+    })
+  }, [catLots, summary.lotIds, now])
 
   // Normal view's market list and reminder cards share one scope, so the toggle in
   // the market card governs both — shortlist by default, every lot when switched off.
@@ -193,7 +185,7 @@ export default function BiddingRoom() {
                 <div className="size-12 rounded-2xl bg-warning-soft grid place-items-center text-warning"><Lock size={22} /></div>
                 <h1 className="text-lg font-bold mt-1">Fund EMD to enter the bidding room</h1>
                 <p className="text-sm text-ink-muted max-w-sm">
-                  {gateLots.length} of your {summary.count} shortlisted lot{summary.count > 1 ? 's' : ''} in {cat.code}
+                  {gateLots.length} of your {summary.count} shortlisted lot{summary.count > 1 ? 's' : ''} in <span className="num font-bold text-ember">{cat.code}</span>
                   {gateLots.length === 1 ? ' still needs' : ' still need'} pre-bid EMD. The room opens once every one is funded.
                 </p>
               </div>
@@ -243,46 +235,34 @@ export default function BiddingRoom() {
     .filter((b) => b.lotId === lot.id && b.status === 'valid')
     .sort((a, b) => Date.parse(b.at) - Date.parse(a.at))
 
-  // Bidders are masked behind a random-looking code scoped to this auction (catalogue)
-  // alone — the same firm gets a different, unrelated code in a different auction, so
-  // identities never carry over between auctions.
-  const auctionBidderCodes = new Map<string, string>()
-  const usedBidderCodes = new Set<string>()
-  const codeFor = (bidderId: string) => {
-    let code = bidderCode(`${cat.id}:${bidderId}`)
-    let salt = 0
-    while (usedBidderCodes.has(code)) code = bidderCode(`${cat.id}:${bidderId}:${++salt}`)
-    usedBidderCodes.add(code)
-    auctionBidderCodes.set(bidderId, code)
-    return code
-  }
-  const auctionBidOrder = [...bids]
-    .filter((b) => b.catalogueId === cat.id)
-    .sort((a, b) => Date.parse(a.at) - Date.parse(b.at))
-  for (const b of auctionBidOrder) {
-    if (!auctionBidderCodes.has(b.bidderId)) codeFor(b.bidderId)
-  }
+  // Rival identities stay masked — real name/firm never shown here — but the
+  // mask is now each buyer's own permanent Bidder ID rather than a throwaway
+  // per-auction code, so it's the same proof-of-identity a seller admin sees
+  // post-close for that lot.
   const maskBidder = (bidderId: string) => {
     if (bidderId === me?.id) return 'You'
-    const code = auctionBidderCodes.get(bidderId) ?? codeFor(bidderId)
-    return `Bidder ${code}`
+    const bidderCode = users.find((u) => u.id === bidderId)?.bidderId
+    return bidderCode ? `Bidder ${bidderCode}` : 'Bidder —'
   }
 
-  const gateOr = (fn: () => void) => {
+  // Generalized over an explicit lot so Quick view's multiple simultaneous
+  // cards can each gate/bid independently, with no single "active lot".
+  const gateOrFor = (targetLot: Lot, fn: () => void) => {
     if (!me) { pushToast({ kind: 'warning', title: 'Sign in to bid', body: 'Use the demo role switcher or the login screen.' }); return }
     // Arriving by direct URL skips the gate, so run it here rather than
     // inventing a second terms rule.
     if (!accepted) { enterBidroom(cat.id); return }
-    if (!funded) { setEmdGateLot(lot); return }
+    if (!summary.fundedLotIds.includes(targetLot.id)) { setEmdGateLot(targetLot); return }
     fn()
   }
+  const gateOr = (fn: () => void) => gateOrFor(lot, fn)
 
-  const doBid = (rate: number) => gateOr(() => {
-    const res = placeBid(lot.id, rate, undefined, isTender ? 'tender' : 'manual')
+  const doBidFor = (targetLot: Lot, rate: number) => gateOrFor(targetLot, () => {
+    const res = placeBid(targetLot.id, rate, undefined, isTender ? 'tender' : 'manual')
     if (res.ok) {
       pushToast(isTender
-        ? { kind: 'success', title: `Offer submitted — ${inr(rate)}/${lot.uom}`, body: `${lot.lotNo} · sealed, cannot be revised` }
-        : { kind: 'success', title: `Bid placed — ${inr(rate)}/${lot.uom}`, body: `${lot.lotNo} · you are H1` })
+        ? { kind: 'success', title: `Offer submitted — ${inr(rate)}/${targetLot.uom}`, body: `${targetLot.lotNo} · sealed, cannot be revised` }
+        : { kind: 'success', title: `Bid placed — ${inr(rate)}/${targetLot.uom}`, body: `${targetLot.lotNo} · you are H1` })
     } else {
       pushToast({ kind: 'danger', title: isTender ? 'Offer rejected' : 'Bid rejected', body: res.error })
     }
@@ -305,7 +285,7 @@ export default function BiddingRoom() {
             onChange={(e) => setTenderOffer(Number(e.target.value.replace(/[^\d]/g, '')) || 0)} />
         </Field>
         <Button disabled={isPaused || tenderOffer < lot.startRate}
-          onClick={() => gateOr(() => { setConfirmRate(tenderOffer); setPreConfirmOpen(true) })}>
+          onClick={() => gateOr(() => { setConfirmLot(lot); setConfirmRate(tenderOffer); setPreConfirmOpen(true) })}>
           <Gavel size={16} /> Submit offer
         </Button>
         {tenderOffer < lot.startRate && (
@@ -326,19 +306,20 @@ export default function BiddingRoom() {
   )
 
   /* -------------------------- shared bid builder -------------------------- */
-  // Three lines on a single white card: the quick-amount grid, then the −/+ input
-  // with the Bid and Set auto-bid buttons sharing its line.
+  // Two lines on a single white card: the quick-amount grid, then the −/+ input
+  // with Bid sitting between it and Set auto-bid — the biggest of the three,
+  // but one row, not a card of its own.
   const renderBidBuilder = (size: 'md' | 'md+' | 'lg') => (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-2.5">
       <div className="card p-3 flex flex-col gap-2.5">
         <AmountGrid minNext={minNext} increment={lot.increment} value={bidAmount} onChange={setBidAmount} size={size} />
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex items-stretch gap-2">
           <AmountInput minNext={minNext} increment={lot.increment} value={bidAmount} onChange={setBidAmount} size={size} />
-          <Button size={size === 'lg' ? 'lg' : 'md'} disabled={isPaused || bidAmount < minNext}
-            onClick={() => gateOr(() => { setConfirmRate(bidAmount); setPreConfirmOpen(true) })}>
+          <Button size={size === 'lg' ? 'lg' : 'md'} className="flex-1" disabled={isPaused || bidAmount < minNext}
+            onClick={() => gateOr(() => { setConfirmLot(lot); setConfirmRate(bidAmount); setPreConfirmOpen(true) })}>
             <Gavel size={16} /> Bid {inr(bidAmount)}
           </Button>
-          <Button variant="ghost" size={size === 'lg' ? 'lg' : 'md'} onClick={() => gateOr(() => setAutoOpen(true))}>
+          <Button variant="ghost" size={size === 'lg' ? 'lg' : 'md'} onClick={() => gateOr(() => setAutoBidLot(lot))}>
             <Bot size={15} /> {myAuto ? 'Edit auto-bid' : 'Set auto-bid'}
           </Button>
         </div>
@@ -437,6 +418,7 @@ export default function BiddingRoom() {
     <Segmented value={style} onChange={setStyle} options={[
       { key: 'classic', label: <><Gavel size={13} className="inline mr-1.5 -mt-0.5" /> Classic</> },
       { key: 'normal', label: <><Monitor size={13} className="inline mr-1.5 -mt-0.5" /> Board</> },
+      { key: 'quick', label: <><Sparkles size={13} className="inline mr-1.5 -mt-0.5" /> Quick</> },
     ]} />
   )
 
@@ -455,22 +437,19 @@ export default function BiddingRoom() {
       {/* header row */}
       <div className="flex flex-wrap items-center gap-3 mb-5">
         <Link to={`/catalogue/${cat.id}`} className="inline-flex items-center gap-1 text-sm font-semibold text-ink-muted hover:text-ink">
-          <ChevronLeft size={16} /> <span className="num">{cat.code}</span>
+          <ChevronLeft size={16} /> <span className="num font-bold text-ember">{cat.code}</span>
         </Link>
         <h1 className="text-xl sm:text-2xl font-bold flex-1 min-w-0 truncate">Bidding room</h1>
         {isPaused && <Chip tone="danger" pulse><ShieldAlert size={12} /> Paused by administrator</Chip>}
-        {/* Normal's shortlist control lives in its market card, leaving this slot free
-            for the switcher — which saves it a row of its own and the dead band that
-            came with it, since Normal has no lot strip to fill that band. */}
-        {style === 'normal'
-          ? styleSwitcher
-          : <Toggle checked={!showAll && summary.count > 0} onChange={(v) => setShowAll(!v)}
-              label={`My shortlist only (${summary.count})`} />}
+        {styleSwitcher}
       </div>
 
-      {/* lot strip — the cockpit switcher */}
-      {style !== 'normal' && (
-      <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 snap-x">
+      {/* lot strip — the cockpit switcher. Up to 14 shortlisted lots lay out in full
+          (wrapping to a second row past 7) so every lot is visible with no scroll;
+          past that it falls back to the old single scrolling line. Quick view lists
+          every shortlisted lot as its own card instead, so it has no need for this. */}
+      {style === 'classic' && (
+      <div className={cx(cockpitLots.length > 14 ? 'flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 snap-x' : 'flex flex-wrap gap-2 pb-2')}>
         {cockpitLots.map((l) => {
           const active = l.id === lot.id
           const lFunded = summary.fundedLotIds.includes(l.id)
@@ -479,7 +458,10 @@ export default function BiddingRoom() {
           return (
             <button key={l.id}
               onClick={() => setParams({ lot: l.id }, { replace: true })}
-              className={cx('card px-3.5 py-2.5 min-w-44 text-left shrink-0 snap-start transition-colors',
+              className={cx('card px-3.5 py-2.5 text-left transition-colors',
+                cockpitLots.length > 14
+                  ? 'min-w-44 shrink-0 snap-start'
+                  : 'min-w-[140px] grow shrink basis-[calc((100%-3rem)/7)] max-w-[calc((100%-3rem)/7)]',
                 active ? 'border-ember bg-ember-soft/40' : 'hover:border-line-strong')}>
               <div className="flex items-center justify-between gap-2">
                 <span className="num text-xs font-bold">{l.lotNo}</span>
@@ -508,12 +490,7 @@ export default function BiddingRoom() {
       </div>
       )}
 
-      {/* style switcher — Normal renders it up in the header row instead */}
-      {style !== 'normal' && (
-        <div className="flex justify-end mt-4 mb-1">{styleSwitcher}</div>
-      )}
-
-      {/* main cockpit — two interchangeable styles */}
+      {/* main cockpit — three interchangeable styles */}
       {style === 'classic' && (
         <div className="grid lg:grid-cols-[1fr_360px] gap-5 mt-3 items-start">
           <div className="card p-5 sm:p-6 relative overflow-hidden">
@@ -606,7 +583,7 @@ export default function BiddingRoom() {
           {/* column 1 — market ticker, grade alongside the lot no so rows are identifiable */}
           <div className="card overflow-hidden">
             <div className="px-3 py-2.5 border-b border-line flex items-center gap-1.5">
-              <Rows3 size={13} className="text-ink-faint" /> <span className="font-bold text-xs">Market — {cat.code}</span>
+              <Rows3 size={13} className="text-ink-faint" /> <span className="font-bold text-xs">Market — <span className="text-ember">{cat.code}</span></span>
             </div>
             {/* one scope control for the whole view — it filters this list and the reminder cards */}
             <div className="px-2 py-2 border-b border-line">
@@ -802,27 +779,63 @@ export default function BiddingRoom() {
         </div>
       )}
 
-      {/* auto-bid modal */}
-      <AutoBidModal open={autoOpen} onClose={() => setAutoOpen(false)} lot={lot}
-        current={myAuto?.maxRate} onSave={(max, active) => {
-          setAutoBid(lot.id, max, active)
-          setAutoOpen(false)
-          pushToast(active
-            ? { kind: 'success', title: 'Auto-bid armed', body: `We'll counter rivals up to ${inr(max)}/${lot.uom} on ${lot.lotNo}.` }
-            : { kind: 'info', title: 'Auto-bid disabled', body: lot.lotNo })
-        }} />
-
-      {/* step 1 — do you want to bid/offer at all? only a "yes" here opens the amount confirmation */}
-      <Modal open={preConfirmOpen} onClose={() => setPreConfirmOpen(false)} title={isTender ? 'Submit an offer?' : 'Place a bid?'}>
-        <div className="space-y-4">
-          <p className="text-sm text-ink-muted">
-            {isTender ? 'Do you want to offer' : 'Do you want to bid'} <b className="num text-ink">{inr(confirmRate)}/{lot.uom}</b> on <b className="num text-ink">{lot.lotNo}</b>?
+      {/* Quick view — every shortlisted lot as its own compact card, so a buyer
+          can work through the whole shortlist and place several bids without
+          switching "the" active lot. Each card carries its own amount and its
+          own confirm/auto-bid trigger. */}
+      {style === 'quick' && (
+        <div className="mt-3">
+          <p className="text-xs text-ink-faint mb-3">
+            Bids are per unit of measure, exclusive of GST &amp; TCS. A bid in a lot&apos;s final {cat.antiSnipeMinutes} minutes extends that lot by {cat.antiSnipeMinutes} minutes.
           </p>
-          <div className="flex gap-2">
-            <Button variant="secondary" className="flex-1" onClick={() => setPreConfirmOpen(false)}>No</Button>
-            <Button className="flex-1" onClick={() => { setPreConfirmOpen(false); setConfirmOpen(true) }}>Yes</Button>
+          <div className="grid gap-3 grid-cols-[repeat(auto-fill,minmax(320px,1fr))]">
+            {cockpitLots.map((l) => (
+              <QuickLotCard key={l.id} lot={l} isTender={isTender} isPaused={isPaused}
+                funded={summary.fundedLotIds.includes(l.id)}
+                leading={l.leadingBidderId === me?.id}
+                iHaveBid={bids.some((b) => b.lotId === l.id && b.bidderId === me?.id && b.status === 'valid')}
+                bidCount={l.bidCount}
+                myAuto={autoBids.find((a) => a.buyerId === me?.id && a.lotId === l.id && a.active)}
+                myTenderBid={bids.find((b) => b.lotId === l.id && b.bidderId === me?.id && b.status === 'valid' && b.type === 'tender')}
+                onRequestBid={(targetLot, rate) => gateOrFor(targetLot, () => { setConfirmLot(targetLot); setConfirmRate(rate); setPreConfirmOpen(true) })}
+                onRequestOffer={(targetLot, rate) => gateOrFor(targetLot, () => { setConfirmLot(targetLot); setConfirmRate(rate); setPreConfirmOpen(true) })}
+                onOpenAutoBid={(targetLot) => gateOrFor(targetLot, () => setAutoBidLot(targetLot))}
+                onOpenEmdGate={(targetLot) => setEmdGateLot(targetLot)} />
+            ))}
           </div>
         </div>
+      )}
+
+      {/* auto-bid modal — keyed to whichever lot opened it, the active lot by default */}
+      <AutoBidModal open={!!autoBidLot} onClose={() => setAutoBidLot(null)} lot={autoBidLot ?? lot}
+        current={(autoBidLot ? autoBids.find((a) => a.buyerId === me?.id && a.lotId === autoBidLot.id && a.active) : myAuto)?.maxRate}
+        onSave={(max, active) => {
+          const targetLot = autoBidLot ?? lot
+          setAutoBid(targetLot.id, max, active)
+          setAutoBidLot(null)
+          pushToast(active
+            ? { kind: 'success', title: 'Auto-bid armed', body: `We'll counter rivals up to ${inr(max)}/${targetLot.uom} on ${targetLot.lotNo}.` }
+            : { kind: 'info', title: 'Auto-bid disabled', body: targetLot.lotNo })
+        }} />
+
+      {/* step 1 — do you want to bid/offer at all? only a "yes" here opens the amount confirmation.
+          Keyed to confirmLot (falling back to the active lot) so Quick view's per-card
+          triggers confirm the lot that was actually clicked, not whichever lot is active. */}
+      <Modal open={preConfirmOpen} onClose={() => setPreConfirmOpen(false)} title={isTender ? 'Submit an offer?' : 'Place a bid?'}>
+        {(() => {
+          const cLot = confirmLot ?? lot
+          return (
+            <div className="space-y-4">
+              <p className="text-sm text-ink-muted">
+                {isTender ? 'Do you want to offer' : 'Do you want to bid'} <b className="num text-ink">{inr(confirmRate)}/{cLot.uom}</b> on <b className="num text-ink">{cLot.lotNo}</b>?
+              </p>
+              <div className="flex gap-2">
+                <Button variant="secondary" className="flex-1" onClick={() => setPreConfirmOpen(false)}>No</Button>
+                <Button className="flex-1" onClick={() => { setPreConfirmOpen(false); setConfirmOpen(true) }}>Yes</Button>
+              </div>
+            </div>
+          )
+        })()}
       </Modal>
 
       {/* step 2 — bid / sealed-offer confirmation modal, with the exact amount to sign off
@@ -830,44 +843,51 @@ export default function BiddingRoom() {
           from the hidden highest sealed offer and would leak exactly what "no visible
           current rate" is supposed to hide. */}
       <Modal open={confirmOpen} onClose={() => setConfirmOpen(false)} title={isTender ? 'Confirm your offer' : 'Confirm your bid'}>
-        <div className="space-y-4">
-          <p className="text-sm text-ink-muted">
-            {isTender ? 'Confirm offer of' : 'Confirm bid of'} <b className="num text-ink">{inr(confirmRate)}/{lot.uom}</b> for <b className="num text-ink">{lot.lotNo}</b>?
-            {isTender && ' This is final — it cannot be revised or resubmitted.'}
-          </p>
-          {/* rate in words — a mistyped digit is far easier to catch spelled out */}
-          <div className="card bg-surface-2 border-0 px-3.5 py-2.5">
-            <div className="text-[11px] font-bold uppercase tracking-wider text-ink-faint">{isTender ? 'Offer amount' : 'Bid amount'}</div>
-            <div className="num text-xl font-bold mt-0.5">{inr(confirmRate)}<span className="text-sm text-ink-faint font-medium">/{lot.uom}</span></div>
-            <div className="text-xs text-ink-muted mt-1 italic">{inrWords(confirmRate)} per {lot.uom}</div>
-          </div>
-          {!isTender && (
-            <div className="card bg-surface-2 border-0 p-3.5 text-sm space-y-1.5">
-              <div className="flex justify-between"><span className="text-ink-muted">Current H1</span><span className="num font-semibold">{lot.currentRate ? inr(lot.currentRate) : '—'}</span></div>
-              {myAuto && <div className="flex justify-between"><span className="text-ink-muted">Your auto-bid ceiling</span><span className="num font-semibold">{inr(myAuto.maxRate)}</span></div>}
+        {(() => {
+          const cLot = confirmLot ?? lot
+          const cMinNext = cLot.currentRate == null ? cLot.startRate : cLot.currentRate + cLot.increment
+          const cMyAuto = autoBids.find((a) => a.buyerId === me?.id && a.lotId === cLot.id && a.active)
+          return (
+            <div className="space-y-4">
+              <p className="text-sm text-ink-muted">
+                {isTender ? 'Confirm offer of' : 'Confirm bid of'} <b className="num text-ink">{inr(confirmRate)}/{cLot.uom}</b> for <b className="num text-ink">{cLot.lotNo}</b>?
+                {isTender && ' This is final — it cannot be revised or resubmitted.'}
+              </p>
+              {/* rate in words — a mistyped digit is far easier to catch spelled out */}
+              <div className="card bg-surface-2 border-0 px-3.5 py-2.5">
+                <div className="text-[11px] font-bold uppercase tracking-wider text-ink-faint">{isTender ? 'Offer amount' : 'Bid amount'}</div>
+                <div className="num text-xl font-bold mt-0.5">{inr(confirmRate)}<span className="text-sm text-ink-faint font-medium">/{cLot.uom}</span></div>
+                <div className="text-xs text-ink-muted mt-1 italic">{inrWords(confirmRate)} per {cLot.uom}</div>
+              </div>
+              {!isTender && (
+                <div className="card bg-surface-2 border-0 p-3.5 text-sm space-y-1.5">
+                  <div className="flex justify-between"><span className="text-ink-muted">Current H1</span><span className="num font-semibold">{cLot.currentRate ? inr(cLot.currentRate) : '—'}</span></div>
+                  {cMyAuto && <div className="flex justify-between"><span className="text-ink-muted">Your auto-bid ceiling</span><span className="num font-semibold">{inr(cMyAuto.maxRate)}</span></div>}
+                </div>
+              )}
+              {!isTender && confirmRate < cMinNext && (
+                <div className="rounded-xl bg-warning-soft border border-warning/25 px-3.5 py-2.5 text-sm font-semibold text-warning">
+                  Someone just bid — minimum is now {inr(cMinNext)}/{cLot.uom}.
+                </div>
+              )}
+              {isTender && confirmRate < cLot.startRate && (
+                <div className="rounded-xl bg-warning-soft border border-warning/25 px-3.5 py-2.5 text-sm font-semibold text-warning">
+                  Offer must be at least {inr(cLot.startRate)}/{cLot.uom}.
+                </div>
+              )}
+              <div className="flex gap-2">
+                <Button variant="secondary" className="flex-1" onClick={() => setConfirmOpen(false)}>Cancel</Button>
+                <Button className="flex-1" disabled={isTender && confirmRate < cLot.startRate} onClick={() => {
+                  const rate = isTender ? confirmRate : confirmRate < cMinNext ? cMinNext : confirmRate
+                  doBidFor(cLot, rate)
+                  setConfirmOpen(false)
+                }}>
+                  {!isTender && confirmRate < cMinNext ? `Bid ${inr(cMinNext)} instead` : 'Confirm'}
+                </Button>
+              </div>
             </div>
-          )}
-          {!isTender && confirmRate < minNext && (
-            <div className="rounded-xl bg-warning-soft border border-warning/25 px-3.5 py-2.5 text-sm font-semibold text-warning">
-              Someone just bid — minimum is now {inr(minNext)}/{lot.uom}.
-            </div>
-          )}
-          {isTender && confirmRate < lot.startRate && (
-            <div className="rounded-xl bg-warning-soft border border-warning/25 px-3.5 py-2.5 text-sm font-semibold text-warning">
-              Offer must be at least {inr(lot.startRate)}/{lot.uom}.
-            </div>
-          )}
-          <div className="flex gap-2">
-            <Button variant="secondary" className="flex-1" onClick={() => setConfirmOpen(false)}>Cancel</Button>
-            <Button className="flex-1" disabled={isTender && confirmRate < lot.startRate} onClick={() => {
-              const rate = isTender ? confirmRate : confirmRate < minNext ? minNext : confirmRate
-              doBid(rate)
-              setConfirmOpen(false)
-            }}>
-              {!isTender && confirmRate < minNext ? `Bid ${inr(minNext)} instead` : 'Confirm'}
-            </Button>
-          </div>
-        </div>
+          )
+        })()}
       </Modal>
 
       {/* EMD gate modal */}
@@ -952,5 +972,119 @@ function AutoBidModal({ open, onClose, lot, current, onSave }: {
         <Button className="flex-1" disabled={!minOk} onClick={() => onSave(val, true)}>Arm auto-bid up to {val ? inr(val) : '—'}</Button>
       </div>
     </Modal>
+  )
+}
+
+/* ------------------------------ Quick view card ---------------------------- */
+/** One shortlisted lot, fully self-contained — its own bid amount, its own
+ *  confirm/auto-bid triggers — so Quick view can lay out every shortlisted lot
+ *  at once and a buyer can bid across all of them without switching "the"
+ *  active lot. */
+function QuickLotCard({
+  lot, isTender, isPaused, funded, leading, iHaveBid, bidCount, myAuto, myTenderBid,
+  onRequestBid, onRequestOffer, onOpenAutoBid, onOpenEmdGate,
+}: {
+  lot: Lot; isTender: boolean; isPaused: boolean
+  funded: boolean; leading: boolean; iHaveBid: boolean; bidCount: number
+  myAuto?: { maxRate: number }; myTenderBid?: { rate: number }
+  onRequestBid: (lot: Lot, rate: number) => void
+  onRequestOffer: (lot: Lot, rate: number) => void
+  onOpenAutoBid: (lot: Lot) => void
+  onOpenEmdGate: (lot: Lot) => void
+}) {
+  const minNext = lot.currentRate == null ? lot.startRate : lot.currentRate + lot.increment
+  const [bidAmount, setBidAmount] = useState(minNext)
+  const [tenderOffer, setTenderOffer] = useState(lot.startRate)
+  // tracks the floor moving out from under a stale amount when someone else bids
+  useEffect(() => { setBidAmount(minNext) }, [minNext])
+
+  const closed = lot.status !== 'live'
+
+  return (
+    <div className="card overflow-hidden">
+      {!isTender && !funded && (
+        <div className="bg-warning-soft border-b border-warning/30 px-4 py-2 text-[11px] font-semibold text-warning flex items-center gap-1.5">
+          <Lock size={11} /> EMD pending.
+          <button className="underline" onClick={() => onOpenEmdGate(lot)}>Fund {inr(lot.preBidEmd)}</button>
+        </div>
+      )}
+      <div className="p-4">
+        <div className="flex items-start justify-between gap-2">
+          <div className="min-w-0">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="num font-bold text-sm">{lot.lotNo}</span>
+              <Chip tone="steel" className="h-5 text-[10px]">{lot.metal}</Chip>
+              <StatusChip status={lot.status} />
+            </div>
+            <p className="text-xs text-ink-muted mt-1.5 truncate">{lot.description}</p>
+          </div>
+          {lot.status === 'live' && <Countdown endsAt={lot.endsAt} size="sm" className="shrink-0" />}
+        </div>
+
+        {!isTender ? (
+          <div className="mt-3.5 flex items-center gap-2 flex-wrap">
+            <div className="num font-bold text-2xl leading-none text-ink">
+              {lot.currentRate ? inr(lot.currentRate) : inr(lot.startRate)}
+              <span className="text-xs text-ink-faint font-medium">/{lot.uom}</span>
+            </div>
+            {!closed ? (
+              leading ? <Chip tone="success" className="h-5 text-[10px]"><Crown size={10} /> You&apos;re H1</Chip>
+                : iHaveBid ? <Chip tone="danger" className="h-5 text-[10px]"><BellRing size={10} /> Outbid</Chip>
+                  : <Chip tone="neutral" className="h-5 text-[10px]">No bid yet</Chip>
+            ) : (
+              <Chip tone={lot.status === 'sold' ? 'success' : lot.status === 'sta' ? 'warning' : 'neutral'} className="h-5 text-[10px]">
+                {lot.status === 'sold' ? `Sold ${inr(lot.resultH1Rate ?? 0)}` : lot.status === 'sta' ? 'STA' : 'Unsold'}
+              </Chip>
+            )}
+            <span className="num text-[11px] text-ink-faint ml-auto">{bidCount} bids</span>
+          </div>
+        ) : (
+          <div className="mt-3.5 text-sm font-semibold text-ink">
+            {myTenderBid ? `Offer submitted ${inr(myTenderBid.rate)}/${lot.uom}` : `Sealed — start ${inr(lot.startRate)}/${lot.uom}`}
+          </div>
+        )}
+
+        {lot.status === 'live' && isTender && !myTenderBid && (
+          <div className="mt-4 flex items-center gap-2">
+            <Input inputMode="numeric" className="num flex-1" value={tenderOffer.toLocaleString('en-IN')}
+              onChange={(e) => setTenderOffer(Number(e.target.value.replace(/[^\d]/g, '')) || 0)} />
+            <Button size="md" disabled={isPaused || tenderOffer < lot.startRate} onClick={() => onRequestOffer(lot, tenderOffer)}>
+              <Gavel size={15} /> Offer
+            </Button>
+          </div>
+        )}
+
+        {lot.status === 'live' && !isTender && (
+          <div className="mt-4 flex flex-col gap-2.5">
+            <AmountGrid minNext={minNext} increment={lot.increment} value={bidAmount} onChange={setBidAmount} size="md" />
+            <div className="flex items-stretch gap-2">
+              <AmountInput minNext={minNext} increment={lot.increment} value={bidAmount} onChange={setBidAmount} size="md" />
+              <Button size="md" className="flex-1" disabled={isPaused || bidAmount < minNext} onClick={() => onRequestBid(lot, bidAmount)}>
+                <Gavel size={15} /> Bid {inr(bidAmount)}
+              </Button>
+              <Button variant="ghost" size="md" title={myAuto ? 'Edit auto-bid' : 'Set auto-bid'} onClick={() => onOpenAutoBid(lot)}>
+                <Bot size={15} />
+              </Button>
+            </div>
+            {myAuto && (
+              <div className="text-[11px] font-semibold text-steel flex items-center gap-1"><Bot size={11} /> Auto-bid to {inr(myAuto.maxRate)}</div>
+            )}
+          </div>
+        )}
+
+        {closed && (
+          <div className="mt-4 text-xs font-semibold">
+            {lot.status === 'sold' && leading ? (
+              <span className="text-success inline-flex items-center gap-1.5"><Sparkles size={13} /> You won this lot at {inr(lot.resultH1Rate ?? 0)}/{lot.uom}</span>
+            ) : (
+              <span className="text-ink-muted">
+                {lot.status === 'sold' ? `Sold at ${inr(lot.resultH1Rate ?? 0)}/${lot.uom}`
+                  : lot.status === 'sta' ? `${isTender ? 'Offer' : 'H1'} below reserve — subject to seller approval` : 'No sale'}
+              </span>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
   )
 }

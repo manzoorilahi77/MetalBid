@@ -122,7 +122,7 @@ export default function Home() {
             {nextClosing && (
               <Link to={`/catalogue/${nextClosing.id}`} className="flex items-center gap-2 text-sm text-ink-muted hover:text-ink group">
                 <span className="hidden sm:inline">Next to close:</span>
-                <span className="num font-semibold text-ink">{nextClosing.code}</span>
+                <span className="num font-semibold text-ember">{nextClosing.code}</span>
                 <Countdown endsAt={nextClosing.endsAt} size="sm" />
                 <ChevronRight size={14} className="text-ink-faint group-hover:translate-x-0.5 transition-transform" />
               </Link>

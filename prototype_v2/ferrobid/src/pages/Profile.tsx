@@ -57,6 +57,15 @@ function ProfileBody({ me }: { me: User }) {
           <h2 className="font-display text-xl font-bold">{me.name}</h2>
           <div className="text-sm text-ink-muted">{me.firm} · {me.city}</div>
           <div className="text-xs text-ink-faint mt-0.5">Member since {fmtDate(me.joinedAt)}</div>
+          {(me.bidderId || me.sellerId) && (
+            <div className="text-xs font-semibold text-ink-muted mt-1.5">
+              {me.bidderId && <>Your Bidder ID: <span className="num text-ink">{me.bidderId}</span></>}
+              {me.sellerId && <>Your Seller ID: <span className="num text-ink">{me.sellerId}</span></>}
+              <span className="block text-[11px] font-normal text-ink-faint mt-0.5">
+                Shown to other bidders in the bid room, and to sellers as proof of who won a lot.
+              </span>
+            </div>
+          )}
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Chip tone="steel">{ROLE_LABEL[role]}</Chip>

@@ -130,14 +130,18 @@ export default function Shortlist() {
                     </div>
 
                     {ui === 'live' || ui === 'closing' ? (
-                      <Countdown endsAt={cat.endsAt} prefix="ends" size="sm" />
-                    ) : ui === 'upcoming' && !closed && needsAttention ? (
+                      <Countdown endsAt={cat.endsAt} prefix="auction ends" size="sm" />
+                    ) : ui === 'upcoming' && closed ? (
+                      <Countdown endsAt={cat.startsAt} prefix="auction starts" size="sm" />
+                    ) : ui === 'upcoming' && needsAttention ? (
                       <span className="inline-flex items-center gap-1.5 text-xs font-bold text-warning num whitespace-nowrap">
                         <Clock size={13} /> {countdown(deadline - now)} left to fund
                       </span>
-                    ) : ui === 'upcoming' && !closed && allLotsCovered ? null : ui === 'upcoming' && !closed ? (
-                      <Countdown endsAt={new Date(deadline).toISOString()} prefix="fund EMD by" size="sm" />
-                    ) : null}
+                    ) : ui === 'upcoming' && allLotsCovered ? null : ui === 'upcoming' ? (
+                      <Countdown endsAt={new Date(deadline).toISOString()} prefix="EMD ends" size="sm" />
+                    ) : (
+                      <span className="text-xs text-ink-faint font-semibold">Closed</span>
+                    )}
 
                     <div className="flex items-center gap-x-5 gap-y-1 text-sm flex-wrap">
                       <span>

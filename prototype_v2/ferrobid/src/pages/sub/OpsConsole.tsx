@@ -87,7 +87,7 @@ export default function OpsConsole() {
                     <tr key={c.id} className="border-b border-line last:border-0 hover:bg-surface-2/60">
                       <td className="px-5 py-3">
                         <Link to={`/catalogue/${c.id}`} className="font-semibold text-ink hover:text-ember">
-                          <span className="num text-xs text-ink-faint mr-2">{c.code}</span>
+                          <span className="num text-xs font-bold text-ember mr-2">{c.code}</span>
                           {c.title}
                         </Link>
                         <div className="text-xs text-ink-faint mt-0.5">{c.region}</div>

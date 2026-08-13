@@ -5,13 +5,13 @@
     "catalogueId": "cat-6",
     "buyerId": "u-buyer-1",
     "stage": "lifting_scheduled",
-    "h1Rate": 581,
-    "awardedQty": 3700,
+    "h1Rate": 531,
+    "awardedQty": 7200,
     "uom": "KG",
-    "materialValue": 2149700,
-    "gstAmount": 386946,
-    "tcsAmount": 21497,
-    "paidAmount": 2558143,
+    "materialValue": 3823200,
+    "gstAmount": 688176,
+    "tcsAmount": 38232,
+    "paidAmount": 4549608,
     "liftingBy": "2026-07-21T06:30:00.000Z",
     "createdAt": "2026-07-14T11:30:00.000Z",
     "liftingChecklist": [
@@ -38,13 +38,13 @@
     "catalogueId": "cat-6",
     "buyerId": "u-buyer-1",
     "stage": "payment_pending",
-    "h1Rate": 505,
-    "awardedQty": 2100,
+    "h1Rate": 568,
+    "awardedQty": 5600,
     "uom": "KG",
-    "materialValue": 1060500,
-    "gstAmount": 190890,
-    "tcsAmount": 10605,
-    "paidAmount": 315499,
+    "materialValue": 3180800,
+    "gstAmount": 572544,
+    "tcsAmount": 31808,
+    "paidAmount": 946288,
     "liftingBy": "2026-07-21T06:30:00.000Z",
     "createdAt": "2026-07-14T11:30:00.000Z",
     "liftingChecklist": [
@@ -57,6 +57,74 @@
         "key": "loading_complete",
         "label": "Loading complete",
         "done": false
+      },
+      {
+        "key": "gross_weighment",
+        "label": "Gross weighment recorded",
+        "done": false
+      }
+    ]
+  },
+  {
+    "id": "do-004",
+    "lotId": "lot-078",
+    "catalogueId": "cat-6",
+    "buyerId": "u-buyer-1",
+    "stage": "dd_issued",
+    "h1Rate": 170,
+    "awardedQty": 3500,
+    "uom": "KG",
+    "materialValue": 595000,
+    "gstAmount": 107100,
+    "tcsAmount": 5950,
+    "paidAmount": 708050,
+    "liftingBy": "2026-07-21T06:30:00.000Z",
+    "createdAt": "2026-07-14T12:15:00.000Z",
+    "liftingChecklist": [
+      {
+        "key": "vehicle_at_weighbridge",
+        "label": "Vehicle at weighbridge",
+        "done": false
+      },
+      {
+        "key": "loading_complete",
+        "label": "Loading complete",
+        "done": false
+      },
+      {
+        "key": "gross_weighment",
+        "label": "Gross weighment recorded",
+        "done": false
+      }
+    ]
+  },
+  {
+    "id": "do-005",
+    "lotId": "lot-080",
+    "catalogueId": "cat-6",
+    "buyerId": "u-buyer-1",
+    "stage": "lifted",
+    "h1Rate": 615,
+    "awardedQty": 5900,
+    "uom": "KG",
+    "materialValue": 3628500,
+    "gstAmount": 653130,
+    "tcsAmount": 36285,
+    "paidAmount": 4317915,
+    "liftingBy": "2026-07-21T06:30:00.000Z",
+    "createdAt": "2026-07-14T13:05:00.000Z",
+    "liftingChecklist": [
+      {
+        "key": "vehicle_at_weighbridge",
+        "label": "Vehicle at weighbridge",
+        "done": true,
+        "at": "2026-07-16T05:20:00.000Z"
+      },
+      {
+        "key": "loading_complete",
+        "label": "Loading complete",
+        "done": true,
+        "at": "2026-07-16T06:05:00.000Z"
       },
       {
         "key": "gross_weighment",
@@ -101,5 +169,75 @@
       }
     ],
     "weighedQty": 2
+  },
+  {
+    "id": "do-006",
+    "lotId": "lot-091",
+    "catalogueId": "cat-7",
+    "buyerId": "u-buyer-1",
+    "stage": "payment_pending",
+    "h1Rate": 29400,
+    "awardedQty": 46,
+    "uom": "MT",
+    "materialValue": 1352400,
+    "gstAmount": 243432,
+    "tcsAmount": 13524,
+    "paidAmount": 60000,
+    "liftingBy": "2026-07-17T06:30:00.000Z",
+    "createdAt": "2026-07-10T13:20:00.000Z",
+    "liftingChecklist": [
+      {
+        "key": "vehicle_at_weighbridge",
+        "label": "Vehicle at weighbridge",
+        "done": false
+      },
+      {
+        "key": "loading_complete",
+        "label": "Loading complete",
+        "done": false
+      },
+      {
+        "key": "gross_weighment",
+        "label": "Gross weighment recorded",
+        "done": false
+      }
+    ]
+  },
+  {
+    "id": "do-007",
+    "lotId": "lot-134",
+    "catalogueId": "cat-12",
+    "buyerId": "u-buyer-1",
+    "stage": "completed",
+    "h1Rate": 28900,
+    "awardedQty": 92,
+    "uom": "MT",
+    "materialValue": 2658800,
+    "gstAmount": 478584,
+    "tcsAmount": 26588,
+    "paidAmount": 3163972,
+    "liftingBy": "2026-07-14T06:30:00.000Z",
+    "createdAt": "2026-07-07T11:00:00.000Z",
+    "liftingChecklist": [
+      {
+        "key": "vehicle_at_weighbridge",
+        "label": "Vehicle at weighbridge",
+        "done": true,
+        "at": "2026-07-13T07:10:00.000Z"
+      },
+      {
+        "key": "loading_complete",
+        "label": "Loading complete",
+        "done": true,
+        "at": "2026-07-13T08:45:00.000Z"
+      },
+      {
+        "key": "gross_weighment",
+        "label": "Gross weighment recorded",
+        "done": true,
+        "at": "2026-07-13T09:15:00.000Z"
+      }
+    ],
+    "weighedQty": 92
   }
 ]

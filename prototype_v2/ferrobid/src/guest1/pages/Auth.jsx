@@ -149,6 +149,7 @@ export const Auth = () => {
   const [searchParams] = useSearchParams();
   const initialTab = searchParams.get('tab') === 'register' ? 'register' : 'login';
   const signIn = useStore((s) => s.signIn);
+  const registerAccount = useStore((s) => s.registerAccount);
 
   const [tab, setTab] = useState(initialTab);
   const [forgotOpen, setForgotOpen] = useState(false);
@@ -161,7 +162,9 @@ export const Auth = () => {
   const [loginTouched, setLoginTouched] = useState({ email: false, password: false });
   const [loginErrors, setLoginErrors] = useState({ email: '', password: '' });
 
-  /* register form */
+  /* register form — which permanent ID this account gets (Bidder ID vs Seller ID)
+     is decided by this choice, made once, at signup. */
+  const [regRole, setRegRole] = useState('buyer');
   const [regForm, setRegForm] = useState({ name: '', email: '', phone: '', company: '', password: '', confirmPassword: '' });
   const [regTouched, setRegTouched] = useState({ name: false, email: false, phone: false, company: false, password: false, confirmPassword: false });
   const [regErrors, setRegErrors] = useState({ name: '', email: '', phone: '', company: '', password: '', confirmPassword: '' });
@@ -315,8 +318,18 @@ export const Auth = () => {
     setTimeout(() => {
       setLoading(false);
       setOtpStep(false);
-      setSuccess('Account verified! Redirecting to dashboard...');
-      setTimeout(() => setSuccess(''), 4000);
+      // This is the one moment a permanent Bidder ID / Seller ID is assigned —
+      // once, at account creation — never re-issued afterwards.
+      const user = registerAccount({
+        name: regForm.name,
+        email: regForm.email,
+        phone: regForm.phone,
+        firm: regForm.company,
+        role: regRole,
+      });
+      const idLabel = regRole === 'seller' ? `Seller ID ${user.sellerId}` : `Bidder ID ${user.bidderId}`;
+      setSuccess(`Account verified! Your ${idLabel}. Redirecting to your portal...`);
+      setTimeout(() => { window.location.hash = ROLE_HOME[regRole]; }, 1200);
     }, 1500);
   };
 
@@ -637,6 +650,26 @@ export const Auth = () => {
                     <p className="auth-form-subtitle">Join 10,000+ verified metal traders across India</p>
 
                     <form onSubmit={handleRegSubmit} noValidate>
+                      <div className="auth-role-toggle" role="radiogroup" aria-label="I want to">
+                        <button
+                          type="button"
+                          role="radio"
+                          aria-checked={regRole === 'buyer'}
+                          className={`auth-role-btn ${regRole === 'buyer' ? 'active' : ''}`}
+                          onClick={() => setRegRole('buyer')}
+                        >
+                          <ShoppingBag size={14} /> Buy — get a Bidder ID
+                        </button>
+                        <button
+                          type="button"
+                          role="radio"
+                          aria-checked={regRole === 'seller'}
+                          className={`auth-role-btn ${regRole === 'seller' ? 'active' : ''}`}
+                          onClick={() => setRegRole('seller')}
+                        >
+                          <Package size={14} /> Sell — get a Seller ID
+                        </button>
+                      </div>
                       <div className="auth-form-row">
                         <FloatingInput
                           id="reg-name"

@@ -53,7 +53,7 @@ export const NAV_BY_ROLE: Record<Role, NavItem[]> = {
     { to: '/buyer', label: 'Home', subLabel: 'Dashboard', end: true, in: ['top', 'sub'] },
     { to: '/buyermarketplace', label: 'Browse & Shortlist', in: ['sub'], activeMatch: ['/catalogue'] },
     { to: '/buyer/emd-shortlisted-catalogue', label: 'EMD & payments', subLabel: 'EMD for shortlisted catalogues', in: ['sub'], activeMatch: ['/buyer/shortlist'] },
-    { to: '/buyer/bids', label: 'My bids', subLabel: 'Bids & results', in: ['sub'] },
+    { to: '/buyer/bids', label: 'My bids', subLabel: 'Bid results', in: ['sub'] },
     { to: '/buyer/auction-status', label: 'Auction status', in: ['sub'] },
     { to: '/noticeboard', label: 'Noticeboard', in: ['top'] },
     { to: '/buyer/wallet', label: 'Wallet & ledger', in: ['sub'] },
@@ -64,6 +64,7 @@ export const NAV_BY_ROLE: Record<Role, NavItem[]> = {
     { to: '/seller/create-lot', label: 'Create lot', in: ['sub'] },
     { to: '/seller/lots', label: 'My lots', subLabel: 'My lots & batches', in: ['sub'] },
     { to: '/seller/monitor', label: 'Live monitor', in: ['sub'] },
+    { to: '/seller/settlement', label: 'Settlement', subLabel: 'Agree price & pay commission', in: ['sub'] },
     { to: '/seller/reports', label: 'Results & reports', in: ['sub'] },
   ],
   field_exec: [
@@ -100,8 +101,9 @@ export const NAV_BY_ROLE: Record<Role, NavItem[]> = {
 }
 
 function Logo() {
+  const role = useStore((s) => s.role)
   return (
-    <Link to="/" className="flex items-center gap-2 shrink-0" aria-label="ferroBid home">
+    <Link to={ROLE_HOME[role]} className="flex items-center gap-2 shrink-0" aria-label="ferroBid home">
       <span className="size-8 rounded-lg bg-ember grid place-items-center text-white">
         <Flame size={18} strokeWidth={2.5} />
       </span>

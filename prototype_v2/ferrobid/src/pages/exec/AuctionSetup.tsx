@@ -80,7 +80,7 @@ export default function AuctionSetup() {
               <div key={c.id} className="p-4 flex flex-wrap items-center gap-x-5 gap-y-3">
                 <div className="min-w-56 flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="num text-xs font-bold text-ink-muted">{c.code}</span>
+                    <span className="num text-xs font-bold text-ember">{c.code}</span>
                     <StatusChip status={ui} />
                     {/* Auction type is set once in Catalogue Builder and fixed from here on —
                         read-only, since this board only manages already-assigned/published sales. */}
@@ -116,7 +116,7 @@ export default function AuctionSetup() {
         <div className="card divide-y divide-line overflow-hidden">
           {rest.map((c) => (
             <div key={c.id} className="px-4 py-3 flex flex-wrap items-center gap-3">
-              <span className="num text-xs font-bold text-ink-muted w-20">{c.code}</span>
+              <span className="num text-xs font-bold text-ember w-20">{c.code}</span>
               <span className="text-sm font-semibold flex-1 min-w-40 truncate">{c.title}</span>
               <span className="text-xs text-ink-faint hidden sm:block">{firm(c.sellerId)}</span>
               <Chip tone="neutral">{c.type === 'tender' ? 'Sealed tender' : 'Forward'}</Chip>
