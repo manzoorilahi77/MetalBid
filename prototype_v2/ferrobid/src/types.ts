@@ -375,6 +375,11 @@ export interface DeliveryOrder {
   ddId?: string
   liftingChecklist: LiftingChecklistItem[]
   weighedQty?: number
+  /** Who put the gross weighment on the record, and when. The figure decides the
+   *  final invoice and any shortfall refund, so a buyer's own reading is a
+   *  declaration — Operations has to witness it before the handover can close. */
+  weighedById?: string
+  weighedAt?: string
   /** Operations' sign-off that the material actually left the yard against the
    *  weighment-final quantity. The last operational act on a sale — until it is
    *  recorded, the delivery stays open however complete it looks. */

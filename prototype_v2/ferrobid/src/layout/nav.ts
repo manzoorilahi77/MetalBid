@@ -58,15 +58,23 @@ export const NAV_BY_ROLE: Record<Role, NavItem[]> = {
     { to: '/buyer/auction-status', label: 'Auction status', in: ['sub'] },
     { to: '/noticeboard', label: 'Noticeboard', in: ['top'] },
     { to: '/buyer/wallet', label: 'Wallet & ledger', in: ['sub'] },
+    // Raising a ticket was reachable from the wallet and from nowhere else, so
+    // the one route into the support chain depended on knowing it was there.
+    { to: '/disputes', label: 'Support', subLabel: 'Support & disputes', in: ['sub'] },
     { to: '/buyer/kyc', label: 'Become a seller', in: ['sub'] },
   ],
+  // Seller — submit → track → watch → settle. Verification comes first because
+  // nothing else on this menu works until Operations has approved the account,
+  // and a seller who signed up directly had no way to reach that wizard at all.
   seller: [
     { to: '/seller', label: 'Workspace', end: true, in: ['sub'] },
+    { to: '/seller/verification', label: 'Verification', subLabel: 'Seller verification', in: ['sub'] },
     { to: '/seller/create-lot', label: 'Create lot', in: ['sub'] },
     { to: '/seller/lots', label: 'My lots', subLabel: 'My lots & batches', in: ['sub'] },
     { to: '/seller/monitor', label: 'Live monitor', in: ['sub'] },
     { to: '/seller/settlement', label: 'Settlement', subLabel: 'Agree price & pay commission', in: ['sub'] },
     { to: '/seller/reports', label: 'Results & reports', in: ['sub'] },
+    { to: '/disputes', label: 'Support', subLabel: 'Support & disputes', in: ['sub'] },
   ],
   field_exec: [
     { to: '/field', label: 'Inspection queue', in: ['top'] },
@@ -78,13 +86,21 @@ export const NAV_BY_ROLE: Record<Role, NavItem[]> = {
   // entry — so they point at one route rather than a second copy.
   exec_manager: [
     { to: '/exec', label: 'Pipeline', subLabel: 'Lot pipeline', end: true, in: ['top', 'sub'] },
+    // The gate that comes before everything else: no verified seller, no lots.
+    { to: '/sub/seller-verification', label: 'Seller verification', in: ['sub'] },
     { to: '/exec/catalogue-builder', label: 'Catalogue builder', in: ['sub'] },
+    // Assigning and re-assigning the yard visit is Operations' own step (spec
+    // Part 13). The same screen the Sub Admin works — one screen, not a copy.
+    { to: '/sub/field-executives', label: 'Field executives', in: ['sub'] },
     { to: '/exec/approvals', label: 'Lot approval', subLabel: 'Lot approval · bypass', in: ['sub'] },
     { to: '/auction/schedule', label: 'Schedule & publish', subLabel: 'Auction schedule & publish', in: ['top', 'sub'] },
     { to: '/auction/emd-eligibility', label: 'EMD eligibility', in: ['sub'] },
     { to: '/exec/logistics', label: 'Logistics', in: ['sub'] },
     { to: '/exec/handover', label: 'Handover', subLabel: 'Handover & closure', in: ['sub'] },
     { to: '/exec/settlement', label: 'Post-auction exceptions', subLabel: 'Post-auction exceptions', in: ['sub'] },
+    // Ops resolves what the Sub Admin cannot close (spec Part 8 and Part 13);
+    // it already holds the permission, it simply had no way in.
+    { to: '/sub/disputes', label: 'Disputes', subLabel: 'Disputes & support', in: ['sub'] },
     { to: '/browse', label: 'Browse', in: ['top'] },
   ],
   // Auction Manager — ordered the way the work happens: publish, admit, run,

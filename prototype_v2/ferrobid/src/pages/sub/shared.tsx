@@ -25,16 +25,16 @@
 import { useMemo, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  Building2, Flag, Gavel, KeyRound, Landmark, MessageSquareWarning, ShieldQuestion,
-  Ticket, UserCheck, Wallet,
+  Building2, ClipboardCheck, Flag, GanttChartSquare, Gavel, KeyRound, Landmark,
+  MessageSquareWarning, PackageSearch, Receipt, ShieldQuestion, Ticket, UserCheck, Wallet,
 } from 'lucide-react'
 import { Avatar, Button, Chip, cx } from '../../components/ui'
 import { useStore } from '../../store/store'
 import { inr, num, relTime } from '../../lib/format'
 import { useNow } from '../../lib/useTick'
 import type {
-  ActionReview, AuditEvent, BankAccount, BidVoidRequest, DepositClaim, Dispute, EmdExemptionRequest,
-  Lot, PasswordReset, User, WithdrawalRequest,
+  ActionReview, AuditEvent, BankAccount, BidVoidRequest, Catalogue, CommissionSettlement,
+  DepositClaim, Dispute, EmdExemptionRequest, Lot, PasswordReset, User, WithdrawalRequest,
 } from '../../types'
 
 /* ============================== the board ================================= */
@@ -42,6 +42,10 @@ import type {
 export type WorkKind =
   | 'flag' | 'kyc' | 'dispute' | 'sta' | 'bid_flag' | 'emd_exemption'
   | 'password_reset' | 'deposit_claim' | 'withdrawal_request' | 'bank_account'
+  // The pre-auction hand-offs this board used to miss entirely: a lot waiting
+  // on the yard, a filed report waiting on a decision, a closed sale waiting on
+  // its results, and a commission the seller says they have paid.
+  | 'unassigned_lot' | 'lot_decision' | 'result_confirm' | 'commission'
 
 export interface WorkItem {
   id: string
@@ -69,18 +73,24 @@ export interface WorkItem {
   exemption?: EmdExemptionRequest
   bidFlag?: BidVoidRequest
   reset?: PasswordReset
+  catalogue?: Catalogue
+  settlement?: CommissionSettlement
 }
 
 export const WORK_ICON: Record<WorkKind, typeof Flag> = {
   flag: Flag, kyc: UserCheck, dispute: MessageSquareWarning, sta: ShieldQuestion,
   bid_flag: Gavel, emd_exemption: Ticket, password_reset: KeyRound,
   deposit_claim: Landmark, withdrawal_request: Wallet, bank_account: Building2,
+  unassigned_lot: PackageSearch, lot_decision: ClipboardCheck,
+  result_confirm: GanttChartSquare, commission: Receipt,
 }
 
 export const WORK_LABEL: Record<WorkKind, string> = {
   flag: 'Flagged lot', kyc: 'Seller verification', dispute: 'Dispute', sta: 'STA chase',
   bid_flag: 'Flagged bid', emd_exemption: 'EMD exemption', password_reset: 'Password reset',
   deposit_claim: 'Deposit claim', withdrawal_request: 'Withdrawal', bank_account: 'Bank account',
+  unassigned_lot: 'Lot to catalogue', lot_decision: 'Lot decision',
+  result_confirm: 'Results to confirm', commission: 'Commission',
 }
 
 /** Tailwind tint per kind, so the same class of work reads the same way on the
@@ -96,6 +106,10 @@ export const WORK_TINT: Record<WorkKind, string> = {
   deposit_claim: 'bg-ember-soft text-ember-strong',
   withdrawal_request: 'bg-ember-soft text-ember-strong',
   bank_account: 'bg-ember-soft text-ember-strong',
+  unassigned_lot: 'bg-steel-soft text-steel-strong',
+  lot_decision: 'bg-steel-soft text-steel-strong',
+  result_confirm: 'bg-warning-soft text-warning',
+  commission: 'bg-ember-soft text-ember-strong',
 }
 
 /** Deterministic hash → the same item always shows the same SLA countdown, so
@@ -125,6 +139,8 @@ export function useWorkBoard(): WorkItem[] {
   const exemptions = useStore((s) => s.emdExemptionRequests)
   const bidVoidRequests = useStore((s) => s.bidVoidRequests)
   const passwordResets = useStore((s) => s.passwordResets)
+  const resultConfirmations = useStore((s) => s.resultConfirmations)
+  const commissionSettlements = useStore((s) => s.commissionSettlements)
   const claims = useStore((s) => s.workClaims)
 
   return useMemo<WorkItem[]>(() => {
@@ -136,6 +152,23 @@ export function useWorkBoard(): WorkItem[] {
     type Raw = Omit<WorkItem, 'leftMs' | 'overdue' | 'amber' | 'dueLabel' | 'claimedBy' | 'claimedAt'>
     const raw: Raw[] = [
       /* --- the pre-auction gate: this desk decides these outright --- */
+      /* A submitted lot with no catalogue behind it cannot reach an inspector at
+         all — the field queue is driven by catalogue assignment — so it is the
+         first thing that has to be picked up, and it used to be on no board. */
+      ...lots.filter((l) => l.status === 'pending_inspection' && !l.catalogueId).map<Raw>((l) => ({
+        id: `wq-uncat-${l.id}`, kind: 'unassigned_lot',
+        title: `Catalogue ${l.lotNo} and book the yard visit`,
+        sub: `${l.metal} ${l.grade} · ${num(l.indicativeQty)} ${l.uom} · ${l.yard || 'yard not given'}`,
+        href: '/exec/catalogue-builder', dueH: 12, mine: true, lot: l,
+      })),
+      /* A filed report waiting on a decision — the single busiest hand-off in
+         the pre-auction chain, and previously invisible here. */
+      ...lots.filter((l) => l.status === 'inspected').map<Raw>((l) => ({
+        id: `wq-decide-${l.id}`, kind: 'lot_decision',
+        title: `Decide ${l.lotNo} — inspection filed`,
+        sub: `${l.metal} ${l.grade} · ${num(l.indicativeQty)} ${l.uom} · ${l.yard}`,
+        href: '/exec/approvals', dueH: 8, mine: true, lot: l,
+      })),
       ...lots.filter((l) => l.status === 'flagged').map<Raw>((l) => ({
         id: `wq-flag-${l.id}`, kind: 'flag',
         title: `Review flagged lot ${l.lotNo}`,
@@ -181,6 +214,17 @@ export function useWorkBoard(): WorkItem[] {
         }
       }),
 
+      /* A closed sale sits still until someone confirms its results — and the
+         seller's whole settlement waits behind that one action. */
+      ...catalogues
+        .filter((c) => c.status === 'closed' && !resultConfirmations.some((r) => r.catalogueId === c.id))
+        .map<Raw>((c) => ({
+          id: `wq-results-${c.id}`, kind: 'result_confirm',
+          title: `Confirm results — ${c.code}`,
+          sub: `${lots.filter((l) => l.catalogueId === c.id && l.status === 'sold').length} sold · ${c.title} — the seller cannot settle until this is done`,
+          href: '/auction/results', dueH: 12, mine: true, catalogue: c,
+        })),
+
       /* --- accounts --- */
       ...passwordResets.filter((r) => !r.consumed).map<Raw>((r) => ({
         id: `wq-pwd-${r.id}`, kind: 'password_reset',
@@ -207,6 +251,15 @@ export function useWorkBoard(): WorkItem[] {
         title: `Withdrawal — ${inr(r.amount)}`,
         sub: `${firmOf(r.userId)} · ${r.status === 'requested' ? 'awaiting Finance review' : 'awaiting Finance processing'}`,
         href: '/finance/withdrawals', dueH: 24, mine: false, withdrawalRequest: r,
+      })),
+      // A commission the seller says they have paid. Finance confirms it against
+      // the bank; this desk watches it, because an auction is not finished until
+      // it clears.
+      ...commissionSettlements.filter((r) => r.status === 'recorded' || r.status === 'queried').map<Raw>((r) => ({
+        id: `wq-comm-${r.id}`, kind: 'commission',
+        title: `Commission — ${inr(r.amount)}`,
+        sub: `${firmOf(r.sellerId)} · ${catalogues.find((c) => c.id === r.catalogueId)?.code ?? ''} · ${r.status === 'queried' ? 'queried with the seller' : 'awaiting Finance confirmation'}`,
+        href: '/finance/commission', dueH: 24, mine: false, settlement: r,
       })),
     ]
 
@@ -239,7 +292,7 @@ export function useWorkBoard(): WorkItem[] {
       Number(b.overdue) - Number(a.overdue)
       || Number(b.mine) - Number(a.mine)
       || a.leftMs - b.leftMs)
-  }, [lots, users, disputes, catalogues, depositClaims, bankAccounts, withdrawalRequests, exemptions, bidVoidRequests, passwordResets, claims])
+  }, [lots, users, disputes, catalogues, depositClaims, bankAccounts, withdrawalRequests, exemptions, bidVoidRequests, passwordResets, resultConfirmations, commissionSettlements, claims])
 }
 
 /* ============================ the review feed ============================== */

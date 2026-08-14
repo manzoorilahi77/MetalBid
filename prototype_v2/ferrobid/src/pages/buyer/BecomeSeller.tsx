@@ -52,9 +52,14 @@ export default function BecomeSeller() {
 
   return (
     <Page>
+      {/* The same wizard serves two doors: a buyer applying to sell, and a
+          seller account that registered directly and still has to be verified
+          before it can submit anything. Only the framing differs. */}
       <PageHeader
-        title="Become a seller"
-        sub="List surplus metal, scrap and idle assets to 4,000+ verified industrial buyers. One-time KYC, then our team handles the rest."
+        title={me.role === 'seller' ? 'Seller verification' : 'Become a seller'}
+        sub={me.role === 'seller'
+          ? 'We verify every seller before their material goes in front of buyers. Submit your firm details once and Operations takes it from there.'
+          : 'List surplus metal, scrap and idle assets to 4,000+ verified industrial buyers. One-time KYC, then our team handles the rest.'}
       />
 
       {/* -------------------------- value props band -------------------------- */}

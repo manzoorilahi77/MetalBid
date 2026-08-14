@@ -342,6 +342,9 @@ export default function App() {
 
           <Route element={<SellerLayout />}>
             <Route path="/seller" element={<SellerWorkspace />} />
+            {/* Same KYC wizard as /buyer/kyc — a seller who registered directly
+                still has to be verified, and had no route to it before. */}
+            <Route path="/seller/verification" element={<BecomeSeller />} />
             <Route path="/seller/create-lot" element={<CreateLot />} />
             <Route path="/seller/lots" element={<MyLots />} />
             <Route path="/seller/monitor" element={<LiveMonitor />} />
@@ -416,14 +419,21 @@ export default function App() {
             <Route path="/sub" element={<OpsConsole />} />
             <Route path="/sub/queue" element={<WorkQueue />} />
             <Route path="/sub/approvals" element={<SubApprovals />} />
-            <Route path="/sub/seller-verification" element={<SellerVerification />} />
-            <Route path="/sub/field-executives" element={<FieldExecutives />} />
             <Route path="/sub/bid-monitor" element={<BidMonitor />} />
             <Route path="/sub/payments" element={<PaymentActivity />} />
-            <Route path="/sub/disputes" element={<SubDisputes />} />
             <Route path="/sub/content" element={<ContentManagement />} />
             <Route path="/sub/reports" element={<SubReports />} />
             <Route path="/sub/activity" element={<MyActivity />} />
+          </Route>
+
+          {/* Three screens the Operation Manager works alongside the Sub Admin:
+              seller verification, the field-executive board and the support
+              desk. Each is one screen, not a copy per role — an Ops Manager who
+              opens one keeps their own tab strip. */}
+          <Route element={<SharedWorkspaceLayout owner="sub_admin" />}>
+            <Route path="/sub/seller-verification" element={<SellerVerification />} />
+            <Route path="/sub/field-executives" element={<FieldExecutives />} />
+            <Route path="/sub/disputes" element={<SubDisputes />} />
           </Route>
 
           {/* Super Admin — our support role. Structure first (a role must exist

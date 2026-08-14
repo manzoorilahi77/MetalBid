@@ -1,7 +1,7 @@
 /* Create Lot — single form + bulk CSV placeholder mode. */
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Camera, Check, Download, UploadCloud } from 'lucide-react'
+import { Camera, Check, Download, ShieldAlert, UploadCloud } from 'lucide-react'
 import { Page } from '../../layout/Chrome'
 import {
   Button, Chip, Field, Input, PageHeader, Segmented, Select, Textarea, Toggle, cx,
@@ -22,6 +22,16 @@ export default function CreateLot() {
   const nav = useNavigate()
   const createLot = useStore((s) => s.createLot)
   const pushToast = useStore((s) => s.pushToast)
+  const me = useStore((s) => s.currentUser)
+
+  /* Verification is Operations' decision, so the form says where the account
+     stands rather than letting the seller find out on submit. */
+  const verified = !!me && (me.sellerVerified || me.kycStatus === 'verified')
+  const gate = verified ? null : me?.kycStatus === 'pending'
+    ? { tone: 'warning' as const, title: 'Verification in progress', body: 'Our team is checking your firm details. You can submit lots the moment it is approved — we will notify you.' }
+    : me?.kycStatus === 'rejected'
+      ? { tone: 'danger' as const, title: 'Verification was not approved', body: 'Check the reason on your notifications, resubmit your details, or appeal to the Operation Manager.' }
+      : { tone: 'warning' as const, title: 'Seller verification needed', body: 'We verify every seller before their material goes in front of buyers. Submit your firm details to start.' }
 
   const [mode, setMode] = useState<'single' | 'bulk'>('single')
   const [photos, setPhotos] = useState<boolean[]>([false, false, false, false])
@@ -34,33 +44,62 @@ export default function CreateLot() {
   const valid = f.grade && f.description && Number(f.qty) > 0 && Number(f.startRate) > 0
 
   const submitSingle = () => {
-    createLot({
+    const res = createLot({
       metal: f.metal, category: f.category as MetalCategory, grade: f.grade,
       description: f.description, indicativeQty: Number(f.qty), uom: f.uom as Uom,
       yard: f.yard || 'Seller yard', startRate: Number(f.startRate),
       increment: Number(f.increment) || 100, reserveRate: Math.round(Number(f.startRate) * 1.07),
       preBidEmd: f.emdRequired ? Number(f.emd) || 10000 : 0, hazardous: f.hazardous,
     })
-    pushToast({ kind: 'success', title: 'Lot submitted for inspection', body: 'Our field team will visit your yard, measure and photograph the material.' })
+    if (!res.ok) {
+      pushToast({ kind: 'danger', title: 'Lot not submitted', body: res.error })
+      return
+    }
+    pushToast({ kind: 'success', title: 'Lot submitted for inspection', body: 'Operations will catalogue it and book a yard visit. You will be told at every step.' })
     nav('/seller/lots')
   }
 
   const importCsv = () => {
+    let imported = 0
+    let failure: string | undefined
     for (const row of CSV_PREVIEW) {
-      createLot({
+      const res = createLot({
         metal: row.metal, category: 'scrap', grade: row.grade,
         description: `${row.grade} — imported via bulk CSV`, indicativeQty: parseFloat(row.qty.replace(/[^\d.]/g, '')),
         uom: row.qty.includes('KG') ? 'KG' : 'MT', yard: 'Seller yard',
         startRate: Number(row.rate.replace(/[^\d]/g, '')), preBidEmd: Number(row.emd.replace(/[^\d]/g, '')),
       })
+      if (res.ok) imported += 1
+      else failure = res.error
     }
-    pushToast({ kind: 'success', title: '3 lots imported', body: 'All queued for field inspection.' })
+    if (imported === 0) {
+      pushToast({ kind: 'danger', title: 'Nothing imported', body: failure })
+      return
+    }
+    pushToast({ kind: 'success', title: `${imported} lots imported`, body: 'All queued with Operations for cataloguing and inspection.' })
     nav('/seller/lots')
   }
 
   return (
     <Page className="max-w-4xl">
       <PageHeader title="Create lot" sub="Declare your material — we physically inspect, measure and catalogue it before auction. Quantity stays indicative until weighment." />
+
+      {gate && (
+        <div className={cx('card p-4 mb-5 flex items-start gap-3',
+          gate.tone === 'danger' ? 'bg-danger-soft/60 border-danger/25' : 'bg-warning-soft/60 border-warning/25')}>
+          <ShieldAlert size={18} className={cx('mt-0.5 shrink-0', gate.tone === 'danger' ? 'text-danger' : 'text-warning')} />
+          <div className="text-[13px]">
+            <div className="font-semibold text-ink">{gate.title}</div>
+            <p className="text-ink-muted mt-0.5">{gate.body}</p>
+            {me?.kycStatus !== 'pending' && (
+              <Button size="sm" variant="secondary" className="mt-2.5" onClick={() => nav('/buyer/kyc')}>
+                Go to seller verification
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
+
       <Segmented options={[{ key: 'single', label: 'Single lot' }, { key: 'bulk', label: 'Bulk upload (CSV + photos)' }]} value={mode} onChange={setMode} />
 
       {mode === 'single' && (
@@ -118,7 +157,7 @@ export default function CreateLot() {
           </div>
           <div className="pt-2 border-t border-line flex items-center justify-between gap-3 flex-wrap">
             <p className="text-xs text-ink-faint max-w-sm">Submitting sends the lot to the ferroBid inspection queue. You'll be notified when it's verified and catalogued.</p>
-            <Button size="lg" disabled={!valid} onClick={submitSingle}>Submit for inspection</Button>
+            <Button size="lg" disabled={!valid || !verified} onClick={submitSingle}>Submit for inspection</Button>
           </div>
         </div>
       )}
@@ -162,7 +201,7 @@ export default function CreateLot() {
                   </tbody>
                 </table>
               </div>
-              <Button size="lg" onClick={importCsv}>Import lots</Button>
+              <Button size="lg" disabled={!verified} onClick={importCsv}>Import lots</Button>
             </>
           )}
           <Button variant="ghost" size="sm" onClick={() => useStore.getState().pushToast({ kind: 'info', title: 'Template downloading', body: 'ferrobid_lots_template.csv (demo)' })}>

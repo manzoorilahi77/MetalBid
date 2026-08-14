@@ -93,6 +93,11 @@ const SURVEILLANCE_ROLES: Role[] = ['auction_manager', 'sub_admin', 'super_admin
  *  Finance approves and processes. Super Admin holds it for support and
  *  recovery, never as a routine desk. */
 const FINANCE_ROLES: Role[] = ['finance_admin', 'super_admin']
+/** Who may put a gross weighment on the record on the platform's behalf. The
+ *  figure decides the final invoice and any shortfall refund, so a buyer's own
+ *  reading is a declaration: one of these has to witness it before Operations
+ *  can close the handover against it. */
+const WEIGHMENT_WITNESS_ROLES: Role[] = ['exec_manager', 'field_exec', 'sub_admin', 'super_admin']
 /** The head of operations. Every Sub Admin account is identical — the same full
  *  menu and the same powers — so this is the whole of the access question for
  *  the supervisory screens; there is deliberately no per-account template. */
@@ -893,7 +898,9 @@ interface State {
   requestEmdExemption: (catalogueId: string, reason: string) => { ok: boolean; error?: string }
 
   /* --- seller --- */
-  createLot: (lot: Partial<Lot>) => void
+  /** Gated on seller verification — an unverified account cannot put material
+   *  in front of buyers. Hands the lot to Operations on success. */
+  createLot: (lot: Partial<Lot>) => { ok: boolean; error?: string; lotId?: string }
 
   /* --- ops / admin --- */
   submitInspection: (lotId: string, report: Omit<InspectionReport, 'id' | 'lotId' | 'date'>, outcome: 'verified' | 'flagged' | 'rejected') => void
@@ -1289,6 +1296,25 @@ const seededWithdrawals = seedWithdrawals()
 /* The settlements are computed from the decided lots, so the two have to agree. */
 const seededLots = seedSellerDecisions()
 const seededCommissionSettlements = seedCommissionSettlements(seededLots)
+
+/** Delivery orders that already carry a weighment were recorded before the
+ *  figure was attributed to anybody. A handover now closes only against a
+ *  reading one of our own people witnessed, so these are stamped with the field
+ *  executive who covered the yard — which is who actually took them. Without
+ *  this the seeded handovers would be unclosable, and the control would look
+ *  like a bug rather than a control. */
+function seedWeighmentWitness(): DeliveryOrder[] {
+  const inspectors = seed.users.filter((u) => u.role === 'field_exec')
+  if (inspectors.length === 0) return seed.deliveryOrders
+  return seed.deliveryOrders.map((d) => {
+    if (d.weighedQty == null || d.weighedById) return d
+    const cat = seed.catalogues.find((c) => c.id === d.catalogueId)
+    const witness = inspectors.find((u) => u.id === cat?.assignedFieldExecId)
+      ?? inspectors[hash(d.id) % inspectors.length]
+    return { ...d, weighedById: witness.id, weighedAt: d.createdAt }
+  })
+}
+const seededDeliveryOrders = seedWeighmentWitness()
 /* The CEO's queue points at these records, so all three are built together. */
 const seededForfeitures = seedEmdForfeitures()
 const seededCeoRefund = seedCeoRefund()
@@ -1325,17 +1351,51 @@ export const useStore = create<State>((set, get) => {
       status: 'pending',
     }
     set((st) => ({ ceoApprovals: [record, ...st.ceoApprovals] }))
-    get().notify({
-      userId: ROLE_DEMO_USER.ceo, kind: 'system',
+    notifyRole('ceo', {
+      kind: 'system',
       title: 'Needs your signature', body: `${summary} — ${reason}`, href: '/ceo/approvals',
     })
+    /* A named delegate is holding the queue right now — they are the person who
+       can actually sign, so they are told as well as the CEO. */
+    const del = get().ceoDelegation
+    if (delegationActive(del, get().now) && del) {
+      get().notify({
+        userId: del.toUserId, kind: 'system',
+        title: 'Needs a signature — you hold the CEO queue',
+        body: `${summary} — ${reason}`, href: '/ceo/approvals',
+      })
+    }
     /* The Super Admin holds the same queue for support and recovery, so it is
        never invisible if the CEO is unreachable and no delegate is named. */
-    get().notify({
-      userId: ROLE_DEMO_USER.super_admin, kind: 'system',
+    notifyRole('super_admin', {
+      kind: 'system',
       title: 'Awaiting sign-off', body: `${summary} — ${reason}`, href: '/admin/control-tower',
     })
     return record
+  }
+
+  /** Called after any decision that can be the *last* one a catalogue was
+   *  waiting on. A draft whose every lot is approved is ready to go to market —
+   *  which nothing announced, so an assembled sale could sit unpublished simply
+   *  because the desk that presses Publish never learned it could. */
+  function announceCatalogueReady(catalogueId: string | null) {
+    if (!catalogueId) return
+    const s = get()
+    const cat = s.catalogues.find((c) => c.id === catalogueId)
+    if (!cat || cat.status !== 'draft') return
+    const catLots = s.lots.filter((l) => l.catalogueId === catalogueId)
+    if (catLots.length === 0 || !catLots.every((l) => l.status === 'approved')) return
+    const reserveValue = catLots.reduce((sum, l) => sum + l.reserveRate * l.indicativeQty, 0)
+    const needsCeo = reserveValue >= s.financeConfig.ceoPublishValueFrom
+    const signed = s.ceoApprovals.some(
+      (a) => a.kind === 'auction_publish' && a.refId === catalogueId && a.status === 'approved')
+    get().audit('catalogue.ready', cat.code,
+      `Every lot approved — ${inr(reserveValue)} at reserve, ready to publish${needsCeo && !signed ? ' once the CEO signs' : ''}`)
+    notifyRole(PUBLISH_ROLES, {
+      kind: 'system', title: `${cat.code} is ready to publish`,
+      body: `${catLots.length} lot${catLots.length === 1 ? '' : 's'} approved · ${inr(reserveValue)} at reserve.${needsCeo && !signed ? ` Above the ${inr(s.financeConfig.ceoPublishValueFrom)} threshold — send it for the CEO's signature first.` : ''}`,
+      href: '/auction/schedule',
+    })
   }
 
   /* ---------- Super Admin helpers ----------
@@ -1466,12 +1526,15 @@ export const useStore = create<State>((set, get) => {
       ),
     }))
 
-    // Sealed tender offers have no visible leader, so there's nothing to be "outbid" from.
-    const me = get().currentUser
-    if (!isTender && me && prevLeader === me.id && bidderId !== me.id) {
+    /* Sealed tender offers have no visible leader, so there is nothing to be
+       "outbid" from. Everywhere else the buyer who just lost the lead is told —
+       whoever they are. This used to fire only when the outbid buyer happened
+       to be the signed-in user, so in a real sale nobody else ever learned they
+       had been overtaken. */
+    if (!isTender && prevLeader && prevLeader !== bidderId) {
       const bidder = get().users.find((u) => u.id === bidderId)
       get().notify({
-        userId: me.id, kind: 'bid', title: `Outbid on ${lot.lotNo}`,
+        userId: prevLeader, kind: 'bid', title: `Outbid on ${lot.lotNo}`,
         body: `${bidder?.firm ?? 'Another bidder'} is leading at ${inr(rate)}/${lot.uom}.`,
         href: `/bidding/${cat.id}?lot=${lot.id}`,
       })
@@ -1531,53 +1594,73 @@ export const useStore = create<State>((set, get) => {
         lots: st.lots.map((l) => (l.id === lot.id ? { ...l, status, resultH1Rate: l.currentRate } : l)),
       }))
 
-      if (me) {
-        const sel = s.selections.find((x) => x.buyerId === me.id && x.catalogueId === cat.id)
-        const funded = sel?.emdFundedLotIds.includes(lot.id)
-        if (lot.leadingBidderId === me.id && status === 'sold') {
-          set({ lastWonLotId: lot.id })
-          get().notify({
-            userId: me.id, kind: 'bid', title: `You won ${lot.lotNo} 🎉`,
-            body: `H1 confirmed at ${inr(lot.currentRate!)}/${lot.uom}. Delivery order will be issued after settlement.`,
-            href: '/buyer/auction-status',
-          })
-          set((st) => ({
-            deliveryOrders: [...st.deliveryOrders, {
-              id: uid('do'), lotId: lot.id, catalogueId: cat.id, buyerId: me.id,
-              stage: 'payment_pending' as const, h1Rate: lot.currentRate!, awardedQty: lot.indicativeQty, uom: lot.uom,
-              materialValue: Math.round(lot.currentRate! * lot.indicativeQty),
-              gstAmount: Math.round(lot.currentRate! * lot.indicativeQty * 0.18),
-              tcsAmount: Math.round(lot.currentRate! * lot.indicativeQty * 0.01),
-              liftingChecklist: emptyLiftingChecklist(),
-              paidAmount: 0, liftingBy: new Date(s.now + 7 * 86400_000).toISOString(),
-              createdAt: new Date(s.now).toISOString(),
-            }],
-          }))
-        } else if (funded && lot.leadingBidderId !== me.id) {
-          // unsuccessful bidder — EMD auto-refund
-          set((st) => ({
-            wallets: st.wallets.map((w) =>
-              w.userId === me.id
-                ? {
-                    ...w, balance: w.balance + lot.preBidEmd, emdLocked: Math.max(0, w.emdLocked - lot.preBidEmd),
-                    ledger: [{ id: uid('led'), at: new Date(s.now).toISOString(), type: 'emd_release' as const, amount: lot.preBidEmd, ref: uid('EMDR').toUpperCase(), lotId: lot.id, catalogueId: cat.id, note: `EMD auto-released — ${lot.lotNo} (${cat.code})` }, ...w.ledger],
-                  }
-                : w,
-            ),
-            selections: st.selections.map((x) =>
-              x.buyerId === me.id && x.catalogueId === cat.id
-                ? { ...x, emdFundedLotIds: x.emdFundedLotIds.filter((id) => id !== lot.id) }
-                : x,
-            ),
-          }))
-          get().notify({
-            userId: me.id, kind: 'wallet', title: `EMD released — ${lot.lotNo}`,
-            body: `${inr(lot.preBidEmd)} returned to your wallet (auction closed, not H1).`, href: '/buyer/wallet',
-          })
-        }
+      /* A lot resolves for *everyone* who took part in it, not only for whoever
+         happens to be signed in. The winner's delivery order is what Finance
+         collects against and what Operations lifts against, so gating any of
+         this on the current session would sever the whole post-auction chain
+         for every other buyer in the sale. */
+      const winnerId = status === 'sold' ? lot.leadingBidderId : null
+      const at = new Date(s.now).toISOString()
+
+      if (winnerId) {
+        ensureWallet(winnerId)
+        const doId = uid('do')
+        const materialValue = Math.round(lot.currentRate! * lot.indicativeQty)
+        set((st) => ({
+          deliveryOrders: [...st.deliveryOrders, {
+            id: doId, lotId: lot.id, catalogueId: cat.id, buyerId: winnerId,
+            stage: 'payment_pending' as const, h1Rate: lot.currentRate!, awardedQty: lot.indicativeQty, uom: lot.uom,
+            materialValue,
+            gstAmount: Math.round(materialValue * (st.financeConfig.gstPct / 100)),
+            tcsAmount: Math.round(materialValue * (st.financeConfig.tcsPct / 100)),
+            liftingChecklist: emptyLiftingChecklist(),
+            paidAmount: 0, liftingBy: new Date(s.now + st.financeConfig.paymentWindowDays * 86400_000).toISOString(),
+            createdAt: at,
+          }],
+        }))
+        // confetti is for the person at the screen; the notification is for the winner
+        if (me?.id === winnerId) set({ lastWonLotId: lot.id })
+        get().notify({
+          userId: winnerId, kind: 'bid', title: `You won ${lot.lotNo} 🎉`,
+          body: `H1 confirmed at ${inr(lot.currentRate!)}/${lot.uom}. Your delivery order is raised — payment opens the lifting.`,
+          href: '/buyer/auction-status',
+        })
+        // Money to collect is Finance's work the moment the lot closes.
+        notifyRole('finance_admin', {
+          kind: 'system', title: `Delivery order raised — ${lot.lotNo}`,
+          body: `${get().users.find((u) => u.id === winnerId)?.firm ?? 'A buyer'} won at ${inr(lot.currentRate!)}/${lot.uom}. ${inr(materialValue)} before tax is due.`,
+          href: '/finance/payments',
+        })
+      }
+
+      // Every unsuccessful funder gets their EMD back the moment the lot closes.
+      for (const sel of s.selections.filter((x) => x.catalogueId === cat.id && x.emdFundedLotIds.includes(lot.id))) {
+        if (sel.buyerId === winnerId) continue
+        ensureWallet(sel.buyerId)
+        set((st) => ({
+          wallets: st.wallets.map((w) =>
+            w.userId === sel.buyerId
+              ? {
+                  ...w, balance: w.balance + lot.preBidEmd, emdLocked: Math.max(0, w.emdLocked - lot.preBidEmd),
+                  ledger: [{ id: uid('led'), at, type: 'emd_release' as const, amount: lot.preBidEmd, ref: uid('EMDR').toUpperCase(), lotId: lot.id, catalogueId: cat.id, note: `EMD auto-released — ${lot.lotNo} (${cat.code})` }, ...w.ledger],
+                }
+              : w,
+          ),
+          selections: st.selections.map((x) =>
+            x.buyerId === sel.buyerId && x.catalogueId === cat.id
+              ? { ...x, emdFundedLotIds: x.emdFundedLotIds.filter((id) => id !== lot.id) }
+              : x,
+          ),
+        }))
+        get().notify({
+          userId: sel.buyerId, kind: 'wallet', title: `EMD released — ${lot.lotNo}`,
+          body: `${inr(lot.preBidEmd)} returned to your wallet (auction closed, not H1).`, href: '/buyer/wallet',
+        })
       }
     }
     // catalogue lifecycle: go live / close when all lots resolved
+    const wentLive: Catalogue[] = []
+    const wentClosed: Catalogue[] = []
     set((st) => ({
       catalogues: st.catalogues.map((c) => {
         if (c.status === 'upcoming' && Date.parse(c.startsAt) <= st.now) {
@@ -1588,17 +1671,60 @@ export const useStore = create<State>((set, get) => {
               set((s3) => ({ lots: s3.lots.map((x) => (x.id === id ? { ...x, status: 'live' as LotStatus, endsAt: c.endsAt } : x)) }))
             }
           }
+          wentLive.push(c)
           return { ...c, status: 'live' as const }
         }
         if (c.status === 'live') {
           const catLots = get().lots.filter((l) => l.catalogueId === c.id)
           if (catLots.length > 0 && catLots.every((l) => !['live', 'approved'].includes(l.status))) {
+            wentClosed.push(c)
             return { ...c, status: 'closed' as const }
           }
         }
         return c
       }),
     }))
+
+    /* A sale opening and a sale ending are both hand-offs, and both used to
+       happen in silence. Going live is the seller's cue to watch; closing is the
+       Auction Manager's cue to confirm the results, which is the step the
+       seller's whole settlement waits on. */
+    for (const c of wentLive) {
+      get().audit('auction.open', c.code, `${c.title} opened on schedule — bidding is live`)
+      if (c.sellerId) {
+        get().notify({
+          userId: c.sellerId, kind: 'lifecycle', title: `${c.code} is live`,
+          body: `Bidding has opened on ${c.title}. You can follow it lot by lot.`,
+          href: '/seller/monitor',
+        })
+      }
+    }
+    for (const c of wentClosed) {
+      const catLots = get().lots.filter((l) => l.catalogueId === c.id)
+      const sold = catLots.filter((l) => l.status === 'sold').length
+      const sta = catLots.filter((l) => l.status === 'sta').length
+      get().audit('auction.close', c.code,
+        `${c.title} closed — ${sold} of ${catLots.length} lots sold${sta ? `, ${sta} below reserve` : ''}`)
+      notifyRole(['auction_manager', 'sub_admin'], {
+        kind: 'lifecycle', title: `${c.code} has closed`,
+        body: `${sold} of ${catLots.length} lots sold${sta ? `, ${sta} cleared below reserve and need an Operations decision` : ''}. Confirm the results to release the seller's settlement.`,
+        href: '/auction/results',
+      })
+      if (sta > 0) {
+        notifyRole(['exec_manager', 'sub_admin'], {
+          kind: 'system', title: `${sta} lot${sta === 1 ? '' : 's'} below reserve — ${c.code}`,
+          body: 'Subject-to-approval lots are waiting on an Operations decision before the results can be confirmed.',
+          href: '/exec/settlement',
+        })
+      }
+      if (c.sellerId) {
+        get().notify({
+          userId: c.sellerId, kind: 'lifecycle', title: `${c.code} has closed`,
+          body: `${sold} of ${catLots.length} lots sold. You can act on each cleared price once the results are confirmed.`,
+          href: '/seller/settlement',
+        })
+      }
+    }
   }
 
   /** Everyone with a stake in one auction — anyone who has shortlisted a lot in
@@ -1614,6 +1740,36 @@ export const useStore = create<State>((set, get) => {
     for (const userId of ids) get().notify({ ...n, href, userId })
   }
 
+  /** Everyone currently holding one of these roles.
+   *
+   *  Work is handed to a *desk*, not to a person: if two Operation Managers are
+   *  on shift, both are told, and if one is suspended neither the notice nor the
+   *  work silently disappears. Every staff hand-off in this store goes through
+   *  here rather than naming a single account, so adding a second Finance user
+   *  never leaves them unaddressed.
+   *
+   *  `exceptUserId` keeps the person who just acted off their own notification —
+   *  a Sub Admin who flags a bid does not need telling that a bid was flagged. */
+  function notifyRole(
+    roles: Role | Role[],
+    n: { kind: NotificationKind; title: string; body: string; href?: string },
+    exceptUserId?: string,
+  ) {
+    const wanted = Array.isArray(roles) ? roles : [roles]
+    const recipients = get().users.filter((u) =>
+      wanted.includes(u.role) && (u.accountStatus ?? 'active') === 'active' && u.id !== exceptUserId)
+    for (const u of recipients) get().notify({ ...n, userId: u.id })
+    /* A desk with nobody at it must not swallow the hand-off. Falling back to
+       the demo holder of the role keeps the chain visible in the prototype
+       rather than dropping the work on the floor. */
+    if (recipients.length === 0) {
+      for (const r of wanted) {
+        const fallback = ROLE_DEMO_USER[r as keyof typeof ROLE_DEMO_USER]
+        if (fallback && fallback !== exceptUserId) get().notify({ ...n, userId: fallback })
+      }
+    }
+  }
+
   return {
     now: Date.now(),
     theme: storedTheme === 'dark' ? 'dark' : 'light',
@@ -1623,6 +1779,7 @@ export const useStore = create<State>((set, get) => {
 
     ...seed,
     lots: seededLots,
+    deliveryOrders: seededDeliveryOrders,
 
     withdrawalWindow: DEFAULT_WITHDRAWAL_WINDOW,
     emdExemptionRequests: seedEmdExemptions(),
@@ -1765,9 +1922,15 @@ export const useStore = create<State>((set, get) => {
       const user: User = {
         id: uid('u'),
         name, email, phone, firm, role,
-        kycStatus: 'none',
+        /* Signing up *as a seller* is itself the application to sell: the
+           account lands on the verification desk straight away. It used to be
+           created at 'none', which no queue looks for — and the only screen that
+           could move it to 'pending' lived on the buyer's menu, so a direct
+           seller signup could never be verified by anybody. */
+        kycStatus: role === 'seller' ? 'pending' : 'none',
         sellerVerified: false,
         standing: 'good',
+        accountStatus: 'active',
         city, gstin,
         avatarHue: Math.floor(Math.random() * 360),
         joinedAt: new Date(s.now).toISOString(),
@@ -1777,6 +1940,19 @@ export const useStore = create<State>((set, get) => {
       set((st) => ({ users: [...st.users, user], wallets: [...st.wallets, { userId: user.id, balance: 0, emdLocked: 0, ledger: [] }] }))
       rememberRole(role)
       set({ role, currentUser: user })
+      get().audit('account.register', firm, `New ${ROLE_LABEL[role].toLowerCase()} account — ${name}, ${city || 'city not given'}`)
+      if (role === 'seller') {
+        notifyRole(['exec_manager', 'sub_admin'], {
+          kind: 'system', title: `New seller to verify — ${firm}`,
+          body: `${name} registered as a seller${gstin ? ` with GSTIN ${gstin}` : ''}. They cannot submit lots until you verify them.`,
+          href: '/sub/seller-verification',
+        })
+        get().notify({
+          userId: user.id, kind: 'system', title: 'Your seller account is with our team',
+          body: 'We verify your firm details before you can submit lots. You will hear from us within one business day.',
+          href: '/seller',
+        })
+      }
       return user
     },
 
@@ -1932,6 +2108,24 @@ export const useStore = create<State>((set, get) => {
           status: 'booked' as const, passCode: `FB-GATE-${Math.random().toString(36).slice(2, 6).toUpperCase()}`,
         }],
       }))
+      const slotCat = get().catalogues.find((c) => c.id === catalogueId)
+      get().audit('inspection.slot_book', slotCat?.code ?? catalogueId,
+        `${me.firm} booked a yard visit for ${persons} on ${date} (${window})`)
+      /* Somebody has to be at the gate. Operations runs the yard window and the
+         assigned field executive is usually the person on site. */
+      notifyRole(['exec_manager', 'sub_admin'], {
+        kind: 'system', title: `Yard visit booked — ${slotCat?.code ?? 'a catalogue'}`,
+        body: `${me.firm} · ${persons} visitor${persons === 1 ? '' : 's'} on ${date}, ${window}, at ${slotCat?.yardName ?? 'the yard'}.`,
+        href: '/exec/logistics',
+      })
+      if (slotCat?.assignedFieldExecId) {
+        get().notify({
+          userId: slotCat.assignedFieldExecId, kind: 'system',
+          title: `Buyer visiting ${slotCat.yardName}`,
+          body: `${me.firm} · ${persons} visitor${persons === 1 ? '' : 's'} on ${date}, ${window}.`,
+          href: `/field/catalogue/${catalogueId}`,
+        })
+      }
     },
 
     submitKyc: () => {
@@ -1941,7 +2135,14 @@ export const useStore = create<State>((set, get) => {
         users: st.users.map((u) => (u.id === me.id ? { ...u, kycStatus: 'pending' as const } : u)),
         currentUser: { ...me, kycStatus: 'pending' },
       }))
-      get().notify({ userId: me.id, kind: 'system', title: 'Seller KYC submitted', body: 'Our team will verify your GSTIN and bank details within 1 business day (demo: instantly approvable from Sub-Admin).' })
+      get().audit('kyc.submit', me.firm, `${me.name} applied to sell — GSTIN ${me.gstin || 'not given'}`)
+      get().notify({ userId: me.id, kind: 'system', title: 'Seller KYC submitted', body: 'Our team will verify your GSTIN and bank details within 1 business day.', href: '/buyer/kyc' })
+      // The desk that has to act on it is told, rather than left to find it.
+      notifyRole(['exec_manager', 'sub_admin'], {
+        kind: 'system', title: `Seller verification — ${me.firm}`,
+        body: `${me.name} applied to sell${me.gstin ? ` with GSTIN ${me.gstin}` : ''}. Verify before they can submit lots.`,
+        href: '/sub/seller-verification',
+      })
     },
 
     // valid only for the two hops needing no extra data — payment_pending needs
@@ -1975,28 +2176,75 @@ export const useStore = create<State>((set, get) => {
 
     recordWeighment: (doId, qty) => {
       const me = get().currentUser
+      const d = get().deliveryOrders.find((x) => x.id === doId)
+      if (!d || !me || d.stage !== 'lifted') return
+      /* Either side may put a reading on the record — the buyer at their own
+         weighbridge, or our people at the yard. Who it was is stamped, because
+         only a staff reading can close the handover. */
+      const isBuyer = d.buyerId === me.id
+      const isStaff = WEIGHMENT_WITNESS_ROLES.includes(get().role)
+      if (!isBuyer && !isStaff) return
+      const at = new Date(get().now).toISOString()
       set((st) => ({
-        deliveryOrders: st.deliveryOrders.map((d) => {
-          if (d.id !== doId || d.stage !== 'lifted' || !me || d.buyerId !== me.id) return d
-          return {
-            ...d,
+        deliveryOrders: st.deliveryOrders.map((x) => (x.id === doId
+          ? {
+            ...x,
             weighedQty: qty,
-            liftingChecklist: d.liftingChecklist.map((item) =>
-              item.key !== 'gross_weighment' ? item : { ...item, done: true, at: new Date(st.now).toISOString() },
+            weighedById: me.id,
+            weighedAt: at,
+            liftingChecklist: x.liftingChecklist.map((item) =>
+              item.key !== 'gross_weighment' ? item : { ...item, done: true, at },
             ),
           }
-        }),
+          : x)),
       }))
+      const lot = get().lots.find((l) => l.id === d.lotId)
+      const variance = d.awardedQty > 0 ? ((qty - d.awardedQty) / d.awardedQty) * 100 : 0
+      get().audit('do.weighment', lot?.lotNo ?? doId,
+        `Gross weighment ${num(qty)} ${d.uom} recorded by ${isStaff ? me.name : `${me.firm} (buyer)`} against ${num(d.awardedQty)} ${d.uom} awarded — ${variance >= 0 ? '+' : ''}${variance.toFixed(1)}%`,
+        Math.abs(variance) >= 1 ? 'warning' : 'info')
+
+      if (isBuyer) {
+        // A buyer's reading is a declaration until we have stood at the bridge.
+        notifyRole(['exec_manager', 'sub_admin'], {
+          kind: 'system', title: `Weighment declared — ${lot?.lotNo ?? 'a lot'}`,
+          body: `${me.firm} recorded ${num(qty)} ${d.uom} against ${num(d.awardedQty)} ${d.uom} awarded (${variance >= 0 ? '+' : ''}${variance.toFixed(1)}%). Witness it before closing the handover.`,
+          href: '/exec/logistics',
+        })
+      } else {
+        get().notify({
+          userId: d.buyerId, kind: 'system', title: `Weighment confirmed — ${lot?.lotNo ?? 'your lot'}`,
+          body: `Recorded at ${num(qty)} ${d.uom}, witnessed by ${me.name}. This is the quantity your invoice is raised on.`,
+          href: '/buyer/auction-status',
+        })
+      }
+      /* A material shortfall is money owed back. Finance is told rather than the
+         buyer having to open a ticket to get it noticed. */
+      if (variance <= -1) {
+        notifyRole('finance_admin', {
+          kind: 'system', title: `Weighment shortfall — ${lot?.lotNo ?? 'a lot'}`,
+          body: `${num(qty)} ${d.uom} against ${num(d.awardedQty)} ${d.uom} awarded (${variance.toFixed(1)}%). The value of the shortfall goes back to the buyer.`,
+          href: '/finance/refunds',
+        })
+      }
     },
 
     completeLifting: (doId) => {
       const me = get().currentUser
       const d = get().deliveryOrders.find((x) => x.id === doId)
-      if (!d || !me || d.buyerId !== me.id || d.stage !== 'lifted' || !d.liftingChecklist.every((i) => i.done)) return
+      if (!d || !me || d.stage !== 'lifted' || !d.liftingChecklist.every((i) => i.done)) return
+      if (d.buyerId !== me.id && !WEIGHMENT_WITNESS_ROLES.includes(get().role)) return
       set((st) => ({
         deliveryOrders: st.deliveryOrders.map((x) => (x.id === doId ? { ...x, stage: 'completed' as const } : x)),
       }))
-      get().audit('do.complete', doId, `Lifting completed — ${num(d.weighedQty ?? d.awardedQty)} ${d.uom} weighed vs ${num(d.awardedQty)} ${d.uom} indicative`)
+      const lot = get().lots.find((l) => l.id === d.lotId)
+      get().audit('do.complete', lot?.lotNo ?? doId, `Lifting completed — ${num(d.weighedQty ?? d.awardedQty)} ${d.uom} weighed vs ${num(d.awardedQty)} ${d.uom} indicative`)
+      // Closing the handover is Operations' step, and it comes next.
+      notifyRole(['exec_manager', 'sub_admin'], {
+        kind: 'system', title: `Lifting complete — ${lot?.lotNo ?? doId}`,
+        body: `${num(d.weighedQty ?? d.awardedQty)} ${d.uom} off site. Close the handover to finish the sale.`,
+        href: '/exec/handover',
+      })
     },
 
     registerBankAccount: (bankName, accountNumber, ifsc, accountHolderName) => {
@@ -2009,6 +2257,12 @@ export const useStore = create<State>((set, get) => {
       }
       set((st) => ({ bankAccounts: [...st.bankAccounts, acc] }))
       get().audit('bankaccount.register', acc.id, `${bankName} account ${masked} registered for verification`)
+      // Verification is Finance's decision, so Finance is told it is waiting.
+      notifyRole('finance_admin', {
+        kind: 'system', title: `Payout account to verify — ${me.firm}`,
+        body: `${bankName} ${masked}, held by ${accountHolderName}. Nothing can be withdrawn to it until you verify it.`,
+        href: '/finance/bank-accounts',
+      })
     },
 
     submitDepositClaim: (amount, utr, transferDate, proofFilename) => {
@@ -2025,6 +2279,13 @@ export const useStore = create<State>((set, get) => {
       }
       set((st) => ({ depositClaims: [...st.depositClaims, claim] }))
       get().audit('deposit.submit', claim.id, `Deposit claim of ${inr(amount)} submitted — UTR ${claim.utr}`)
+      // Nothing is credited until Finance matches it to the bank, so Finance
+      // hears about it the moment the buyer claims it.
+      notifyRole('finance_admin', {
+        kind: 'system', title: `Deposit claimed — ${inr(amount)}`,
+        body: `${me.firm} · UTR ${claim.utr} dated ${transferDate}. Match it against the statement before crediting the wallet.`,
+        href: '/finance/deposits',
+      })
       return { ok: true }
     },
 
@@ -2056,6 +2317,13 @@ export const useStore = create<State>((set, get) => {
         ),
       }))
       get().audit('withdrawal.request', req.id, `Withdrawal of ${inr(amount)} requested to •••• ${account.last4}`)
+      // Money out runs on a window and a maker–checker; Finance is told at the
+      // start of it, not when someone next opens the screen.
+      notifyRole('finance_admin', {
+        kind: 'system', title: `Withdrawal to review — ${inr(amount)}`,
+        body: `${me.firm} to ${account.bankName} •••• ${account.last4}.${amount >= get().financeConfig.withdrawalSecondSignatureFrom ? ' Above the second-signature threshold — a different Finance user must release it.' : ''}`,
+        href: '/finance/withdrawals',
+      })
       return { ok: true }
     },
 
@@ -2072,6 +2340,16 @@ export const useStore = create<State>((set, get) => {
         ),
       }))
       get().audit('withdrawal.cancel', id, `Withdrawal of ${inr(req.amount)} cancelled by buyer — reversed`)
+      // It was on Finance's desk; it has to visibly leave it.
+      notifyRole('finance_admin', {
+        kind: 'system', title: `Withdrawal withdrawn — ${inr(req.amount)}`,
+        body: `${me.firm} cancelled their request before it was released. The balance is back in their wallet; nothing to process.`,
+        href: '/finance/withdrawals',
+      })
+      get().notify({
+        userId: me.id, kind: 'wallet', title: 'Withdrawal cancelled',
+        body: `${inr(req.amount)} is back in your available balance.`, href: '/buyer/wallet',
+      })
     },
 
     requestEmdExemption: (catalogueId, reason) => {
@@ -2093,7 +2371,15 @@ export const useStore = create<State>((set, get) => {
       get().audit('emd_exemption.request', cat.code, `${me.firm} requested an EMD deadline exemption — ${req.reason}`, 'warning')
       get().notify({
         userId: me.id, kind: 'system', title: 'EMD exemption requested',
-        body: `Your request for ${cat.code} is awaiting sub-admin approval.`, href: '/buyer/emd-shortlisted-catalogue',
+        body: `Your request for ${cat.code} is with the auction desk. You will be told either way before bidding opens.`,
+        href: '/buyer/emd-shortlisted-catalogue',
+      })
+      /* This expires with the auction, so the three roles that can decide it are
+         told rather than left to find it on a queue. */
+      notifyRole(['auction_manager', 'exec_manager', 'sub_admin'], {
+        kind: 'system', title: `EMD exemption — ${me.firm}`,
+        body: `${cat.code} · ${req.reason}`,
+        href: '/auction/emd-eligibility',
       })
       return { ok: true }
     },
@@ -2101,6 +2387,20 @@ export const useStore = create<State>((set, get) => {
     /* ------------------------------ seller ------------------------------ */
     createLot: (partial) => {
       const me = get().currentUser
+      /* The verification gate is only a gate if it stops something. A seller
+         whose KYC has not been approved may not put material in front of
+         buyers — the decision belongs to Operations, not to the seller. */
+      if (!me) return { ok: false, error: 'Sign in as a seller to submit a lot' }
+      if (me.role === 'seller' && !me.sellerVerified && me.kycStatus !== 'verified') {
+        return {
+          ok: false,
+          error: me.kycStatus === 'pending'
+            ? 'Your seller verification is still with our team. You can submit lots as soon as it is approved.'
+            : me.kycStatus === 'rejected'
+              ? 'Your seller verification was not approved. Resubmit your details, or appeal to the Operation Manager.'
+              : 'Complete seller verification before submitting a lot.',
+        }
+      }
       const id = uid('lot')
       const lot: Lot = {
         id, lotNo: `UNL-${id.slice(-4).toUpperCase()}`, catalogueId: null as unknown as string,
@@ -2115,7 +2415,21 @@ export const useStore = create<State>((set, get) => {
         ...partial,
       }
       set((st) => ({ lots: [...st.lots, lot] }))
-      get().audit('lot.create', lot.lotNo, `${me?.firm ?? 'Seller'} submitted ${lot.grade || lot.metal} for inspection`)
+      get().audit('lot.create', lot.lotNo, `${me.firm} submitted ${lot.grade || lot.metal} for inspection`)
+      /* A submitted lot is work for Operations — it has to be taken into the
+         pipeline and assembled into a catalogue before any inspector can ever
+         see it, so it cannot be left to be noticed. */
+      notifyRole(['exec_manager', 'sub_admin'], {
+        kind: 'system', title: `New lot from ${me.firm}`,
+        body: `${lot.grade || lot.metal} · ${num(lot.indicativeQty)} ${lot.uom} at ${lot.yard || 'a yard'} — take it into the pipeline and assign an inspection.`,
+        href: '/exec',
+      })
+      get().notify({
+        userId: me.id, kind: 'system', title: `${lot.lotNo} submitted`,
+        body: 'Operations will assemble it into a catalogue and book a yard inspection. It stays private until then.',
+        href: '/seller/lots',
+      })
+      return { ok: true, lotId: lot.id }
     },
 
     /* ---------------------------- ops / admin --------------------------- */
@@ -2143,13 +2457,12 @@ export const useStore = create<State>((set, get) => {
       const cat = get().catalogues.find((c) => c.id === lot?.catalogueId)
       const title = `${lot?.lotNo ?? 'Lot'} inspection ${outcome}`
       const measured = `${report.measuredQty} ${report.uom} measured against ${lot?.indicativeQty ?? '—'} ${report.uom} declared`
-      for (const u of get().users.filter((u) => u.role === 'exec_manager')) {
-        get().notify({
-          userId: u.id, kind: 'system', title,
-          body: `${me?.name ?? 'Field executive'} filed report ${version > 1 ? `v${version} ` : ''}— ${measured}. Awaiting your decision.`,
-          href: '/exec/approvals',
-        })
-      }
+      // Both roles hold the lot gate, so both are told a report has landed.
+      notifyRole(['exec_manager', 'sub_admin'], {
+        kind: 'system', title,
+        body: `${me?.name ?? 'Field executive'} filed report ${version > 1 ? `v${version} ` : ''}— ${measured}. Awaiting your decision.`,
+        href: '/exec/approvals',
+      })
       if (cat?.sellerId) {
         get().notify({
           userId: cat.sellerId, kind: 'system', title,
@@ -2203,6 +2516,8 @@ export const useStore = create<State>((set, get) => {
           href: `/field/lot/${lot.id}`,
         })
       }
+      // This may have been the last lot the catalogue was waiting on.
+      if (outcome === 'approved') announceCatalogueReady(lot.catalogueId)
       return { ok: true }
     },
 
@@ -2239,6 +2554,18 @@ export const useStore = create<State>((set, get) => {
       if (!order) return { ok: false, error: 'Delivery order not found' }
       if (order.stage !== 'completed') return { ok: false, error: 'The material has not been lifted yet' }
       if (order.handoverConfirmedAt) return { ok: false, error: 'This handover is already closed' }
+      /* Weighment-final means final. The quantity here becomes the invoice and
+         any shortfall refund, so it cannot rest on the buyer's own reading —
+         one of our people has to have witnessed it. */
+      if (order.weighedQty != null) {
+        const weigher = s.users.find((u) => u.id === order.weighedById)
+        if (!weigher || !WEIGHMENT_WITNESS_ROLES.includes(weigher.role)) {
+          return {
+            ok: false,
+            error: 'The weighment on this order was declared by the buyer. Record the witnessed figure on Logistics before closing the handover.',
+          }
+        }
+      }
       const at = new Date(s.now).toISOString()
       set((st) => ({
         deliveryOrders: st.deliveryOrders.map((d) =>
@@ -2256,8 +2583,8 @@ export const useStore = create<State>((set, get) => {
         href: '/buyer/auction-status',
       })
       // Finance books the sale off the back of this.
-      get().notify({
-        userId: ROLE_DEMO_USER.finance_admin, kind: 'system',
+      notifyRole('finance_admin', {
+        kind: 'system',
         title: 'Delivery closed',
         body: `${lot?.lotNo ?? doId} handed over at ${num(qty)} ${order.uom}. Ready to book.`,
         href: '/finance/payments',
@@ -2267,9 +2594,33 @@ export const useStore = create<State>((set, get) => {
 
     setSellerLotDecision: (lotId, decision) => {
       set((st) => ({ lots: st.lots.map((l) => (l.id === lotId ? { ...l, sellerDecision: decision } : l)) }))
-      const lot = get().lots.find((l) => l.id === lotId)
+      const s = get()
+      const lot = s.lots.find((l) => l.id === lotId)
+      const cat = s.catalogues.find((c) => c.id === lot?.catalogueId)
+      const seller = s.users.find((u) => u.id === cat?.sellerId)
       get().audit('lot.seller_decision', lot?.lotNo ?? lotId,
-        decision ? `Seller ${decision} the cleared price` : 'Seller decision reset to pending')
+        decision ? `Seller ${decision} the cleared price` : 'Seller decision reset to pending',
+        decision === 'rejected' ? 'warning' : 'info')
+
+      /* Rejecting is not the end of the lot — it is the start of an operational
+         exception, and the material is sitting in a yard while it waits. Ops
+         used to have to notice. */
+      if (decision === 'rejected') {
+        notifyRole(['exec_manager', 'sub_admin'], {
+          kind: 'system', title: `${lot?.lotNo ?? 'A lot'} — seller refused the cleared price`,
+          body: `${seller?.firm ?? 'The seller'} refused ${inr(lot?.resultH1Rate ?? lot?.currentRate ?? 0)}/${lot?.uom ?? 'MT'} on ${cat?.code ?? 'a closed auction'}. No commission is due — decide what happens to the material.`,
+          href: '/exec/settlement',
+        })
+      }
+      /* Accepting is what makes commission owed, so Finance is told a receipt is
+         coming rather than discovering it when the seller records payment. */
+      if (decision === 'accepted') {
+        notifyRole('finance_admin', {
+          kind: 'system', title: `Cleared price accepted — ${lot?.lotNo ?? 'a lot'}`,
+          body: `${seller?.firm ?? 'A seller'} accepted ${inr(lot?.resultH1Rate ?? lot?.currentRate ?? 0)}/${lot?.uom ?? 'MT'} on ${cat?.code ?? 'a closed auction'}. Commission becomes due on this lot.`,
+          href: '/finance/commission',
+        })
+      }
     },
 
     recordCommissionSettlement: (catalogueId, amount, mode, reference) => {
@@ -2287,8 +2638,8 @@ export const useStore = create<State>((set, get) => {
       get().audit('lot.commission_settled', cat?.code ?? catalogueId,
         `Commission ${mode === 'emd' ? 'netted from EMD' : 'paid by transfer'} — ${inr(amount)}`)
       // Hands the record straight to the Finance desk that has to confirm it.
-      get().notify({
-        userId: ROLE_DEMO_USER.finance_admin, kind: 'system',
+      notifyRole('finance_admin', {
+        kind: 'system',
         title: `Commission recorded — ${cat?.code ?? 'auction'}`,
         body: `${me?.firm ?? 'A seller'} settled ${inr(amount)} ${mode === 'emd' ? 'from held EMD' : 'by transfer'}. Confirm it against the bank.`,
         href: '/finance/commission',
@@ -2413,6 +2764,7 @@ export const useStore = create<State>((set, get) => {
           href: '/seller/lots',
         })
       }
+      announceCatalogueReady(lot.catalogueId)
       return { ok: true }
     },
 
@@ -2427,6 +2779,28 @@ export const useStore = create<State>((set, get) => {
       const unresolved = catLots.filter((l) => l.status !== 'approved')
       if (unresolved.length > 0) {
         return { ok: false, error: `${unresolved.length} lot${unresolved.length > 1 ? 's' : ''} still need${unresolved.length > 1 ? '' : 's'} approval` }
+      }
+      /* The CEO threshold is a rule about the sale, not about the button that
+         starts it — so it is enforced here rather than only by a disabled
+         control on one screen. Anything at or above the configured value stays
+         private until a signature is on record. */
+      const reserveValue = catLots.reduce((sum, l) => sum + l.reserveRate * l.indicativeQty, 0)
+      if (reserveValue >= s.financeConfig.ceoPublishValueFrom) {
+        const signed = s.ceoApprovals.some(
+          (a) => a.kind === 'auction_publish' && a.refId === catalogueId && a.status === 'approved',
+        )
+        if (!signed) {
+          const pending = s.ceoApprovals.find(
+            (a) => a.kind === 'auction_publish' && a.refId === catalogueId
+              && (a.status === 'pending' || a.status === 'info_requested'),
+          )
+          return {
+            ok: false,
+            error: pending
+              ? `${cat.code} is with the CEO for signature — ${inr(reserveValue)} at reserve is above the ${inr(s.financeConfig.ceoPublishValueFrom)} threshold.`
+              : `${inr(reserveValue)} at reserve is above the ${inr(s.financeConfig.ceoPublishValueFrom)} publish threshold. Send it for the CEO's signature first.`,
+          }
+        }
       }
       const nowMs = s.now
       let endsAt = Date.parse(cat.endsAt)
@@ -2454,7 +2828,25 @@ export const useStore = create<State>((set, get) => {
         ),
       }))
       get().audit('catalogue.publish', cat.code, `Published "${cat.title}" with ${catLots.length} lots`, 'info')
+      // Public from here: the marketplace notice is genuinely for everyone.
       get().notify({ userId: null, kind: 'lifecycle', title: `New catalogue ${cat.code}`, body: cat.title, href: `/catalogue/${cat.id}` })
+      /* Publishing hands the sale to the auction floor and tells the seller
+         their material is on the market — neither used to be said. */
+      notifyRole(['auction_manager', 'sub_admin'], {
+        kind: 'lifecycle', title: `${cat.code} is ${status === 'live' ? 'live' : 'scheduled'}`,
+        body: `${catLots.length} lot${catLots.length === 1 ? '' : 's'} at ${cat.yardName}. ${status === 'live' ? 'It is on the floor now.' : `Opens ${new Date(Date.parse(cat.startsAt)).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}.`}`,
+        href: status === 'live' ? '/auction/live' : '/auction/schedule',
+      }, s.currentUser?.id)
+      if (cat.sellerId) {
+        get().notify({
+          userId: cat.sellerId, kind: 'lifecycle',
+          title: `${cat.code} is ${status === 'live' ? 'live' : 'scheduled'}`,
+          body: status === 'live'
+            ? `Your ${catLots.length} lot${catLots.length === 1 ? ' is' : 's are'} on the marketplace and EMD funding is open.`
+            : `Your ${catLots.length} lot${catLots.length === 1 ? '' : 's'} go to market on schedule. Buyers can see the catalogue and fund EMD now.`,
+          href: '/seller/monitor',
+        })
+      }
       return { ok: true }
     },
 
@@ -2524,6 +2916,21 @@ export const useStore = create<State>((set, get) => {
         ),
       }))
       get().audit('bid.void', lot?.lotNo ?? bidId, `Bid of ${inr(bid.rate)} on ${lot?.lotNo ?? bid.lotId} voided — ladder recomputed`, 'critical')
+      /* Voiding a bid changes two people's position in a live sale and neither
+         used to be told: the bidder whose offer was struck out, and whoever the
+         recomputed ladder has just put in front. */
+      get().notify({
+        userId: bid.bidderId, kind: 'bid', title: `Your bid on ${lot?.lotNo ?? 'a lot'} was voided`,
+        body: `${inr(bid.rate)}/${lot?.uom ?? 'MT'} has been struck from the ladder after review. You can bid again if the lot is still open.`,
+        href: lot?.catalogueId ? `/bidding/${lot.catalogueId}?lot=${bid.lotId}` : '/buyer/bids',
+      })
+      if (top && top.bidderId !== bid.bidderId) {
+        get().notify({
+          userId: top.bidderId, kind: 'bid', title: `You are leading ${lot?.lotNo ?? 'a lot'}`,
+          body: `A bid above yours was voided after review. Your ${inr(top.rate)}/${lot?.uom ?? 'MT'} is now H1.`,
+          href: lot?.catalogueId ? `/bidding/${lot.catalogueId}?lot=${bid.lotId}` : '/buyer/bids',
+        })
+      }
     },
 
     /* ------------------------- auction floor -------------------------------
@@ -2549,6 +2956,20 @@ export const useStore = create<State>((set, get) => {
         lots: st.lots.map((l) => (l.catalogueId === catalogueId ? { ...l, endsAt } : l)),
       }))
       get().audit('auction.reschedule', cat.code, `Rescheduled to ${new Date(startsAt).toLocaleString('en-IN')} → ${new Date(endsAt).toLocaleString('en-IN')}, anti-snipe ${antiSnipeMinutes} min`, 'warning')
+      /* Buyers plan around these times — they have shortlisted lots and in most
+         cases already locked EMD against them — and the seller is waiting on
+         the sale. Moving the dates without telling either was the gap. */
+      notifyParticipants(catalogueId, {
+        kind: 'lifecycle', title: `${cat.code} has been rescheduled`,
+        body: `Bidding now opens ${new Date(startsAt).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })} and closes ${new Date(endsAt).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}. Your EMD and shortlist are unaffected.`,
+      })
+      if (cat.sellerId) {
+        get().notify({
+          userId: cat.sellerId, kind: 'lifecycle', title: `${cat.code} has been rescheduled`,
+          body: `Your sale now runs ${new Date(startsAt).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })} → ${new Date(endsAt).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}. Nothing about your lots or reserves has changed.`,
+          href: '/seller/monitor',
+        })
+      }
       return { ok: true }
     },
 
@@ -2560,8 +2981,8 @@ export const useStore = create<State>((set, get) => {
         catalogues: st.catalogues.map((c) => (c.id === catalogueId ? { ...c, status: 'draft' as const } : c)),
       }))
       get().audit('auction.return_to_ops', cat.code, `Returned to Operations before publish — ${comments}`, 'warning')
-      get().notify({
-        userId: ROLE_DEMO_USER.exec_manager, kind: 'system',
+      notifyRole(['exec_manager', 'sub_admin'], {
+        kind: 'system',
         title: `${cat.code} returned to Operations`, body: comments, href: '/exec/catalogue-builder',
       })
     },
@@ -2582,8 +3003,8 @@ export const useStore = create<State>((set, get) => {
       }
       set((st) => ({ cancellationRequests: [req, ...st.cancellationRequests] }))
       get().audit('auction.cancel_request', cat.code, `Cancellation requested — ${reason}`, 'critical')
-      get().notify({
-        userId: ROLE_DEMO_USER.super_admin, kind: 'system',
+      notifyRole('super_admin', {
+        kind: 'system',
         title: `Cancellation requested — ${cat.code}`, body: reason, href: '/admin/control-tower',
       })
       return { ok: true }
@@ -2632,6 +3053,14 @@ export const useStore = create<State>((set, get) => {
       }
       set((st) => ({ bidVoidRequests: [req, ...st.bidVoidRequests] }))
       get().audit('bid.flag', lot?.lotNo ?? bid.lotId, `${reason} — ${inr(bid.rate)} on ${lot?.lotNo ?? bid.lotId}${notes ? ` · ${notes}` : ''}`, 'warning')
+      /* A flag is only worth raising if the desk that can escalate it hears
+         about it while the auction is still running. Whoever flagged is left
+         off — they know. */
+      notifyRole(['auction_manager', 'sub_admin'], {
+        kind: 'system', title: `Bid flagged — ${lot?.lotNo ?? 'a lot'}`,
+        body: `${reason} · ${inr(bid.rate)}/${lot?.uom ?? 'MT'}${notes ? ` — ${notes}` : ''}. Decide whether to request a void from the Super Admin.`,
+        href: '/auction/bid-monitor',
+      }, s.currentUser?.id)
     },
 
     requestBidVoid: (requestId, note) => {
@@ -2648,8 +3077,8 @@ export const useStore = create<State>((set, get) => {
       }))
       const lot = s.lots.find((l) => l.id === req.lotId)
       get().audit('bid.void_request', lot?.lotNo ?? req.lotId, `Void requested from Super Admin — ${req.reason}${note ? ` · ${note}` : ''}`, 'critical')
-      get().notify({
-        userId: ROLE_DEMO_USER.super_admin, kind: 'system',
+      notifyRole('super_admin', {
+        kind: 'system',
         title: `Void requested — ${lot?.lotNo ?? 'bid'}`, body: req.reason, href: '/admin/control-tower',
       })
     },
@@ -2669,6 +3098,15 @@ export const useStore = create<State>((set, get) => {
       const lot = s.lots.find((l) => l.id === req.lotId)
       // Dismissed, not erased — the flag stays on the record either way.
       get().audit('bid.flag_dismiss', lot?.lotNo ?? req.lotId, `Flag reviewed and dismissed${note ? ` — ${note}` : ''} — the bid stands`, 'warning')
+      // Whoever raised the flag is told what came of it — a surveillance chain
+      // that never answers back stops being used.
+      if (req.raisedBy && req.raisedBy !== s.currentUser?.id) {
+        get().notify({
+          userId: req.raisedBy, kind: 'system', title: `Flag dismissed — ${lot?.lotNo ?? 'a lot'}`,
+          body: note || 'Reviewed and found legitimate. The bid stands and the flag remains on record.',
+          href: '/sub/bid-monitor',
+        })
+      }
     },
 
     decideBidVoidRequest: (id, approve, note) => {
@@ -2768,8 +3206,8 @@ export const useStore = create<State>((set, get) => {
       set((st) => ({ staReferrals: [referral, ...st.staReferrals] }))
       const cat = s.catalogues.find((c) => c.id === lot.catalogueId)
       get().audit('auction.sta_refer', lot.lotNo, `Below-reserve lot referred to Operations (${cat?.code ?? lot.catalogueId}) — ${note}`, 'warning')
-      get().notify({
-        userId: ROLE_DEMO_USER.exec_manager, kind: 'system',
+      notifyRole(['exec_manager', 'sub_admin'], {
+        kind: 'system',
         title: `${lot.lotNo} referred — cleared below reserve`,
         body: note, href: '/exec/settlement',
       })
@@ -2780,6 +3218,28 @@ export const useStore = create<State>((set, get) => {
       }))
       const u = get().users.find((x) => x.id === userId)
       get().audit('user.standing', u?.firm ?? userId, `Standing set to ${standing}${reason ? ` — ${reason}` : ''}`, standing === 'defaulter' ? 'critical' : 'warning')
+      /* Standing changes what a customer may do on the platform, so they are
+         told what changed and why rather than finding out at a locked button. */
+      get().notify({
+        userId, kind: 'system',
+        title: {
+          good: 'Your account standing has been restored',
+          watchlist: 'Your account has been placed on watchlist',
+          defaulter: 'Your account has been restricted',
+        }[standing],
+        body: standing === 'good'
+          ? 'Full access is back. Nothing further is needed from you.'
+          : `${reason ?? 'Reviewed by our operations team.'} Contact support if you believe this is a mistake.`,
+        href: '/disputes',
+      })
+      // Money at risk against a restricted account is Finance's problem too.
+      if (standing === 'defaulter') {
+        notifyRole('finance_admin', {
+          kind: 'system', title: `Account restricted — ${u?.firm ?? userId}`,
+          body: `${reason ?? 'Marked as a defaulter by operations.'} Check any EMD held and open delivery orders against this account.`,
+          href: '/finance/emd',
+        })
+      }
     },
     // Recording a Demand Draft received from the buyer offline — Finance's
     // collection step, which replaces the generic advance for
@@ -2803,7 +3263,22 @@ export const useStore = create<State>((set, get) => {
             : x,
         ),
       }))
-      get().audit('dd.issue', doId, `Demand Draft ${dd.ddNumber} (${dd.issuingBank}) for ${inr(dd.amount)} recorded`)
+      const ddLot = get().lots.find((l) => l.id === d.lotId)
+      get().audit('dd.issue', ddLot?.lotNo ?? doId, `Demand Draft ${dd.ddNumber} (${dd.issuingBank}) for ${inr(dd.amount)} recorded`)
+      /* Recording the draft is what releases the order for lifting, so both the
+         buyer and the desk that did not record it are told. A DD taken at the
+         yard has to reach Finance; one taken at the desk has to reach
+         Operations. */
+      get().notify({
+        userId: d.buyerId, kind: 'wallet', title: `Payment recorded — ${ddLot?.lotNo ?? 'your lot'}`,
+        body: `Demand Draft ${dd.ddNumber} for ${inr(dd.amount)} is on the record. Lifting can be scheduled.`,
+        href: '/buyer/auction-status',
+      })
+      notifyRole(FINANCE_ROLES.includes(role) ? ['exec_manager', 'sub_admin'] : ['finance_admin'], {
+        kind: 'system', title: `Demand Draft recorded — ${ddLot?.lotNo ?? doId}`,
+        body: `${dd.ddNumber} (${dd.issuingBank}) for ${inr(dd.amount)}, recorded by ${me?.name ?? 'a colleague'}.`,
+        href: FINANCE_ROLES.includes(role) ? '/exec/logistics' : '/finance/payments',
+      })
     },
 
     verifyBankAccount: (id) => {
@@ -2878,6 +3353,20 @@ export const useStore = create<State>((set, get) => {
         ),
       }))
       get().audit('withdrawal.review', id, `Withdrawal of ${inr(req.amount)} reviewed into processing by ${me?.name ?? 'Finance'}`)
+      /* Maker–checker only works if the checker knows there is something to
+         release. Above the threshold it has to be a different Finance user, so
+         whoever reviewed it is left off their own hand-off. */
+      const needsSecond = req.amount >= get().financeConfig.withdrawalSecondSignatureFrom
+      notifyRole('finance_admin', {
+        kind: 'system', title: `Withdrawal ready to release — ${inr(req.amount)}`,
+        body: `${get().users.find((u) => u.id === req.userId)?.firm ?? 'A customer'} · reviewed by ${me?.name ?? 'Finance'}.${needsSecond ? ' Above the second-signature threshold — a different Finance user must release it.' : ''}`,
+        href: '/finance/withdrawals',
+      }, needsSecond ? me?.id : undefined)
+      get().notify({
+        userId: req.userId, kind: 'wallet', title: 'Withdrawal under review',
+        body: `${inr(req.amount)} has passed review and is queued for release to your verified account.`,
+        href: '/buyer/wallet',
+      })
     },
 
     processWithdrawal: (id) => {
@@ -3073,8 +3562,8 @@ export const useStore = create<State>((set, get) => {
       const lot = s.lots.find((l) => l.id === d.lotId)
       get().audit('payment.confirm', lot?.lotNo ?? doId, `Receipt of ${inr(due)} confirmed via ${method} (${ref}) — delivery order released to Operations`)
       // Finance confirming the money is what lets Operations schedule lifting.
-      get().notify({
-        userId: ROLE_DEMO_USER.exec_manager, kind: 'system',
+      notifyRole(['exec_manager', 'sub_admin'], {
+        kind: 'system',
         title: `Payment cleared — ${lot?.lotNo ?? 'delivery order'}`,
         body: `${inr(due)} received. Lifting can be scheduled.`, href: '/exec/logistics',
       })
@@ -3125,6 +3614,12 @@ export const useStore = create<State>((set, get) => {
         raiseCeoApproval('emd_forfeiture', record.id, amount,
           `Forfeit ${inr(amount)} of EMD held against ${lot.lotNo}`, reason)
         get().audit('emd.forfeit_request', lot.lotNo, `Forfeiture of ${inr(amount)} sent for CEO sign-off — ${reason}`, 'critical')
+        // Their money is frozen pending a decision; they are told that, and why.
+        get().notify({
+          userId: buyerId, kind: 'wallet', title: `EMD held pending review — ${lot.lotNo}`,
+          body: `${inr(amount)} stays locked while a forfeiture is decided. ${reason}`,
+          href: '/buyer/wallet',
+        })
         return { ok: true, awaitingCeo: true }
       }
       applyForfeiture(record)
@@ -3179,6 +3674,14 @@ export const useStore = create<State>((set, get) => {
         return { ok: true, awaitingCeo: true }
       }
       get().audit('refund.raise', party?.firm ?? userId, `Refund of ${inr(amount)} raised — ${reason}`)
+      /* A Sub Admin closing a dispute in the customer's favour can raise this,
+         but only Finance approves and pays it — so Finance is told rather than
+         the request waiting to be noticed on a queue. */
+      notifyRole('finance_admin', {
+        kind: 'system', title: `Refund to decide — ${inr(amount)}`,
+        body: `${party?.firm ?? 'A customer'} · ${reason}${disputeId ? ' (raised from a dispute — the ticket stays open until it is paid)' : ''}`,
+        href: '/finance/refunds',
+      }, s.currentUser?.id)
       return { ok: true }
     },
 
@@ -3321,6 +3824,12 @@ export const useStore = create<State>((set, get) => {
       if (!original || original.status === 'cancelled') return
       set((st) => ({ invoices: st.invoices.map((i) => (i.id === id ? { ...i, status: 'cancelled' as const, note } : i)) }))
       get().audit('invoice.cancel', original.number, `Cancelled — ${note}`, 'warning')
+      // A tax document the customer is holding has stopped being valid.
+      get().notify({
+        userId: original.partyId, kind: 'wallet', title: `Invoice ${original.number} cancelled`,
+        body: `${note} A corrected document follows if one is due.`,
+        href: '/buyer/auction-status',
+      })
     },
 
     /* ------------------------------ reconciliation ---------------------- */
@@ -3366,8 +3875,8 @@ export const useStore = create<State>((set, get) => {
       if (!line) return
       set((st) => ({ bankStatementLines: st.bankStatementLines.map((l) => (l.id === lineId ? { ...l, escalated: true } : l)) }))
       get().audit('recon.escalate', line.ref, `Break of ${inr(line.amount)} escalated — ${line.breakNote ?? 'no note'}`, 'critical')
-      get().notify({
-        userId: ROLE_DEMO_USER.super_admin, kind: 'system',
+      notifyRole('super_admin', {
+        kind: 'system',
         title: 'Reconciliation break escalated',
         body: `${inr(line.amount)} on ${line.ref} — ${line.breakNote ?? 'unmatched'}`,
         href: '/finance/reconciliation',
@@ -3575,6 +4084,14 @@ export const useStore = create<State>((set, get) => {
         `Role removed — ${holders.length} account${holders.length === 1 ? '' : 's'} suspended, none deleted. ${reason}`,
         role.label, null, snapshot)
       get().audit('role.remove', role.label, `${reason} — ${holders.length} account(s) suspended`, 'critical')
+      /* Suspension is only real because it stops the sign-in — which means the
+         people it stops have to be told, rather than meeting a locked door. */
+      for (const u of holders) {
+        get().notify({
+          userId: u.id, kind: 'system', title: 'Your access has been suspended',
+          body: `The ${role.label} role was withdrawn — ${reason}. Your account and its history are intact. Contact a Super Admin to be reinstated.`,
+        })
+      }
       return { ok: true }
     },
 
@@ -4064,6 +4581,15 @@ export const useStore = create<State>((set, get) => {
          back is a correction of its own, made here, with its own entry. */
       recordStructural('account.edit', `${user.name} · ${user.firm}`, `Account details corrected — ${fields.join(', ')}`, before, after)
       get().audit('account.edit', user.name, `${before} → ${after}`, 'warning')
+      /* Support changed something on someone else's account. They are told what
+         changed, which is what makes a wrong correction findable. */
+      if (userId !== s.currentUser?.id) {
+        get().notify({
+          userId, kind: 'system', title: 'Your account details were updated',
+          body: `Support corrected: ${after}. If that is not right, reply on a support ticket and we will put it back.`,
+          href: '/profile',
+        })
+      }
       return { ok: true }
     },
 
@@ -4107,13 +4633,29 @@ export const useStore = create<State>((set, get) => {
     createDispute: (subject, category, body, lotId) => {
       const me = get().currentUser
       if (!me) return
+      const id = uid('dsp')
       set((st) => ({
         disputes: [{
-          id: uid('dsp'), userId: me.id, subject, category, lotId,
+          id, userId: me.id, subject, category, lotId,
           status: 'open' as const, createdAt: new Date(st.now).toISOString(),
           messages: [{ from: 'user' as const, body, at: new Date(st.now).toISOString() }],
         }, ...st.disputes],
       }))
+      /* A ticket is a customer waiting. It used to be the one customer-initiated
+         action in the store that wrote no audit entry and told nobody — so the
+         Sub Admin's own Approvals screen, which reviews the audit trail, could
+         not see that support had been asked for anything. */
+      get().audit('dispute.open', id.toUpperCase(), `${me.firm} raised "${subject}" (${category})`, 'warning')
+      notifyRole(['sub_admin', 'exec_manager'], {
+        kind: 'system', title: `New ticket — ${subject}`,
+        body: `${me.firm} · ${category}${lotId ? ` · ${get().lots.find((l) => l.id === lotId)?.lotNo ?? ''}` : ''} — ${body.slice(0, 120)}`,
+        href: '/sub/disputes',
+      })
+      get().notify({
+        userId: me.id, kind: 'system', title: 'Your ticket is with support',
+        body: 'Someone on the support desk will pick it up and reply here.',
+        href: '/disputes',
+      })
     },
 
     /* ================= Sub Admin — supervision, support, shift =============
@@ -4181,8 +4723,10 @@ export const useStore = create<State>((set, get) => {
         })
       }
       if (escalatedTo) {
-        get().notify({
-          userId: null, kind: 'system',
+        /* Addressed to the desk that can act on it. This used to be a
+           null-addressed notice, which every buyer and seller received. */
+        notifyRole('super_admin', {
+          kind: 'system',
           title: `Sub Admin review needs Super Admin — ${ev.target}`,
           body: review.note, href: '/admin/control-tower',
         })
@@ -4301,12 +4845,23 @@ export const useStore = create<State>((set, get) => {
       set((st) => ({ contentDrafts: [draft, ...st.contentDrafts] }))
       get().audit('content.draft', `${draft.page} · ${draft.section}`,
         `Submitted for publishing${needsCeo ? ' — pricing/legal copy, needs the CEO as well as us' : ''}`)
-      get().notify({
-        userId: null, kind: 'system',
+      /* Publishing is the Super Admin's, and pricing or legal copy needs the CEO
+         too. Addressed to them — not broadcast to every buyer and seller, which
+         is what a null userId does. */
+      notifyRole('super_admin', {
+        kind: 'system',
         title: 'Content waiting to be published',
         body: `${draft.page} · ${draft.section} — drafted by ${s.currentUser?.name ?? 'a Sub Admin'}.`,
         href: '/admin/content',
       })
+      if (needsCeo) {
+        notifyRole('ceo', {
+          kind: 'system',
+          title: 'Content needs your signature',
+          body: `${draft.page} · ${draft.section} — pricing or legal copy, so it does not go live on our say-so alone.`,
+          href: '/ceo/approvals',
+        })
+      }
       return { ok: true }
     },
 

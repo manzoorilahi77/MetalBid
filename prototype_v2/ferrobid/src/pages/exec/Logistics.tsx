@@ -1,9 +1,16 @@
-/* Executive Manager — lifting & logistics board across delivery orders. */
-import { Truck } from 'lucide-react'
+/* Executive Manager — lifting & logistics board across delivery orders.
+
+   Also the desk where the gross weighment is witnessed. The buyer can declare a
+   reading from their own weighbridge, but the figure that closes a handover —
+   and therefore the figure the invoice and any shortfall refund are built on —
+   has to be put on the record by one of our people. That is what the weighment
+   panel on a lifting card is for. */
+import { useState } from 'react'
+import { Truck, Scale } from 'lucide-react'
 import { Page } from '../../layout/Chrome'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Lock } from 'lucide-react'
-import { PageHeader, Button, Chip, Stat, cx } from '../../components/ui'
+import { PageHeader, Button, Chip, Field, Input, Modal, Stat, cx } from '../../components/ui'
 import { useStore } from '../../store/store'
 import { num, relTime, fmtDate } from '../../lib/format'
 import { useNow } from '../../lib/useTick'
@@ -22,7 +29,42 @@ export default function Logistics() {
   const users = useStore((s) => s.users)
   const catalogues = useStore((s) => s.catalogues)
   const advanceDeliveryOrder = useStore((s) => s.advanceDeliveryOrder)
+  const recordWeighment = useStore((s) => s.recordWeighment)
+  const toggleLiftingChecklistItem = useStore((s) => s.toggleLiftingChecklistItem)
+  const completeLifting = useStore((s) => s.completeLifting)
   const pushToast = useStore((s) => s.pushToast)
+
+  const [weighTarget, setWeighTarget] = useState<DeliveryOrder | null>(null)
+  const [weighQty, setWeighQty] = useState('')
+
+  /** Who put the current reading on the record. A buyer's own figure is a
+   *  declaration and cannot close the handover; ours can. */
+  const witness = (d: DeliveryOrder) => {
+    if (d.weighedQty == null) return null
+    const by = users.find((u) => u.id === d.weighedById)
+    const staff = !!by && by.role !== 'buyer' && by.role !== 'seller'
+    return { by, staff, label: staff ? by.name : `${by?.firm ?? 'Buyer'} (buyer's reading)` }
+  }
+
+  const saveWeighment = () => {
+    if (!weighTarget) return
+    const qty = Number(weighQty)
+    if (!(qty > 0)) {
+      pushToast({ kind: 'danger', title: 'Weighment not recorded', body: 'Enter the gross weighment reading.' })
+      return
+    }
+    recordWeighment(weighTarget.id, qty)
+    const variance = ((qty - weighTarget.awardedQty) / weighTarget.awardedQty) * 100
+    pushToast({
+      kind: Math.abs(variance) >= 1 ? 'warning' : 'success',
+      title: `Weighment witnessed — ${num(qty)} ${weighTarget.uom}`,
+      body: Math.abs(variance) < 1
+        ? 'On the awarded quantity. Handover can be closed against this figure.'
+        : `${variance >= 0 ? '+' : ''}${variance.toFixed(1)}% against the awarded quantity — Finance has been told.`,
+    })
+    setWeighTarget(null)
+    setWeighQty('')
+  }
 
   const awaiting = deliveryOrders.filter((d) => d.stage === 'payment_pending' || d.stage === 'dd_issued')
   const lifting = deliveryOrders.filter((d) => d.stage === 'lifting_scheduled' || d.stage === 'lifted')
@@ -78,6 +120,66 @@ export default function Logistics() {
                 </div>
               )}
             </div>
+
+            {/* The weighment panel — the figure the invoice is built on. */}
+            {d.stage === 'lifted' && (() => {
+              const w = witness(d)
+              const variance = w && d.weighedQty != null
+                ? ((d.weighedQty - d.awardedQty) / d.awardedQty) * 100 : 0
+              return (
+                <div className={cx('rounded-lg border px-2.5 py-2 space-y-1.5',
+                  !w ? 'border-line bg-surface-2'
+                    : w.staff ? 'border-success/25 bg-success-soft/50' : 'border-warning/30 bg-warning-soft/50')}>
+                  <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-ink-faint">
+                    <Scale size={12} /> Gross weighment
+                  </div>
+                  {w ? (
+                    <>
+                      <div className="flex items-baseline gap-2">
+                        <span className="num text-sm font-bold">{num(d.weighedQty!)} {d.uom}</span>
+                        <span className={cx('num text-[11px] font-semibold',
+                          Math.abs(variance) < 1 ? 'text-ink-faint' : variance < 0 ? 'text-danger' : 'text-warning')}>
+                          {variance >= 0 ? '+' : ''}{variance.toFixed(1)}%
+                        </span>
+                      </div>
+                      <div className="text-[11px] text-ink-muted">{w.label}</div>
+                      {!w.staff && (
+                        <p className="text-[11px] text-ink-muted">
+                          A buyer&apos;s own reading cannot close the handover. Witness it to confirm the figure.
+                        </p>
+                      )}
+                    </>
+                  ) : (
+                    <p className="text-[11px] text-ink-muted">Not recorded yet. The handover closes against this figure.</p>
+                  )}
+                  <div className="flex gap-1.5">
+                    <Button size="sm" variant={w?.staff ? 'ghost' : 'secondary'} className="flex-1"
+                      onClick={() => { setWeighTarget(d); setWeighQty(String(d.weighedQty ?? d.awardedQty)) }}>
+                      {w?.staff ? 'Re-weigh' : 'Witness weighment'}
+                    </Button>
+                    {d.liftingChecklist.every((i) => i.done) && (
+                      <Button size="sm" variant="success" className="flex-1"
+                        onClick={() => {
+                          completeLifting(d.id)
+                          pushToast({ kind: 'success', title: `${d.id.toUpperCase()} lifted`, body: 'Handover is ready to close.' })
+                        }}>
+                        Mark lifted
+                      </Button>
+                    )}
+                  </div>
+                  {!d.liftingChecklist.every((i) => i.done) && (
+                    <div className="flex flex-wrap gap-1 pt-0.5">
+                      {d.liftingChecklist.filter((i) => !i.done).map((i) => (
+                        <button key={i.key} onClick={() => toggleLiftingChecklistItem(d.id, i.key)}
+                          className="text-[11px] px-2 py-0.5 rounded-full border border-line-strong text-ink-muted hover:border-success/50 hover:text-success transition-colors">
+                          {i.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )
+            })()}
           </>
         )}
         {kind === 'awaiting' && (
@@ -133,6 +235,26 @@ export default function Logistics() {
           Buyer payments <ArrowRight size={13} />
         </Link>
       </div>
+
+      <Modal open={!!weighTarget} onClose={() => setWeighTarget(null)} title="Witness the gross weighment">
+        {weighTarget && (
+          <div className="space-y-4">
+            <p className="text-[13px] text-ink-muted">
+              {lots.find((l) => l.id === weighTarget.lotId)?.grade ?? weighTarget.lotId} for {firm(weighTarget.buyerId)}.
+              Awarded at <span className="num font-semibold text-ink">{num(weighTarget.awardedQty)} {weighTarget.uom}</span>.
+              This figure is weighment-final: the invoice and any shortfall refund are built on it.
+            </p>
+            <Field label={`Gross weighment (${weighTarget.uom})`} hint="As read at the weighbridge, in our presence.">
+              <Input inputMode="decimal" className="num" value={weighQty}
+                onChange={(e) => setWeighQty(e.target.value.replace(/[^\d.]/g, ''))} />
+            </Field>
+            <div className="flex justify-end gap-2">
+              <Button variant="ghost" onClick={() => setWeighTarget(null)}>Cancel</Button>
+              <Button onClick={saveWeighment} disabled={!(Number(weighQty) > 0)}>Record weighment</Button>
+            </div>
+          </div>
+        )}
+      </Modal>
     </Page>
   )
 }
