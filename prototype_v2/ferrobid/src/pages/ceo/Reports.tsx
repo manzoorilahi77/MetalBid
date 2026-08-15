@@ -174,7 +174,7 @@ export default function CeoReports() {
         <Pack
           title="Profit and loss"
           screen="profit and loss"
-          to="/ceo"
+          to="/ceo/pnl"
           blurb="What we earned, what we spent, and what was left — with what is deliberately excluded stated at the bottom."
           lines={[
             { label: 'Money we earned', value: inr(books.income) },

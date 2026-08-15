@@ -24,7 +24,7 @@ import { useStore } from '../../store/store'
 import { inr, inrCompact, num } from '../../lib/format'
 import { delta } from '../../lib/money'
 import { LedgerRow, ShareBar, commissionBreakdown } from '../finance/shared'
-import { Headline, NotMyDecision, PlainStat, Question, Ranked, TrendBars, useBooks, useGrowth, useSignatureQueue } from './shared'
+import { Headline, NotMyDecision, PlainStat, Question, Ranked, TrendBars, incomeByMonth, useBooks, useGrowth, useSignatureQueue } from './shared'
 
 export default function CeoProfitLoss() {
   const month = useBooks('month')
@@ -36,30 +36,9 @@ export default function CeoProfitLoss() {
 
   const { byCategory, byRegion } = useMemo(() => commissionBreakdown(month, users), [month, users])
 
-  /* Income recognised by calendar month — commission Finance has matched to the
-     bank, plus buyer premium on paid delivery orders. The rows behind it are
-     period-independent, so one pass over them gives the whole year. */
-  const trend = useMemo(() => {
-    const now = new Date(month.now)
-    const buckets = Array.from({ length: 12 }, (_, i) => {
-      const d = new Date(now.getFullYear(), now.getMonth() - (11 - i), 1)
-      return { key: `${d.getFullYear()}-${d.getMonth()}`, label: d.toLocaleDateString('en-IN', { month: 'short' }), value: 0 }
-    })
-    const index = new Map(buckets.map((b, i) => [b.key, i]))
-    const add = (iso: string | undefined, amount: number) => {
-      if (!iso) return
-      const d = new Date(iso)
-      const i = index.get(`${d.getFullYear()}-${d.getMonth()}`)
-      if (i != null) buckets[i].value += amount
-    }
-    for (const r of month.commissionRows) {
-      if (r.confirmed) add(r.settlement?.confirmedAt, r.commissionDue)
-    }
-    for (const row of month.deliveryRows) {
-      if (row.d.paidAmount > 0) add(row.d.createdAt, row.d.materialValue * (cfg.buyerPremiumPct / 100))
-    }
-    return buckets
-  }, [month, cfg.buyerPremiumPct])
+  /* Income recognised by calendar month — the same twelve points the dashboard
+     draws, arrived at by the same pass over the books. */
+  const trend = useMemo(() => incomeByMonth(month), [month])
 
   const nothingYet = year.income === 0 && year.commissionOwed === 0
 

@@ -20,6 +20,7 @@ import {
 } from '../../components/ui'
 import { useStore } from '../../store/store'
 import { fmtDateTime, inr, inrCompact, num, relTime } from '../../lib/format'
+import { emdDeadlineMs, emdOpensAtMs } from '../../lib/emd'
 import { useNow } from '../../lib/useTick'
 import { AuctionIdentity, ReasonModal, ScopeNote, SectionTitle, isAwaitingPublish, useAuctionRows, type AuctionRow } from './shared'
 import type { Catalogue } from '../../types'
@@ -33,6 +34,19 @@ import type { Catalogue } from '../../types'
 const toLocalInput = (iso: string) => {
   const d = new Date(iso)
   return new Date(d.getTime() - d.getTimezoneOffset() * 60_000).toISOString().slice(0, 16)
+}
+
+/** How long a window is, in the coarsest unit that still says something — the
+ *  point of showing it is "is this enough time for a buyer to move money", so
+ *  "2 days" answers it and "2d 04h 17m" does not. */
+const fmtGap = (ms: number) => {
+  const m = Math.round(ms / 60_000)
+  if (m < 1) return 'immediately'
+  if (m >= 2880) return `${Math.round(m / 1440)} days`
+  if (m >= 1440) return '1 day'
+  if (m >= 120) return `${Math.round(m / 60)} hours`
+  if (m >= 60) return '1 hour'
+  return `${m} minutes`
 }
 
 /* --------------------------- the buyer's-eye view -------------------------- */
@@ -59,12 +73,15 @@ function BuyerPreview({ row }: { row: AuctionRow }) {
           <Chip tone="steel">{cat.type === 'tender' ? 'Sealed tender' : 'Live auction'}</Chip>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4 pt-3.5 border-t border-line text-sm">
+        {/* Both ends of the EMD window, not just the cut-off — a buyer plans
+            funding around when it opens as much as when it shuts. */}
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mt-4 pt-3.5 border-t border-line text-sm">
           {[
             ['Lots', num(lots.length)],
-            ['Opens', fmtDateTime(cat.startsAt)],
-            ['Closes', fmtDateTime(cat.endsAt)],
-            ['EMD cut-off', fmtDateTime(cat.emdDeadline)],
+            ['EMD opens', fmtDateTime(new Date(emdOpensAtMs(cat)).toISOString())],
+            ['EMD closes', fmtDateTime(new Date(emdDeadlineMs(cat)).toISOString())],
+            ['Auction opens', fmtDateTime(cat.startsAt)],
+            ['Auction closes', fmtDateTime(cat.endsAt)],
           ].map(([k, v]) => (
             <div key={k}>
               <div className="text-[10px] font-bold uppercase tracking-wider text-ink-faint">{k}</div>
@@ -126,6 +143,9 @@ export default function AuctionSchedule() {
   const [mode, setMode] = useState<'now' | 'schedule'>('schedule')
   const [previewOf, setPreviewOf] = useState<AuctionRow | null>(null)
   const [editTarget, setEditTarget] = useState<Catalogue | null>(null)
+  // a sale has four instants, not two: the EMD window, then the bidding window
+  const [emdOpensAt, setEmdOpensAt] = useState('')
+  const [emdClosesAt, setEmdClosesAt] = useState('')
   const [startsAt, setStartsAt] = useState('')
   const [endsAt, setEndsAt] = useState('')
   const [antiSnipe, setAntiSnipe] = useState(5)
@@ -137,6 +157,11 @@ export default function AuctionSchedule() {
 
   const openEdit = (cat: Catalogue) => {
     setEditTarget(cat)
+    // `emdOpensAt` is optional on the catalogue, so the field is filled from the
+    // instant actually in force (emd.ts falls back well before the cut-off) —
+    // editing it here is what makes it explicit
+    setEmdOpensAt(toLocalInput(new Date(emdOpensAtMs(cat)).toISOString()))
+    setEmdClosesAt(toLocalInput(new Date(emdDeadlineMs(cat)).toISOString()))
     setStartsAt(toLocalInput(cat.startsAt))
     setEndsAt(toLocalInput(cat.endsAt))
     setAntiSnipe(cat.antiSnipeMinutes)
@@ -189,14 +214,33 @@ export default function AuctionSchedule() {
 
   const saveSchedule = () => {
     if (!editTarget) return
-    const res = rescheduleCatalogue(editTarget.id, new Date(startsAt).toISOString(), new Date(endsAt).toISOString(), antiSnipe)
+    const res = rescheduleCatalogue(editTarget.id, {
+      emdOpensAt: new Date(emdOpensAt).toISOString(),
+      emdDeadline: new Date(emdClosesAt).toISOString(),
+      startsAt: new Date(startsAt).toISOString(),
+      endsAt: new Date(endsAt).toISOString(),
+      antiSnipeMinutes: antiSnipe,
+    })
     if (!res.ok) {
       pushToast({ kind: 'danger', title: 'Schedule unchanged', body: res.error })
       return
     }
-    pushToast({ kind: 'success', title: `${editTarget.code} rescheduled`, body: 'Bidders on this sale will see the new times.' })
+    pushToast({ kind: 'success', title: `${editTarget.code} rescheduled`, body: 'Bidders on this sale will see the new EMD window and bidding times.' })
     setEditTarget(null)
   }
+
+  /* The order is the sale itself, so it is checked as the manager types rather
+     than only on save — a window in the wrong order is a mistake to point at,
+     not an error to hand back. */
+  const scheduleError = (() => {
+    if (!editTarget) return null
+    const [eo, ec, so, sc] = [emdOpensAt, emdClosesAt, startsAt, endsAt].map((v) => Date.parse(v))
+    if ([eo, ec, so, sc].some(Number.isNaN)) return 'All four times are needed before this can be saved.'
+    if (ec <= eo) return 'EMD closes before it opens. Buyers would have no window to fund in.'
+    if (ec > so) return 'EMD closes after bidding opens. Pre-bid EMD has to be funded before the first bid.'
+    if (sc <= so) return 'The auction closes before it opens.'
+    return null
+  })()
 
   return (
     <Page>
@@ -434,24 +478,52 @@ export default function AuctionSchedule() {
       <Modal open={!!editTarget} onClose={() => setEditTarget(null)} title={`Schedule — ${editTarget?.code ?? ''}`}>
         {editTarget && (
           <div className="space-y-4">
-            <div className="grid sm:grid-cols-2 gap-3">
-              <Field label="Opens">
-                <Input type="datetime-local" className="num" value={startsAt} onChange={(e) => setStartsAt(e.target.value)} />
-              </Field>
-              <Field label="Closes">
-                <Input type="datetime-local" className="num" value={endsAt} onChange={(e) => setEndsAt(e.target.value)} />
-              </Field>
+            {/* Two windows, in the order they happen: buyers fund, then they
+                bid. Kept as separate blocks so the EMD window reads as a phase
+                of the sale rather than as fine print on the auction times. */}
+            <div>
+              <div className="text-[11px] font-bold uppercase tracking-wider text-ink-faint mb-2">1 · Pre-bid EMD window</div>
+              <div className="grid sm:grid-cols-2 gap-3">
+                <Field label="EMD opens" hint="Shortlisting and funding become possible">
+                  <Input type="datetime-local" className="num" value={emdOpensAt} onChange={(e) => setEmdOpensAt(e.target.value)} />
+                </Field>
+                <Field label="EMD closes" hint="Cut-off — no new lots can be funded after this">
+                  <Input type="datetime-local" className="num" value={emdClosesAt} onChange={(e) => setEmdClosesAt(e.target.value)} />
+                </Field>
+              </div>
             </div>
+
+            <div>
+              <div className="text-[11px] font-bold uppercase tracking-wider text-ink-faint mb-2">2 · Bidding window</div>
+              <div className="grid sm:grid-cols-2 gap-3">
+                <Field label="Auction opens" hint="Bidding starts — the sale is live from here">
+                  <Input type="datetime-local" className="num" value={startsAt} onChange={(e) => setStartsAt(e.target.value)} />
+                </Field>
+                <Field label="Auction closes" hint="Subject to anti-snipe extensions below">
+                  <Input type="datetime-local" className="num" value={endsAt} onChange={(e) => setEndsAt(e.target.value)} />
+                </Field>
+              </div>
+            </div>
+
             <Field label="Anti-snipe window" hint="A bid inside the last N minutes pushes that lot's close out by the same N minutes, automatically.">
               <Input type="number" min={0} max={60} className="num w-32" value={antiSnipe}
                 onChange={(e) => setAntiSnipe(Math.max(0, Math.min(60, Number(e.target.value))))} />
             </Field>
-            <p className="text-xs text-ink-faint">
-              The pre-bid EMD cut-off is recomputed from the opening time — buyers keep their full funding window.
-            </p>
+
+            {scheduleError ? (
+              <p className="text-xs text-danger font-semibold flex items-start gap-1.5">
+                <AlertTriangle size={13} className="mt-px shrink-0" />{scheduleError}
+              </p>
+            ) : (
+              <p className="text-xs text-ink-faint">
+                Buyers get <span className="num">{fmtGap(Date.parse(emdClosesAt) - Date.parse(emdOpensAt))}</span> to fund their EMD,
+                and bidding opens <span className="num">{fmtGap(Date.parse(startsAt) - Date.parse(emdClosesAt))}</span> after the cut-off.
+              </p>
+            )}
+
             <div className="flex justify-end gap-2">
               <Button variant="ghost" onClick={() => setEditTarget(null)}>Cancel</Button>
-              <Button onClick={saveSchedule}>Save schedule</Button>
+              <Button onClick={saveSchedule} disabled={!!scheduleError}>Save schedule</Button>
             </div>
           </div>
         )}

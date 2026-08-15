@@ -19,7 +19,9 @@ export default function MyLots() {
   const [tab, setTab] = useState<TabKey>('pipeline')
 
   const myCatIds = catalogues.filter((c) => c.sellerId === me?.id).map((c) => c.id)
-  const mine = lots.filter((l) => (l.catalogueId ? myCatIds.includes(l.catalogueId) : true))
+  // an uncatalogued lot is owned by whoever submitted it, so it is matched on
+  // the lot's own seller rather than shown to every seller
+  const mine = lots.filter((l) => (l.catalogueId ? myCatIds.includes(l.catalogueId) : l.sellerId === me?.id))
 
   const groups: Record<TabKey, Lot[]> = {
     pipeline: mine.filter((l) => ['pending_inspection', 'inspected', 'flagged', 'rejected'].includes(l.status)),

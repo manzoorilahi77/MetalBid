@@ -1,0 +1,596 @@
+/* ==========================================================================
+   Subscription funnel — /subscribe (details + payment) and /onboarding
+   (business details + password). One stylesheet for both: they are two halves
+   of the same four-step flow and must not drift apart visually.
+   Same Industrial Forge tokens and light canvas as the rest of the guest site.
+   ========================================================================== */
+
+.ck-page {
+  font-family: var(--font-body);
+  background:
+    radial-gradient(70% 45% at 85% 0%, rgba(228, 87, 46, 0.07) 0%, transparent 60%),
+    radial-gradient(60% 40% at 0% 100%, rgba(43, 76, 126, 0.06) 0%, transparent 60%),
+    var(--color-canvas);
+  min-height: 70vh;
+  padding: 32px 0 72px;
+}
+.ck-shell { max-width: 1080px; }
+.ck-shell-narrow { max-width: 620px; }
+
+.ck-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+  transition: color var(--dur-base) var(--ease-out), gap var(--dur-base) var(--ease-out);
+}
+.ck-back:hover { color: var(--primary); gap: 10px; }
+
+.ck-head { margin-bottom: 24px; }
+.ck-head h1 {
+  font-family: var(--font-heading);
+  font-size: clamp(24px, 3vw, 34px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--dark);
+  margin: 0 0 6px;
+}
+.ck-head p { margin: 0; font-size: 14.5px; color: var(--text-muted); }
+
+/* --- payment receipt strip (onboarding) ---------------------------------- */
+.ck-paid {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 18px;
+  margin-bottom: 24px;
+  border-radius: var(--radius-lg);
+  background: rgba(30, 127, 79, 0.07);
+  border: 1px solid rgba(30, 127, 79, 0.28);
+  color: var(--color-success);
+}
+.ck-paid > svg { flex-shrink: 0; margin-top: 2px; }
+.ck-paid div { display: grid; gap: 2px; }
+.ck-paid strong { font-size: 14px; }
+.ck-paid span { font-size: 12.5px; color: var(--text-muted); }
+
+/* --- step rail ------------------------------------------------------------ */
+.ck-steps {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  list-style: none;
+  margin: 0 0 24px;
+  padding: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.ck-steps::-webkit-scrollbar { display: none; }
+.ck-step {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 15px 8px 9px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  border: 1px solid var(--border);
+  white-space: nowrap;
+  transition: all var(--dur-base) var(--ease-out);
+}
+.ck-step-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-surface-3);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.ck-step-label { font-size: 12.5px; font-weight: 600; color: var(--text-muted); }
+.ck-step.is-active {
+  border-color: var(--primary);
+  box-shadow: 0 6px 18px -10px rgba(228, 87, 46, 0.7);
+}
+.ck-step.is-active .ck-step-dot { background: var(--primary); color: #fff; }
+.ck-step.is-active .ck-step-label { color: var(--dark); font-weight: 700; }
+.ck-step.is-done .ck-step-dot { background: var(--color-success); color: #fff; }
+.ck-step.is-done .ck-step-label { color: var(--dark); }
+
+/* --- layout --------------------------------------------------------------- */
+.ck-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 330px;
+  gap: 24px;
+  align-items: start;
+}
+
+.ck-card {
+  background: var(--color-surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: var(--shadow-lg);
+}
+.ck-card-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--font-heading);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--dark);
+  margin: 0 0 6px;
+}
+.ck-card-title svg { color: var(--primary); }
+.ck-card-title.ck-mt { margin-top: 30px; }
+.ck-card-sub { margin: 0 0 18px; font-size: 13.5px; line-height: 1.55; color: var(--text-muted); }
+
+/* --- buyer / seller choice ------------------------------------------------ */
+.ck-roles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin: 16px 0 4px;
+}
+.ck-role {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+  padding: 18px;
+  text-align: left;
+  border-radius: var(--radius-lg);
+  border: 1.5px solid var(--border);
+  background: var(--color-surface);
+  cursor: pointer;
+  transition: all var(--dur-base) var(--ease-out);
+}
+.ck-role:hover { border-color: rgba(228, 87, 46, 0.45); transform: translateY(-2px); }
+.ck-role.is-on {
+  border-color: var(--primary);
+  background: rgba(228, 87, 46, 0.04);
+  box-shadow: 0 12px 30px -16px rgba(228, 87, 46, 0.8);
+}
+.ck-role-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(228, 87, 46, 0.1);
+  color: var(--primary);
+  flex-shrink: 0;
+}
+.ck-role-body { display: grid; gap: 4px; }
+.ck-role-body strong { font-size: 14.5px; color: var(--dark); }
+.ck-role-body span { font-size: 12.5px; line-height: 1.5; color: var(--text-muted); }
+.ck-role-tick {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary);
+  color: #fff;
+  opacity: 0;
+  transform: scale(0.6);
+  transition: all var(--dur-base) var(--ease-out);
+}
+.ck-role.is-on .ck-role-tick { opacity: 1; transform: scale(1); }
+
+/* --- fields --------------------------------------------------------------- */
+.ck-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 16px;
+}
+.ck-field { display: grid; gap: 6px; align-content: start; }
+.ck-field[data-span="2"] { grid-column: 1 / -1; }
+.ck-field > label {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--dark);
+  letter-spacing: 0.1px;
+}
+.ck-input-wrap { position: relative; display: flex; }
+.ck-field input,
+.ck-field select,
+.ck-field textarea {
+  width: 100%;
+  padding: 11px 13px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--color-surface);
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--dark);
+  transition: border-color var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
+}
+.ck-field textarea { resize: vertical; line-height: 1.5; }
+.ck-field select { cursor: pointer; appearance: none; padding-right: 34px;
+  background-image: linear-gradient(45deg, transparent 50%, var(--text-muted) 50%), linear-gradient(135deg, var(--text-muted) 50%, transparent 50%);
+  background-position: calc(100% - 18px) calc(50% + 1px), calc(100% - 13px) calc(50% + 1px);
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+.ck-field input::placeholder,
+.ck-field textarea::placeholder { color: var(--color-ink-faint); }
+.ck-field input:focus,
+.ck-field select:focus,
+.ck-field textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(228, 87, 46, 0.12);
+}
+.ck-field.is-bad input,
+.ck-field.is-bad select,
+.ck-field.is-bad textarea { border-color: var(--color-danger); }
+.ck-field.is-ok input,
+.ck-field.is-ok select { border-color: rgba(30, 127, 79, 0.5); }
+.ck-eye {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+}
+.ck-hint { margin: 0; font-size: 11.5px; color: var(--text-muted); }
+.ck-err {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--color-danger);
+}
+.ck-err-block { margin: -4px 0 0; }
+
+/* --- chips & segments ----------------------------------------------------- */
+.ck-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.ck-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 13px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+  background: var(--color-surface);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--dur-base) var(--ease-out);
+}
+.ck-chip:hover { border-color: rgba(228, 87, 46, 0.45); color: var(--dark); }
+.ck-chip.is-on {
+  background: rgba(228, 87, 46, 0.1);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.ck-segments {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 5px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface-2);
+  border: 1px solid var(--border);
+}
+.ck-segment {
+  flex: 1 1 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 9px 14px;
+  border: none;
+  border-radius: var(--radius-full);
+  background: transparent;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--dur-base) var(--ease-out);
+}
+.ck-segment:hover { color: var(--dark); }
+.ck-segment.is-on {
+  background: var(--color-surface);
+  color: var(--primary);
+  box-shadow: var(--shadow-sm);
+}
+
+/* --- notes, buttons ------------------------------------------------------- */
+.ck-note,
+.ck-secure {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin-top: 20px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: var(--color-surface-2);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+.ck-note svg,
+.ck-secure svg { color: var(--primary); flex-shrink: 0; margin-top: 1px; }
+.ck-note a { color: var(--primary); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+
+.ck-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  width: 100%;
+  margin-top: 22px;
+  padding: 14px 22px;
+  border: none;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--primary), #c8441f);
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 14.5px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 10px 26px -10px rgba(228, 87, 46, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
+}
+.ck-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 16px 34px -12px rgba(228, 87, 46, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.2); }
+.ck-primary:active:not(:disabled) { transform: translateY(0) scale(0.99); transition-duration: 0.08s; }
+.ck-primary:disabled { opacity: 0.75; cursor: progress; }
+.ck-primary svg { flex-shrink: 0; }
+
+.ck-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 22px;
+  padding: 14px 20px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+  background: var(--color-surface);
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--dur-base) var(--ease-out);
+}
+.ck-ghost:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); }
+.ck-ghost:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.ck-actions { display: flex; gap: 12px; align-items: stretch; }
+.ck-actions .ck-primary { flex: 1; }
+
+.ck-spin { animation: ck-rotate 0.9s linear infinite; }
+@keyframes ck-rotate { to { transform: rotate(360deg); } }
+
+/* --- password strength + terms -------------------------------------------- */
+.ck-strength { display: flex; align-items: center; gap: 10px; margin-top: -4px; }
+.ck-strength[data-span="2"] { grid-column: 1 / -1; }
+.ck-strength-track {
+  flex: 1;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface-3);
+  overflow: hidden;
+}
+.ck-strength-fill { height: 100%; border-radius: inherit; }
+.ck-strength span { font-size: 11.5px; font-weight: 700; }
+
+.ck-terms {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 22px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.ck-terms input { margin-top: 2px; width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer; }
+.ck-terms a { color: var(--primary); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+.ck-terms.is-bad span { color: var(--color-danger); }
+
+/* --- order summary -------------------------------------------------------- */
+.ck-side { position: sticky; top: 88px; }
+.ck-summary {
+  background: var(--color-surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 22px;
+  box-shadow: var(--shadow-lg);
+}
+.ck-summary-eyebrow {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 8px;
+}
+.ck-summary-head h3 {
+  font-family: var(--font-heading);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--dark);
+  margin: 0 0 3px;
+  overflow-wrap: anywhere;
+}
+.ck-summary-head p { margin: 0; font-size: 12.5px; color: var(--text-muted); }
+
+.ck-summary-role {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 16px 0;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: rgba(228, 87, 46, 0.06);
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+.ck-summary-role svg { color: var(--primary); flex-shrink: 0; }
+.ck-summary-role strong { color: var(--dark); }
+
+.ck-summary-perks { list-style: none; margin: 0 0 18px; padding: 0; display: grid; gap: 9px; }
+.ck-summary-perks li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+.ck-summary-perks svg { color: var(--color-success); flex-shrink: 0; margin-top: 2px; }
+
+.ck-summary-lines { border-top: 1px solid var(--border); padding-top: 14px; display: grid; gap: 10px; }
+.ck-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--text-muted);
+  overflow: hidden;
+}
+.ck-line span:last-child { font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--dark); }
+.ck-line.is-credit { color: var(--color-success); }
+.ck-line.is-credit span { color: var(--color-success); display: flex; align-items: center; gap: 6px; }
+.ck-line.is-total {
+  border-top: 1px dashed var(--border);
+  padding-top: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--dark);
+}
+.ck-line.is-total span:last-child {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.ck-summary-foot {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--color-ink-faint);
+}
+.ck-summary-foot svg { color: var(--color-success); flex-shrink: 0; margin-top: 1px; }
+
+/* --- done screen ---------------------------------------------------------- */
+.ck-done {
+  text-align: center;
+  background: var(--color-surface);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 44px 32px 36px;
+  box-shadow: var(--shadow-lg);
+}
+.ck-done-mark {
+  width: 68px;
+  height: 68px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(30, 127, 79, 0.1);
+  border: 1px solid rgba(30, 127, 79, 0.3);
+  color: var(--color-success);
+}
+.ck-done h1 {
+  font-family: var(--font-heading);
+  font-size: clamp(24px, 3vw, 32px);
+  font-weight: 700;
+  color: var(--dark);
+  margin: 0 0 8px;
+}
+.ck-done-lead { margin: 0 0 24px; font-size: 14.5px; color: var(--text-muted); }
+
+.ck-idcard {
+  display: grid;
+  gap: 6px;
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(145deg, var(--color-ember) 0%, #c8441f 100%);
+  box-shadow: 0 18px 40px -20px rgba(200, 68, 31, 0.7);
+  margin-bottom: 8px;
+}
+.ck-idcard-label {
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+}
+.ck-idcard-val {
+  font-family: var(--font-mono);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #fff;
+}
+.ck-idcard-note { font-size: 12px; line-height: 1.5; color: rgba(255, 255, 255, 0.9); }
+
+.ck-done-cta { max-width: 380px; margin-inline: auto; }
+.ck-done-link {
+  display: inline-block;
+  margin-top: 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.ck-done-link:hover { color: var(--primary); }
+
+/* --- responsive ----------------------------------------------------------- */
+@media (max-width: 960px) {
+  .ck-grid { grid-template-columns: 1fr; }
+  /* The summary leads on a phone — you should see what you are paying for
+     before the form, not after scrolling past it. */
+  .ck-side { position: static; order: -1; }
+}
+@media (max-width: 640px) {
+  .ck-page { padding: 20px 0 56px; }
+  .ck-card { padding: 20px; }
+  .ck-roles { grid-template-columns: 1fr; }
+  .ck-fields { grid-template-columns: 1fr; }
+  .ck-field[data-span="2"] { grid-column: auto; }
+  .ck-actions { flex-direction: column-reverse; }
+  .ck-actions .ck-ghost { margin-top: 0; }
+  .ck-segments { flex-direction: column; }
+  .ck-step-label { display: none; }
+  .ck-step { padding: 8px; }
+}

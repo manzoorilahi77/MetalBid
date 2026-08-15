@@ -816,9 +816,13 @@
 .auth-quickroles {
   margin-top: 2px;
 }
+/* Three across, but flex rather than grid: eight cards leave the last row short,
+   and a grid would park those two hard left under an empty third column, which
+   reads as a card that failed to load. Wrapping flex rows centre instead. */
 .auth-quickroles-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 9px;
 }
 
@@ -837,6 +841,9 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  /* One third of the row, less its two 9px gaps — the column width the grid
+     used to give these cards. */
+  flex: 0 0 calc((100% - 18px) / 3);
   /* Three across means the longest label ("Finance Administrator") wraps to two
      lines; the min-height keeps every row the same height regardless. */
   min-height: 52px;
@@ -857,7 +864,7 @@
 }
 
 /* The icon chip is the piece doing the colour work — a filled rounded square
-   rather than a bare glyph, so the grid scans as nine cards and not nine
+   rather than a bare glyph, so the grid scans as eight cards and not eight
    words. */
 .auth-quickrole-icon {
   display: grid;
@@ -887,7 +894,7 @@
 .auth-quickrole-btn[data-tier='money']  { --role-accent: var(--color-success); }
 .auth-quickrole-btn[data-tier='admin']  { --role-accent: var(--accent-maroon); }
 /* --accent-maroon is a deep #7b2d20 tuned for light surfaces and has no
-   dark-mode value of its own; left alone the three admin icons sink into the
+   dark-mode value of its own; left alone the two admin icons sink into the
    dark card. Lift it here rather than globally — the Market Intelligence
    dashboard is the token's other consumer and isn't ours to retune. */
 :root[data-theme='dark'] .auth-quickrole-btn[data-tier='admin'] {
@@ -921,7 +928,7 @@
   opacity: 0.45;
   cursor: not-allowed;
 }
-/* Pressing one card disables all nine. The one being signed into keeps full
+/* Pressing one card disables all eight. The one being signed into keeps full
    contrast and wears its accent, so the spinner reads as progress rather than
    as another greyed-out control. */
 .auth-quickrole-btn.is-signing-in:disabled {

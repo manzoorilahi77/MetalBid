@@ -1,6 +1,6 @@
 /* Seller workspace — overview of my catalogues, pipeline and live action. */
 import { Link } from 'react-router-dom'
-import { ArrowUpRight, Gavel, TrendingUp } from 'lucide-react'
+import { ArrowUpRight, BadgeCheck, FileCheck2, Gavel, ShieldAlert, TrendingUp } from 'lucide-react'
 import { Page } from '../../layout/Chrome'
 import { Chip, Countdown, EmptyState, PageHeader, Stat, StatusChip } from '../../components/ui'
 import { catalogueUiStatus, useStore } from '../../store/store'
@@ -38,6 +38,35 @@ export default function SellerWorkspace() {
 
   const recent = [...myBids].sort((a, b) => Date.parse(b.at) - Date.parse(a.at)).slice(0, 8)
 
+  /* Seller verification is a one-time step, so it isn't a permanent menu tab —
+     this card is the only door into the wizard, and it states where the
+     account actually stands rather than just linking off. */
+  const verification = me?.sellerVerified
+    ? {
+        icon: <BadgeCheck size={20} />,
+        accent: 'border-l-success', badge: 'bg-success-soft text-success',
+        title: 'Seller verification complete',
+        body: `${me.firm ?? 'Your firm'} is KYC-verified. Your lots can go in front of buyers.`,
+        cta: 'View my verification',
+      }
+    : me?.kycStatus === 'pending'
+      ? {
+          icon: <FileCheck2 size={20} />,
+          accent: 'border-l-steel', badge: 'bg-steel-soft text-steel-strong',
+          title: 'Seller verification under review',
+          body: 'Operations is checking your GSTIN, PAN and bank details. You’ll hear back within 1 business day.',
+          cta: 'Track my verification',
+        }
+      : {
+          icon: <ShieldAlert size={20} />,
+          accent: 'border-l-ember', badge: 'bg-ember-soft text-ember-strong',
+          title: 'Complete your seller verification',
+          body: me?.kycStatus === 'rejected'
+            ? 'Your last submission needs corrections. Re-submit your firm details to start selling.'
+            : 'We verify every seller before their material is auctioned. Submit your firm details once — it takes about 5 minutes.',
+          cta: 'Start verification',
+        }
+
   return (
     <Page>
       <PageHeader
@@ -45,6 +74,23 @@ export default function SellerWorkspace() {
         sub={`${me?.firm ?? 'Your firm'} · lots are inspected & catalogued by the ferroBid ops team before auction.`}
         actions={<Link to="/seller/create-lot"><button className="h-10 px-4 rounded-xl bg-ember text-white text-sm font-semibold hover:bg-ember-strong">+ Create lot</button></Link>}
       />
+
+      {/* seller verification — reached from here, not from the header */}
+      <Link
+        to="/seller/verification"
+        className={`card card-hover p-5 mb-6 flex items-start gap-4 border-l-4 ${verification.accent}`}
+      >
+        <span className={`size-10 rounded-xl flex items-center justify-center shrink-0 ${verification.badge}`}>
+          {verification.icon}
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="font-display font-bold leading-snug">{verification.title}</div>
+          <p className="text-sm text-ink-muted mt-1">{verification.body}</p>
+        </div>
+        <span className="text-sm font-semibold text-steel hover:underline inline-flex items-center gap-1 shrink-0 self-center">
+          {verification.cta} <ArrowUpRight size={14} />
+        </span>
+      </Link>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <Stat label="Live lots" value={num(liveLots.length)} sub={`across ${liveCats.length} live catalogue${liveCats.length === 1 ? '' : 's'}`} tone="ember" />

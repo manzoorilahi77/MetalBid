@@ -1,6 +1,6 @@
 import React from 'react';
-import { 
-  ArrowLeft, ShieldAlert, TrendingUp, Briefcase, Settings, 
+import {
+  ArrowLeft, TrendingUp, Briefcase, Settings,
   MapPin, DollarSign, Headphones, Scale, Eye, 
   Package, ShoppingBag, Truck, SearchCheck
 } from 'lucide-react';
@@ -8,14 +8,6 @@ import { Link } from 'react-router-dom';
 
 const Roles = () => {
   const roles = [
-    {
-      title: "Super Admin",
-      icon: <ShieldAlert size={24} />,
-      color: "#ef4444",
-      bg: "#fef2f2",
-      purpose: "Complete ownership of the platform with unrestricted access to every module and operation.",
-      responsibilities: ["Manage every module", "System configurations", "Audit logs", "Security", "Override approvals"]
-    },
     {
       title: "CEO",
       icon: <TrendingUp size={24} />,

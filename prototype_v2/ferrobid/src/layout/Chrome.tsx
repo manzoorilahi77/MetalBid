@@ -8,7 +8,9 @@ import {
   Bell, Check, ChevronDown, Flame, Gavel, Globe, LogOut, Mail, Menu, Moon, Search, Sun, User as UserIcon,
   Wallet as WalletIcon, X, LifeBuoy, FileText, SlidersHorizontal,
 } from 'lucide-react'
-import { ROLE_HOME, ROLE_LABEL, topNavFrom, useStore } from '../store/store'
+import { ROLE_HOME, ROLE_LABEL, pageMatches, topNavFrom, useStore } from '../store/store'
+import type { TopNavLink } from '../store/store'
+import type { Role } from '../types'
 import { inrCompact, relTime } from '../lib/format'
 import { useClientIp } from '../lib/useClientIp'
 import { AppComingSoonModal, Avatar, Chip, cx } from '../components/ui'
@@ -202,6 +204,31 @@ function SessionIp({ className }: { className?: string }) {
   )
 }
 
+/** One link on the sticky top bar.
+ *
+ *  A standalone page keeps NavLink's own matching, including the `end` rules a
+ *  few routes have always needed. A category is a link to its first page that
+ *  stays lit for every page inside it — click it and the strip below fills with
+ *  that category's screens, which is the whole two-level menu in one gesture. */
+function TopNavLinkView({ link, role, pathname }: { link: TopNavLink; role: Role; pathname: string }) {
+  const cls = (active: boolean) =>
+    cx('h-9 px-3 rounded-lg text-sm font-semibold inline-flex items-center whitespace-nowrap transition-colors',
+      active ? 'text-ember-strong bg-ember-soft/70' : 'text-ink-muted hover:text-ink hover:bg-surface-2')
+  if (link.standalone) {
+    return (
+      <NavLink to={link.to} end={link.to === ROLE_HOME[role] || link.to === '/browse' || link.to === '/buyermarketplace'}
+        className={({ isActive }) => cls(isActive)}>
+        {link.label}
+      </NavLink>
+    )
+  }
+  return (
+    <NavLink to={link.to} className={() => cls(link.pages.some((p) => pageMatches(p, pathname)))}>
+      {link.label}
+    </NavLink>
+  )
+}
+
 function TopNav() {
   const role = useStore((s) => s.role)
   const pages = useStore((s) => s.pageRegistry)
@@ -244,11 +271,7 @@ function TopNav() {
         <Logo />
         <nav className="hidden lg:flex items-center gap-0.5 ml-4">
           {links.map((l) => (
-            <NavLink key={l.to} to={l.to} end={l.to === ROLE_HOME[role] || l.to === '/browse' || l.to === '/buyermarketplace'}
-              className={({ isActive }) => cx('h-9 px-3 rounded-lg text-sm font-semibold inline-flex items-center whitespace-nowrap transition-colors',
-                isActive ? 'text-ember-strong bg-ember-soft/70' : 'text-ink-muted hover:text-ink hover:bg-surface-2')}>
-              {l.label}
-            </NavLink>
+            <TopNavLinkView key={l.key} link={l} role={role} pathname={location.pathname} />
           ))}
         </nav>
         {isGuest2 ? (
@@ -294,13 +317,26 @@ function TopNav() {
                 className="h-10 w-full pl-9 pr-3 rounded-xl bg-surface-2 border border-line text-sm" />
             </form>
           )}
-          {links.map((l) => (
-            <NavLink key={l.to} to={l.to}
+          {/* Mobile has no room for two rows of nav, so a category lists the
+              pages inside it rather than standing in for them. */}
+          {links.map((l) => (l.standalone ? (
+            <NavLink key={l.key} to={l.to}
               className={({ isActive }) => cx('block px-3 py-2.5 rounded-lg text-sm font-semibold',
                 isActive ? 'text-ember-strong bg-ember-soft/70' : 'text-ink-muted')}>
               {l.label}
             </NavLink>
-          ))}
+          ) : (
+            <div key={l.key} className="pt-2">
+              <div className="px-3 pb-1 text-[11px] font-bold uppercase tracking-wider text-ink-faint">{l.label}</div>
+              {l.pages.map((p) => (
+                <NavLink key={p.to} to={p.to} end={p.end}
+                  className={() => cx('block px-3 py-2 rounded-lg text-sm font-semibold',
+                    pageMatches(p, location.pathname) ? 'text-ember-strong bg-ember-soft/70' : 'text-ink-muted')}>
+                  {p.subLabel ?? p.label}
+                </NavLink>
+              ))}
+            </div>
+          )))}
         </nav>
       )}
     </header>
@@ -460,9 +496,17 @@ function Footer() {
 }
 
 /* ------------------------- contextual sub-nav ------------------------------ */
-/** Secondary nav under the header for multi-section areas — never a sidebar. */
+/** Secondary nav under the header for multi-section areas — never a sidebar.
+ *
+ *  For the three operations roles the top bar names the category and this strip
+ *  holds the pages inside it, so a Sub Admin's eighteen screens arrive six at a
+ *  time in the order the work happens. Every other role passes its whole menu
+ *  here and gets the single flat strip it always had. */
 export function SubNav({ items }: { items: { to: string; label: string; end?: boolean; locked?: boolean; activeMatch?: string[] }[] }) {
   const { pathname } = useLocation()
+  /* A shared page (Browse, a catalogue) sits in no category, so there is no
+     strip to show — the categories on the top bar are the way back. */
+  if (items.length === 0) return null
   return (
     <div className="border-b border-line bg-surface/60 sticky top-16 z-30 backdrop-blur">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center gap-1 overflow-x-auto overflow-y-hidden">

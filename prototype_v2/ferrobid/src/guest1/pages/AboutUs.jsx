@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
-  Building2, Users, Network, ShieldCheck,
+  Users, Network, ShieldCheck,
   Banknote, ArrowRight, TrendingUp,
   MapPin, Eye, Factory,
   Check, Ban, ChevronRight,
@@ -87,36 +87,17 @@ const PIPELINE = [
    it carries information rather than decorating the panel. */
 const ACCENTS = {
   you:        { base: '#e4572e', soft: 'rgba(228, 87, 46, 0.10)',  line: 'rgba(228, 87, 46, 0.34)' },
-  ownership:  { base: '#1c1917', soft: 'rgba(28, 25, 23, 0.06)',   line: 'rgba(28, 25, 23, 0.22)' },
   governance: { base: '#2b4c7e', soft: 'rgba(43, 76, 126, 0.10)',  line: 'rgba(43, 76, 126, 0.30)' },
   operations: { base: '#b45309', soft: 'rgba(180, 83, 9, 0.10)',   line: 'rgba(180, 83, 9, 0.30)' }
 };
 
 const LEGEND = [
   { key: 'you', label: 'Customers' },
-  { key: 'ownership', label: 'Ownership' },
   { key: 'governance', label: 'Governance' },
   { key: 'operations', label: 'Operations' }
 ];
 
 const TEAM_TIERS = [
-  {
-    id: 'ownership',
-    label: 'Ownership',
-    accent: 'ownership',
-    roles: [
-      {
-        id: 'super-admin',
-        title: 'Super Admin',
-        icon: Building2,
-        purpose: 'Complete ownership of the platform with unrestricted access.',
-        stages: [1, 2, 3, 4, 5],
-        mandate: ['Manage every module', 'Assign permissions', 'System configurations', 'Financial visibility', 'Audit logs', 'Delete and restore data'],
-        authority: ['Full access to all modules', 'Approve or reject any workflow', 'Manage organization structure'],
-        limits: []
-      }
-    ]
-  },
   {
     id: 'governance',
     label: 'Governance',
@@ -272,7 +253,7 @@ const GovernanceMap = ({ activeId, onSelect }) => {
       <div className="ecosystem-container">
         <header className="sec-head gov-head">
           <p className="sec-eyebrow">Access &amp; authority</p>
-          <h2 className="sec-title">Nine roles. One chain of authority.</h2>
+          <h2 className="sec-title">Eight roles. One chain of authority.</h2>
           <p className="sec-lead">
             No single person moves a lot from a seller's yard to a settled invoice. Start with
             your own role, then see who stands behind it.

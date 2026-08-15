@@ -5,7 +5,7 @@ import {
   Eye, EyeOff, Mail, Lock, User, Phone, Building2,
   ArrowLeft, ShieldCheck, CheckCircle, AlertCircle,
   Loader2, ArrowRight, Globe, Gavel, TrendingUp,
-  Award, Users, Zap, ShoppingBag, Package, ClipboardCheck, BarChart3, Crown, IndianRupee
+  Award, Users, Zap, ShoppingBag, Package, ClipboardCheck, BarChart3, IndianRupee
 } from 'lucide-react';
 import { useStore, ROLE_HOME, ROLE_LABEL, DEMO_LOGINS, DEMO_PASSWORD } from '../../store/store';
 import { asset } from '../utils/asset';
@@ -14,14 +14,18 @@ import { asset } from '../utils/asset';
    every role's portal is reachable straight from this page without anyone
    needing to know the credentials in store.ts. */
 /* Laid out 3-per-row: the two market-side roles plus their manager, then the
-   three operating roles, then the three admin tiers.
+   three operating roles, then the two admin tiers.
 
-   `tier` is what the card is coloured by. Nine identically-styled pills made
+   `tier` is what the card is coloured by. Eight identically-styled pills made
    the grid read as one undifferentiated block; colouring by which side of the
    business a role sits on lets you find the one you want without reading all
-   nine labels. Market-side is ember (the brand), operations steel, Finance the
+   eight labels. Market-side is ember (the brand), operations steel, Finance the
    money green used everywhere else for rupee figures, and the admin tiers
-   maroon. The accents themselves are defined in auth.css under [data-tier]. */
+   maroon. The accents themselves are defined in auth.css under [data-tier].
+
+   Super Admin is deliberately not here, and not anywhere else a visitor can
+   see: it is the developers' break-glass account, reached only by typing its
+   credentials into the form above. See store.ts. */
 const QUICK_LOGIN_ROLES = [
   { role: 'buyer', icon: ShoppingBag, tier: 'market' },
   { role: 'seller', icon: Package, tier: 'market' },
@@ -30,7 +34,6 @@ const QUICK_LOGIN_ROLES = [
   { role: 'auction_manager', icon: Gavel, tier: 'ops' },
   { role: 'finance_admin', icon: IndianRupee, tier: 'money' },
   { role: 'ceo', icon: TrendingUp, tier: 'admin' },
-  { role: 'super_admin', icon: Crown, tier: 'admin' },
   { role: 'sub_admin', icon: ShieldCheck, tier: 'admin' },
 ];
 const DEMO_EMAIL_BY_ROLE = Object.fromEntries(

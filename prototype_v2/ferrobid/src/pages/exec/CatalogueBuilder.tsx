@@ -11,6 +11,11 @@
      an EMD or a unit across every selected lot at once is fast and is exactly
      the sort of edit that goes unnoticed, so the original value is kept beside
      the new one on the lot, the change is audited, and the seller is told.
+
+   Terms are edited per lot: clicking a lot opens its own increment / EMD / unit,
+   prefilled with what currently applies to it. Opening a second lot saves the
+   first — the panel is a per-lot editor, not one setting shared by the batch.
+   The bulk form is still there as the batch shortcut when no lot is open.
 --------------------------------------------------------------------------- */
 import { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
@@ -39,6 +44,20 @@ const YARD_REGION: Record<string, string> = {
   'Mancheswar Depot': 'Bhubaneswar, OD',
   'MSTC Paradip Yard': 'Paradip, OD',
   'RSTPS Ash Yard': 'Ramagundam, TS',
+}
+
+/** One lot's terms as they sit in the editor. `init` is what was loaded, so a
+ *  field the user never touched is left exactly as it was rather than being
+ *  re-derived — an EMD of 5.03% must not drift the rupee figure by a rounding
+ *  step just because its lot was opened. */
+type TermsDraft = { inc: string; emdPct: string; uom: Uom | ''; init: { inc: string; emdPct: string; uom: Uom | '' } }
+const EMPTY_DRAFT: TermsDraft = { inc: '', emdPct: '', uom: '', init: { inc: '', emdPct: '', uom: '' } }
+
+const startValue = (l: Lot) => l.startRate * l.indicativeQty
+/** EMD is entered as a percentage but stored in rupees, so read it back out. */
+const emdPctOf = (l: Lot, emd: number) => {
+  const base = startValue(l)
+  return base ? String(Math.round((emd / base) * 10000) / 100) : ''
 }
 
 const ATTACH_TILES = [
@@ -71,6 +90,9 @@ export default function CatalogueBuilder() {
   const [bulkInc, setBulkInc] = useState('')
   const [bulkEmdPct, setBulkEmdPct] = useState('')
   const [bulkUom, setBulkUom] = useState<Uom | ''>('')
+  // the lot whose terms are open in the side panel, and its unsaved draft
+  const [activeId, setActiveId] = useState<string | null>(null)
+  const [draft, setDraft] = useState<TermsDraft>(EMPTY_DRAFT)
 
   // step 2 — details
   const tomorrow2pm = useMemo(() => { const d = new Date(); d.setDate(d.getDate() + 1); d.setHours(14, 0, 0, 0); return d }, [])
@@ -102,7 +124,10 @@ export default function CatalogueBuilder() {
   // a waived lot flips to 'approved' but must stay visible here until it's
   // actually placed into a catalogue.
   const pool = lots.filter((l) => !l.catalogueId && (l.status === 'pending_inspection' || (l.inspectionWaived && l.status === 'approved')))
+  // A catalogue is sold on behalf of one seller, so picking a seller here is a
+  // narrowing of the pool, not a highlight — nobody else's material is shown.
   const filtered = pool.filter((l) =>
+    (!sellerFilter || l.sellerId === sellerFilter) &&
     (!metalFilter || `${l.metal} ${l.grade}`.toLowerCase().includes(metalFilter.toLowerCase())) &&
     (!yardFilter || l.yard.toLowerCase().includes(yardFilter.toLowerCase())),
   )
@@ -110,18 +135,106 @@ export default function CatalogueBuilder() {
   const firstLot = selected[0]
   const code = `AUC-${2430 + catalogues.length}`
   const effective = (l: Lot) => ({ ...l, ...overrides[l.id] })
+  const firmOf = (sellerId: string) => users.find((u) => u.id === sellerId)?.firm ?? 'Unknown seller'
+  /** How many of this lot's own terms this build has changed. */
+  const diffCount = (l: Lot) => {
+    const o = overrides[l.id]
+    if (!o) return 0
+    return (o.increment != null && o.increment !== l.increment ? 1 : 0)
+      + (o.preBidEmd != null && o.preBidEmd !== l.preBidEmd ? 1 : 0)
+      + (o.uom && o.uom !== l.uom ? 1 : 0)
+  }
+
+  const activeLot = activeId ? lots.find((l) => l.id === activeId) ?? null : null
+  const activePos = activeId ? selectedIds.indexOf(activeId) : -1
+  // A catalogue carries a single sellerId — the seller who is told about every
+  // override and notified through the sale — so a mixed selection has no owner.
+  const sellerIdsSelected = [...new Set(selected.map((l) => l.sellerId))]
+  const mixedSellers = sellerIdsSelected.length > 1
 
   const step1Done = selectedIds.length > 0
   const step2Done = step1Done && title.trim().length > 0 && !!startLocal && !!endLocal
   const canGo = (s: Step) => s === 's1' || (s === 's2' ? step1Done : step2Done)
   const gotoStep = (s: Step) => {
+    // leaving step 1 banks whatever is open, so the annexure and the preview
+    // are never built from a half-typed panel
+    if (activeId) commit(activeId, draft)
     if (canGo(s)) setStep(s)
     else pushToast({ kind: 'warning', title: 'Complete the current step first', body: s === 's2' ? 'Select at least one lot to continue.' : 'A title and schedule are required before moving on.' })
   }
 
   /* -------------------------------- actions -------------------------------- */
-  const toggleLot = (id: string) =>
+  const toggleLot = (id: string) => {
+    // dropping the lot whose terms are open saves the edit and closes the panel
+    if (selectedIds.includes(id) && id === activeId) closeLot()
     setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]))
+  }
+
+  /* --------------------------- per-lot terms editor ------------------------ */
+  /** Write a draft onto the lot it belongs to. An emptied field means "put the
+   *  seller's own value back", which is why it deletes the override rather than
+   *  storing a zero. */
+  const commit = (lotId: string, d: TermsDraft) => {
+    const l = lots.find((x) => x.id === lotId)
+    if (!l) return
+    setOverrides((prev) => {
+      const o: Partial<Lot> = { ...prev[lotId] }
+      // an emptied field is a revert; a field that was already blank (a lot with
+      // no start value can't show a percentage) is simply left alone
+      if (!d.inc.trim()) { if (d.init.inc) delete o.increment }
+      else if (d.inc !== d.init.inc && Number(d.inc) > 0) o.increment = Number(d.inc)
+      if (!d.emdPct.trim()) { if (d.init.emdPct) delete o.preBidEmd }
+      else if (d.emdPct !== d.init.emdPct && Number(d.emdPct) > 0) o.preBidEmd = Math.round((Number(d.emdPct) / 100) * startValue(l))
+      if (d.uom && d.uom !== d.init.uom) o.uom = d.uom
+      const next = { ...prev }
+      if (Object.keys(o).length) next[lotId] = o
+      else delete next[lotId]
+      return next
+    })
+  }
+
+  /** Open a lot's terms. Whatever was open is saved first — the panel belongs
+   *  to one lot at a time, and switching lots must not throw the edit away. */
+  const openLot = (id: string) => {
+    if (activeId === id) return
+    if (activeId) commit(activeId, draft)
+    const l = lots.find((x) => x.id === id)
+    if (!l) return
+    if (!selectedIds.includes(id)) setSelectedIds((prev) => [...prev, id])
+    const e = { ...l, ...overrides[id] }
+    const init = { inc: String(e.increment), emdPct: emdPctOf(l, e.preBidEmd), uom: e.uom as Uom | '' }
+    setDraft({ ...init, init })
+    setActiveId(id)
+  }
+
+  function closeLot() {
+    if (activeId) commit(activeId, draft)
+    setActiveId(null)
+    setDraft(EMPTY_DRAFT)
+  }
+
+  const saveActive = () => {
+    if (!activeLot) return
+    commit(activeLot.id, draft)
+    setDraft((d) => ({ ...d, init: { inc: d.inc, emdPct: d.emdPct, uom: d.uom } }))
+    pushToast({
+      kind: 'info',
+      title: `Terms saved for ${activeLot.lotNo}`,
+      body: 'They apply to this lot only. The seller keeps their submitted figures and is told what changed.',
+    })
+  }
+
+  /** Drop every change on the open lot and show the seller's own terms again. */
+  const resetActive = () => {
+    if (!activeLot) return
+    setOverrides((prev) => {
+      const next = { ...prev }
+      delete next[activeLot.id]
+      return next
+    })
+    const init = { inc: String(activeLot.increment), emdPct: emdPctOf(activeLot, activeLot.preBidEmd), uom: activeLot.uom as Uom | '' }
+    setDraft({ ...init, init })
+  }
 
   const move = (idx: number, dir: -1 | 1) =>
     setSelectedIds((prev) => {
@@ -173,12 +286,22 @@ export default function CatalogueBuilder() {
 
   const assign = () => {
     if (!firstLot || !fieldExecId) return
+    if (mixedSellers) {
+      pushToast({
+        kind: 'warning',
+        title: 'One catalogue, one seller',
+        body: `These lots belong to ${sellerIdsSelected.length} different sellers. Go back to step 1 and keep to one.`,
+      })
+      return
+    }
     const yard = yardName || firstLot.yard
     const cat: Catalogue = {
       id: uid('cat'),
       code,
       title: title.trim(),
-      sellerId: sellerFilter || 'u-seller-1',
+      // the lots carry the seller, so the catalogue takes it from them rather
+      // than from whatever the filter happens to be left on
+      sellerId: firstLot.sellerId,
       type: auctionType,
       status: 'draft',
       assignedFieldExecId: fieldExecId,
@@ -258,30 +381,57 @@ export default function CatalogueBuilder() {
               </Field>
             </div>
 
+            {mixedSellers && (
+              <div className="card border-l-4 border-l-warning px-4 py-3 flex flex-wrap items-center gap-2">
+                <AlertTriangle size={15} className="text-warning shrink-0" />
+                <span className="text-sm font-semibold">This selection spans {sellerIdsSelected.length} sellers</span>
+                <span className="text-[12px] text-ink-muted">
+                  A catalogue is sold for one seller — {sellerIdsSelected.map(firmOf).join(', ')}. Pick a seller above and keep to their lots.
+                </span>
+              </div>
+            )}
+
             {filtered.length === 0 ? (
-              <EmptyState title="No submitted lots match" body="Wait for sellers to submit lots for inspection, or loosen the filters above." />
+              <EmptyState
+                title="No submitted lots match"
+                body={sellerFilter
+                  ? `${firmOf(sellerFilter)} has no lots waiting to be catalogued. Choose another seller, or loosen the metal and yard filters.`
+                  : 'Wait for sellers to submit lots for inspection, or loosen the filters above.'}
+              />
             ) : (
               <div className="card divide-y divide-line overflow-hidden">
                 {filtered.map((l) => {
                   const on = selectedIds.includes(l.id)
+                  const open = activeId === l.id
+                  const e = effective(l)
+                  const changed = diffCount(l)
                   return (
-                    <label key={l.id} className={cx('flex items-center gap-3 p-3.5 cursor-pointer transition-colors', on ? 'bg-ember-soft/40' : 'hover:bg-surface-2')}>
-                      <input type="checkbox" checked={on} onChange={() => toggleLot(l.id)} className="size-4 accent-[var(--color-ember,#c2410c)]" />
-                      <PhotoThumb hue={l.photos[0]?.hue ?? 24} category={l.category} className="w-14 h-11" />
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm font-semibold truncate">{l.grade} · {l.metal}</div>
-                        <div className="text-xs text-ink-muted truncate">
-                          <span className="num">{num(l.indicativeQty)} {l.uom}</span> · {l.yard} · start <span className="num">{inr(l.startRate)}/{l.uom}</span>
+                    <div key={l.id} className={cx('flex items-center gap-3 p-3.5 transition-colors', open ? 'bg-ember-soft/70' : on ? 'bg-ember-soft/40' : 'hover:bg-surface-2')}>
+                      <input type="checkbox" checked={on} onChange={() => toggleLot(l.id)} aria-label={`Select ${l.lotNo}`}
+                        className="size-4 shrink-0 cursor-pointer accent-[var(--color-ember,#c2410c)]" />
+                      {/* the row body opens this lot's own terms — selecting it
+                          on the way, because terms only travel with a lot that
+                          is actually in the catalogue */}
+                      <button type="button" onClick={() => openLot(l.id)} aria-pressed={open}
+                        className="flex-1 min-w-0 flex items-center gap-3 text-left cursor-pointer">
+                        <PhotoThumb hue={l.photos[0]?.hue ?? 24} category={l.category} className="w-14 h-11" />
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-semibold truncate">{l.grade} · {l.metal}</div>
+                          <div className="text-xs text-ink-muted truncate">
+                            <span className="num">{num(l.indicativeQty)} {e.uom}</span> · {l.yard} · start <span className="num">{inr(l.startRate)}/{e.uom}</span>
+                          </div>
+                          <div className="text-xs text-ink-faint truncate">{firmOf(l.sellerId)}</div>
                         </div>
-                      </div>
-                      {/* Bypassing an inspection is a decision, not an assembly
-                          step, and it needs a typed reason — so it is made on
-                          Lot approval and only shown here as a state. */}
-                      {l.inspectionWaived
-                        ? <Chip tone="warning">Bypassed — no yard visit</Chip>
-                        : l.knownSeller && <Chip tone="success">Known seller</Chip>}
-                      <span className="num text-xs text-ink-faint shrink-0">{l.lotNo}</span>
-                    </label>
+                        {changed > 0 && <Chip tone="warning">Terms changed · <span className="num">{changed}</span></Chip>}
+                        {/* Bypassing an inspection is a decision, not an assembly
+                            step, and it needs a typed reason — so it is made on
+                            Lot approval and only shown here as a state. */}
+                        {l.inspectionWaived
+                          ? <Chip tone="warning">Bypassed — no yard visit</Chip>
+                          : l.knownSeller && <Chip tone="success">Known seller</Chip>}
+                        <span className="num text-xs text-ink-faint shrink-0">{l.lotNo}</span>
+                      </button>
+                    </div>
                   )
                 })}
               </div>
@@ -294,14 +444,18 @@ export default function CatalogueBuilder() {
               <div className="text-xs font-semibold uppercase tracking-wider text-ink-faint mb-3">
                 Selected lots <span className="num">({selectedIds.length})</span>
               </div>
-              {selected.length === 0 && <div className="text-sm text-ink-faint">Tick lots on the left to build the running order.</div>}
+              {selected.length === 0 && <div className="text-sm text-ink-faint">Tick lots on the left to build the running order. Click a lot to set its own increment and EMD.</div>}
               <div className="space-y-2">
                 {selected.map((l, i) => (
-                  <div key={l.id} className="flex items-center gap-2 rounded-xl border border-line bg-surface-2 p-2">
+                  <div key={l.id} className={cx('flex items-center gap-2 rounded-xl border p-2', activeId === l.id ? 'border-ember bg-ember-soft/60' : 'border-line bg-surface-2')}>
                     <span className="num text-xs font-bold text-ember-strong bg-ember-soft rounded-md px-1.5 py-0.5 shrink-0">
                       LOT-{String(i + 1).padStart(2, '0')}
                     </span>
-                    <div className="flex-1 min-w-0 text-xs font-semibold truncate">{l.grade}</div>
+                    <button type="button" onClick={() => openLot(l.id)}
+                      className="flex-1 min-w-0 flex items-center gap-1.5 text-left text-xs font-semibold cursor-pointer">
+                      <span className="truncate">{l.grade}</span>
+                      {diffCount(l) > 0 && <span className="size-1.5 rounded-full bg-warning shrink-0" title="Terms changed on this lot" />}
+                    </button>
                     <button onClick={() => move(i, -1)} disabled={i === 0} aria-label="Move up"
                       className="p-1 rounded-md text-ink-muted hover:bg-surface disabled:opacity-30"><ArrowUp size={13} /></button>
                     <button onClick={() => move(i, 1)} disabled={i === selected.length - 1} aria-label="Move down"
@@ -313,23 +467,77 @@ export default function CatalogueBuilder() {
               </div>
             </div>
 
-            <div className="card p-4 space-y-3">
-              <div className="text-xs font-semibold uppercase tracking-wider text-ink-faint">Bulk-set for selected</div>
-              <Field label="Increment (₹)"><Input type="number" placeholder="e.g. 200" value={bulkInc} onChange={(e) => setBulkInc(e.target.value)} /></Field>
-              <Field label="EMD (% of start value)" hint="Computed per lot on start rate × quantity">
-                <Input type="number" placeholder="e.g. 2" value={bulkEmdPct} onChange={(e) => setBulkEmdPct(e.target.value)} />
-              </Field>
-              <Field label="Unit of measure">
-                <Select value={bulkUom} onChange={(e) => setBulkUom(e.target.value as Uom | '')}>
-                  <option value="">Keep as-is</option>
-                  <option value="MT">MT</option><option value="KG">KG</option><option value="PCS">PCS</option><option value="LOT">LOT</option>
-                </Select>
-              </Field>
-              <div className="flex items-center justify-between">
-                <Chip tone="neutral">Sale basis: as-is-where-is</Chip>
-                <Button size="sm" variant="secondary" onClick={applyBulk} disabled={selected.length === 0}>Apply</Button>
+            {/* One panel, two modes: the terms of the lot you have open, or —
+                when nothing is open — the batch shortcut across the selection. */}
+            {activeLot ? (
+              <div className="card p-4 space-y-3 ring-2 ring-ember/40">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <div className="text-xs font-semibold uppercase tracking-wider text-ink-faint">Terms for this lot</div>
+                    <div className="text-sm font-semibold truncate mt-1">
+                      {activePos >= 0 && <span className="num text-ember-strong mr-1.5">LOT-{String(activePos + 1).padStart(2, '0')}</span>}
+                      {activeLot.grade}
+                    </div>
+                    <div className="text-xs text-ink-faint truncate">
+                      <span className="num">{activeLot.lotNo}</span> · {firmOf(activeLot.sellerId)} · <span className="num">{num(activeLot.indicativeQty)} {draft.uom || activeLot.uom}</span> at <span className="num">{inr(activeLot.startRate)}</span>
+                    </div>
+                  </div>
+                  <button onClick={closeLot} aria-label="Close lot terms"
+                    className="p-1 rounded-md text-ink-faint hover:text-ink hover:bg-surface-2 shrink-0"><X size={14} /></button>
+                </div>
+
+                <Field label="Increment (₹)" hint={<>Seller submitted <span className="num">{inr(activeLot.increment)}</span></>}>
+                  <Input type="number" placeholder={String(activeLot.increment)} value={draft.inc}
+                    onChange={(e) => setDraft((d) => ({ ...d, inc: e.target.value }))} />
+                </Field>
+                <Field
+                  label="EMD (% of start value)"
+                  hint={Number(draft.emdPct) > 0
+                    ? <>Works out to <span className="num">{inr(Math.round((Number(draft.emdPct) / 100) * startValue(activeLot)))}</span> on this lot · seller submitted <span className="num">{inr(activeLot.preBidEmd)}</span></>
+                    : <>Seller submitted <span className="num">{inr(activeLot.preBidEmd)}</span> — clear the field to keep it</>}
+                >
+                  <Input type="number" step="0.01" placeholder={emdPctOf(activeLot, activeLot.preBidEmd)} value={draft.emdPct}
+                    onChange={(e) => setDraft((d) => ({ ...d, emdPct: e.target.value }))} />
+                </Field>
+                <Field label="Unit of measure">
+                  <Select value={draft.uom} onChange={(e) => setDraft((d) => ({ ...d, uom: e.target.value as Uom | '' }))}>
+                    <option value="MT">MT</option><option value="KG">KG</option><option value="PCS">PCS</option><option value="LOT">LOT</option>
+                  </Select>
+                </Field>
+
+                <div className="flex items-center justify-between gap-2">
+                  {diffCount(activeLot) > 0
+                    ? <button onClick={resetActive} className="text-xs font-semibold text-ink-muted hover:text-danger">Reset to seller&apos;s values</button>
+                    : <Chip tone="neutral">Sale basis: as-is-where-is</Chip>}
+                  <Button size="sm" variant="secondary" onClick={saveActive}>Save</Button>
+                </div>
+                <p className="text-[11px] text-ink-faint border-t border-line pt-2.5">
+                  These figures apply to this lot alone. Opening another lot saves this one first.
+                  {selected.length > 1 && <> Need the same change on every lot? <button onClick={closeLot} className="font-semibold text-ember hover:underline">Bulk-set instead</button>.</>}
+                </p>
               </div>
-            </div>
+            ) : (
+              <div className="card p-4 space-y-3">
+                <div className="text-xs font-semibold uppercase tracking-wider text-ink-faint">Bulk-set for selected</div>
+                <Field label="Increment (₹)"><Input type="number" placeholder="e.g. 200" value={bulkInc} onChange={(e) => setBulkInc(e.target.value)} /></Field>
+                <Field label="EMD (% of start value)" hint="Computed per lot on start rate × quantity">
+                  <Input type="number" placeholder="e.g. 2" value={bulkEmdPct} onChange={(e) => setBulkEmdPct(e.target.value)} />
+                </Field>
+                <Field label="Unit of measure">
+                  <Select value={bulkUom} onChange={(e) => setBulkUom(e.target.value as Uom | '')}>
+                    <option value="">Keep as-is</option>
+                    <option value="MT">MT</option><option value="KG">KG</option><option value="PCS">PCS</option><option value="LOT">LOT</option>
+                  </Select>
+                </Field>
+                <div className="flex items-center justify-between">
+                  <Chip tone="neutral">Sale basis: as-is-where-is</Chip>
+                  <Button size="sm" variant="secondary" onClick={applyBulk} disabled={selected.length === 0}>Apply</Button>
+                </div>
+                <p className="text-[11px] text-ink-faint border-t border-line pt-2.5">
+                  Applies to all <span className="num">{selected.length}</span> selected lots. To set one lot on its own, click it in the list.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -488,6 +696,7 @@ export default function CatalogueBuilder() {
               <h2 className="font-display text-2xl font-bold mt-2">{title.trim() || 'Untitled catalogue'}</h2>
               <div className="text-sm text-ink-muted mt-1">
                 {yardName || firstLot?.yard} · {region || (firstLot ? YARD_REGION[firstLot.yard] : '') || '—'}
+                {firstLot && <> · sold for {firmOf(firstLot.sellerId)}</>}
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
                 <div className="card bg-surface-2 p-3">
@@ -561,6 +770,17 @@ export default function CatalogueBuilder() {
             </div>
           )}
 
+          {mixedSellers && (
+            <div className="card border-l-4 border-l-danger px-4 py-3 flex flex-wrap items-center gap-2">
+              <AlertTriangle size={15} className="text-danger shrink-0" />
+              <span className="text-sm font-semibold">This catalogue has no single seller</span>
+              <span className="text-[12px] text-ink-muted">
+                {sellerIdsSelected.map(firmOf).join(', ')} are all in it. Every override is disclosed to one seller and the sale settles to one account,
+                so drop the others on step 1 before assigning.
+              </span>
+            </div>
+          )}
+
           <div className="card p-4 flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-wrap items-end gap-3">
               <Field label="Assign to field executive" className="w-56">
@@ -575,14 +795,14 @@ export default function CatalogueBuilder() {
                 buyers when somebody publishes it on <Link to="/auction/schedule" className="text-ember font-semibold hover:underline">Auction schedule</Link>.
               </div>
             </div>
-            <Button onClick={assign} disabled={!step2Done || !fieldExecId}>Save & assign for inspection</Button>
+            <Button onClick={assign} disabled={!step2Done || !fieldExecId || mixedSellers}>Save &amp; assign for inspection</Button>
           </div>
         </div>
       )}
 
       {/* wizard nav */}
       <div className="flex items-center justify-between mt-6">
-        <Button variant="ghost" disabled={step === 's1'} onClick={() => setStep(STEPS[STEPS.indexOf(step) - 1])}>← Back</Button>
+        <Button variant="ghost" disabled={step === 's1'} onClick={() => gotoStep(STEPS[STEPS.indexOf(step) - 1])}>← Back</Button>
         {step !== 's4' && (
           <Button variant="secondary" onClick={() => gotoStep(STEPS[STEPS.indexOf(step) + 1])}>Next →</Button>
         )}

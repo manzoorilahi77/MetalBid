@@ -217,7 +217,7 @@
 
 /* Fixed height: the console must not resize as you click through roles, or the
    page jumps under the reader's cursor. The rail is a constant, so this is set
-   to clear the tallest panel (Super Admin / CEO, six mandate rows) and every
+   to clear the tallest panel (CEO, six mandate rows) and every
    shorter role simply leaves air above the pinned footnote. */
 .gov-body {
   display: grid;
@@ -942,8 +942,8 @@
 
 @media (max-width: 900px) {
   .gov-body { grid-template-columns: 1fr; }
-  /* Wrap rather than scroll horizontally: a side-scrolling rail hides five of
-     the nine roles behind a swipe with no affordance. All of them stay on
+  /* Wrap rather than scroll horizontally: a side-scrolling rail hides half of
+     the eight roles behind a swipe with no affordance. All of them stay on
      screen, still grouped by tier. */
   .gov-rail {
     border-right: none;

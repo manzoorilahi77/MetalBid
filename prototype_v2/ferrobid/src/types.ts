@@ -90,6 +90,10 @@ export interface Lot {
   id: string
   lotNo: string // "LOT-01"
   catalogueId: string
+  /** Who submitted the material. Set on the lot itself rather than read off the
+   *  catalogue, because a lot exists — and has to be findable by seller in the
+   *  catalogue builder — long before any catalogue holds it. */
+  sellerId: string
   metal: string // "MS", "SS 304", "Copper" …
   category: MetalCategory
   grade: string
@@ -836,6 +840,11 @@ export interface PageDef {
   retained?: boolean
   /** Set when this entry was attached to a role it did not ship with. */
   attachedFrom?: string
+  /** Splits a long menu into two levels — the category shows on the top bar and
+   *  its pages fill the strip below. Roles whose menu is small enough to read at
+   *  a glance leave it unset and render one flat strip; the operations roles
+   *  group theirs, so eighteen tabs become three headings of six. */
+  category?: string
 }
 
 export type StructuralChangeKind =

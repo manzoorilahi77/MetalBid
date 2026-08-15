@@ -98,6 +98,7 @@ import FinanceReconciliation from './pages/finance/Reconciliation'
 import FinanceReports from './pages/finance/Reports'
 
 /* CEO / MD */
+import CeoDashboard from './pages/ceo/Dashboard'
 import CeoProfitLoss from './pages/ceo/ProfitLoss'
 import CeoGrowth from './pages/ceo/Growth'
 import CeoAuctionPerformance from './pages/ceo/AuctionPerformance'
@@ -142,7 +143,10 @@ import Audit from './pages/admin/Audit'
  *  reordered or hidden in the Super Admin's Page manager moves both at once. */
 function useSubNavItems(role: Role) {
   const pages = useStore((s) => s.pageRegistry)
-  return subNavFrom(pages, role)
+  /* For a role with categories this strip is scoped to the one we are inside,
+     so the top bar picks the category and this picks the page within it. */
+  const { pathname } = useLocation()
+  return subNavFrom(pages, role, pathname)
 }
 
 /** Browse and Noticeboard are shared pages that live outside every role's own
@@ -398,9 +402,11 @@ export default function App() {
           </Route>
 
           {/* CEO — are we making money · are we growing · is anything at risk ·
-              what needs me. Only the approvals screen has buttons. */}
+              what needs me. The dashboard is the summary layer over the other
+              seven screens; only the approvals screen has buttons. */}
           <Route element={<CeoLayout />}>
-            <Route path="/ceo" element={<CeoProfitLoss />} />
+            <Route path="/ceo" element={<CeoDashboard />} />
+            <Route path="/ceo/pnl" element={<CeoProfitLoss />} />
             <Route path="/ceo/growth" element={<CeoGrowth />} />
             <Route path="/ceo/auctions" element={<CeoAuctionPerformance />} />
             <Route path="/ceo/risk" element={<CeoRisk />} />

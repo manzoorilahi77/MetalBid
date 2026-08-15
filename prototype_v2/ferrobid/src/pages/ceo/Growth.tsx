@@ -156,7 +156,7 @@ export default function CeoGrowth() {
             <NotMyDecision>
               Sales value is not turnover. Buyers settle with sellers directly for the material; the platform&apos;s own
               income is the commission and premium on the{' '}
-              <Link to="/ceo" className="text-ember font-semibold hover:underline">profit &amp; loss</Link>. Counting the
+              <Link to="/ceo/pnl" className="text-ember font-semibold hover:underline">profit &amp; loss</Link>. Counting the
               full {inrCompact(c.salesValue)} as ours would overstate the business by roughly two orders of magnitude,
               which is exactly why the two live on separate screens.
             </NotMyDecision>

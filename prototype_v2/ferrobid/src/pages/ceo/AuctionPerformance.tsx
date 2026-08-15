@@ -13,109 +13,21 @@
    the Auction Manager. It is here so the pattern across sales is visible in one
    place, which is the only view nobody else has.
 --------------------------------------------------------------------------- */
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Gavel, Timer } from 'lucide-react'
 import { Page } from '../../layout/Chrome'
 import { Chip, EmptyState, PageHeader, Segmented, StatusChip } from '../../components/ui'
-import { useStore } from '../../store/store'
 import { inr, inrCompact, num, relTime } from '../../lib/format'
-import { PERIOD_LABEL, clearedValue, delta, periodBounds, reserveValue, within, type PeriodKey } from '../../lib/money'
-import { Headline, NotMyDecision, PlainStat, Question, Ranked, useGrowth } from './shared'
-
-interface AuctionResultRow {
-  id: string
-  code: string
-  title: string
-  region: string
-  closedAt: string
-  lotsOffered: number
-  lotsSold: number
-  realisation: number
-  reserve: number
-  uplift: number | null
-  bidders: number
-  bids: number
-  extensions: number
-  confirmed: boolean
-}
+import { PERIOD_LABEL, delta, type PeriodKey } from '../../lib/money'
+import { Headline, NotMyDecision, PlainStat, Question, Ranked, useAuctionPerformance, useGrowth } from './shared'
 
 export default function CeoAuctionPerformance() {
   const [period, setPeriod] = useState<PeriodKey>('quarter')
   const g = useGrowth(period)
-  const catalogues = useStore((s) => s.catalogues)
-  const lots = useStore((s) => s.lots)
-  const bids = useStore((s) => s.bids)
-  const bidVoidRequests = useStore((s) => s.bidVoidRequests)
-  const cancellationRequests = useStore((s) => s.cancellationRequests)
-  const resultConfirmations = useStore((s) => s.resultConfirmations)
-  const now = g.now
-
-  const { rows, live, upcoming, totals } = useMemo(() => {
-    const { from, to } = periodBounds(period, now)
-    const inWindow = (iso: string) => (period === 'all' ? true : within(iso, from, to))
-    const lotsByCat = new Map<string, typeof lots>()
-    for (const l of lots) {
-      const arr = lotsByCat.get(l.catalogueId)
-      if (arr) arr.push(l)
-      else lotsByCat.set(l.catalogueId, [l])
-    }
-
-    const rows: AuctionResultRow[] = catalogues
-      .filter((c) => c.status === 'closed' && inWindow(c.endsAt))
-      .map((c) => {
-        const catLots = lotsByCat.get(c.id) ?? []
-        const sold = catLots.filter((l) => (l.status === 'sold' || l.status === 'sta') && l.resultH1Rate != null)
-        const catBids = bids.filter((b) => b.catalogueId === c.id && b.status === 'valid')
-        const realisation = sold.reduce((s, l) => s + (clearedValue(l) ?? 0), 0)
-        const reserve = sold.reduce((s, l) => s + reserveValue(l), 0)
-        return {
-          id: c.id,
-          code: c.code,
-          title: c.title,
-          region: c.region,
-          closedAt: c.endsAt,
-          lotsOffered: catLots.length,
-          lotsSold: sold.length,
-          realisation,
-          reserve,
-          uplift: reserve > 0 ? ((realisation - reserve) / reserve) * 100 : null,
-          bidders: new Set(catBids.map((b) => b.bidderId)).size,
-          bids: catBids.length,
-          extensions: catLots.reduce((s, l) => s + l.extensions, 0),
-          confirmed: resultConfirmations.some((r) => r.catalogueId === c.id),
-        }
-      })
-      .sort((a, b) => Date.parse(b.closedAt) - Date.parse(a.closedAt))
-
-    const totalLots = rows.reduce((s, r) => s + r.lotsOffered, 0)
-    const soldLots = rows.reduce((s, r) => s + r.lotsSold, 0)
-    const totalBids = rows.reduce((s, r) => s + r.bids, 0)
-    const extensions = rows.reduce((s, r) => s + r.extensions, 0)
-    const voids = bidVoidRequests.filter((v) => v.status === 'approved' && inWindow(v.decidedAt ?? v.raisedAt)).length
-    const flags = bidVoidRequests.filter((v) => inWindow(v.raisedAt)).length
-    const cancellations = cancellationRequests.filter((r) => r.status === 'approved' && inWindow(r.decidedAt ?? r.requestedAt)).length
-
-    return {
-      rows,
-      live: catalogues.filter((c) => c.status === 'live'),
-      upcoming: catalogues.filter((c) => c.status === 'upcoming'),
-      totals: {
-        auctions: rows.length,
-        totalLots,
-        soldLots,
-        sellThrough: totalLots > 0 ? (soldLots / totalLots) * 100 : 0,
-        bidsPerLot: soldLots > 0 ? totalBids / soldLots : 0,
-        biddersPerAuction: rows.length > 0 ? rows.reduce((s, r) => s + r.bidders, 0) / rows.length : 0,
-        extensions,
-        extensionRate: soldLots > 0 ? (extensions / soldLots) * 100 : 0,
-        voids,
-        flags,
-        cancellations,
-        realisation: rows.reduce((s, r) => s + r.realisation, 0),
-      },
-    }
-  }, [period, now, catalogues, lots, bids, bidVoidRequests, cancellationRequests, resultConfirmations])
+  // The same derivation the dashboard summarises — one measurement of a sale,
+  // read by two screens.
+  const { rows, live, upcoming, totals, now } = useAuctionPerformance(period)
 
   const prevSellThrough = g.previous.lotsOffered > 0 ? (g.previous.lotsSold / g.previous.lotsOffered) * 100 : 0
 

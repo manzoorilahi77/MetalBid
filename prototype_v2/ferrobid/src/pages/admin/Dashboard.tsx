@@ -331,7 +331,7 @@ export default function AdminDashboard() {
       <p className="text-sm text-ink-muted mb-4">
         Platform-wide KPIs across catalogues, bidders and settlement. The money view of the same business is{' '}
         <Link to="/finance/pnl" className="text-ember font-semibold hover:underline">Finance's profit &amp; loss</Link>; the CEO reads it{' '}
-        <Link to="/ceo" className="text-ember font-semibold hover:underline">in their own words</Link>.
+        <Link to="/ceo/pnl" className="text-ember font-semibold hover:underline">in their own words</Link>.
       </p>
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
         <Stat label="GMV (sold lots)" value={inrCompact(gmv)} tone="ember" sub="H1 × indicative qty" />

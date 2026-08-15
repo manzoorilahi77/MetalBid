@@ -29,6 +29,22 @@ export type NavItem = {
   /** Pages a role must keep — an audit or record surface the Page manager may
    *  not hide or detach, however the menu is rearranged. */
   retained?: boolean
+  /** Splits a long menu into two levels: this page's category is what the role
+   *  sees on the **top bar**, and the pages sharing that category are what fill
+   *  the **strip below it** once the category is open.
+   *
+   *  Roles with a handful of screens read fine as one flat strip. The three
+   *  operations roles do not: the Sub Admin alone holds eighteen, which is more
+   *  tabs than anyone can scan, and the strip scrolls sideways so the last ones
+   *  are simply out of sight. Categorised, the bar names three places to go and
+   *  each opens six — and both levels run left to right in the order the work
+   *  happens, so the next thing you need is the next thing along.
+   *
+   *  A categorised page no longer needs `'top'` in `in`: the category holds that
+   *  slot on its behalf. Leave `category` unset and nothing changes — the page
+   *  keeps its own top-bar link if it had one, and a role with no categories at
+   *  all keeps the single flat strip it always had. */
+  category?: string
 }
 
 export const NAV_BY_ROLE: Record<Role, NavItem[]> = {
@@ -63,12 +79,12 @@ export const NAV_BY_ROLE: Record<Role, NavItem[]> = {
     { to: '/disputes', label: 'Support', subLabel: 'Support & disputes', in: ['sub'] },
     { to: '/buyer/kyc', label: 'Become a seller', in: ['sub'] },
   ],
-  // Seller — submit → track → watch → settle. Verification comes first because
-  // nothing else on this menu works until Operations has approved the account,
-  // and a seller who signed up directly had no way to reach that wizard at all.
+  // Seller — submit → track → watch → settle. Verification is deliberately not
+  // a menu tab: it is a one-time step, so it lives as a status card on the
+  // workspace (`/seller/verification` stays routable and is reached from there)
+  // rather than a permanent header entry the seller passes every day.
   seller: [
-    { to: '/seller', label: 'Workspace', end: true, in: ['sub'] },
-    { to: '/seller/verification', label: 'Verification', subLabel: 'Seller verification', in: ['sub'] },
+    { to: '/seller', label: 'Workspace', end: true, in: ['sub'], activeMatch: ['/seller/verification'] },
     { to: '/seller/create-lot', label: 'Create lot', in: ['sub'] },
     { to: '/seller/lots', label: 'My lots', subLabel: 'My lots & batches', in: ['sub'] },
     { to: '/seller/monitor', label: 'Live monitor', in: ['sub'] },
@@ -79,28 +95,35 @@ export const NAV_BY_ROLE: Record<Role, NavItem[]> = {
   field_exec: [
     { to: '/field', label: 'Inspection queue', in: ['top'] },
   ],
-  // Operation Manager — the order the work happens: assemble the catalogue,
-  // take the lots in, decide them, then take the sale to market and deliver it.
-  // Auction schedule and EMD eligibility are the same screens the Auction
-  // Manager works; both roles hold them, and whoever acts is named in the audit
-  // entry — so they point at one route rather than a second copy.
+  // Operation Manager — the order the work happens, in three headings that are
+  // themselves in that order: take the goods in, take the sale to market, then
+  // deliver it and close the file. Auction schedule and EMD eligibility are the
+  // same screens the Auction Manager works; both roles hold them, and whoever
+  // acts is named in the audit entry — so they point at one route rather than a
+  // second copy.
   exec_manager: [
-    { to: '/exec', label: 'Pipeline', subLabel: 'Lot pipeline', end: true, in: ['top', 'sub'] },
+    /* — Intake: nothing can be sold until a seller is verified, their lot is
+         inspected in the yard and the lot is approved. — */
+    { to: '/exec', label: 'Pipeline', subLabel: 'Lot pipeline', end: true, in: ['sub'], category: 'Intake & approval' },
     // The gate that comes before everything else: no verified seller, no lots.
-    { to: '/sub/seller-verification', label: 'Seller verification', in: ['sub'] },
-    { to: '/exec/catalogue-builder', label: 'Catalogue builder', in: ['sub'] },
+    { to: '/sub/seller-verification', label: 'Seller verification', in: ['sub'], category: 'Intake & approval' },
     // Assigning and re-assigning the yard visit is Operations' own step (spec
     // Part 13). The same screen the Sub Admin works — one screen, not a copy.
-    { to: '/sub/field-executives', label: 'Field executives', in: ['sub'] },
-    { to: '/exec/approvals', label: 'Lot approval', subLabel: 'Lot approval · bypass', in: ['sub'] },
-    { to: '/auction/schedule', label: 'Schedule & publish', subLabel: 'Auction schedule & publish', in: ['top', 'sub'] },
-    { to: '/auction/emd-eligibility', label: 'EMD eligibility', in: ['sub'] },
-    { to: '/exec/logistics', label: 'Logistics', in: ['sub'] },
-    { to: '/exec/handover', label: 'Handover', subLabel: 'Handover & closure', in: ['sub'] },
-    { to: '/exec/settlement', label: 'Post-auction exceptions', subLabel: 'Post-auction exceptions', in: ['sub'] },
+    { to: '/sub/field-executives', label: 'Field executives', in: ['sub'], category: 'Intake & approval' },
+    { to: '/exec/approvals', label: 'Lot approval', subLabel: 'Lot approval · bypass', in: ['sub'], category: 'Intake & approval' },
+    /* — Sale: approved lots become a catalogue, the catalogue gets a date, and
+         buyers are admitted to bid on it. — */
+    { to: '/exec/catalogue-builder', label: 'Catalogue builder', in: ['sub'], category: 'Catalogue & sale' },
+    { to: '/auction/schedule', label: 'Schedule & publish', subLabel: 'Auction schedule & publish', in: ['sub'], category: 'Catalogue & sale' },
+    { to: '/auction/emd-eligibility', label: 'EMD eligibility', in: ['sub'], category: 'Catalogue & sale' },
+    /* — After the hammer: move the goods, hand them over, then clear whatever
+         did not go to plan. — */
+    { to: '/exec/logistics', label: 'Logistics', in: ['sub'], category: 'Delivery & closure' },
+    { to: '/exec/handover', label: 'Handover', subLabel: 'Handover & closure', in: ['sub'], category: 'Delivery & closure' },
+    { to: '/exec/settlement', label: 'Post-auction exceptions', subLabel: 'Post-auction exceptions', in: ['sub'], category: 'Delivery & closure' },
     // Ops resolves what the Sub Admin cannot close (spec Part 8 and Part 13);
     // it already holds the permission, it simply had no way in.
-    { to: '/sub/disputes', label: 'Disputes', subLabel: 'Disputes & support', in: ['sub'] },
+    { to: '/sub/disputes', label: 'Disputes', subLabel: 'Disputes & support', in: ['sub'], category: 'Delivery & closure' },
     { to: '/browse', label: 'Browse', in: ['top'] },
   ],
   // Auction Manager — ordered the way the work happens: publish, admit, run,
@@ -141,10 +164,13 @@ export const NAV_BY_ROLE: Record<Role, NavItem[]> = {
     { to: '/admin/finance', label: 'Financial config', locked: true, in: ['sub'] },
     { to: '/browse', label: 'Browse', in: ['top'] },
   ],
-  // Sub Admin — head of operations. Ordered exactly the way the roles they
-  // oversee are ordered: their own desk first, then the pre-auction pipeline in
-  // the Operation Manager's order, then the sale in the Auction Manager's
-  // order, then what they watch rather than execute, then accounts and admin.
+  // Sub Admin — head of operations, and the widest menu on the platform:
+  // eighteen screens, which is far more than a flat strip can show. They divide
+  // cleanly into three headings of six, left to right in the order a day runs:
+  //
+  //   Ops desk          — where they start, and who they let onto the platform
+  //   Auction pipeline  — a lot from arrival to a live sale, in one straight line
+  //   Oversight         — what they watch after the hammer, and the record of it
   //
   // Half of these are not copies. Lot pipeline, lot approval, the catalogue
   // builder, the schedule, EMD eligibility and the live floor are the *same*
@@ -156,35 +182,41 @@ export const NAV_BY_ROLE: Record<Role, NavItem[]> = {
   // permission templates: the work is divided by assignment on the work queue,
   // never by capability.
   sub_admin: [
-    { to: '/sub', label: 'Ops console', subLabel: 'Dashboard · ops console', end: true, in: ['top', 'sub'] },
-    { to: '/sub/queue', label: 'Work queue', in: ['top', 'sub'] },
-    { to: '/sub/approvals', label: 'Approvals', subLabel: 'Approvals — all roles', in: ['sub'] },
-    /* — pre-auction, in the Operation Manager's order — */
-    { to: '/sub/seller-verification', label: 'Seller verification', in: ['sub'] },
-    { to: '/exec', label: 'Lot pipeline', in: ['sub'] },
-    { to: '/sub/field-executives', label: 'Field executives', in: ['sub'] },
-    { to: '/exec/approvals', label: 'Lot approval', subLabel: 'Lot approval · bypass', in: ['sub'] },
-    { to: '/exec/catalogue-builder', label: 'Catalogue builder', in: ['sub'] },
-    /* — the auction, in the Auction Manager's order — */
-    { to: '/auction/schedule', label: 'Schedule & publish', subLabel: 'Auction schedule & publish', in: ['sub'] },
-    { to: '/auction/emd-eligibility', label: 'EMD eligibility', in: ['sub'] },
-    { to: '/auction/live', label: 'Live auctions', in: ['top', 'sub'] },
-    { to: '/sub/bid-monitor', label: 'Bid monitor', in: ['sub'] },
-    /* — watching, not executing — */
-    { to: '/sub/payments', label: 'EMD & payments', subLabel: 'EMD & payment activity', in: ['sub'] },
-    { to: '/sub/disputes', label: 'Disputes', subLabel: 'Disputes & support', in: ['sub'] },
-    /* — accounts and admin — */
-    { to: '/admin/users', label: 'User accounts', subLabel: 'User accounts · password reset', in: ['sub'] },
-    { to: '/sub/content', label: 'Content', subLabel: 'Content management', in: ['sub'] },
-    { to: '/sub/reports', label: 'Reports', in: ['sub'] },
-    { to: '/sub/activity', label: 'My activity', in: ['sub'], retained: true },
+    /* — their own desk: what landed overnight, what is assigned to them, what
+         is waiting on their decision — then the three doors onto the platform
+         they alone hold open (sellers, field staff, everybody's accounts). — */
+    { to: '/sub', label: 'Ops console', subLabel: 'Dashboard · ops console', end: true, in: ['sub'], category: 'Ops desk' },
+    { to: '/sub/queue', label: 'Work queue', in: ['sub'], category: 'Ops desk' },
+    { to: '/sub/approvals', label: 'Approvals', subLabel: 'Approvals — all roles', in: ['sub'], category: 'Ops desk' },
+    { to: '/sub/seller-verification', label: 'Seller verification', in: ['sub'], category: 'Ops desk' },
+    { to: '/sub/field-executives', label: 'Field executives', in: ['sub'], category: 'Ops desk' },
+    { to: '/admin/users', label: 'User accounts', subLabel: 'User accounts · password reset', in: ['sub'], category: 'Ops desk' },
+    /* — one lot's whole journey, in the Operation Manager's order and then the
+         Auction Manager's: it arrives, it is approved, it is catalogued, it is
+         given a date, buyers are admitted, and it goes live. — */
+    { to: '/exec', label: 'Lot pipeline', in: ['sub'], category: 'Auction pipeline' },
+    { to: '/exec/approvals', label: 'Lot approval', subLabel: 'Lot approval · bypass', in: ['sub'], category: 'Auction pipeline' },
+    { to: '/exec/catalogue-builder', label: 'Catalogue builder', in: ['sub'], category: 'Auction pipeline' },
+    { to: '/auction/schedule', label: 'Schedule & publish', subLabel: 'Auction schedule & publish', in: ['sub'], category: 'Auction pipeline' },
+    { to: '/auction/emd-eligibility', label: 'EMD eligibility', in: ['sub'], category: 'Auction pipeline' },
+    { to: '/auction/live', label: 'Live auctions', in: ['sub'], category: 'Auction pipeline' },
+    /* — watching, not executing: the sale as it runs, the money it moved, what
+         went wrong, what the platform told people, and the record of it all. — */
+    { to: '/sub/bid-monitor', label: 'Bid monitor', in: ['sub'], category: 'Oversight & records' },
+    { to: '/sub/payments', label: 'EMD & payments', subLabel: 'EMD & payment activity', in: ['sub'], category: 'Oversight & records' },
+    { to: '/sub/disputes', label: 'Disputes', subLabel: 'Disputes & support', in: ['sub'], category: 'Oversight & records' },
+    { to: '/sub/content', label: 'Content', subLabel: 'Content management', in: ['sub'], category: 'Oversight & records' },
+    { to: '/sub/reports', label: 'Reports', in: ['sub'], category: 'Oversight & records' },
+    { to: '/sub/activity', label: 'My activity', in: ['sub'], retained: true, category: 'Oversight & records' },
   ],
   // CEO / MD — four questions, in order: are we making money, is the business
-  // growing, is anything at risk, what needs me. Profit & loss is the landing
-  // page; the signature queue also sits on the top bar because it is the one
+  // growing, is anything at risk, what needs me. The dashboard is the landing
+  // page and answers all four at a glance, then hands off to the screen behind
+  // each one; the signature queue also sits on the top bar because it is the one
   // screen in the workspace with buttons and other people are waiting on it.
   ceo: [
-    { to: '/ceo', label: 'Profit & loss', end: true, in: ['top', 'sub'] },
+    { to: '/ceo', label: 'Dashboard', end: true, in: ['top', 'sub'] },
+    { to: '/ceo/pnl', label: 'Profit & loss', in: ['top', 'sub'] },
     { to: '/ceo/growth', label: 'Business growth', subLabel: 'Growth', in: ['sub'] },
     { to: '/ceo/auctions', label: 'Auction performance', in: ['sub'] },
     { to: '/ceo/risk', label: 'Money at risk', in: ['top', 'sub'] },
@@ -193,24 +225,30 @@ export const NAV_BY_ROLE: Record<Role, NavItem[]> = {
     { to: '/ceo/delegate', label: 'Delegate my approvals', subLabel: 'Delegate approvals', in: ['sub'] },
     { to: '/ceo/reports', label: 'Reports', in: ['sub'] },
   ],
-  // Super Admin — our support role, in the order of the spec: structure first
-  // (a role must exist before anyone can hold it), then people, then settings,
-  // then the exceptions only we can clear, then the record and the undo.
-  // `Ops console` sits on the top bar because a Super Admin also sees
+  // Super Admin — our support role, in the order of the spec, and its four
+  // headings are that order: structure first (a role must exist before anyone
+  // can hold it), then the people who hold it, then the settings they work
+  // inside, then the exceptions only we can clear and the record that proves it.
+  // Each heading depends on the one before it, which is why they read left to
+  // right. `Ops console` sits on the top bar because a Super Admin also sees
   // everything a Sub Admin sees, and that is the door into it.
   super_admin: [
-    { to: '/admin', label: 'Dashboard', end: true, in: ['top', 'sub'] },
-    { to: '/admin/roles', label: 'Roles', in: ['sub'] },
-    { to: '/admin/pages', label: 'Page manager', in: ['sub'] },
-    { to: '/admin/sub-admins', label: 'Sub Admins', subLabel: 'Sub Admin accounts', in: ['sub'] },
-    { to: '/admin/users', label: 'User accounts', subLabel: 'All user accounts', in: ['sub'] },
-    { to: '/admin/finance', label: 'Financial config', in: ['sub'] },
-    { to: '/admin/master-data', label: 'Master data', in: ['sub'] },
-    { to: '/admin/content', label: 'Content publishing', in: ['sub'] },
-    { to: '/admin/blacklist', label: 'Blacklist', subLabel: 'Blacklist & defaulters', in: ['sub'] },
-    { to: '/admin/control-tower', label: 'Emergency override', in: ['top', 'sub'] },
-    { to: '/admin/change-history', label: 'Change history', subLabel: 'Change history & rollback', in: ['sub'] },
-    { to: '/admin/audit', label: 'Audit trail', in: ['sub'], retained: true },
+    /* — what exists before anyone can use it — */
+    { to: '/admin', label: 'Dashboard', end: true, in: ['sub'], category: 'Structure' },
+    { to: '/admin/roles', label: 'Roles', in: ['sub'], category: 'Structure' },
+    { to: '/admin/pages', label: 'Page manager', in: ['sub'], category: 'Structure' },
+    /* — who holds those roles, and who is barred from the platform — */
+    { to: '/admin/sub-admins', label: 'Sub Admins', subLabel: 'Sub Admin accounts', in: ['sub'], category: 'People & access' },
+    { to: '/admin/users', label: 'User accounts', subLabel: 'All user accounts', in: ['sub'], category: 'People & access' },
+    { to: '/admin/blacklist', label: 'Blacklist', subLabel: 'Blacklist & defaulters', in: ['sub'], category: 'People & access' },
+    /* — the rules and reference data everyone then works inside — */
+    { to: '/admin/finance', label: 'Financial config', in: ['sub'], category: 'Settings & content' },
+    { to: '/admin/master-data', label: 'Master data', in: ['sub'], category: 'Settings & content' },
+    { to: '/admin/content', label: 'Content publishing', in: ['sub'], category: 'Settings & content' },
+    /* — what only we can clear, and the record and undo behind it — */
+    { to: '/admin/control-tower', label: 'Emergency override', in: ['sub'], category: 'Exceptions & record' },
+    { to: '/admin/change-history', label: 'Change history', subLabel: 'Change history & rollback', in: ['sub'], category: 'Exceptions & record' },
+    { to: '/admin/audit', label: 'Audit trail', in: ['sub'], retained: true, category: 'Exceptions & record' },
     { to: '/sub', label: 'Ops console', in: ['top'] },
   ],
 }

@@ -202,6 +202,160 @@ export function useGrowth(period: PeriodKey): Growth {
   }, [period, now, catalogues, lots, bids, users])
 }
 
+/* ========================= what did we earn, by month? =================== */
+
+/** Income recognised by calendar month — commission Finance has matched to the
+ *  bank, plus buyer premium on paid delivery orders. The rows behind it are
+ *  period-independent, so one pass over them gives the whole year.
+ *
+ *  A pure function of the books rather than a second hook, because the P&L and
+ *  the dashboard both draw this curve: two implementations would eventually
+ *  disagree, and the one nobody checked would be the one that got forwarded.
+ *  Wrap in `useMemo` at the call site. */
+export function incomeByMonth(books: Books): { label: string; value: number }[] {
+  const now = new Date(books.now)
+  const buckets = Array.from({ length: 12 }, (_, i) => {
+    const d = new Date(now.getFullYear(), now.getMonth() - (11 - i), 1)
+    return { key: `${d.getFullYear()}-${d.getMonth()}`, label: d.toLocaleDateString('en-IN', { month: 'short' }), value: 0 }
+  })
+  const index = new Map(buckets.map((b, i) => [b.key, i]))
+  const add = (iso: string | undefined, amount: number) => {
+    if (!iso) return
+    const d = new Date(iso)
+    const i = index.get(`${d.getFullYear()}-${d.getMonth()}`)
+    if (i != null) buckets[i].value += amount
+  }
+  for (const r of books.commissionRows) {
+    if (r.confirmed) add(r.settlement?.confirmedAt, r.commissionDue)
+  }
+  for (const row of books.deliveryRows) {
+    if (row.d.paidAmount > 0) add(row.d.createdAt, row.d.materialValue * (books.cfg.buyerPremiumPct / 100))
+  }
+  return buckets.map(({ label, value }) => ({ label, value }))
+}
+
+/* ========================= did the sales work? =========================== */
+
+/** One closed auction, measured the way the auction performance screen measures
+ *  it — sell-through, uplift over the seller's own floor, and how deep the
+ *  bidding actually went. */
+export interface AuctionResultRow {
+  id: string
+  code: string
+  title: string
+  region: string
+  closedAt: string
+  lotsOffered: number
+  lotsSold: number
+  realisation: number
+  reserve: number
+  uplift: number | null
+  bidders: number
+  bids: number
+  extensions: number
+  confirmed: boolean
+}
+
+export interface AuctionPerformance {
+  now: number
+  /** Closed auctions inside the window, newest first. */
+  rows: AuctionResultRow[]
+  live: Catalogue[]
+  upcoming: Catalogue[]
+  totals: {
+    auctions: number
+    totalLots: number
+    soldLots: number
+    sellThrough: number
+    bidsPerLot: number
+    biddersPerAuction: number
+    extensions: number
+    extensionRate: number
+    /** Bids a Super Admin struck off, and every bid surveillance put on record. */
+    voids: number
+    flags: number
+    cancellations: number
+    realisation: number
+  }
+}
+
+/** How well the sales themselves worked, as opposed to how big they were.
+ *  Shared by the auction performance screen and the dashboard's summary of it,
+ *  so a sell-through figure cannot mean two things in two places. */
+export function useAuctionPerformance(period: PeriodKey): AuctionPerformance {
+  const now = useNow()
+  const catalogues = useStore((s) => s.catalogues)
+  const lots = useStore((s) => s.lots)
+  const bids = useStore((s) => s.bids)
+  const bidVoidRequests = useStore((s) => s.bidVoidRequests)
+  const cancellationRequests = useStore((s) => s.cancellationRequests)
+  const resultConfirmations = useStore((s) => s.resultConfirmations)
+
+  return useMemo(() => {
+    const { from, to } = periodBounds(period, now)
+    const inWindow = (iso: string) => (period === 'all' ? true : within(iso, from, to))
+    const lotsByCat = new Map<string, Lot[]>()
+    for (const l of lots) {
+      const arr = lotsByCat.get(l.catalogueId)
+      if (arr) arr.push(l)
+      else lotsByCat.set(l.catalogueId, [l])
+    }
+
+    const rows: AuctionResultRow[] = catalogues
+      .filter((c) => c.status === 'closed' && inWindow(c.endsAt))
+      .map((c) => {
+        const catLots = lotsByCat.get(c.id) ?? []
+        const sold = soldLots(catLots)
+        const catBids = bids.filter((b) => b.catalogueId === c.id && b.status === 'valid')
+        const realisation = sold.reduce((s, l) => s + (clearedValue(l) ?? 0), 0)
+        const reserve = sold.reduce((s, l) => s + reserveValue(l), 0)
+        return {
+          id: c.id,
+          code: c.code,
+          title: c.title,
+          region: c.region,
+          closedAt: c.endsAt,
+          lotsOffered: catLots.length,
+          lotsSold: sold.length,
+          realisation,
+          reserve,
+          uplift: reserve > 0 ? ((realisation - reserve) / reserve) * 100 : null,
+          bidders: new Set(catBids.map((b) => b.bidderId)).size,
+          bids: catBids.length,
+          extensions: catLots.reduce((s, l) => s + l.extensions, 0),
+          confirmed: resultConfirmations.some((r) => r.catalogueId === c.id),
+        }
+      })
+      .sort((a, b) => Date.parse(b.closedAt) - Date.parse(a.closedAt))
+
+    const totalLots = rows.reduce((s, r) => s + r.lotsOffered, 0)
+    const sold = rows.reduce((s, r) => s + r.lotsSold, 0)
+    const totalBids = rows.reduce((s, r) => s + r.bids, 0)
+    const extensions = rows.reduce((s, r) => s + r.extensions, 0)
+
+    return {
+      now,
+      rows,
+      live: catalogues.filter((c) => c.status === 'live'),
+      upcoming: catalogues.filter((c) => c.status === 'upcoming'),
+      totals: {
+        auctions: rows.length,
+        totalLots,
+        soldLots: sold,
+        sellThrough: totalLots > 0 ? (sold / totalLots) * 100 : 0,
+        bidsPerLot: sold > 0 ? totalBids / sold : 0,
+        biddersPerAuction: rows.length > 0 ? rows.reduce((s, r) => s + r.bidders, 0) / rows.length : 0,
+        extensions,
+        extensionRate: sold > 0 ? (extensions / sold) * 100 : 0,
+        voids: bidVoidRequests.filter((v) => v.status === 'approved' && inWindow(v.decidedAt ?? v.raisedAt)).length,
+        flags: bidVoidRequests.filter((v) => inWindow(v.raisedAt)).length,
+        cancellations: cancellationRequests.filter((r) => r.status === 'approved' && inWindow(r.decidedAt ?? r.requestedAt)).length,
+        realisation: rows.reduce((s, r) => s + r.realisation, 0),
+      },
+    }
+  }, [period, now, catalogues, lots, bids, bidVoidRequests, cancellationRequests, resultConfirmations])
+}
+
 /* =========================== is anything at risk? ========================= */
 
 export interface AgeingRow {
@@ -641,7 +795,11 @@ export function TrendBars({ points, title, sub, highlightLast = true }: {
       </div>
       <div className="flex items-end gap-1.5 h-32">
         {points.map((p, i) => (
-          <div key={`${p.label}-${i}`} className="flex-1 flex flex-col items-center gap-1.5 min-w-0 group">
+          // `h-full` is load-bearing: `items-end` on the row switches off the
+          // default stretch, so without it each column is only as tall as its
+          // label, the bar track resolves to zero, and every bar's percentage
+          // height is a percentage of nothing.
+          <div key={`${p.label}-${i}`} className="flex-1 h-full flex flex-col items-center gap-1.5 min-w-0 group">
             <div className="relative w-full flex-1 flex items-end">
               <div
                 className={cx('w-full rounded-t transition-colors',

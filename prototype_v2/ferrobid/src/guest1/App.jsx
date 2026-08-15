@@ -45,6 +45,10 @@ const KnowledgeCenter = lazy(() => import('./pages/KnowledgeCenter'));
 const MarketReports = lazy(() => import('./pages/MarketReports'));
 // The two legal documents carry a lot of content and their own stylesheet;
 // they are lazy for the same reason the pages above are.
+/* The two halves of the subscription funnel — only reached from a Subscribe
+   click, so they load on demand like the other secondary pages. */
+const Subscribe = lazy(() => import('./pages/Subscribe'));
+const Onboarding = lazy(() => import('./pages/Onboarding'));
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
 const TermsAndConditions = lazy(() => import('./pages/TermsAndConditions'));
 
@@ -553,23 +557,35 @@ function Home() {
           >
             <div className="sec-head" style={{ marginBottom: '28px' }}>
               <p className="sec-eyebrow">Platform Access</p>
-              <h2 className="sec-title">Clear, Predictable Pricing</h2>
+              <h2 className="sec-title">One Plan. One Year. ₹4,999.</h2>
               <p className="sec-lead">
-                A transparent, value-driven pricing structure. Gain full access to enterprise auction tools with a simple subscription and fixed, transparent platform fees designed for scale.
+                No tiers, no per-auction fees, no transaction cut on your subscription. A single yearly membership opens every verified auction in Karnataka — and every person you refer takes ₹500 off your next year.
               </p>
             </div>
-            <Link to="/pricing" style={{ textDecoration: 'none' }}>
-              <MotionDiv whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} style={{ display: 'inline-block' }}>
-                <button className="btn" style={{
-                  background: 'linear-gradient(135deg, var(--primary), var(--primary-hover))', color: 'white', border: 'none', borderRadius: '8px',
-                  padding: '13px 26px', fontSize: '14px', fontWeight: 700, display: 'inline-flex',
-                  alignItems: 'center', gap: '8px', cursor: 'pointer',
-                  boxShadow: '0 8px 20px -6px rgba(200, 68, 31, 0.45), inset 0 1px 0 rgba(255,255,255,0.18)'
-                }}>
-                  View detailed plans <ArrowRight size={16} />
-                </button>
-              </MotionDiv>
-            </Link>
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+              <Link to="/subscribe" style={{ textDecoration: 'none' }}>
+                <MotionDiv whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} style={{ display: 'inline-block' }}>
+                  <button className="btn" style={{
+                    background: 'linear-gradient(135deg, var(--primary), var(--primary-hover))', color: 'white', border: 'none', borderRadius: '8px',
+                    padding: '13px 26px', fontSize: '14px', fontWeight: 700, display: 'inline-flex',
+                    alignItems: 'center', gap: '8px', cursor: 'pointer',
+                    boxShadow: '0 8px 20px -6px rgba(200, 68, 31, 0.45), inset 0 1px 0 rgba(255,255,255,0.18)'
+                  }}>
+                    Subscribe for ₹4,999 <ArrowRight size={16} />
+                  </button>
+                </MotionDiv>
+              </Link>
+              <Link to="/pricing" style={{ textDecoration: 'none' }}>
+                <MotionDiv whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} style={{ display: 'inline-block' }}>
+                  <button className="btn btn-outline" style={{
+                    borderRadius: '8px', padding: '13px 26px', fontSize: '14px', fontWeight: 700,
+                    display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer'
+                  }}>
+                    See what's included
+                  </button>
+                </MotionDiv>
+              </Link>
+            </div>
           </MotionDiv>
 
           <MotionDiv
@@ -591,17 +607,18 @@ function Home() {
             >
               <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '60%', height: '4px', background: 'var(--primary)', borderBottomLeftRadius: '4px', borderBottomRightRadius: '4px' }}></div>
               
-              <p style={{ color: 'var(--text-muted)', fontSize: '13px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 'var(--track-label)', marginBottom: '8px' }}>Starting at</p>
-              <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '28px' }}>
-                <span style={{ fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums', fontSize: '56px', fontWeight: 700, color: 'var(--primary)', lineHeight: 1, letterSpacing: '-1.5px', textShadow: '0 2px 4px rgba(228, 87, 46,0.1)' }}>₹2,999</span>
-                <span style={{ color: 'var(--text-muted)', fontSize: '14px', marginLeft: '6px', fontWeight: 600 }}>/mo</span>
+              <p style={{ color: 'var(--text-muted)', fontSize: '13px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 'var(--track-label)', marginBottom: '8px' }}>Annual membership · Karnataka</p>
+              <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '10px' }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums', fontSize: '56px', fontWeight: 700, color: 'var(--primary)', lineHeight: 1, letterSpacing: '-1.5px', textShadow: '0 2px 4px rgba(228, 87, 46,0.1)' }}>₹4,999</span>
+                <span style={{ color: 'var(--text-muted)', fontSize: '14px', marginLeft: '6px', fontWeight: 600 }}>/year</span>
               </div>
+              <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginBottom: '24px' }}>Billed once — that is ≈ ₹417 a month.</p>
               <div style={{ height: '1px', background: 'linear-gradient(90deg, rgba(228, 87, 46,0.2) 0%, transparent 100%)', marginBottom: '24px' }}></div>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {[
-                  "Fixed, transparent platform fees",
-                  "Unlimited lot listings",
-                  "Full access to all auction models"
+                  "Unlimited bidding on every Karnataka auction",
+                  "Verified sellers, lot photos & assay reports",
+                  "₹500 in coupons for every person you refer"
                 ].map((item, i) => (
                   <motion.li
                     key={i}
@@ -736,6 +753,8 @@ const App = () => {
         <Route path="/terms" element={<TermsAndConditions />} />
         <Route path="/roles" element={<Roles />} />
         <Route path="/pricing" element={<Pricing />} />
+        <Route path="/subscribe" element={<Subscribe />} />
+        <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/calendar" element={<AuctionCalendar />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/contact" element={<ContactUs />} />

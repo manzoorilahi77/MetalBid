@@ -46,6 +46,10 @@ export default function PageManager() {
   )
   const role = activeRoles.find((r) => r.key === roleKey)
   const hidden = menu.filter((p) => p.hidden).length
+  /** How many headings this role's tab strip renders. Zero means one flat
+   *  strip — the shape every role had before the operations menus grew past
+   *  what a single row of tabs can show. */
+  const categories = new Set(menu.filter((p) => p.category).map((p) => p.category)).size
 
   const say = (r: { ok: boolean; error?: string }, title: string, body?: string) => {
     if (!r.ok) pushToast({ kind: 'danger', title: 'Not changed', body: r.error })
@@ -76,17 +80,20 @@ export default function PageManager() {
           {activeRoles.map((r) => <option key={r.key} value={r.key}>{r.label}</option>)}
         </Select>
         <span className="num text-xs text-ink-faint">
-          {menu.length} entr{menu.length === 1 ? 'y' : 'ies'}{hidden > 0 && ` · ${hidden} hidden`}
+          {menu.length} entr{menu.length === 1 ? 'y' : 'ies'}
+          {categories > 0 && ` in ${categories} categor${categories === 1 ? 'y' : 'ies'}`}
+          {hidden > 0 && ` · ${hidden} hidden`}
         </span>
         <Link to="/admin/roles" className="text-[13px] font-semibold text-ember hover:underline ml-auto">Roles →</Link>
       </div>
 
       <div className="card mt-4 overflow-x-auto">
-        <table className="w-full text-sm min-w-[860px]">
+        <table className="w-full text-sm min-w-[980px]">
           <thead>
             <tr className={th}>
               <th className="px-5 py-2.5 w-10">#</th>
               <th className="px-4 py-2.5">Tab label</th>
+              <th className="px-4 py-2.5">Category</th>
               <th className="px-4 py-2.5">Route</th>
               <th className="px-4 py-2.5">Where it shows</th>
               <th className="px-4 py-2.5">State</th>
@@ -101,6 +108,11 @@ export default function PageManager() {
                 <td className="px-4 py-2.5">
                   <div className="font-semibold">{p.label}</div>
                   {p.subLabel && p.subLabel !== p.label && <div className="text-xs text-ink-faint">tab strip: {p.subLabel}</div>}
+                </td>
+                <td className="px-4 py-2.5">
+                  {p.category
+                    ? <Chip tone="neutral">{p.category}</Chip>
+                    : <span className="text-xs text-ink-faint">—</span>}
                 </td>
                 <td className="px-4 py-2.5 num text-ink-muted">{p.to}</td>
                 <td className="px-4 py-2.5">
