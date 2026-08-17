@@ -53,7 +53,7 @@ export default function FieldLotDetail() {
           {lot.hazardous && <Chip tone="danger">Hazardous</Chip>}
         </div>
         <h1 className="font-display text-xl font-bold mt-1">{lot.grade}</h1>
-        <div className="text-sm text-ink-muted mt-1">{lot.description}</div>
+        <div className="text-sm font-semibold text-ink mt-1">{lot.description}</div>
         <div className="num text-sm font-semibold mt-2">Declared {num(lot.indicativeQty)} {lot.uom}</div>
       </div>
 

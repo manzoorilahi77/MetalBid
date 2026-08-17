@@ -1,10 +1,10 @@
-import { lazy, Suspense } from 'react'
 import { HashRouter, Outlet, Route, Routes, useLocation } from 'react-router-dom'
 import Chrome, { Page, SubNav } from './layout/Chrome'
 import ScrollToTop from './layout/ScrollToTop'
 import type { Role } from './types'
 import { ToastHost } from './components/ui'
 import { BidroomGateProvider } from './components/BidroomGate'
+import { GuestGateProvider, GuestRouteGuard } from './components/GuestGate'
 import { useTick } from './lib/useTick'
 import { subNavFrom, useStore, visiblePages } from './store/store'
 
@@ -20,19 +20,6 @@ import Legal from './pages/Legal'
 import Disputes from './pages/Disputes'
 import NotificationPrefs from './pages/NotificationPrefs'
 import Profile from './pages/Profile'
-
-/* guest 2 — redesigned public site (code-split from the authenticated app;
-   Phase 9). Each page loads on demand behind the Guest2Layout Suspense. */
-const Guest2Home = lazy(() => import('./pages/guest2/Home'))
-const Guest2SolutionsBuyers = lazy(() => import('./pages/guest2/SolutionsBuyers'))
-const Guest2SolutionsSellers = lazy(() => import('./pages/guest2/SolutionsSellers'))
-const Guest2HowItWorks = lazy(() => import('./pages/guest2/HowItWorks'))
-const Guest2Contact = lazy(() => import('./pages/guest2/Contact'))
-const Guest2ExitIntent = lazy(() => import('./pages/guest2/ExitIntentWhatsApp'))
-
-/* Master switch for the exit-intent WhatsApp invite. Off for now — the modal
-   and all its logic stay intact; flip this to `true` to bring it back. */
-const SHOW_WHATSAPP_MODAL = false
 
 /* buyer */
 import BuyerDashboard from './pages/buyer/Dashboard'
@@ -64,7 +51,6 @@ import InspectLot from './pages/field/InspectLot'
 import Pipeline from './pages/exec/Pipeline'
 import LotApproval from './pages/exec/LotApproval'
 import CatalogueBuilder from './pages/exec/CatalogueBuilder'
-import AuctionSetup from './pages/exec/AuctionSetup'
 import Settlement from './pages/exec/Settlement'
 import Logistics from './pages/exec/Logistics'
 import Handover from './pages/exec/Handover'
@@ -241,10 +227,18 @@ function SubAdminLayout() {
   )
 }
 
+/** The buyer's area — and the guest tour that runs through the front of it.
+ *
+ *  A visitor who came in through "Browse as Guest" is on `/buyermarketplace`,
+ *  which is a buyer route, but they must not be handed the buyer's tab strip:
+ *  every tab on it would be a dead end for somebody with no account. They get
+ *  their own strip instead (see NAV_BY_ROLE.guest_buyer) — the same tabs, with
+ *  the ones that need an account locked behind the subscription prompt. */
 function BuyerLayout() {
+  const role = useStore((s) => s.role)
   return (
     <>
-      <SubNav items={useSubNavItems('buyer')} />
+      <SubNav items={useSubNavItems(role === 'guest_buyer' ? 'guest_buyer' : 'buyer')} />
       <Outlet />
     </>
   )
@@ -256,19 +250,6 @@ function SellerLayout() {
       <SubNav items={useSubNavItems('seller')} />
       <Outlet />
     </>
-  )
-}
-
-/** Guest 2 public site — shared chrome like every other role. A lean top nav
- *  (no sub-nav) drives the few marketing pages; this layout is the Suspense
- *  boundary for the lazy pages and the single mount point for the exit-intent
- *  WhatsApp community invite (so it can fire from any Guest 2 page, once). */
-function Guest2Layout() {
-  return (
-    <Suspense fallback={<Page className="py-24 text-center text-ink-faint">Loading…</Page>}>
-      <Outlet />
-      {SHOW_WHATSAPP_MODAL && <Guest2ExitIntent />}
-    </Suspense>
   )
 }
 
@@ -297,6 +278,11 @@ export default function App() {
           lands you at the bottom of the next page. */}
       <ScrollToTop />
       <ToastHost />
+      {/* Owns "Browse as Guest": the read-only tour of the buyer's marketplace,
+          and the one subscription prompt every locked surface funnels into. */}
+      <GuestGateProvider>
+      {/* Backstop behind the locked tabs — a hand-typed URL lands here too. */}
+      <GuestRouteGuard />
       {/* Owns the one gate into any bidding room, so every trigger in every
           page runs the same pending-EMD → terms → navigate sequence. */}
       <BidroomGateProvider>
@@ -319,15 +305,6 @@ export default function App() {
 
           <Route element={<CatalogueDetailLayout />}>
             <Route path="/catalogue/:id" element={<AuctionDetail />} />
-          </Route>
-
-          {/* Guest 2 public site — shared chrome, lean top nav (Phase 3/6) */}
-          <Route element={<Guest2Layout />}>
-            <Route path="/g2" element={<Guest2Home />} />
-            <Route path="/g2/solutions/buyers" element={<Guest2SolutionsBuyers />} />
-            <Route path="/g2/solutions/sellers" element={<Guest2SolutionsSellers />} />
-            <Route path="/g2/how-it-works" element={<Guest2HowItWorks />} />
-            <Route path="/g2/contact" element={<Guest2Contact />} />
           </Route>
 
           <Route element={<BuyerLayout />}>
@@ -365,7 +342,6 @@ export default function App() {
             <Route path="/exec" element={<Pipeline />} />
             <Route path="/exec/approvals" element={<LotApproval />} />
             <Route path="/exec/catalogue-builder" element={<CatalogueBuilder />} />
-            <Route path="/exec/auction-setup" element={<AuctionSetup />} />
             <Route path="/exec/settlement" element={<Settlement />} />
             <Route path="/exec/logistics" element={<Logistics />} />
             <Route path="/exec/handover" element={<Handover />} />
@@ -468,6 +444,7 @@ export default function App() {
         </Route>
       </Routes>
       </BidroomGateProvider>
+      </GuestGateProvider>
     </HashRouter>
   )
 }

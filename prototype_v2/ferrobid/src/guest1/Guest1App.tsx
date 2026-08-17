@@ -15,6 +15,7 @@
    (see the swap in src/App.tsx), so the two apps are fully isolated.
 --------------------------------------------------------------------------- */
 import { HashRouter } from 'react-router-dom'
+import { useTick } from '../lib/useTick'
 
 /* fonts — relocated verbatim from the homepage's original main.jsx */
 import '@fontsource/outfit/400.css'
@@ -50,6 +51,15 @@ import './styles/index.css'
 import HomepageApp from './App.jsx'
 
 export default function Guest1App() {
+  /* The auction engine — the same one the manager app mounts as <Engine />.
+     The two apps never mount together, so this is the only clock running while
+     a visitor is on the public site, and without it the store's `now` never
+     advances: the homepage's live band would freeze at whatever the seed said,
+     countdowns on the marketplace and every catalogue page would stand still,
+     and a catalogue that reached its start time would never open. Tick here and
+     the public site is looking at the live sale, not a photograph of it. */
+  useTick()
+
   return (
     <HashRouter basename="/home">
       <HomepageApp />

@@ -33,7 +33,11 @@ export default function SellerWorkspace() {
     .sort((a, b) => b.uplift - a.uplift)[0]
   const expected = liveLots.reduce((s, l) => s + (l.currentRate ?? l.startRate) * l.indicativeQty, 0)
 
-  const pipeline = lots.filter((l) => l.catalogueId === null)
+  /* My own uncatalogued lots — scoped by the lot's own sellerId, the same way
+     My lots reads them. Filtering on `catalogueId === null` alone counted every
+     seller's pipeline into this seller's snapshot, so the tallies here
+     disagreed with the list the "Open my lots & batches" link leads to. */
+  const pipeline = lots.filter((l) => !l.catalogueId && l.sellerId === me?.id)
   const pipeCount = (st: string) => pipeline.filter((l) => l.status === st).length
 
   const recent = [...myBids].sort((a, b) => Date.parse(b.at) - Date.parse(a.at)).slice(0, 8)
@@ -133,7 +137,10 @@ export default function SellerWorkspace() {
         })}
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-4 mt-10">
+      {/* [&>*]:min-w-0 — a grid item defaults to min-width:auto, so these two
+          cards were sized by their widest no-wrap content (the bidder rows)
+          rather than by the column, and overhung the screen on a phone. */}
+      <div className="grid lg:grid-cols-2 gap-4 mt-10 [&>*]:min-w-0">
         {/* pipeline snapshot */}
         <div className="card p-5">
           <h2 className="text-lg font-bold mb-3">Pipeline snapshot</h2>
@@ -158,7 +165,9 @@ export default function SellerWorkspace() {
               return (
                 <div key={b.id} className="py-2.5 flex items-center gap-3 text-sm">
                   <span className="font-semibold">{mask(b.bidderId)}</span>
-                  <span className="text-ink-muted truncate flex-1">bid on <b className="num text-ink">{l.lotNo}</b> {l.grade}</span>
+                  {/* min-w-0 or the truncating cell keeps its content width and
+                      pushes the row past a phone's viewport instead of eliding. */}
+                  <span className="text-ink-muted truncate flex-1 min-w-0">bid on <b className="num text-ink">{l.lotNo}</b> {l.grade}</span>
                   <span className="num font-bold">{inr(b.rate)}<span className="text-ink-faint font-medium">/{l.uom}</span></span>
                   <span className="text-xs text-ink-faint num w-16 text-right">{relTime(b.at, now)}</span>
                 </div>

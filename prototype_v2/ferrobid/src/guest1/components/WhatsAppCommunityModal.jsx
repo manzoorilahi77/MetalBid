@@ -168,7 +168,10 @@ export const WhatsAppCommunityModal = () => {
             {/* Chat header */}
             <div className="wa-head">
               <div className="wa-head-avatar">
-                <img src={asset('/image.png')} alt="FerroBid" />
+                {/* Shield mark, not the full lock-up — a circular avatar has no
+                    room for the wordmark. image.png was a lower-res copy of the
+                    same shield with a cream background baked in. */}
+                <img src={asset('/ferrobid-icon.png')} alt="FerroBid" />
               </div>
               <div className="wa-head-meta">
                 <div className="wa-head-name">FerroBid Alerts</div>

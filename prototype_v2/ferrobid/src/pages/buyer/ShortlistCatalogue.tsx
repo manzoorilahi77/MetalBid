@@ -243,7 +243,7 @@ export default function ShortlistCatalogue() {
                     <Chip tone="neutral">{lot.metal}</Chip>
                     {lot.grade && <Chip tone="steel">{lot.grade}</Chip>}
                   </div>
-                  <div className="text-sm text-ink-muted mt-0.5 line-clamp-1">{lot.description}</div>
+                  <div className="text-sm font-semibold text-ink mt-0.5 line-clamp-1">{lot.description}</div>
                   <div className="text-xs text-ink-faint mt-0.5">indicative — final on weighment</div>
                 </div>
                 <div className="text-right">
@@ -341,7 +341,7 @@ export default function ShortlistCatalogue() {
                   {lot.grade && <Chip tone="steel">{lot.grade}</Chip>}
                   <StatusChip status={lot.status} />
                 </div>
-                <div className="text-sm text-ink-muted mt-0.5 line-clamp-1">{lot.description}</div>
+                <div className="text-sm font-semibold text-ink mt-0.5 line-clamp-1">{lot.description}</div>
               </div>
               <div className="text-right">
                 <div className="text-[11px] uppercase tracking-wider text-ink-faint">Indicative qty</div>

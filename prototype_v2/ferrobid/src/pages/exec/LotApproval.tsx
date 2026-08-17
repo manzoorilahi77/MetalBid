@@ -83,17 +83,25 @@ export default function LotApproval() {
   const awaitingInspection = lots.filter((l) => l.status === 'pending_inspection')
   const bypassed = lots.filter((l) => l.inspectionWaived)
 
+  /* Both of these read the seller off the lot, not off its catalogue. Half this
+     queue is material that has been inspected but not yet catalogued — the lot
+     carries `sellerId` from submission precisely for that stage — and going via
+     the catalogue made every one of those rows read "Direct consignment" with a
+     blank history, which is the opposite of what the screen is for. */
+  const sellerIdOf = (l: Lot) =>
+    l.sellerId ?? catalogues.find((c) => c.id === l.catalogueId)?.sellerId ?? null
+
   const sellerOf = (l: Lot) => {
-    const cat = catalogues.find((c) => c.id === l.catalogueId)
-    const seller = cat ? users.find((u) => u.id === cat.sellerId) : undefined
+    const id = sellerIdOf(l)
+    const seller = id ? users.find((u) => u.id === id) : undefined
     return seller?.firm ?? YARD_SELLER[l.yard] ?? 'Direct consignment'
   }
 
   /** What this seller's material has done before — the only thing that makes a
    *  bypass a judgement rather than a guess. */
   const sellerHistory = (l: Lot) => {
-    const catIds = catalogues.filter((c) => c.sellerId && c.sellerId === catalogues.find((x) => x.id === l.catalogueId)?.sellerId).map((c) => c.id)
-    const theirs = lots.filter((x) => catIds.includes(x.catalogueId))
+    const sellerId = sellerIdOf(l)
+    const theirs = sellerId ? lots.filter((x) => sellerIdOf(x) === sellerId) : []
     return {
       submitted: theirs.length,
       rejected: theirs.filter((x) => x.status === 'rejected').length,
@@ -256,7 +264,7 @@ export default function LotApproval() {
                     {l.hazardous && <Chip tone="danger">Hazardous</Chip>}
                   </div>
                   <h2 className="font-display text-lg font-bold mt-1">{l.grade} · {l.metal}</h2>
-                  <div className="text-sm text-ink-muted mt-0.5">{l.description}</div>
+                  <div className="text-sm font-semibold text-ink mt-0.5">{l.description}</div>
                   <div className="text-xs text-ink-faint mt-1">
                     Seller <span className="text-ink-muted font-semibold">{sellerOf(l)}</span> · Yard <span className="text-ink-muted font-semibold">{l.yard}</span>
                   </div>

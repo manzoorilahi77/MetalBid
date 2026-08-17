@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, lazy, Suspense } from 'react';
+import React, { useRef, useState, useEffect, useMemo, lazy, Suspense } from 'react';
 import { motion, useInView, MotionConfig } from 'framer-motion';
 import { 
   Search, ChevronDown, TrendingUp, TrendingDown,
@@ -27,6 +27,10 @@ import { AppComingSoonModal } from './components/AppComingSoonModal';
 import { HeroIllustration } from './components/hero/HeroIllustration';
 import { Auth } from './pages/Auth';
 import { useGuest1Theme } from './hooks/useGuest1Theme';
+import { useStore } from '../store/store';
+import { useNow } from '../lib/useTick';
+import { countdown, inr } from '../lib/format';
+import { forthcomingAuctions, liveActivityFeed } from './lib/marketplaceAdapter';
 import { asset } from './utils/asset';
 import './styles/auth.css';
 
@@ -102,10 +106,26 @@ const IndiaMapSvg = () => (
 
 const MotionDiv = motion.div;
 
-const UpcomingAuctionCard = ({ item, i }) => {
+/* The whole card is the door into the catalogue, the way the marketplace's own
+   cards are — the date badge already says when, so a second "View" control
+   inside the card would only compete with it. */
+const UpcomingAuctionCard = ({ item, i, now, onOpen }) => {
+  const onKeyDown = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onOpen();
+    }
+  };
+
   return (
     <MotionDiv
       className="auction-card"
+      role="button"
+      tabIndex={0}
+      onClick={onOpen}
+      onKeyDown={onKeyDown}
+      aria-label={`${item.company} — ${item.code}, opens ${item.date}`}
+      style={{ cursor: 'pointer' }}
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-40px' }}
@@ -118,14 +138,18 @@ const UpcomingAuctionCard = ({ item, i }) => {
       </div>
       <div className="auction-info">
         <div className="auction-title">{item.company}</div>
-        <div className="auction-loc"><MapPin size={12}/> {item.loc}</div>
+        <div className="auction-loc">
+          <MapPin size={12}/> {item.loc} · {item.lots} lot{item.lots === 1 ? '' : 's'}
+        </div>
         <div className="auction-stats">
           <div className="stat-col">
-            <span>Auction Date</span>
-            <span>{item.date}</span>
+            {/* Counts down against the store clock rather than restating the
+                badge above it — the date is already there, twice was noise. */}
+            <span>Opens in</span>
+            <span>{countdown(Date.parse(item.startsAt) - now)}</span>
           </div>
           <div className="stat-col primary" style={{ textAlign: 'right' }}>
-            <span>EMD Value</span>
+            <span>EMD from</span>
             <span>{item.emd}</span>
           </div>
         </div>
@@ -134,15 +158,34 @@ const UpcomingAuctionCard = ({ item, i }) => {
   );
 };
 
-/* The band runs the rooms that are open right now, so each lot carries its
-   standing highest bid rather than a pre-bid EMD. */
-const tickerData = [
-  { material: 'MS Plate Offcuts (Fresh)', city: 'Mumbai', state: 'Maharashtra', bid: '₹6.20 L', qty: '11 MT', type: 'ferrous' },
-  { material: 'Mixed Aluminium Extrusion Scrap', city: 'Chennai', state: 'Tamil Nadu', bid: '₹7.20 L', qty: '5 MT', type: 'aluminium' },
-  { material: 'Heavy Melting Steel Scrap (HMS 80:20)', city: 'Raipur', state: 'Chhattisgarh', bid: '₹8.50 L', qty: '25 MT', type: 'ferrous' },
-  { material: 'Copper Cable Scrap (Millberry)', city: 'Pune', state: 'Maharashtra', bid: '₹7.23 L', qty: '1 MT', type: 'copper' },
-  { material: 'CR Coil Secondary Stock', city: 'Bhiwadi', state: 'Rajasthan', bid: '₹4.50 L', qty: '10 MT', type: 'ferrous' },
-];
+/* ---------------------------------------------------------------------------
+   "Browse as Guest" — the door from the homepage into the real product.
+
+   It used to open this site's own marketing marketplace (#/home/marketplace).
+   It now hands the visitor the buyer's actual marketplace (#/buyermarketplace)
+   under the `guest_buyer` role: the same catalogue grid, filters, lot annexure
+   and inspection details a subscribed bidder sees, read only, with every
+   participating action behind the subscription prompt (src/components/GuestGate).
+
+   The destination lives in the manager app's router, not this one — guest1 runs
+   an isolated <HashRouter basename="/home"> (see Guest1Gate.tsx), so its own
+   `navigate()` would only ever produce "#/home/…". Writing the hash directly is
+   what crosses the boundary; Guest1Gate is listening for exactly that.
+--------------------------------------------------------------------------- */
+export const BrowseAsGuestButton = ({ className, style, onNavigate }) => (
+  <button
+    type="button"
+    className={className}
+    style={style}
+    onClick={() => {
+      onNavigate?.();
+      useStore.getState().switchRole('guest_buyer');
+      window.location.hash = '/buyermarketplace';
+    }}
+  >
+    Browse as Guest
+  </button>
+);
 
 export const Navbar = ({ theme, toggleTheme }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -171,7 +214,13 @@ export const Navbar = ({ theme, toggleTheme }) => {
     <nav className="navbar">
       <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div className="nav-brand">
-          <Link to="/"><img src={asset('/headericon.png')} alt="FerroBid Logo" style={{ height: '42px', objectFit: 'contain' }} /></Link>
+          {/* Two files, not a CSS filter: headericon's wordmark is black and
+              vanishes on the dark bar, while `invert` would swing the ember
+              shield to blue. footericon is the same lock-up, white wordmark. */}
+          <Link to="/" aria-label="FerroBid home">
+            <img src={asset('/headericon.png')} alt="FerroBid" className="brand-logo brand-logo-light" style={{ height: '42px' }} />
+            <img src={asset('/footericon.png')} alt="FerroBid" className="brand-logo brand-logo-dark" style={{ height: '42px' }} />
+          </Link>
         </div>
         
         <div className="nav-links">
@@ -202,7 +251,7 @@ export const Navbar = ({ theme, toggleTheme }) => {
           <Link to="/#announcements" className="nav-icon-btn" aria-label="Announcements">
             <Bell size={20} className="text-muted" />
           </Link>
-          <Link to="/marketplace" className="btn btn-outline nav-guest-btn" style={{ textDecoration: 'none' }}>Browse as Guest</Link>
+          <BrowseAsGuestButton className="btn btn-outline nav-guest-btn" />
           <Link to="/auth" className="btn btn-primary nav-login-btn" style={{ textDecoration: 'none' }}>Login / Register</Link>
         </div>
 
@@ -218,7 +267,7 @@ export const Navbar = ({ theme, toggleTheme }) => {
           <Link to="/#announcements" onClick={() => setIsMenuOpen(false)}>Announcements</Link>
           <Link to="/about-us" onClick={() => setIsMenuOpen(false)}>About us</Link>
           <div className="mobile-nav-actions">
-            <Link to="/marketplace" className="btn btn-outline" style={{width: '100%', marginBottom: '10px', textDecoration: 'none'}} onClick={() => setIsMenuOpen(false)}>Browse as Guest</Link>
+            <BrowseAsGuestButton className="btn btn-outline" style={{ width: '100%', marginBottom: '10px' }} onNavigate={() => setIsMenuOpen(false)} />
             <Link to="/auth" className="btn btn-primary" style={{width: '100%', textDecoration: 'none'}} onClick={() => setIsMenuOpen(false)}>Login / Register</Link>
           </div>
         </div>
@@ -236,10 +285,10 @@ export const Footer = () => {
       <div className="footer-grid">
           <div className="footer-brand-col">
             <div className="footer-logo">
-                {/* headericon, not footericon: the footer lock-up was the
-                    light-on-dark variant and washes out now the footer is a
-                    plain surface. */}
-                <img src={asset('/headericon.png')} alt="FerroBid Logo" loading="lazy" decoding="async" style={{ height: '40px', objectFit: 'contain', marginLeft: '-8px' }} />
+                {/* headericon on the light surface; footericon (white wordmark)
+                    only once the footer actually goes dark. */}
+                <img src={asset('/headericon.png')} alt="FerroBid" loading="lazy" decoding="async" className="brand-logo brand-logo-light" style={{ height: '40px', marginLeft: '-8px' }} />
+                <img src={asset('/footericon.png')} alt="FerroBid" loading="lazy" decoding="async" className="brand-logo brand-logo-dark" style={{ height: '40px', marginLeft: '-8px' }} />
             </div>
             <p className="footer-desc" style={{fontSize: '11px', marginTop: '8px', fontWeight: 600}}>India's Trusted Digital Metal Auction Platform</p>
             {/* Legal pair closes out the brand column rather than taking a row
@@ -331,6 +380,25 @@ function Home() {
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
 
+  /* Both bands below are the real sale, not a picture of one: the same
+     catalogues, lots and standing bids the marketplace and every signed-in
+     screen read. `now` advances each second (the engine mounted in
+     Guest1App), so a bid landing in a room moves the figure on the homepage,
+     and a catalogue reaching its start time leaves the forthcoming rail on
+     its own and appears in the live band instead. */
+  const now = useNow();
+  const catalogues = useStore((s) => s.catalogues);
+  const lots = useStore((s) => s.lots);
+  const users = useStore((s) => s.users);
+
+  const live = useMemo(() => liveActivityFeed(catalogues, lots, now), [catalogues, lots, now]);
+  const upcoming = useMemo(() => forthcomingAuctions(catalogues, lots, users, now), [catalogues, lots, users, now]);
+
+  /* Either band is a door into the catalogue itself — the read-only page a
+     visitor gets anywhere else on this site, with the lot annexure, terms,
+     inspection window and documents, and nothing that needs an account. */
+  const openCatalogue = (catalogueId) => navigate(`/catalogue/${catalogueId}`);
+
   const checkScroll = () => {
     if (carouselRef.current) {
       const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
@@ -339,11 +407,14 @@ function Home() {
     }
   };
 
+  // Re-measured when the rail's contents change, not only on resize: the
+  // number of forthcoming catalogues is now data, and a rail that no longer
+  // overflows must not keep offering a "next" arrow.
   useEffect(() => {
     checkScroll();
     window.addEventListener('resize', checkScroll);
     return () => window.removeEventListener('resize', checkScroll);
-  }, []);
+  }, [upcoming.length]);
 
   const scrollCarousel = (direction) => {
     if (carouselRef.current) {
@@ -456,7 +527,7 @@ function Home() {
           <div className="ticker-head-text">
             <h2 className="ticker-heading" id="live-auctions-heading">
               Live Auctions
-              <span className="ticker-count">{tickerData.length} auctions</span>
+              <span className="ticker-count">{live.auctions} auction{live.auctions === 1 ? '' : 's'}</span>
             </h2>
             <p className="ticker-desc">
               Rooms open across India right now. Every bid lands in real time, so the
@@ -477,27 +548,47 @@ function Home() {
                 <span className="text-[10px] text-ink-faint hidden sm:inline">Bidding across India</span>
               </div>
 
-              <div className="overflow-hidden whitespace-nowrap relative flex-1 [mask-image:linear-gradient(to_right,transparent,#000_5%,#000_95%,transparent)]">
-                {/* rendered twice back-to-back → seamless -50% loop */}
-                <div className="animate-ticker flex items-center gap-3.5 text-[13px]">
-                  {[...tickerData, ...tickerData].map((item, i) => (
-                    <div
-                      key={i}
-                      aria-hidden={i >= tickerData.length}
-                      className="flex items-center gap-2.5 shrink-0 rounded-lg border border-line bg-surface px-3.5 py-2 shadow-[0_2px_8px_-4px_rgba(0,0,0,0.12)]"
-                    >
-                      <span className={`ticker-dot ${item.type} animate-live-pulse`} />
-                      <span className="font-bold text-ink">{item.material}</span>
-                      <span className="inline-flex items-center gap-1.5 text-ink-muted">
-                        <MapPin size={13} className="text-ember shrink-0" /> {item.city}, {item.state}
-                      </span>
-                      <span className="inline-flex items-center gap-1 rounded-md bg-steel-soft text-steel-strong px-2 py-0.5 text-[11px] font-bold border border-steel/15">
-                        Bid <span className="num text-[13px] font-extrabold">{item.bid}</span>
-                      </span>
-                    </div>
-                  ))}
+              {live.items.length > 0 ? (
+                <div className="overflow-hidden whitespace-nowrap relative flex-1 [mask-image:linear-gradient(to_right,transparent,#000_5%,#000_95%,transparent)]">
+                  {/* rendered twice back-to-back → seamless -50% loop */}
+                  <div className="animate-ticker flex items-center gap-3.5 text-[13px]">
+                    {[...live.items, ...live.items].map((item, i) => {
+                      // The second pass is the loop's tail, not content: it is
+                      // hidden from assistive tech and taken out of the tab
+                      // order so a keyboard user meets each lot exactly once.
+                      const echo = i >= live.items.length;
+                      return (
+                        <button
+                          key={`${item.key}-${echo ? 'echo' : 'lead'}`}
+                          type="button"
+                          tabIndex={echo ? -1 : 0}
+                          aria-hidden={echo || undefined}
+                          onClick={() => openCatalogue(item.catalogueId)}
+                          title={`${item.material} — open this catalogue`}
+                          className="flex items-center gap-2.5 shrink-0 cursor-pointer text-left rounded-lg border border-line bg-surface px-3.5 py-2 shadow-[0_2px_8px_-4px_rgba(0,0,0,0.12)] transition-colors hover:border-ember/45"
+                        >
+                          <span className={`ticker-dot ${item.bead} animate-live-pulse`} />
+                          <span className="font-bold text-ink">{item.material}</span>
+                          <span className="inline-flex items-center gap-1.5 text-ink-muted">
+                            <MapPin size={13} className="text-ember shrink-0" /> {item.city}{item.state && `, ${item.state}`}
+                          </span>
+                          {/* "Bid" only once somebody has actually bid — until
+                              then the figure is the opening rate, and calling
+                              it a bid would invent one. */}
+                          <span className="inline-flex items-center gap-1 rounded-md bg-steel-soft text-steel-strong px-2 py-0.5 text-[11px] font-bold border border-steel/15">
+                            {item.hasBid ? 'Bid' : 'Start'} <span className="num text-[13px] font-extrabold">{inr(item.rate)}</span>/{item.uom}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <p className="flex-1 text-[13px] text-ink-muted m-0">
+                  No rooms are open at this moment.
+                  {upcoming.length > 0 && ` The next auction opens ${upcoming[0].date}.`}
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -506,7 +597,9 @@ function Home() {
       {/* Announcements */}
       <AnnouncementsSection />
 
-      {/* Forthcoming Auctions */}
+      {/* Forthcoming Auctions — hidden outright when nothing is scheduled,
+          rather than a heading over an empty rail. */}
+      {upcoming.length > 0 && (
       <section className="live-auctions" style={{ overflow: 'hidden' }}>
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '32px' }}>
@@ -524,15 +617,14 @@ function Home() {
             <button className={`carousel-nav-btn left ${!canScrollLeft ? 'disabled' : ''}`} aria-label="Previous" onClick={() => canScrollLeft && scrollCarousel('left')}><ChevronLeft size={20} /></button>
 
             <div className="auction-carousel" ref={carouselRef} onScroll={checkScroll}>
-              {[
-                { company: 'Shree Balaji Metal Corp', loc: 'Mumbai, Maharashtra', cat: 'ALUMINIUM', date: '28 Jul 2026', emd: '₹25,000', img: asset('/aluminium_scrap.png') },
-                { company: 'Om Sai Recycling Pvt Ltd', loc: 'Chennai, TN', cat: 'RUBBER', date: '02 Aug 2026', emd: '₹18,500', img: asset('/rubber_scrap.png') },
-                { company: 'Bhilai Ispat Udyog', loc: 'Raipur, Chhattisgarh', cat: 'STEEL', date: '05 Aug 2026', emd: '₹65,000', img: asset('/images/auctions/hms_scrap.png') },
-                { company: 'Deccan Alloys & Steel', loc: 'Pune, Maharashtra', cat: 'STEEL', date: '09 Aug 2026', emd: '₹1,20,000', img: asset('/images/auctions/cr_coil.png') },
-                { company: 'Saraswati Non-Ferrous Ltd', loc: 'Ahmedabad, Gujarat', cat: 'COPPER', date: '12 Aug 2026', emd: '₹95,000', img: asset('/images/auctions/copper_wire.png') },
-                { company: 'Ganges Metal Traders', loc: 'Kolkata, WB', cat: 'ZINC', date: '15 Aug 2026', emd: '₹40,000', img: asset('/images/auctions/zinc_dross.png') }
-              ].map((item, i) => (
-                <UpcomingAuctionCard key={i} item={item} i={i} />
+              {upcoming.map((item, i) => (
+                <UpcomingAuctionCard
+                  key={item.catalogueId}
+                  item={item}
+                  i={i}
+                  now={now}
+                  onOpen={() => openCatalogue(item.catalogueId)}
+                />
               ))}
             </div>
 
@@ -540,6 +632,7 @@ function Home() {
           </div>
         </div>
       </section>
+      )}
 
       {/* How It Works Section */}
       <HowItWorksSection />
@@ -703,7 +796,7 @@ function Home() {
                   <Link to="/auth?tab=register" className="btn cta-btn-white" style={{ textDecoration: 'none' }}>Register Now <ArrowRight size={14} className="ml-2"/></Link>
                </MotionDiv>
                <MotionDiv whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.95 }}>
-                 <Link to="/marketplace" className="btn cta-btn-outline" style={{ textDecoration: 'none' }}>Browse as Guest</Link>
+                 <BrowseAsGuestButton className="btn cta-btn-outline" />
                </MotionDiv>
             </div>
          </div>

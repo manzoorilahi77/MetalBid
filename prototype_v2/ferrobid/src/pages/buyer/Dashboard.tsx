@@ -1,7 +1,7 @@
 /* Buyer home — an action feed. Whatever needs doing next is highest on the
    page: a live, fully-funded auction pins to the top with one tap into its
    bidding room; everything else queues below in EMD fund-by order. */
-import { useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   AlertTriangle, ArrowRight, Bell, CalendarDays, CheckCircle2, ChevronLeft, ChevronRight, Gavel, Truck, UserRound,
@@ -12,59 +12,110 @@ import { EmdReminderBanner } from '../../components/EmdReminder'
 import { useBidroomGate } from '../../components/BidroomGate'
 import { useStore, selectionSummary, isCatalogueShortlisted, hasApprovedEmdExemption } from '../../store/store'
 import { emdDeadlineMs } from '../../lib/emd'
-import { fmtDate, inr, inrCompact, relTime } from '../../lib/format'
+import { inr, inrCompact, relTime } from '../../lib/format'
 import { useNow } from '../../lib/useTick'
 import type { Catalogue } from '../../types'
 
 type CalEventTone = 'ember' | 'danger' | 'success' | 'steel'
-type CalEvent = { date: string; label: string; tone: CalEventTone }
-const TONE_DOT: Record<CalEventTone, string> = {
-  ember: 'bg-ember', danger: 'bg-danger', success: 'bg-success', steel: 'bg-steel',
+type CalEvent = {
+  date: string
+  /** What happens in this block — "Auction closes", "Bid closes". */
+  label: string
+  tone: CalEventTone
+  /** Reference the buyer quotes: catalogue code or lot number. */
+  code?: string
+  /** Seller and size, or the yard. */
+  meta?: string
+  tags?: string[]
+  to?: string
 }
 
-/** Compact month calendar — dots mark days with a buyer-relevant deadline
-    (auction close, active-bid close, delivery lift-by); the side list spells
-    out whatever's coming up next so the dots aren't a guessing game. */
+const TONE_TEXT: Record<CalEventTone, string> = {
+  ember: 'text-ember', danger: 'text-danger', success: 'text-success', steel: 'text-steel',
+}
+
+/** The working band the grid draws. A deadline outside it is pinned to the
+    nearest edge row rather than dropped, so nothing falls off the calendar. */
+const HOURS = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00']
+
+/** "Aug 17" / "Monday" — month-first, matching the auction calendar elsewhere
+    on the platform. `fmtTime` carries seconds, which a schedule block doesn't. */
+const dateLabel = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+const weekdayLabel = (d: Date) => d.toLocaleDateString('en-US', { weekday: 'long' })
+const clockLabel = (iso: string) =>
+  new Date(iso).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })
+
+const dayKey = (d: Date) => `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`
+const slotKey = (d: Date, hour: string) => `${dayKey(d)}|${hour}`
+const hourOf = (d: Date) => `${String(Math.min(18, Math.max(9, d.getHours()))).padStart(2, '0')}:00`
+
+/** Auction calendar — a week × time-block matrix. Each cell carries a count
+    badge for the deadlines that land in that hour; picking one opens the block
+    in the side panel. Three days on phones, seven from tablet up. */
 function DashboardCalendar({ events }: { events: CalEvent[] }) {
   const now = useNow()
-  const [monthOffset, setMonthOffset] = useState(0)
-  // Which day is picked, so the side panel can narrow from "everything
-  // upcoming" down to "just this day" — cleared whenever the month changes,
-  // since a day number from last month means nothing in the new one.
-  const [selectedDay, setSelectedDay] = useState<number | null>(null)
-  const today = new Date(now)
-  const viewDate = new Date(today.getFullYear(), today.getMonth() + monthOffset, 1)
-  const year = viewDate.getFullYear()
-  const month = viewDate.getMonth()
-  const firstDow = new Date(year, month, 1).getDay()
-  const daysInMonth = new Date(year, month + 1, 0).getDate()
+  const [offset, setOffset] = useState(0)
+  const [cols, setCols] = useState(() => (typeof window === 'undefined' || window.innerWidth >= 768 ? 7 : 3))
+  const [picked, setPicked] = useState<{ key: string; label: string; weekday: string; hour: string } | null>(null)
 
-  const eventsByDay = new Map<number, CalEvent[]>()
-  for (const e of events) {
-    const d = new Date(e.date)
-    if (d.getFullYear() === year && d.getMonth() === month) {
-      const day = d.getDate()
-      eventsByDay.set(day, [...(eventsByDay.get(day) ?? []), e])
+  useEffect(() => {
+    const onResize = () => setCols(window.innerWidth >= 768 ? 7 : 3)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+
+  const todayStamp = new Date(now).toDateString()
+
+  const days = useMemo(() => {
+    const t = new Date(todayStamp)
+    const start = new Date(t.getFullYear(), t.getMonth(), t.getDate() + offset)
+    return Array.from({ length: cols }, (_, i) => {
+      const d = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i)
+      return {
+        d,
+        label: dateLabel(d),
+        weekday: weekdayLabel(d),
+        isToday: d.toDateString() === todayStamp,
+      }
+    })
+  }, [offset, cols, todayStamp])
+
+  /** Every event bucketed into the hour block it falls in, earliest first. */
+  const bySlot = useMemo(() => {
+    const m = new Map<string, CalEvent[]>()
+    for (const e of [...events].sort((a, b) => Date.parse(a.date) - Date.parse(b.date))) {
+      const d = new Date(e.date)
+      const k = slotKey(d, hourOf(d))
+      const list = m.get(k)
+      if (list) list.push(e)
+      else m.set(k, [e])
     }
-  }
+    return m
+  }, [events])
 
-  const cells: (number | null)[] = [...Array(firstDow).fill(null), ...Array.from({ length: daysInMonth }, (_, i) => i + 1)]
-  const monthLabel = viewDate.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })
+  // Default to the first block in view that actually holds something — landing
+  // on an empty 11:00 teaches the buyer nothing.
+  const fallback = useMemo(() => {
+    for (const day of days) {
+      for (const h of HOURS) {
+        if (bySlot.get(slotKey(day.d, h))?.length) {
+          return { key: slotKey(day.d, h), label: day.label, weekday: day.weekday, hour: h }
+        }
+      }
+    }
+    const d0 = days[0]
+    return { key: slotKey(d0.d, '11:00'), label: d0.label, weekday: d0.weekday, hour: '11:00' }
+  }, [days, bySlot])
 
-  const changeMonth = (delta: number) => {
-    setMonthOffset((o) => o + delta)
-    setSelectedDay(null)
-  }
+  const active = picked ?? fallback
+  const activeList = bySlot.get(active.key) ?? []
 
-  const upcoming = [...events]
-    .filter((e) => Date.parse(e.date) >= now)
-    .sort((a, b) => Date.parse(a.date) - Date.parse(b.date))
-    .slice(0, 6)
+  const go = (step: number) => { setOffset((o) => o + step * cols); setPicked(null) }
+  const goToday = () => { setOffset(0); setPicked(null) }
 
-  const selectedEvents = selectedDay != null ? (eventsByDay.get(selectedDay) ?? []) : null
-  const selectedLabel = selectedDay != null
-    ? new Date(year, month, selectedDay).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' })
-    : null
+  const first = days[0]
+  const last = days[days.length - 1]
+  const rangeLabel = `${first.label} - ${last.label}, ${last.d.getFullYear()}`
 
   return (
     <section className="mt-8">
@@ -72,116 +123,119 @@ function DashboardCalendar({ events }: { events: CalEvent[] }) {
         <CalendarDays size={16} className="text-ink-muted" />
         <h2 className="font-display text-lg font-bold">Calendar</h2>
       </div>
-      <div className="card overflow-hidden">
-        <div className="flex flex-col sm:flex-row">
-          {/* month grid — a fixed-width pane so the day badges stay tidy
-              circles instead of stretching to fill the page */}
-          <div className="p-6 sm:w-[420px] sm:shrink-0">
-            <div className="flex items-center justify-between mb-5">
-              <button type="button" aria-label="Previous month" onClick={() => changeMonth(-1)}
-                className="size-9 rounded-lg grid place-items-center text-ink-muted hover:bg-surface-2 hover:text-ink transition-colors">
-                <ChevronLeft size={18} />
-              </button>
-              <span className="font-display font-bold text-base">{monthLabel}</span>
-              <button type="button" aria-label="Next month" onClick={() => changeMonth(1)}
-                className="size-9 rounded-lg grid place-items-center text-ink-muted hover:bg-surface-2 hover:text-ink transition-colors">
-                <ChevronRight size={18} />
-              </button>
-            </div>
-            <div className="grid grid-cols-7 text-center text-xs font-semibold text-ink-faint mb-2">
-              {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => <div key={i}>{d}</div>)}
-            </div>
-            <div className="grid grid-cols-7">
-              {cells.map((d, i) => {
-                if (d === null) return <div key={i} />
-                const isToday = monthOffset === 0 && d === today.getDate()
-                const isSelected = selectedDay === d
-                const dayEvents = eventsByDay.get(d) ?? []
-                return (
-                  <button key={i} type="button"
-                    aria-pressed={isSelected}
-                    aria-label={`${monthLabel.split(' ')[0]} ${d}${dayEvents.length ? `, ${dayEvents.length} deadline${dayEvents.length > 1 ? 's' : ''}` : ''}`}
-                    title={dayEvents.map((e) => e.label).join('\n') || undefined}
-                    onClick={() => setSelectedDay((prev) => (prev === d ? null : d))}
-                    className="group aspect-square w-full rounded-lg flex flex-col items-center justify-center gap-1.5 cursor-pointer">
-                    <span className={cx(
-                      'grid place-items-center size-10 rounded-full text-sm font-semibold transition-colors',
-                      isSelected
-                        ? 'bg-steel text-white'
-                        : isToday
-                          ? 'ring-2 ring-ember text-ember-strong font-bold group-hover:bg-ember-soft'
-                          : 'text-ink group-hover:bg-surface-2',
-                    )}>
-                      {d}
-                    </span>
-                    <span className="flex items-center gap-1 h-1.5">
-                      {dayEvents.slice(0, 3).map((e, j) => (
-                        <span key={j} className={cx('size-1.5 rounded-full', TONE_DOT[e.tone])} />
-                      ))}
-                      {dayEvents.length > 3 && <span className="size-1.5 rounded-full bg-ink-faint" />}
-                    </span>
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-          {/* agenda pane — everything upcoming by default, or just the picked
-              day's deadlines once one is clicked. Height-capped with its own
-              scroll so a busy day never stretches the whole card. */}
-          <div className="p-6 flex-1 min-w-0 flex flex-col border-t sm:border-t-0 sm:border-l border-line">
-            <div className="flex items-center justify-between mb-4 shrink-0">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-ink-faint">
-                  {selectedLabel ?? 'Upcoming'}
-                </span>
-                {!selectedEvents && upcoming.length > 0 && (
-                  <span className="text-[10px] font-bold text-ink-faint bg-surface-2 rounded-full size-4 grid place-items-center">
-                    {upcoming.length}
-                  </span>
-                )}
+
+      <div className="grid lg:grid-cols-[minmax(0,1fr)_380px] gap-6 lg:gap-8 items-start">
+        {/* ------------------------------- matrix ------------------------------ */}
+        <div className="card rounded-3xl p-2 overflow-hidden">
+          <div className="grid" style={{ gridTemplateColumns: `80px repeat(${cols}, minmax(0,1fr))` }}>
+            {/* corner */}
+            <div className="bg-surface-2 border-r border-r-line-strong border-b-2 border-b-line" />
+
+            {days.map((day) => (
+              <div key={dayKey(day.d)}
+                className="relative text-center py-3 px-1 bg-surface-2 border-r border-r-line-strong border-b-2 border-b-line"
+                style={day.isToday
+                  ? { background: 'linear-gradient(180deg, color-mix(in srgb, var(--ember) 8%, var(--surface-2)) 0%, var(--surface-2) 100%)' }
+                  : undefined}>
+                {day.isToday && <span className="absolute top-0 left-[10%] right-[10%] h-[3px] bg-ember rounded-b" />}
+                <div className="text-[15px] font-extrabold text-ink leading-none">{day.label}</div>
+                <div className="text-[11px] font-semibold text-ink-muted uppercase tracking-[0.5px] mt-1">{day.weekday}</div>
               </div>
-              {selectedDay != null && (
-                <Button variant="ghost" size="sm" className="h-7 px-2.5 text-xs" onClick={() => setSelectedDay(null)}>
-                  Show all
-                </Button>
-              )}
-            </div>
-            <div className="flex-1 overflow-y-auto max-h-[22rem] -mr-1 pr-1">
-              {selectedEvents ? (
-                selectedEvents.length === 0 ? (
-                  <p className="text-sm text-ink-muted">No deadlines on this day.</p>
-                ) : (
-                  <div className="flex flex-col divide-y divide-line">
-                    {selectedEvents.map((e, i) => (
-                      <div key={i} className="flex items-start gap-2.5 text-sm py-2 first:pt-0 last:pb-0">
-                        <span className={cx('size-1.5 rounded-full mt-1.5 shrink-0', TONE_DOT[e.tone])} />
-                        <div className="font-medium">{e.label}</div>
-                      </div>
-                    ))}
-                  </div>
-                )
-              ) : upcoming.length === 0 ? (
-                <p className="text-sm text-ink-muted">Nothing on your calendar right now.</p>
-              ) : (
-                <div className="flex flex-col divide-y divide-line">
-                  {upcoming.map((e, i) => (
-                    <button key={i} type="button"
-                      onClick={() => {
-                        const d = new Date(e.date)
-                        setMonthOffset((d.getFullYear() - today.getFullYear()) * 12 + (d.getMonth() - today.getMonth()))
-                        setSelectedDay(d.getDate())
-                      }}
-                      className="flex items-start gap-2.5 text-sm w-full text-left py-2 first:pt-0 last:pb-0 hover:bg-surface-2 rounded-lg -mx-1.5 px-1.5 transition-colors">
-                      <span className={cx('size-1.5 rounded-full mt-1.5 shrink-0', TONE_DOT[e.tone])} />
-                      <div className="min-w-0">
-                        <div className="font-medium truncate">{e.label}</div>
-                        <div className="text-xs text-ink-faint">{fmtDate(e.date)}</div>
-                      </div>
-                    </button>
-                  ))}
+            ))}
+
+            {HOURS.map((h) => (
+              <Fragment key={h}>
+                <div className="num text-[11px] font-semibold text-ink-muted flex items-center justify-end px-3 bg-surface-2/40 border-r border-r-line-strong border-b border-b-line-strong">
+                  {h}
                 </div>
-              )}
-            </div>
+                {days.map((day) => {
+                  const k = slotKey(day.d, h)
+                  const list = bySlot.get(k) ?? []
+                  const has = list.length > 0
+                  const isSel = active.key === k && active.hour === h
+                  return (
+                    <button key={k} type="button" disabled={!has}
+                      aria-label={has ? `${list.length} on ${day.label} at ${h}` : undefined}
+                      onClick={() => setPicked({ key: k, label: day.label, weekday: day.weekday, hour: h })}
+                      className={cx('h-[38px] flex items-center justify-center border-r border-r-line-strong border-b border-b-line-strong transition-colors',
+                        has ? 'cursor-pointer hover:bg-ember-soft/60' : 'cursor-default',
+                        isSel && 'rounded-lg ring-1 ring-ember/25 relative z-[5]')}
+                      style={isSel
+                        ? { background: 'radial-gradient(circle, color-mix(in srgb, var(--ember) 16%, transparent) 0%, color-mix(in srgb, var(--ember) 5%, transparent) 100%)' }
+                        : day.isToday ? { background: 'color-mix(in srgb, var(--ember) 3%, transparent)' } : undefined}>
+                      {has && (
+                        <span className="num text-[12px] font-extrabold text-white px-2.5 py-0.5 rounded-full leading-tight"
+                          style={{
+                            background: 'linear-gradient(135deg, var(--ember), var(--ember-strong))',
+                            boxShadow: '0 4px 12px color-mix(in srgb, var(--ember-strong) 32%, transparent)',
+                          }}>
+                          {list.length}
+                        </span>
+                      )}
+                    </button>
+                  )
+                })}
+              </Fragment>
+            ))}
+          </div>
+
+          <div className="px-6 py-4 text-center text-xs font-medium text-ink-muted">
+            *Auction schedule can be subjected to change.
+          </div>
+        </div>
+
+        {/* ------------------------------ side panel --------------------------- */}
+        <div className="card rounded-3xl p-6 flex flex-col lg:sticky lg:top-24 lg:h-[600px]">
+          <div className="flex items-center justify-between gap-2 rounded-full border border-line bg-surface p-1.5 mb-4 shrink-0">
+            <button type="button" onClick={goToday}
+              className="h-8 px-4 rounded-full bg-ember-soft text-ember-strong text-[13px] font-bold hover:brightness-95 transition-all">
+              Today
+            </button>
+            <button type="button" aria-label="Previous days" onClick={() => go(-1)}
+              className="size-8 shrink-0 rounded-full border border-line grid place-items-center text-ink hover:bg-surface-2 transition-colors">
+              <ChevronLeft size={18} />
+            </button>
+            <span className="text-sm font-bold text-ink text-center flex-1 min-w-0 px-1">{rangeLabel}</span>
+            <button type="button" aria-label="Next days" onClick={() => go(1)}
+              className="size-8 shrink-0 rounded-full border border-line grid place-items-center text-ink hover:bg-surface-2 transition-colors">
+              <ChevronRight size={18} />
+            </button>
+          </div>
+
+          <h3 className="font-display text-2xl font-bold pb-4 mb-5 border-b border-line shrink-0">
+            {active.label} {active.weekday} {active.hour}
+          </h3>
+
+          <div className="flex-1 min-h-0 overflow-y-auto -mr-2 pr-2 flex flex-col gap-4">
+            {activeList.length === 0 ? (
+              <div className="rounded-2xl border border-line px-5 py-4 text-sm text-ink-muted">
+                Nothing scheduled in this block.
+              </div>
+            ) : activeList.map((e, i) => {
+              const inner = (
+                <>
+                  <div className={cx('num text-[13px] font-extrabold tracking-[0.5px]', TONE_TEXT[e.tone])}>
+                    {e.code ?? 'Deadline'}
+                  </div>
+                  <div className="text-[15px] font-bold text-ink mt-2 leading-normal break-words">{e.label}</div>
+                  {e.meta && <div className="text-[13px] text-ink-muted mt-1">{e.meta}</div>}
+                  <div className="flex flex-wrap gap-2 mt-4">
+                    {e.tags?.map((t) => (
+                      <span key={t} className="bg-surface-2 text-ink-muted text-[11px] font-bold px-3 py-1.5 rounded-full border border-line">
+                        {t}
+                      </span>
+                    ))}
+                    <span className="num bg-ember-soft text-ember-strong text-[11px] font-bold px-3 py-1.5 rounded-full border border-ember/15">
+                      {clockLabel(e.date)}
+                    </span>
+                  </div>
+                </>
+              )
+              const cls = 'block text-left rounded-2xl border border-line bg-surface px-5 py-4 shrink-0 transition-all duration-300 hover:-translate-y-1 hover:border-ember/30 hover:shadow-[var(--shadow-card-hover)]'
+              return e.to
+                ? <Link key={i} to={e.to} className={cls}>{inner}</Link>
+                : <div key={i} className={cx(cls, 'hover:translate-y-0')}>{inner}</div>
+            })}
           </div>
         </div>
       </div>
@@ -198,6 +252,7 @@ export default function Dashboard() {
   const me = useStore((s) => s.currentUser)
   const lots = useStore((s) => s.lots)
   const catalogues = useStore((s) => s.catalogues)
+  const users = useStore((s) => s.users)
   const bids = useStore((s) => s.bids)
   const wallets = useStore((s) => s.wallets)
   const selections = useStore((s) => s.selections)
@@ -262,24 +317,46 @@ export default function Dashboard() {
   const shortlistedCats = catalogues.filter((cat) => isCatalogueShortlisted({ watchlist }, me.id, cat.id))
   const shortlistedIds = new Set(shortlistedCats.map((c) => c.id))
 
+  const sellerOf = (cat: Catalogue) => users.find((u) => u.id === cat.sellerId)?.firm ?? 'Seller'
+
   const calEvents: CalEvent[] = [
     ...shortlistedCats.flatMap((cat): CalEvent[] => {
       const summary = selectionSummary({ selections, lots }, me.id, cat.id)
       const emdDate = new Date(emdDeadlineMs(cat)).toISOString()
+      const base = {
+        code: cat.code,
+        meta: `${sellerOf(cat)} · ${cat.lotIds.length} lot${cat.lotIds.length === 1 ? '' : 's'}`,
+        tags: [cat.region],
+        to: `/catalogue/${cat.id}`,
+      }
       return [
-        { date: cat.startsAt, label: `${cat.code} auction starts`, tone: 'steel' },
-        { date: cat.endsAt, label: `${cat.code} auction closes`, tone: 'ember' },
+        { ...base, date: cat.startsAt, label: 'Auction opens', tone: 'steel' },
+        { ...base, date: cat.endsAt, label: 'Auction closes', tone: 'ember' },
         summary.count > 0 && summary.shortfall > 0
-          ? { date: emdDate, label: `${cat.code} EMD unpaid — fund ${inr(summary.shortfall)} by deadline`, tone: 'danger' }
-          : { date: emdDate, label: `${cat.code} EMD funding closes`, tone: 'steel' },
+          ? { ...base, date: emdDate, label: `EMD unpaid — fund ${inr(summary.shortfall)}`, tone: 'danger', to: `/buyer/shortlist/${cat.id}` }
+          : { ...base, date: emdDate, label: 'EMD funding closes', tone: 'steel' },
       ]
     }),
     ...activeLots.filter((l) => shortlistedIds.has(l.catalogueId)).map((l): CalEvent => ({
-      date: l.endsAt, label: `${l.lotNo} bid closes`, tone: l.leadingBidderId === me.id ? 'success' : 'danger',
+      date: l.endsAt,
+      label: l.leadingBidderId === me.id ? 'Bid closes — you are H1' : 'Bid closes — you are outbid',
+      tone: l.leadingBidderId === me.id ? 'success' : 'danger',
+      code: l.lotNo,
+      meta: `${l.metal} ${l.grade}`,
+      tags: l.currentRate != null ? [inr(l.currentRate)] : undefined,
+      to: '/buyer/bids?tab=active',
     })),
     ...pendingDos.filter((d) => shortlistedIds.has(d.catalogueId)).map((d): CalEvent => {
       const l = lotById.get(d.lotId)
-      return { date: d.liftingBy, label: `${l?.lotNo ?? d.lotId} lift-by deadline`, tone: 'steel' }
+      return {
+        date: d.liftingBy,
+        label: 'Lift-by deadline',
+        tone: 'steel',
+        code: l?.lotNo ?? d.lotId,
+        meta: l ? `${l.metal} ${l.grade}` : undefined,
+        tags: ['Delivery'],
+        to: '/buyer/auction-status',
+      }
     }),
   ]
 

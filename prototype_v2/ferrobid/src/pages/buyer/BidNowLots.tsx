@@ -149,7 +149,7 @@ export default function BidNowLots() {
                     <span className="num text-sm font-bold">{l.lotNo}</span>
                     <Chip tone="neutral">{l.metal}</Chip>
                   </div>
-                  <div className="text-xs text-ink-muted line-clamp-1 mt-0.5">{l.description}</div>
+                  <div className="text-xs font-semibold text-ink line-clamp-1 mt-0.5">{l.description}</div>
                   <div className="text-[11px] text-ink-faint mt-0.5 num">
                     {num(l.indicativeQty)} {l.uom} · start {inr(l.startRate)}/{l.uom} · EMD {inr(l.preBidEmd)}
                   </div>

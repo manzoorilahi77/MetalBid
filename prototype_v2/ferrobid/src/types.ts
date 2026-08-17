@@ -7,7 +7,12 @@
 export type Role =
   | 'guest'
   | 'guest1' // isolated standalone public homepage app (own router, at /home)
-  | 'guest2' // redesigned public/marketing site, anonymous like 'guest'
+  /** "Browse as Guest" from the public homepage — a read-only walk through the
+   *  buyer's own marketplace. Anonymous like the other guests, but it borrows
+   *  the buyer's screens rather than a marketing site's, so a visitor sees the
+   *  real catalogues and lots before deciding to subscribe. Every action that
+   *  would commit them to a sale is locked behind the subscription prompt. */
+  | 'guest_buyer'
   | 'buyer'
   | 'seller'
   | 'field_exec'

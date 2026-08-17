@@ -20,8 +20,8 @@
 --------------------------------------------------------------------------- */
 import { lazy, Suspense, useLayoutEffect, useSyncExternalStore, type ReactNode } from 'react'
 
-// Lazy so the entire homepage bundle (framer sections, react-simple-maps,
-// world-atlas topojson, @fontsource CSS, …) is code-split into its own chunk
+// Lazy so the entire homepage bundle (framer sections, the India map,
+// @fontsource CSS, …) is code-split into its own chunk
 // and only downloaded when a visitor actually opens the homepage — it never
 // weighs down the manager app's initial load.
 const Guest1App = lazy(() => import('./Guest1App'))

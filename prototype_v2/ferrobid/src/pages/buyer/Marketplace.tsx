@@ -5,6 +5,7 @@ import { Search, SearchX, Star, X } from 'lucide-react'
 import { Page } from '../../layout/Chrome'
 import { Button, EmptyState, Field, Input, PageHeader, Select, cx } from '../../components/ui'
 import { CatalogueCard } from '../../components/domain'
+import { useGuestGate } from '../../components/GuestGate'
 import { useStore, catalogueUiStatus, isCatalogueShortlisted } from '../../store/store'
 import { useNow } from '../../lib/useTick'
 import type { Catalogue } from '../../types'
@@ -37,6 +38,7 @@ export default function BuyerMarketplace() {
   const catalogues = useStore((s) => s.catalogues)
   const lots = useStore((s) => s.lots)
   const watchlist = useStore((s) => s.watchlist)
+  const guest = useGuestGate()
   const [params, setParams] = useSearchParams()
 
   const tabParam = params.get('tab')
@@ -125,8 +127,11 @@ export default function BuyerMarketplace() {
 
   return (
     <Page>
+      {/* The title names what the visitor can actually do here — promising a
+          guest "& Shortlist" on a page where shortlisting is locked reads as a
+          broken screen rather than a paywall. */}
       <PageHeader
-        title="Browse & Shortlist"
+        title={guest.isGuest ? 'Browse the marketplace' : 'Browse & Shortlist'}
         sub="Every catalogue is physically inspected and verified by our field team. Sold as-is-where-is — quantities are indicative, final on weighment."
       />
 
@@ -147,8 +152,10 @@ export default function BuyerMarketplace() {
             </button>
           ))}
         </div>
+        {/* A guest has no shortlist to filter down to, so this filter is the
+            prompt rather than a facet — same as the star on each card. */}
         <button aria-pressed={scope === 'shortlisted'}
-          onClick={() => setScope(scope === 'shortlisted' ? 'all' : 'shortlisted')}
+          onClick={() => { if (guest.block('shortlist')) return; setScope(scope === 'shortlisted' ? 'all' : 'shortlisted') }}
           className={cx('mt-3 h-9 px-3.5 rounded-full border text-sm font-semibold whitespace-nowrap inline-flex items-center gap-2 transition-colors',
             scope === 'shortlisted' ? 'bg-ember-soft border-ember/30 text-ember-strong' : 'bg-surface border-line-strong text-ink-muted hover:text-ink hover:border-ink/30')}>
           <Star size={14} fill={scope === 'shortlisted' ? 'currentColor' : 'none'} />

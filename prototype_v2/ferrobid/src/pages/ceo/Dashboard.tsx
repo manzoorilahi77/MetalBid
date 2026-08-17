@@ -353,7 +353,7 @@ export default function CeoDashboard() {
         title="CEO dashboard"
         sub="Your executive view of ferroBid — what we earned, how the sales performed, whether we are growing, what is exposed, and what is waiting on your signature."
         actions={
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 min-w-0 max-w-full">
             <span className="inline-flex items-center gap-1.5 h-8 px-2.5 rounded-lg border border-line bg-surface-2 text-[12px] text-ink-muted">
               <span className="size-1.5 rounded-full bg-success animate-live-pulse" aria-hidden />
               <span className="num">As at {asAt}</span>

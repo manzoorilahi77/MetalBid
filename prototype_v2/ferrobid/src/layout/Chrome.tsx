@@ -5,16 +5,16 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import {
-  Bell, Check, ChevronDown, Flame, Gavel, Globe, LogOut, Mail, Menu, Moon, Search, Sun, User as UserIcon,
+  Bell, ChevronDown, Gavel, Lock, LogOut, Mail, Menu, Moon, Search, Sun, User as UserIcon,
   Wallet as WalletIcon, X, LifeBuoy, FileText, SlidersHorizontal,
 } from 'lucide-react'
 import { ROLE_HOME, ROLE_LABEL, pageMatches, topNavFrom, useStore } from '../store/store'
 import type { TopNavLink } from '../store/store'
 import type { Role } from '../types'
 import { inrCompact, relTime } from '../lib/format'
-import { useClientIp } from '../lib/useClientIp'
 import { AppComingSoonModal, Avatar, Chip, cx } from '../components/ui'
 import { useBidroomGate } from '../components/BidroomGate'
+import { GuestPreviewBanner, GuestWalletChip, useGuestGate } from '../components/GuestGate'
 
 /* The shipped menu now lives in ./nav, and the store seeds its page registry
    from it. Chrome renders the registry — which the Super Admin's Page manager
@@ -23,16 +23,25 @@ import { useBidroomGate } from '../components/BidroomGate'
 export { NAV_BY_ROLE } from './nav'
 export type { NavItem } from './nav'
 
+/* The same lock-up the public homepage nav and footer use, so the brand does
+   not change shape when a visitor signs in. Two files rather than one plus a
+   CSS filter: the wordmark flips black -> white for dark mode but the ember
+   shield must stay ember, and `invert` would take the orange to blue.
+   public/ assets need BASE_URL or they 404 when served from a sub-path. */
 function Logo() {
   const role = useStore((s) => s.role)
   return (
-    <Link to={ROLE_HOME[role]} className="flex items-center gap-2 shrink-0" aria-label="ferroBid home">
-      <span className="size-8 rounded-lg bg-ember grid place-items-center text-white">
-        <Flame size={18} strokeWidth={2.5} />
-      </span>
-      <span className="font-display text-xl font-bold tracking-tight hidden sm:block">
-        ferro<span className="text-ember">Bid</span>
-      </span>
+    <Link to={ROLE_HOME[role]} className="flex items-center shrink-0" aria-label="ferroBid home">
+      <img
+        src={`${import.meta.env.BASE_URL}headericon.png`}
+        alt=""
+        className="h-9 w-auto object-contain dark:hidden"
+      />
+      <img
+        src={`${import.meta.env.BASE_URL}footericon.png`}
+        alt=""
+        className="h-9 w-auto object-contain hidden dark:block"
+      />
     </Link>
   )
 }
@@ -141,68 +150,6 @@ function ProfileMenu() {
   )
 }
 
-/**
- * SessionIp — the visitor's public IP, in the slot the catalogue search used to
- * occupy. Reads as an enterprise session/audit marker, so it's styled as a
- * static readout (not a control) and never shifts width while resolving.
- *
- * IPv6 addresses are far wider than the chip, so the value truncates and the
- * full address lives in the tooltip + copy action.
- */
-function SessionIp({ className }: { className?: string }) {
-  const { ip, state } = useClientIp()
-  const [copied, setCopied] = useState(false)
-
-  useEffect(() => {
-    if (!copied) return
-    const t = window.setTimeout(() => setCopied(false), 1400)
-    return () => window.clearTimeout(t)
-  }, [copied])
-
-  const copy = async () => {
-    if (!ip) return
-    try {
-      await navigator.clipboard.writeText(ip)
-      setCopied(true)
-    } catch {
-      /* clipboard blocked (insecure origin / denied) — the tooltip still shows it */
-    }
-  }
-
-  const label =
-    state === 'ready' ? ip : state === 'loading' ? 'Resolving…' : 'Unavailable'
-
-  return (
-    <button
-      type="button"
-      onClick={copy}
-      disabled={state !== 'ready'}
-      title={state === 'ready' ? `Session IP ${ip} — click to copy` : 'Session IP unavailable'}
-      aria-label={state === 'ready' ? `Session IP ${ip}. Click to copy.` : 'Session IP unavailable'}
-      className={cx(
-        'h-9 px-3 rounded-xl bg-surface-2 border border-line inline-flex items-center gap-2 max-w-[13rem] shrink-0',
-        state === 'ready'
-          ? 'hover:border-line-strong cursor-pointer'
-          : 'cursor-default opacity-70',
-        className,
-      )}
-    >
-      {copied ? (
-        <Check size={13} className="text-success shrink-0" />
-      ) : (
-        <Globe size={13} className={cx('shrink-0', state === 'ready' ? 'text-steel' : 'text-ink-faint')} />
-      )}
-      <span className="flex flex-col items-start leading-none min-w-0">
-        <span className="text-[9px] font-bold uppercase tracking-wider text-ink-faint">
-          {copied ? 'Copied' : 'Session IP'}
-        </span>
-        <span className={cx('num text-[12px] font-bold mt-0.5 truncate max-w-full', state === 'ready' ? 'text-ink' : 'text-ink-faint')}>
-          {label}
-        </span>
-      </span>
-    </button>
-  )
-}
 
 /** One link on the sticky top bar.
  *
@@ -211,9 +158,19 @@ function SessionIp({ className }: { className?: string }) {
  *  stays lit for every page inside it — click it and the strip below fills with
  *  that category's screens, which is the whole two-level menu in one gesture. */
 function TopNavLinkView({ link, role, pathname }: { link: TopNavLink; role: Role; pathname: string }) {
+  const { isGuest, open } = useGuestGate()
   const cls = (active: boolean) =>
     cx('h-9 px-3 rounded-lg text-sm font-semibold inline-flex items-center whitespace-nowrap transition-colors',
       active ? 'text-ember-strong bg-ember-soft/70' : 'text-ink-muted hover:text-ink hover:bg-surface-2')
+  /* On the guest tour a locked entry is a subscription prompt, not a link —
+     following it would only land them on an empty signed-in screen. */
+  if (isGuest && link.pages.some((p) => p.locked)) {
+    return (
+      <button onClick={() => open('page')} className={cx(cls(false), 'gap-1.5')}>
+        {link.label} <Lock size={12} className="text-ink-faint" />
+      </button>
+    )
+  }
   if (link.standalone) {
     return (
       <NavLink to={link.to} end={link.to === ROLE_HOME[role] || link.to === '/browse' || link.to === '/buyermarketplace'}
@@ -243,17 +200,17 @@ function TopNav() {
   useEffect(() => setMobileOpen(false), [location.pathname])
 
   const { openBidNow } = useBidroomGate()
+  const { isGuest, open: openSubscribe } = useGuestGate()
 
   /* The registry, not the shipped defaults — a tab renamed or hidden in Page
      manager changes this bar immediately. */
   const links = topNavFrom(pages, role)
   const wallet = wallets.find((w) => w.userId === me?.id)
   const showWallet = role === 'buyer' || role === 'seller'
-  /* The shortcut straight into a live auction — buyers only, wherever they are. */
+  /* The shortcut straight into a live auction — buyers only, wherever they are.
+     A guest gets the same slot, pointed at the subscription instead: the fastest
+     way to explain what the tour is missing is to leave the button where it is. */
   const showBidNow = role === 'buyer' && !!me
-  /* Guest 2 is the public marketing site: no catalogue search in its chrome —
-     it shows the session IP readout instead. Every other role keeps search. */
-  const isGuest2 = role === 'guest2'
 
   const submitSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -274,23 +231,26 @@ function TopNav() {
             <TopNavLinkView key={l.key} link={l} role={role} pathname={location.pathname} />
           ))}
         </nav>
-        {isGuest2 ? (
-          <div className="ml-auto hidden md:block">
-            <SessionIp />
-          </div>
-        ) : (
-          <form onSubmit={submitSearch} className="ml-auto hidden md:flex items-center relative">
-            <Search size={15} className="absolute left-3 text-ink-faint pointer-events-none" />
-            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search catalogues…"
-              className="h-9 w-40 xl:w-52 pl-9 pr-3 rounded-xl bg-surface-2 border border-line text-sm placeholder:text-ink-faint focus:outline-2 focus:outline-ember/50 focus:bg-surface" />
-          </form>
-        )}
+        <form onSubmit={submitSearch} className="ml-auto hidden md:flex items-center relative">
+          <Search size={15} className="absolute left-3 text-ink-faint pointer-events-none" />
+          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search catalogues…"
+            className="h-9 w-40 xl:w-52 pl-9 pr-3 rounded-xl bg-surface-2 border border-line text-sm placeholder:text-ink-faint focus:outline-2 focus:outline-ember/50 focus:bg-surface" />
+        </form>
         {showBidNow && (
           <button onClick={openBidNow} title="Pick a live auction and go straight to its bidding room"
             className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-xl bg-ember text-white text-[13px] font-bold hover:bg-ember-strong whitespace-nowrap shrink-0">
             <Gavel size={15} /> Bid Now
           </button>
         )}
+        {isGuest && (
+          <button onClick={() => openSubscribe('bid')} title="Subscribe to take part in a sale"
+            className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-xl bg-ember text-white text-[13px] font-bold hover:bg-ember-strong whitespace-nowrap shrink-0">
+            <Gavel size={15} /> Subscribe to bid
+          </button>
+        )}
+        {/* A guest has no account, so the wallet reads as struck-out rather than
+            zeroed — zeroes would claim a balance they do not have. */}
+        {isGuest && <GuestWalletChip className="hidden sm:inline-flex" />}
         {showWallet && wallet && (
           <Link to="/buyer/wallet" className="hidden sm:inline-flex items-center gap-1.5 h-9 px-3 rounded-xl bg-surface-2 border border-line hover:border-line-strong whitespace-nowrap shrink-0" title="Wallet & EMD">
             <WalletIcon size={14} className="text-ember" />
@@ -306,37 +266,44 @@ function TopNav() {
       </div>
       {mobileOpen && (
         <nav className="lg:hidden border-t border-line bg-surface px-4 py-3 space-y-1 animate-fade-up">
-          {isGuest2 ? (
-            <div className="mb-2">
-              <SessionIp />
-            </div>
-          ) : (
-            <form onSubmit={submitSearch} className="relative mb-2">
-              <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint" />
-              <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search catalogues, lots…"
-                className="h-10 w-full pl-9 pr-3 rounded-xl bg-surface-2 border border-line text-sm" />
-            </form>
-          )}
+          <form onSubmit={submitSearch} className="relative mb-2">
+            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint" />
+            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search catalogues, lots…"
+              className="h-10 w-full pl-9 pr-3 rounded-xl bg-surface-2 border border-line text-sm" />
+          </form>
           {/* Mobile has no room for two rows of nav, so a category lists the
               pages inside it rather than standing in for them. */}
           {links.map((l) => (l.standalone ? (
-            <NavLink key={l.key} to={l.to}
-              className={({ isActive }) => cx('block px-3 py-2.5 rounded-lg text-sm font-semibold',
-                isActive ? 'text-ember-strong bg-ember-soft/70' : 'text-ink-muted')}>
-              {l.label}
-            </NavLink>
+            isGuest && l.pages.some((p) => p.locked) ? (
+              <button key={l.key} onClick={() => openSubscribe('page')}
+                className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold text-ink-muted flex items-center gap-1.5">
+                {l.label} <Lock size={12} className="text-ink-faint" />
+              </button>
+            ) : (
+              <NavLink key={l.key} to={l.to}
+                className={({ isActive }) => cx('block px-3 py-2.5 rounded-lg text-sm font-semibold',
+                  isActive ? 'text-ember-strong bg-ember-soft/70' : 'text-ink-muted')}>
+                {l.label}
+              </NavLink>
+            )
           ) : (
             <div key={l.key} className="pt-2">
               <div className="px-3 pb-1 text-[11px] font-bold uppercase tracking-wider text-ink-faint">{l.label}</div>
-              {l.pages.map((p) => (
+              {l.pages.map((p) => (isGuest && p.locked ? (
+                <button key={p.to} onClick={() => openSubscribe('page')}
+                  className="w-full text-left px-3 py-2 rounded-lg text-sm font-semibold text-ink-muted flex items-center gap-1.5">
+                  {p.subLabel ?? p.label} <Lock size={12} className="text-ink-faint" />
+                </button>
+              ) : (
                 <NavLink key={p.to} to={p.to} end={p.end}
                   className={() => cx('block px-3 py-2 rounded-lg text-sm font-semibold',
                     pageMatches(p, location.pathname) ? 'text-ember-strong bg-ember-soft/70' : 'text-ink-muted')}>
                   {p.subLabel ?? p.label}
                 </NavLink>
-              ))}
+              )))}
             </div>
           )))}
+          {isGuest && <div className="pt-2"><GuestWalletChip className="w-full justify-start" /></div>}
         </nav>
       )}
     </header>
@@ -498,26 +465,40 @@ function Footer() {
 /* ------------------------- contextual sub-nav ------------------------------ */
 /** Secondary nav under the header for multi-section areas — never a sidebar.
  *
- *  For the three operations roles the top bar names the category and this strip
- *  holds the pages inside it, so a Sub Admin's eighteen screens arrive six at a
- *  time in the order the work happens. Every other role passes its whole menu
- *  here and gets the single flat strip it always had. */
+ *  For the five staff desks the top bar names the category and this strip holds
+ *  the pages inside it, so a Sub Admin's eighteen screens arrive six at a time
+ *  in the order the work happens. Every other role passes its whole menu here
+ *  and gets the single flat strip it always had. */
 export function SubNav({ items }: { items: { to: string; label: string; end?: boolean; locked?: boolean; activeMatch?: string[] }[] }) {
   const { pathname } = useLocation()
+  const { isGuest, open: openSubscribe } = useGuestGate()
   /* A shared page (Browse, a catalogue) sits in no category, so there is no
      strip to show — the categories on the top bar are the way back. */
   if (items.length === 0) return null
+  const base = 'h-11 px-3.5 text-[13px] inline-flex items-center gap-1.5 whitespace-nowrap border-b-[3px] -mb-px transition-colors'
+  const idle = 'border-transparent font-semibold text-ink-muted hover:text-ink hover:bg-surface-2'
   return (
     <div className="border-b border-line bg-surface/60 sticky top-16 z-30 backdrop-blur">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center gap-1 overflow-x-auto overflow-y-hidden">
         {items.map((it) => {
           const extraActive = it.activeMatch?.some((p) => pathname === p || pathname.startsWith(`${p}/`))
+          /* `locked` means two different things by role. For a signed-in role it
+             is read-only-once-you-are-there (Finance opening the Super Admin's
+             fee config), so the tab still navigates. On the guest tour there is
+             nothing behind it to read, so it becomes the subscription prompt. */
+          if (isGuest && it.locked) {
+            return (
+              <button key={it.to} onClick={() => openSubscribe('page')} className={cx(base, idle, 'opacity-80')}
+                title="Subscribe to unlock this page">
+                {it.label}
+                <Lock size={12} className="text-ink-faint" />
+              </button>
+            )
+          }
           return (
             <NavLink key={it.to} to={it.to} end={it.end}
-              className={({ isActive }) => cx('h-11 px-3.5 text-[13px] inline-flex items-center gap-1.5 whitespace-nowrap border-b-[3px] -mb-px transition-colors',
-                (isActive || extraActive)
-                  ? 'border-ember text-ember-strong font-bold bg-ember-soft/40'
-                  : 'border-transparent font-semibold text-ink-muted hover:text-ink hover:bg-surface-2')}>
+              className={({ isActive }) => cx(base,
+                (isActive || extraActive) ? 'border-ember text-ember-strong font-bold bg-ember-soft/40' : idle)}>
               {it.label}
               {it.locked && <span className="text-ink-faint" title="Restricted for this role">🔒</span>}
             </NavLink>
@@ -533,6 +514,8 @@ export default function Chrome() {
   return (
     <div className="min-h-screen flex flex-col">
       <TopNav />
+      {/* Renders nothing outside the "Browse as Guest" tour. */}
+      <GuestPreviewBanner />
       <main className="flex-1">
         <Outlet />
       </main>

@@ -17,7 +17,6 @@ import '../styles/Pricing.css';
    than on a feature matrix — hence the tilting plan card and the referral
    calculator that lets a visitor drive the price to zero. Subscribe hands off
    to /subscribe, which collects the basics and payment before onboarding.
-   The previous four-tier page is archived at Pricing.legacy.jsx.
    --------------------------------------------------------------------------- */
 
 const PLAN_FEATURES = [

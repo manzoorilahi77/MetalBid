@@ -33,12 +33,21 @@ export type NavItem = {
    *  sees on the **top bar**, and the pages sharing that category are what fill
    *  the **strip below it** once the category is open.
    *
-   *  Roles with a handful of screens read fine as one flat strip. The three
-   *  operations roles do not: the Sub Admin alone holds eighteen, which is more
-   *  tabs than anyone can scan, and the strip scrolls sideways so the last ones
-   *  are simply out of sight. Categorised, the bar names three places to go and
-   *  each opens six — and both levels run left to right in the order the work
-   *  happens, so the next thing you need is the next thing along.
+   *  Roles with a handful of screens read fine as one flat strip. The five
+   *  staff desks do not: the Sub Admin alone holds eighteen, which is more tabs
+   *  than anyone can scan, and the strip scrolls sideways so the last ones are
+   *  simply out of sight. Categorised, the bar names three or four places to go
+   *  and each opens a handful — and both levels run left to right in the order
+   *  the work happens, so the next thing you need is the next thing along.
+   *
+   *  Two rules keep the two levels honest, and every categorised role below
+   *  follows them:
+   *
+   *  · A category opens on its first page, so whatever that role reaches for
+   *    most inside a category goes first and stays one click from anywhere.
+   *  · Only pages that leave the workspace (Browse, the Ops console door) stay
+   *    uncategorised on the top bar. A workspace page kept out of every category
+   *    would show an empty strip beneath it, which reads as a broken screen.
    *
    *  A categorised page no longer needs `'top'` in `in`: the category holds that
    *  slot on its behalf. Leave `category` unset and nothing changes — the page
@@ -56,15 +65,24 @@ export const NAV_BY_ROLE: Record<Role, NavItem[]> = {
   // guest1 renders its own standalone app (Guest1App) outside this Chrome
   // shell, so it needs no top/sub nav items here — the map only requires a key.
   guest1: [],
-  // Guest 2 (public-site role) — uses the shared chrome like every other role.
-  // Lean top nav, no sub-nav (like the guest role); deeper content lives on the
-  // home page and the two solution pages.
-  guest2: [
-    { to: '/g2', label: 'Home', end: true, in: ['top'] },
-    { to: '/g2/solutions/buyers', label: 'For buyers', in: ['top'] },
-    { to: '/g2/solutions/sellers', label: 'For sellers', in: ['top'] },
-    { to: '/g2/how-it-works', label: 'How it works', in: ['top'] },
-    { to: '/g2/contact', label: 'Contact', in: ['top'] },
+  // "Browse as Guest" — the buyer's own menu, shown to somebody who does not
+  // hold it yet. The two things a visitor came to do (see what is for sale, and
+  // see what is inside a catalogue) are open; every tab that only means
+  // something once you have an account is `locked`, which for THIS role means
+  // the tab is a subscription prompt rather than a link (see GuestGate).
+  //
+  // The locked tabs stay on the strip on purpose: hiding them would show a
+  // visitor a smaller product than the one they are being asked to pay for.
+  guest_buyer: [
+    { to: '/buyermarketplace', label: 'Marketplace', subLabel: 'Browse catalogues', end: true, in: ['top', 'sub'], activeMatch: ['/catalogue'] },
+    { to: '/buyer', label: 'Dashboard', locked: true, in: ['sub'] },
+    { to: '/buyer/emd-shortlisted-catalogue', label: 'EMD & payments', locked: true, in: ['sub'] },
+    { to: '/buyer/bids', label: 'My bids', locked: true, in: ['sub'] },
+    { to: '/buyer/auction-status', label: 'Auction status', locked: true, in: ['sub'] },
+    { to: '/buyer/wallet', label: 'Wallet & ledger', locked: true, in: ['sub'] },
+    { to: '/buyer/kyc', label: 'Become a seller', locked: true, in: ['sub'] },
+    { to: '/noticeboard', label: 'Noticeboard', in: ['top'] },
+    { to: '/help', label: 'How it works', in: ['top'] },
   ],
   buyer: [
     { to: '/buyer', label: 'Home', subLabel: 'Dashboard', end: true, in: ['top', 'sub'] },
@@ -126,42 +144,71 @@ export const NAV_BY_ROLE: Record<Role, NavItem[]> = {
     { to: '/sub/disputes', label: 'Disputes', subLabel: 'Disputes & support', in: ['sub'], category: 'Delivery & closure' },
     { to: '/browse', label: 'Browse', in: ['top'] },
   ],
-  // Auction Manager — ordered the way the work happens: publish, admit, run,
-  // watch, close. `Live auctions` also sits on the top bar because it is the
-  // one screen this role needs to reach from anywhere, mid-sale.
+  // Auction Manager — a sale has three states and so does this menu: before it
+  // opens, while it is running, and after the hammer. The headings are in that
+  // order and so are the screens inside each one.
+  //
+  // The middle heading opens on `Live auctions`, which is deliberate: that is
+  // the intervention desk, the one screen this role needs mid-sale from
+  // wherever they happen to be, and as the first page of its category it is
+  // still a single click from anywhere.
   auction_manager: [
-    { to: '/auction', label: 'Dashboard', end: true, in: ['top', 'sub'] },
-    { to: '/auction/schedule', label: 'Schedule & publish', subLabel: 'Auction schedule & publish', in: ['sub'] },
-    { to: '/auction/emd-eligibility', label: 'EMD eligibility', in: ['sub'] },
-    { to: '/auction/live', label: 'Live auctions', in: ['top', 'sub'] },
-    { to: '/auction/rooms', label: 'Bidding rooms', in: ['sub'], activeMatch: ['/auction/rooms'] },
-    { to: '/auction/bid-monitor', label: 'Bid monitor', in: ['sub'] },
-    { to: '/auction/announcements', label: 'Announcements', in: ['sub'] },
-    { to: '/auction/results', label: 'Results', in: ['sub'] },
-    { to: '/auction/history', label: 'Auction history', in: ['sub'] },
-    { to: '/auction/reports', label: 'Auction reports', in: ['sub'] },
+    /* — before it opens: what needs me today, then put the catalogue on the
+         market with a date, then decide who is let in to bid on it. — */
+    { to: '/auction', label: 'Dashboard', end: true, in: ['sub'], category: 'Setup & scheduling' },
+    { to: '/auction/schedule', label: 'Schedule & publish', subLabel: 'Auction schedule & publish', in: ['sub'], category: 'Setup & scheduling' },
+    { to: '/auction/emd-eligibility', label: 'EMD eligibility', in: ['sub'], category: 'Setup & scheduling' },
+    /* — while it runs: every sale at once, then one room, then the bids inside
+         it, then whatever the system cannot tell the bidders by itself. — */
+    { to: '/auction/live', label: 'Live auctions', in: ['sub'], category: 'Live floor' },
+    { to: '/auction/rooms', label: 'Bidding rooms', in: ['sub'], activeMatch: ['/auction/rooms'], category: 'Live floor' },
+    { to: '/auction/bid-monitor', label: 'Bid monitor', in: ['sub'], category: 'Live floor' },
+    { to: '/auction/announcements', label: 'Announcements', in: ['sub'], category: 'Live floor' },
+    /* — after the hammer: confirm the outcomes so the seller can settle, then
+         the record of what happened, then how well the sales are running. — */
+    { to: '/auction/results', label: 'Results', in: ['sub'], category: 'Results & records' },
+    { to: '/auction/history', label: 'Auction history', in: ['sub'], category: 'Results & records' },
+    { to: '/auction/reports', label: 'Auction reports', in: ['sub'], category: 'Results & records' },
     { to: '/browse', label: 'Browse', in: ['top'] },
   ],
-  // Finance Administrator — ordered the way the money moves: in, held, out,
-  // then the records that prove it. `Profit & loss` also sits on the top bar
-  // because "are we making money" is the question this desk is asked from
-  // anywhere, and it is the one screen the CEO reads over their shoulder.
+  // Finance Administrator — thirteen screens, which is more than a flat strip
+  // can show, and they divide the way the money itself divides: what comes in,
+  // what goes out, and the books that have to agree with both.
+  //
+  //   Money in         — every rupee entering the platform, in the order of a sale
+  //   Money out        — every rupee leaving it, behind the gate that lets it
+  //   Books & records  — the documents, the bank match, and the result
+  //
+  // Buyers pay sellers directly, so there is no payout screen here: the only
+  // money the platform keeps is commission, which is why it closes "Money in"
+  // rather than opening "Money out".
   finance_admin: [
-    { to: '/finance', label: 'Dashboard', end: true, in: ['top', 'sub'] },
-    { to: '/finance/pnl', label: 'Profit & loss', in: ['top', 'sub'] },
-    { to: '/finance/deposits', label: 'Deposits', in: ['sub'] },
-    { to: '/finance/payments', label: 'Buyer payments', subLabel: 'Buyer payments & DOs', in: ['sub'] },
-    { to: '/finance/commission', label: 'Commission', subLabel: 'Commission settlements', in: ['sub'] },
-    { to: '/finance/emd', label: 'EMD ledger', subLabel: 'EMD ledger & forfeiture', in: ['sub'] },
-    { to: '/finance/bank-accounts', label: 'Bank accounts', in: ['sub'] },
-    { to: '/finance/withdrawals', label: 'Withdrawals', in: ['sub'] },
-    { to: '/finance/refunds', label: 'Refunds', in: ['sub'] },
-    { to: '/finance/invoices', label: 'Invoices & receipts', in: ['sub'] },
-    { to: '/finance/reconciliation', label: 'Reconciliation', in: ['sub'] },
-    { to: '/finance/reports', label: 'Financial reports', in: ['sub'], retained: true },
+    /* — in, in the order one sale collects it: EMD funded before bidding, held
+         while it runs, the buyer's payment after the hammer, and the platform's
+         commission last. `Dashboard` heads it because "what needs me today" is
+         where the desk starts, and it is already laid out in this same order. — */
+    { to: '/finance', label: 'Dashboard', subLabel: 'Dashboard · finance desk', end: true, in: ['sub'], category: 'Money in' },
+    { to: '/finance/deposits', label: 'Deposits', in: ['sub'], category: 'Money in' },
+    { to: '/finance/emd', label: 'EMD ledger', subLabel: 'EMD ledger & forfeiture', in: ['sub'], category: 'Money in' },
+    { to: '/finance/payments', label: 'Buyer payments', subLabel: 'Buyer payments & DOs', in: ['sub'], category: 'Money in' },
+    { to: '/finance/commission', label: 'Commission', subLabel: 'Commission settlements', in: ['sub'], category: 'Money in' },
+    /* — out, and `Bank accounts` opens it rather than sitting with the records
+         because it is the prerequisite, not admin: an account has to be verified
+         before a single rupee can be paid to it. Then the two ways money leaves
+         — returned because something went wrong, or drawn out by its owner. — */
+    { to: '/finance/bank-accounts', label: 'Bank accounts', in: ['sub'], category: 'Money out' },
+    { to: '/finance/refunds', label: 'Refunds', in: ['sub'], category: 'Money out' },
+    { to: '/finance/withdrawals', label: 'Withdrawals', in: ['sub'], category: 'Money out' },
+    /* — the record chain, in the order it is built: issue the document, match it
+         against the bank, read what it added up to, export it, and the rates it
+         was all computed from. — */
+    { to: '/finance/invoices', label: 'Invoices & receipts', in: ['sub'], category: 'Books & records' },
+    { to: '/finance/reconciliation', label: 'Reconciliation', in: ['sub'], category: 'Books & records' },
+    { to: '/finance/pnl', label: 'Profit & loss', in: ['sub'], category: 'Books & records' },
+    { to: '/finance/reports', label: 'Financial reports', in: ['sub'], retained: true, category: 'Books & records' },
     // Read-only from here: Finance sees the money side of an EMD exemption but
     // never decides it, and cannot change a rate it has to charge.
-    { to: '/admin/finance', label: 'Financial config', locked: true, in: ['sub'] },
+    { to: '/admin/finance', label: 'Financial config', locked: true, in: ['sub'], category: 'Books & records' },
     { to: '/browse', label: 'Browse', in: ['top'] },
   ],
   // Sub Admin — head of operations, and the widest menu on the platform:

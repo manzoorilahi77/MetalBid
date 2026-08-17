@@ -284,7 +284,10 @@
   text-decoration: none;
 }
 .auth-logo-img {
-  height: 30px;
+  /* 36, not the old 30: the previous file was a wordmark-only logo, so it read
+     fine small. The shield-plus-wordmark lock-up needs the extra height before
+     "FerroBid" resolves. */
+  height: 36px;
   object-fit: contain;
 }
 

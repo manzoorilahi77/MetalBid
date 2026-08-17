@@ -28,11 +28,11 @@ function MarketplaceCardComponent({ animated }: MarketplaceCardProps) {
 
   return (
     <div className="flex h-full flex-col">
-      <p className="text-[1cqw] font-medium leading-none tracking-[0.07em] text-[#8b8f96]">
+      <p className="text-[1cqw] font-medium leading-none tracking-[0.07em] text-[var(--hero-card-ink-faint)]">
         ON THE FLOOR
       </p>
 
-      <h3 className="mt-[1cqw] text-[1.6cqw] font-medium leading-[1.25] text-[#1f2328]">
+      <h3 className="mt-[1cqw] text-[1.6cqw] font-medium leading-[1.25] text-[var(--hero-card-ink)]">
         What trades here
       </h3>
 
@@ -49,13 +49,13 @@ function MarketplaceCardComponent({ animated }: MarketplaceCardProps) {
                 className={[
                   'h-[0.65cqw] w-[0.65cqw] shrink-0 rounded-full',
                   'transition-colors duration-500 ease-out',
-                  active ? 'bg-[#e4572e]' : 'bg-[#d5d1cc]',
+                  active ? 'bg-[#e4572e]' : 'bg-[var(--hero-card-rule-strong)]',
                 ].join(' ')}
               />
               <span
                 className={[
                   'text-[1.2cqw] leading-none transition-colors duration-500 ease-out',
-                  active ? 'text-[#1f2328]' : 'text-[#8b8f96]',
+                  active ? 'text-[var(--hero-card-ink)]' : 'text-[var(--hero-card-ink-faint)]',
                 ].join(' ')}
               >
                 {category}
@@ -65,18 +65,18 @@ function MarketplaceCardComponent({ animated }: MarketplaceCardProps) {
         })}
       </ul>
 
-      <div className="mt-[1.5cqw] h-px bg-[#e6e4e1]" />
+      <div className="mt-[1.5cqw] h-px bg-[var(--hero-card-rule)]" />
 
-      <p className="mt-[1.25cqw] text-[1.15cqw] leading-none text-[#6f747c]">Seller Network</p>
-      <p className="mt-[0.8cqw] text-[1.9cqw] font-semibold leading-none tabular-nums text-[#1f2328]">
+      <p className="mt-[1.25cqw] text-[1.15cqw] leading-none text-[var(--hero-card-ink-faint)]">Seller Network</p>
+      <p className="mt-[0.8cqw] text-[1.9cqw] font-semibold leading-none tabular-nums text-[var(--hero-card-ink)]">
         25+
       </p>
-      <p className="mt-[0.65cqw] text-[1.15cqw] leading-none text-[#6f747c]">states covered</p>
+      <p className="mt-[0.65cqw] text-[1.15cqw] leading-none text-[var(--hero-card-ink-faint)]">states covered</p>
 
       <div className="mt-auto pt-[1.3cqw]">
-        <div className="h-px bg-[#e6e4e1]" />
-        <p className="mt-[1.15cqw] text-[1.05cqw] leading-none text-[#8b8f96]">Auction formats</p>
-        <p className="mt-[0.8cqw] text-[1.1cqw] leading-[1.35] text-[#4b5058]">
+        <div className="h-px bg-[var(--hero-card-rule)]" />
+        <p className="mt-[1.15cqw] text-[1.05cqw] leading-none text-[var(--hero-card-ink-faint)]">Auction formats</p>
+        <p className="mt-[0.8cqw] text-[1.1cqw] leading-[1.35] text-[var(--hero-card-ink-muted)]">
           Forward · Reverse · Sealed
         </p>
       </div>

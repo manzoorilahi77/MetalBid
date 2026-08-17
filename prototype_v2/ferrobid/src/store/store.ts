@@ -20,10 +20,17 @@ import type {
 
 const seed = loadSeed()
 
-/** Demo identity per role for the header role switcher. 'guest', 'guest1' and
- *  'guest2' are all public/unauthenticated shells — anonymous, so there is no
- *  demo user to look up. */
-export const ROLE_DEMO_USER: Record<Exclude<Role, 'guest' | 'guest1' | 'guest2'>, string> = {
+/** Every role that is a public, unauthenticated shell: no account, no demo
+ *  identity, nothing of their own on the platform. `guest_buyer` is one of them
+ *  — it walks the buyer's screens read-only, but it is still nobody. */
+export const ANONYMOUS_ROLES = ['guest', 'guest1', 'guest_buyer'] as const
+export type AnonymousRole = (typeof ANONYMOUS_ROLES)[number]
+export const isAnonymousRole = (role: Role): role is AnonymousRole =>
+  (ANONYMOUS_ROLES as readonly string[]).includes(role)
+
+/** Demo identity per role for the header role switcher. The anonymous shells
+ *  above have none — there is no demo user to look up. */
+export const ROLE_DEMO_USER: Record<Exclude<Role, AnonymousRole>, string> = {
   buyer: 'u-buyer-1',
   seller: 'u-seller-2',
   field_exec: 'u-field-1',
@@ -38,7 +45,7 @@ export const ROLE_DEMO_USER: Record<Exclude<Role, 'guest' | 'guest1' | 'guest2'>
 export const ROLE_LABEL: Record<Role, string> = {
   guest: 'Guest',
   guest1: 'Guest 1',
-  guest2: 'Guest 2',
+  guest_buyer: 'Guest preview',
   buyer: 'Buyer',
   seller: 'Seller',
   field_exec: 'Field Executive',
@@ -53,7 +60,8 @@ export const ROLE_LABEL: Record<Role, string> = {
 export const ROLE_HOME: Record<Role, string> = {
   guest: '/',
   guest1: '/home',
-  guest2: '/g2',
+  // A guest preview lands where the tour is: the buyer's own marketplace.
+  guest_buyer: '/buyermarketplace',
   buyer: '/buyer',
   seller: '/seller',
   field_exec: '/field',
@@ -145,12 +153,12 @@ export const delegationActive = (d: CeoDelegation | null, now: number): boolean 
  *  the list can't drift between them, and used to validate the persisted role
  *  read back from localStorage. */
 export const ROLE_ORDER: Role[] = [
-  'guest', 'guest1', 'guest2', 'buyer', 'seller', 'field_exec', 'exec_manager', 'auction_manager', 'finance_admin', 'sub_admin', 'super_admin', 'ceo',
+  'guest', 'guest1', 'guest_buyer', 'buyer', 'seller', 'field_exec', 'exec_manager', 'auction_manager', 'finance_admin', 'sub_admin', 'super_admin', 'ceo',
 ]
 
 /** Demo sign-in credentials for the manager Login page: user ID → role.
  *  Every account uses DEMO_PASSWORD. */
-export const DEMO_LOGINS: Record<string, Exclude<Role, 'guest' | 'guest1' | 'guest2'>> = {
+export const DEMO_LOGINS: Record<string, Exclude<Role, AnonymousRole>> = {
   'buy@gmail.com': 'buyer',
   'sell@gmail.com': 'seller',
   'field@gmail.com': 'field_exec',
@@ -1136,7 +1144,10 @@ const fmtStamp = (iso: string) =>
   new Date(iso).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })
 
 function seedRoleRegistry(): RoleDef[] {
-  return ROLE_ORDER.filter((r) => r !== 'guest1' && r !== 'guest2').map((key) => ({
+  /* guest1 and guest_buyer are presentations of the public site rather
+     than roles anyone is granted, so they are not accounts a Super Admin
+     administers and do not belong on the Roles screen. */
+  return ROLE_ORDER.filter((r) => r !== 'guest1' && r !== 'guest_buyer').map((key) => ({
     key,
     label: ROLE_LABEL[key],
     home: ROLE_HOME[key],
@@ -1278,7 +1289,7 @@ const ROLE_KEY = 'fb.demo.role'
 
 /** The demo role has to survive a refresh. HashRouter keeps the URL, so a role
  *  that resets to 'buyer' on load leaves the switcher chip contradicting the
- *  page you're actually looking at (refresh on /g2 → chip reads "Buyer"). */
+ *  page you're actually looking at (refresh on /seller → chip reads "Buyer"). */
 const storedRole: Role = (() => {
   try {
     const r = localStorage.getItem(ROLE_KEY) as Role | null
@@ -1299,9 +1310,7 @@ function rememberRole(role: Role) {
 
 /** Demo user backing a role; the anonymous public shells have none. */
 const demoUserFor = (role: Role) =>
-  role === 'guest' || role === 'guest1' || role === 'guest2'
-    ? null
-    : seed.users.find((u) => u.id === ROLE_DEMO_USER[role]) ?? null
+  isAnonymousRole(role) ? null : seed.users.find((u) => u.id === ROLE_DEMO_USER[role]) ?? null
 
 /* Computed once at module load: the withdrawal rows reference the account rows,
    and the statement references both, so all three have to agree. */
@@ -1354,6 +1363,19 @@ export const useStore = create<State>((set, get) => {
     }
     return wallet(userId)!
   }
+
+  /** Who to tell about a lot.
+   *
+   *  A lot carries its own `sellerId` from the moment it is submitted — long
+   *  before any catalogue holds it — which is exactly why the field is on the
+   *  lot and not read off the catalogue. Reading the seller off the catalogue
+   *  instead drops every hand-off in the stage *between* submission and the
+   *  catalogue builder: a lot inspected, approved, rejected or bypassed while
+   *  still uncatalogued told its seller nothing at all, because there was no
+   *  catalogue to find them through. The catalogue is the fallback here, never
+   *  the source. */
+  const sellerOfLot = (lot: Lot | undefined) =>
+    lot?.sellerId ?? get().catalogues.find((c) => c.id === lot?.catalogueId)?.sellerId ?? null
 
   /** Parks a decision that is above a configured rupee threshold. It does not
    *  complete here — it completes when it is signed, in `decideCeoApproval`. */
@@ -1865,8 +1887,8 @@ export const useStore = create<State>((set, get) => {
     },
     switchRole: (role) => {
       rememberRole(role)
-      // guest, guest1 and guest2 are unauthenticated public shells — no demo identity
-      if (role === 'guest' || role === 'guest1' || role === 'guest2') {
+      // The public shells are unauthenticated — no demo identity behind them
+      if (isAnonymousRole(role)) {
         set({ role, currentUser: null })
         return
       }
@@ -2482,7 +2504,7 @@ export const useStore = create<State>((set, get) => {
 
       // The two people whose work waits on the report hear about it as it lands:
       // Operations decides the lot, the seller owns the material.
-      const cat = get().catalogues.find((c) => c.id === lot?.catalogueId)
+      const sellerId = sellerOfLot(lot)
       const title = `${lot?.lotNo ?? 'Lot'} inspection ${outcome}`
       const measured = `${report.measuredQty} ${report.uom} measured against ${lot?.indicativeQty ?? '—'} ${report.uom} declared`
       // Both roles hold the lot gate, so both are told a report has landed.
@@ -2491,9 +2513,9 @@ export const useStore = create<State>((set, get) => {
         body: `${me?.name ?? 'Field executive'} filed report ${version > 1 ? `v${version} ` : ''}— ${measured}. Awaiting your decision.`,
         href: '/exec/approvals',
       })
-      if (cat?.sellerId) {
+      if (sellerId) {
         get().notify({
-          userId: cat.sellerId, kind: 'system', title,
+          userId: sellerId, kind: 'system', title,
           body: `${measured}. Operations decides the lot next.`,
           href: '/seller/lots',
         })
@@ -2523,9 +2545,10 @@ export const useStore = create<State>((set, get) => {
         outcome === 'rejected' ? 'warning' : 'info')
 
       // The seller finds out from us, not by noticing their lot is missing.
-      if (cat?.sellerId) {
+      const sellerId = sellerOfLot(lot)
+      if (sellerId) {
         get().notify({
-          userId: cat.sellerId, kind: 'system',
+          userId: sellerId, kind: 'system',
           title: {
             approved: `${lot.lotNo} approved`,
             flagged: `${lot.lotNo} sent back for re-inspection`,
@@ -2783,10 +2806,10 @@ export const useStore = create<State>((set, get) => {
       // Warning severity, not info: this lot goes to market described on the
       // seller's word alone, and the monthly count of these is a quality metric.
       get().audit('inspection.bypass', lot.lotNo, `Inspection bypassed — ${reason}`, 'warning')
-      const cat = get().catalogues.find((c) => c.id === lot.catalogueId)
-      if (cat?.sellerId) {
+      const sellerId = sellerOfLot(lot)
+      if (sellerId) {
         get().notify({
-          userId: cat.sellerId, kind: 'system',
+          userId: sellerId, kind: 'system',
           title: `${lot.lotNo} accepted without inspection`,
           body: `Accepted on your description — ${reason}. The quantity stays indicative and is final on weighment.`,
           href: '/seller/lots',
@@ -3932,7 +3955,7 @@ export const useStore = create<State>((set, get) => {
     requestCeoSignoff: ({ kind, refId, amount, summary, reason, payload }) => {
       const role = get().role
       // Customers never raise one of these; every kind comes off a staff desk.
-      if (role === 'guest' || role === 'guest1' || role === 'guest2' || role === 'buyer' || role === 'seller') return null
+      if (isAnonymousRole(role) || role === 'buyer' || role === 'seller') return null
       const existing = get().ceoApprovals.find(
         (a) => a.refId === refId && a.kind === kind && (a.status === 'pending' || a.status === 'info_requested'),
       )
@@ -5167,8 +5190,8 @@ export function pageMatches(page: PageDef, pathname: string): boolean {
 }
 
 /** The role's categories, in menu order, each with the pages inside it. Empty
- *  for a role whose menu is one flat list — which is every role but the three
- *  operations desks, whose menus are too long to read as one row of tabs. */
+ *  for a role whose menu is one flat list — which is every role but the five
+ *  staff desks, whose menus are too long to read as one row of tabs. */
 export function categoriesFrom(pages: PageDef[], role: Role | string) {
   const out: { label: string; pages: PageDef[] }[] = []
   const seen = new Map<string, { label: string; pages: PageDef[] }>()

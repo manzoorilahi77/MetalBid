@@ -28,11 +28,11 @@ function HowItWorksCardComponent({ animated }: HowItWorksCardProps) {
 
   return (
     <div className="flex h-full flex-col">
-      <p className="text-[1cqw] font-medium leading-none tracking-[0.07em] text-[#8b8f96]">
+      <p className="text-[1cqw] font-medium leading-none tracking-[0.07em] text-[var(--hero-card-ink-faint)]">
         HOW IT WORKS
       </p>
 
-      <h3 className="mt-[1.1cqw] text-[1.6cqw] font-medium leading-[1.25] text-[#1f2328]">
+      <h3 className="mt-[1.1cqw] text-[1.6cqw] font-medium leading-[1.25] text-[var(--hero-card-ink)]">
         From listing
         <br />
         to payout
@@ -43,7 +43,7 @@ function HowItWorksCardComponent({ animated }: HowItWorksCardProps) {
             end so it starts and stops dead on the first and last dot. */}
         <span
           aria-hidden="true"
-          className="absolute bottom-[0.55cqw] left-[0.55cqw] top-[0.55cqw] w-px -translate-x-1/2 bg-[#e6e4e1]"
+          className="absolute bottom-[0.55cqw] left-[0.55cqw] top-[0.55cqw] w-px -translate-x-1/2 bg-[var(--hero-card-rule)]"
         />
 
         {STEPS.map((step, index) => {
@@ -70,7 +70,7 @@ function HowItWorksCardComponent({ animated }: HowItWorksCardProps) {
                   aria-hidden="true"
                   className={[
                     'h-full w-full rounded-full transition-colors duration-500 ease-out',
-                    active ? 'bg-[#e4572e]' : 'bg-[#d5d1cc]',
+                    active ? 'bg-[#e4572e]' : 'bg-[var(--hero-card-rule-strong)]',
                   ].join(' ')}
                 />
               </span>
@@ -78,7 +78,7 @@ function HowItWorksCardComponent({ animated }: HowItWorksCardProps) {
               <span
                 className={[
                   'text-[1.25cqw] leading-none transition-colors duration-500 ease-out',
-                  active ? 'text-[#1f2328]' : 'text-[#8b8f96]',
+                  active ? 'text-[var(--hero-card-ink)]' : 'text-[var(--hero-card-ink-faint)]',
                 ].join(' ')}
               >
                 {step.label}
@@ -89,8 +89,8 @@ function HowItWorksCardComponent({ animated }: HowItWorksCardProps) {
       </ol>
 
       <div className="mt-auto pt-[1.6cqw]">
-        <div className="h-px bg-[#e6e4e1]" />
-        <p className="mt-[1.3cqw] text-[1.05cqw] leading-[1.5] text-[#6f747c]">
+        <div className="h-px bg-[var(--hero-card-rule)]" />
+        <p className="mt-[1.3cqw] text-[1.05cqw] leading-[1.5] text-[var(--hero-card-ink-faint)]">
           Free to browse.
           <br />
           Register once to bid.

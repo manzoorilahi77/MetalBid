@@ -80,9 +80,13 @@ export default function SellerVerification() {
    *  and the reason a rejection is not free. */
   const footprint = (u: User) => {
     const theirs = catalogues.filter((c) => c.sellerId === u.id)
+    const theirCatIds = new Set(theirs.map((c) => c.id))
     return {
       catalogues: theirs.length,
-      lots: lots.filter((l) => theirs.some((c) => c.id === l.catalogueId)).length,
+      /* Counted off the lot's own sellerId, so material this seller has
+         submitted but that Operations has not catalogued yet still counts
+         towards what a rejection would cost them. */
+      lots: lots.filter((l) => (l.catalogueId ? theirCatIds.has(l.catalogueId) : l.sellerId === u.id)).length,
     }
   }
 

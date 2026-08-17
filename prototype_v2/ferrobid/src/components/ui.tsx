@@ -138,9 +138,13 @@ export function Segmented<T extends string>({ options, value, onChange, classNam
   options: { key: T; label: ReactNode }[]
   value: T; onChange: (v: T) => void; className?: string; stretch?: boolean
 }) {
+  /* The segments never wrap (a half-broken pill reads as damage), so on a
+     narrow screen a long set has to scroll inside its own box rather than
+     widen the page behind it — same treatment as the sub-nav tab strip. */
   return (
     <div className={cx('p-1 rounded-xl bg-surface-2 border border-line gap-0.5',
-      stretch ? 'flex w-full' : 'inline-flex', className)}>
+      stretch ? 'flex w-full' : 'inline-flex max-w-full overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
+      className)}>
       {options.map((o) => (
         <button key={o.key} onClick={() => onChange(o.key)}
           className={cx('h-8 rounded-lg text-[13px] font-semibold transition-colors whitespace-nowrap',
@@ -286,13 +290,20 @@ export function Modal({ open, onClose, title, children, wide }: {
   if (!open) return null
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6" role="dialog" aria-modal>
-      <div className="absolute inset-0 bg-black/45 backdrop-blur-[2px]" onClick={onClose} />
-      <div className={cx('relative card w-full max-h-[92vh] overflow-y-auto animate-toast-in rounded-b-none sm:rounded-b-2xl', wide ? 'sm:max-w-3xl' : 'sm:max-w-lg')}>
-        <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-line sticky top-0 bg-surface z-10">
-          <h3 className="text-lg font-bold">{title}</h3>
-          <button onClick={onClose} aria-label="Close" className="p-1.5 rounded-lg text-ink-muted hover:bg-surface-2"><X size={18} /></button>
+      <div className="absolute inset-0 bg-black/55 backdrop-blur-[3px]" onClick={onClose} />
+      {/* Deeper elevation than a page card: a dialog has to read as lifted off the
+          whole page, not as one more surface on it. */}
+      <div className={cx('relative card w-full max-h-[92vh] overflow-y-auto animate-toast-in',
+        'rounded-b-none sm:rounded-b-2xl shadow-[0_28px_70px_-24px_rgb(0_0_0/0.5)]',
+        wide ? 'sm:max-w-3xl' : 'sm:max-w-lg')}>
+        <div className="flex items-start justify-between gap-4 px-5 sm:px-6 pt-5 pb-4 border-b border-line sticky top-0 bg-surface z-10">
+          <h3 className="font-display text-[17px] font-bold tracking-tight leading-snug pt-0.5">{title}</h3>
+          <button onClick={onClose} aria-label="Close"
+            className="shrink-0 -mr-1 size-8 grid place-items-center rounded-lg text-ink-faint transition-colors hover:bg-surface-2 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember/40">
+            <X size={17} />
+          </button>
         </div>
-        <div className="p-5">{children}</div>
+        <div className="px-5 sm:px-6 py-5">{children}</div>
       </div>
     </div>
   )
@@ -641,7 +652,13 @@ export function PageHeader({ title, sub, actions, crumbs }: {
         <h1 className="text-2xl sm:text-3xl font-bold">{title}</h1>
         {sub && <p className="text-sm text-ink-muted mt-1 max-w-2xl">{sub}</p>}
       </div>
-      {actions && <div className="flex items-center gap-2 flex-wrap">{actions}</div>}
+      {/* min-w-0: a flex item defaults to min-width:auto, so this strip refused
+          to shrink below the min-content width of whatever it holds. A wide
+          no-wrap control (the period Segmented on the CEO and Ops screens) then
+          pushed it past a phone's screen, where the page cannot scroll
+          sideways — the last option was simply unreachable. Allowing it to
+          shrink lets the control itself scroll instead. */}
+      {actions && <div className="flex items-center gap-2 flex-wrap min-w-0 max-w-full">{actions}</div>}
     </div>
   )
 }

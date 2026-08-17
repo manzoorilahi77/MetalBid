@@ -40,6 +40,13 @@
   --danger-soft: #fbe7e5;
   /* ownership marker — "this one is mine" on shared lists */
   --gold: #b8860b;
+  --gold-soft: #f7efd6;
+
+  /* Card elevation. Two stacked layers — a tight contact shadow so the edge
+     stays crisp, and a wide soft one for the lift. Neutral ink-toned, never
+     coloured: a card is paper on the canvas, not a branded surface. */
+  --shadow-card: 0 1px 2px rgb(28 25 23 / 0.04), 0 3px 10px -3px rgb(28 25 23 / 0.07);
+  --shadow-card-hover: 0 2px 4px rgb(28 25 23 / 0.05), 0 10px 24px -8px rgb(28 25 23 / 0.13);
 }
 
 .dark {
@@ -70,6 +77,11 @@
   --danger: #e56358;
   --danger-soft: #38201d;
   --gold: #e3b341;
+  --gold-soft: #372c11;
+
+  /* on a dark canvas an ink-toned shadow is invisible — go to black, deeper */
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 3px 12px -4px rgb(0 0 0 / 0.5);
+  --shadow-card-hover: 0 2px 6px rgb(0 0 0 / 0.45), 0 12px 28px -8px rgb(0 0 0 / 0.6);
 }
 
 @theme inline {
@@ -100,6 +112,7 @@
   --color-danger: var(--danger);
   --color-danger-soft: var(--danger-soft);
   --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
 
   --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
@@ -244,13 +257,23 @@
 }
 
 @layer components {
-  /* flat card with hairline border — the Forge base surface */
+  /* Card: hairline border + one soft shadow — the Forge base surface.
+     Nested panels opt out of the shadow by carrying border-0 / border-dashed:
+     they sit *inside* a card and must stay flat, or the page reads as a pile. */
   .card {
     @apply bg-surface border border-line rounded-2xl;
   }
-  /* Hover settles with weight (soft decelerate) rather than a linear snap. */
+  .card:not([class*="border-0"]):not([class*="border-dashed"]) {
+    box-shadow: var(--shadow-card);
+  }
+  /* Hover deepens the shadow and firms the hairline — nothing moves, scales or
+     lifts. The :not() chain matches the base rule's specificity so it can win. */
+  .card-hover:not([class*="border-0"]):not([class*="border-dashed"]):hover {
+    border-color: var(--line-strong);
+    box-shadow: var(--shadow-card-hover);
+  }
   .card-hover {
-    @apply transition-all duration-300 ease-[cubic-bezier(0.33,1,0.68,1)] hover:-translate-y-0.5 hover:border-line-strong hover:shadow-[0_10px_30px_-18px_rgb(0_0_0/0.35)];
+    transition: box-shadow 200ms var(--ease-soft), border-color 200ms var(--ease-soft);
   }
   /* tabular mono numerals for rates / EMD / countdowns */
   .num {
@@ -269,6 +292,30 @@
 }
 *::-webkit-scrollbar {
   display: none;
+}
+
+/* Opt back in, for the few places where the content is wider than the viewport
+   and nothing else signals it — a Kanban board's columns, chiefly. A hidden
+   scrollbar there reads as "this is all there is". Class beats `*`, so these
+   rules win without !important. */
+.scroll-visible {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+.scroll-visible::-webkit-scrollbar {
+  display: block;
+  height: 8px;
+  width: 8px;
+}
+.scroll-visible::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scroll-visible::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 999px;
+}
+.scroll-visible:hover::-webkit-scrollbar-thumb {
+  background: var(--ink-faint);
 }
 
 /* Print: only #print-area (an auction's results, opted into via a page)

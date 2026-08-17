@@ -13,12 +13,16 @@ import {
   BellRing,
 } from 'lucide-react';
 
+/* Each category's colour is a token pair, not a literal: the light values are
+   mid-tone inks that read on a white card, and on a dark one the same hues have
+   to come *up* rather than down. Both halves are declared together in
+   styles/index.css so a category cannot gain one without the other. */
 const CATEGORY_META = {
-  feature: { label: 'New Feature', icon: Sparkles, color: '#3a5a8c', bg: '#eef2f9' },
-  promo: { label: 'Promotion', icon: Gift, color: '#b8451f', bg: '#faf0ea' },
-  maintenance: { label: 'Maintenance', icon: Wrench, color: '#96631a', bg: '#f8f2e6' },
-  milestone: { label: 'Milestone', icon: Award, color: '#2c7a57', bg: '#ecf5ef' },
-  policy: { label: 'Policy Update', icon: FileText, color: '#5c5750', bg: '#f2f0ec' },
+  feature: { label: 'New Feature', icon: Sparkles, color: 'var(--anc-feature)', bg: 'var(--anc-feature-bg)' },
+  promo: { label: 'Promotion', icon: Gift, color: 'var(--anc-promo)', bg: 'var(--anc-promo-bg)' },
+  maintenance: { label: 'Maintenance', icon: Wrench, color: 'var(--anc-maintenance)', bg: 'var(--anc-maintenance-bg)' },
+  milestone: { label: 'Milestone', icon: Award, color: 'var(--anc-milestone)', bg: 'var(--anc-milestone-bg)' },
+  policy: { label: 'Policy Update', icon: FileText, color: 'var(--anc-policy)', bg: 'var(--anc-policy-bg)' },
 };
 
 // Newest first — this is the correct order for an announcements feed.

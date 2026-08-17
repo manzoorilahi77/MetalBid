@@ -30,6 +30,31 @@ const Block = ({ block }) => {
 export const BlogPost = () => {
   const { slug } = useParams();
   const post = getPost(slug);
+  // The three share controls did nothing at all. They resolve through the
+  // browser's own sharing rather than any new UI: the native share sheet where
+  // one exists, the reader's mail client, and the clipboard.
+  const [shareNote, setShareNote] = React.useState('');
+  const shareUrl = typeof window === 'undefined' ? '' : window.location.href;
+  const note = (msg) => {
+    setShareNote(msg);
+    window.setTimeout(() => setShareNote(''), 2400);
+  };
+  const copyLink = () => {
+    navigator.clipboard?.writeText(shareUrl)
+      .then(() => note('Link copied'))
+      .catch(() => note('Could not copy the link'));
+  };
+  const nativeShare = () => {
+    if (navigator.share) {
+      navigator.share({ title: post?.title, url: shareUrl }).catch(() => {});
+    } else {
+      copyLink();
+    }
+  };
+  const mailShare = () => {
+    window.location.href =
+      `mailto:?subject=${encodeURIComponent(post?.title ?? 'FerroBid')}&body=${encodeURIComponent(shareUrl)}`;
+  };
 
   if (!post) {
     return (
@@ -97,10 +122,10 @@ export const BlogPost = () => {
 
         {/* Share */}
         <div className="blog-share">
-          <span className="blog-share-label">Share</span>
-          <button className="blog-share-btn" aria-label="Share this article"><Share2 size={16} /></button>
-          <button className="blog-share-btn" aria-label="Share via email"><Mail size={16} /></button>
-          <button className="blog-share-btn" aria-label="Copy link"><Link2 size={16} /></button>
+          <span className="blog-share-label">{shareNote || 'Share'}</span>
+          <button className="blog-share-btn" aria-label="Share this article" onClick={nativeShare}><Share2 size={16} /></button>
+          <button className="blog-share-btn" aria-label="Share via email" onClick={mailShare}><Mail size={16} /></button>
+          <button className="blog-share-btn" aria-label="Copy link" onClick={copyLink}><Link2 size={16} /></button>
         </div>
 
         {/* Author */}

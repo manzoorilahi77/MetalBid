@@ -14,6 +14,7 @@ import {
   Button, Chip, Countdown, EmptyState, Modal, PhotoThumb,
   StatusChip, Tabs, Toggle, cx,
 } from '../components/ui'
+import { useGuestGate } from '../components/GuestGate'
 import { catalogueUiStatus, isCatalogueEmdLocked, selectionSummary, useStore } from '../store/store'
 import { emdDeadlineMs, emdOpensAtMs, emdWindowClosed, emdWindowNotOpen } from '../lib/emd'
 import { fmtDate, fmtDateTime, inr, inrCompact, num, relTime } from '../lib/format'
@@ -43,6 +44,7 @@ export default function AuctionDetail() {
   const bookSlot = useStore((s) => s.bookInspectionSlot)
   const inspectionSlots = useStore((s) => s.inspectionSlots)
   const announcements = useStore((s) => s.announcements)
+  const guest = useGuestGate()
 
   const [tab, setTab] = useState<TabKey>('lots')
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS)
@@ -52,9 +54,11 @@ export default function AuctionDetail() {
 
   // Buyers browse their own faceted grid at /buyermarketplace, not the
   // guest-facing /browse — sending a signed-in buyer there was landing them
-  // on a page outside their own nav entirely.
-  const browseHref = role === 'buyer' ? '/buyermarketplace' : '/browse'
-  const browseLabel = role === 'buyer' ? 'Browse & Shortlist' : 'Browse'
+  // on a page outside their own nav entirely. A "Browse as Guest" visitor is
+  // touring that same grid, so they go back to it too.
+  const onBuyerGrid = role === 'buyer' || guest.isGuest
+  const browseHref = onBuyerGrid ? '/buyermarketplace' : '/browse'
+  const browseLabel = role === 'buyer' ? 'Browse & Shortlist' : guest.isGuest ? 'Marketplace' : 'Browse'
 
   const cat = catalogues.find((c) => c.id === id && c.status !== 'draft')
   if (!cat) {
@@ -119,9 +123,17 @@ export default function AuctionDetail() {
             <p className="text-sm text-ink-muted mt-2">{cat.description}</p>
           </div>
           <div className="flex flex-col items-end gap-2">
-            {(canBid || isBuyer) && (
-              <div className="flex items-center gap-3">
+            {(canBid || isBuyer || guest.isGuest) && (
+              <div className="flex flex-wrap items-center justify-end gap-3">
                 {canBid && <Countdown endsAt={cat.endsAt} prefix="closes in" size="lg" />}
+                {/* The guest gets the real button in the real place — pressing
+                    it is how the tour explains itself. */}
+                {guest.isGuest && (
+                  <Button variant="secondary" size="md" onClick={() => guest.block('shortlist')}
+                    title="Subscribe to shortlist this catalogue">
+                    <Star size={14} /> Add to shortlist
+                  </Button>
+                )}
                 {isBuyer && (
                   <span title={notOpen
                     ? `EMD funding opens ${relTime(new Date(emdOpensAtMs(cat)).toISOString(), now)}`
@@ -155,13 +167,14 @@ export default function AuctionDetail() {
                   ? <Chip tone="danger" className="h-8 px-3 text-sm num">EMD closed {fmtDateTime(new Date(emdDeadlineMs(cat)).toISOString())}</Chip>
                   : <Chip tone="warning" className="h-8 px-3 text-sm num">Fund EMD by {fmtDateTime(new Date(emdDeadlineMs(cat)).toISOString())}</Chip>
             )}
-            <div className="flex gap-2">
+            {/* wraps on a phone — side by side these two overran the viewport */}
+            <div className="flex flex-wrap justify-end gap-2">
               <Button variant="secondary" size="md" onClick={() => pushToast({ kind: 'info', title: 'Catalogue PDF downloading', body: `${cat.code} Catalogue & Annexure.pdf (demo)` })}>
                 <Download size={14} /> Catalogue PDF
               </Button>
               {accepted
                 ? <Chip tone="success" className="h-10 px-4"><Check size={12} /> T&C accepted · {termsAccepted[cat.id]}</Chip>
-                : <Button variant="steel" size="md" onClick={() => setTermsOpen(true)}><ScrollText size={14} /> Accept Terms & Conditions</Button>}
+                : <Button variant="steel" size="md" onClick={() => { if (guest.block('terms')) return; setTermsOpen(true) }}><ScrollText size={14} /> Accept Terms & Conditions</Button>}
             </div>
           </div>
         </div>
@@ -258,8 +271,8 @@ export default function AuctionDetail() {
                             <StatusChip status={lot.status} />
                             {lot.extensions > 0 && <Chip tone="warning" className="num">+{lot.extensions} ext</Chip>}
                           </div>
-                          <p className="text-sm text-ink-muted mt-1 line-clamp-2">{lot.description}
-                            <span className="text-ink-faint"> · As-is-where-is.</span>
+                          <p className="text-sm font-semibold text-ink mt-1 line-clamp-2">{lot.description}
+                            <span className="font-normal text-ink-faint"> · As-is-where-is.</span>
                           </p>
                           {rep && (
                             <p className="text-xs mt-1.5 text-ink-muted">
@@ -344,7 +357,7 @@ export default function AuctionDetail() {
                 {terms.special.map((g, i) => <li key={i}>{g}</li>)}
               </ol>
             </section>
-            {!accepted && <Button onClick={() => setTermsOpen(true)}><ScrollText size={15} /> Accept Terms & Conditions</Button>}
+            {!accepted && <Button onClick={() => { if (guest.block('terms')) return; setTermsOpen(true) }}><ScrollText size={15} /> Accept Terms & Conditions</Button>}
           </div>
         )}
 
@@ -373,6 +386,7 @@ export default function AuctionDetail() {
                 ) : (
                   <Button className="mt-4" variant="steel"
                     onClick={() => {
+                      if (guest.block('inspection')) return
                       if (!me) { pushToast({ kind: 'warning', title: 'Sign in to book an inspection visit' }); return }
                       bookSlot(cat.id, new Date(now + 86400_000).toISOString(), '10:00–13:00 IST', 2)
                       setSlotBooked(true)

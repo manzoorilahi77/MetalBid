@@ -62,7 +62,7 @@ export default function MyLots() {
                       <Chip tone="steel" className="num">Won by Bidder {users.find((u) => u.id === l.leadingBidderId)?.bidderId ?? '—'}</Chip>
                     )}
                   </div>
-                  <p className="text-sm text-ink-muted mt-1 line-clamp-1">{l.description}</p>
+                  <p className="text-sm font-semibold text-ink mt-1 line-clamp-1">{l.description}</p>
                   {rep && (
                     <p className="text-xs mt-1 text-ink-muted">
                       Inspected: measured <b className="num text-ink">{num(rep.measuredQty)} {rep.uom}</b>

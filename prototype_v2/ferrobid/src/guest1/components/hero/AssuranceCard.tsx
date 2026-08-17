@@ -22,11 +22,11 @@ const POINTS: readonly string[] = [
 function AssuranceCardComponent({ animated }: AssuranceCardProps) {
   return (
     <div className="flex h-full flex-col">
-      <p className="text-[1cqw] font-medium leading-none tracking-[0.07em] text-[#8b8f96]">
+      <p className="text-[1cqw] font-medium leading-none tracking-[0.07em] text-[var(--hero-card-ink-faint)]">
         SECURE BY DESIGN
       </p>
 
-      <h3 className="mt-[1.2cqw] text-[1.7cqw] font-medium leading-[1.25] text-[#1f2328]">
+      <h3 className="mt-[1.2cqw] text-[1.7cqw] font-medium leading-[1.25] text-[var(--hero-card-ink)]">
         Every trade is protected
       </h3>
 
@@ -34,7 +34,7 @@ function AssuranceCardComponent({ animated }: AssuranceCardProps) {
         {POINTS.map((point, index) => (
           <motion.li
             key={point}
-            className="flex items-center gap-[0.8cqw] text-[1.25cqw] leading-none text-[#4b5058]"
+            className="flex items-center gap-[0.8cqw] text-[1.25cqw] leading-none text-[var(--hero-card-ink-muted)]"
             initial={animated ? { opacity: 0, x: -4 } : false}
             animate={{ opacity: 1, x: 0 }}
             transition={
@@ -51,7 +51,7 @@ function AssuranceCardComponent({ animated }: AssuranceCardProps) {
               strokeWidth={1.6}
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="h-[1.15cqw] w-[1.15cqw] shrink-0 text-[#1e7f4f]"
+              className="h-[1.15cqw] w-[1.15cqw] shrink-0 text-[var(--hero-card-ok)]"
             >
               <path d="M2.4 6.3 4.7 8.6 9.6 3.5" />
             </svg>
@@ -61,15 +61,15 @@ function AssuranceCardComponent({ animated }: AssuranceCardProps) {
       </ul>
 
       <div className="mt-auto pt-[1.5cqw]">
-        <div className="h-px bg-[#e6e4e1]" />
+        <div className="h-px bg-[var(--hero-card-rule)]" />
 
         <div className="mt-[1.35cqw] flex items-center justify-between gap-[1cqw]">
-          <p className="min-w-0 text-[1.15cqw] leading-[1.4] text-[#6f747c]">
+          <p className="min-w-0 text-[1.15cqw] leading-[1.4] text-[var(--hero-card-ink-faint)]">
             Payment released once delivery is confirmed
           </p>
 
-          <span className="flex shrink-0 items-center gap-[0.45cqw] rounded-full bg-[#e8f3ec] px-[0.9cqw] py-[0.5cqw] text-[1.35cqw] leading-none text-[#1e7f4f]">
-            <span aria-hidden="true" className="h-[0.6cqw] w-[0.6cqw] rounded-full bg-[#1e7f4f]" />
+          <span className="flex shrink-0 items-center gap-[0.45cqw] rounded-full bg-[var(--hero-card-ok-bg)] px-[0.9cqw] py-[0.5cqw] text-[1.35cqw] leading-none text-[var(--hero-card-ok)]">
+            <span aria-hidden="true" className="h-[0.6cqw] w-[0.6cqw] rounded-full bg-[var(--hero-card-ok)]" />
             Secured
           </span>
         </div>

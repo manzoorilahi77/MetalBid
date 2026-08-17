@@ -193,7 +193,7 @@ export default function Bids() {
                             ? <Chip tone="steel">Offer submitted</Chip>
                             : leading ? <Chip tone="success">Leading H1</Chip> : <Chip tone="danger" pulse>Outbid</Chip>}
                         </div>
-                        <div className="text-sm text-ink-muted mt-0.5 line-clamp-1">{lot.description}</div>
+                        <div className="text-sm font-semibold text-ink mt-0.5 line-clamp-1">{lot.description}</div>
                       </div>
                       <Countdown endsAt={lot.endsAt} size="sm" />
                       <Button size="sm" variant={isTender ? 'secondary' : leading ? 'secondary' : 'primary'}
@@ -330,7 +330,7 @@ export default function Bids() {
                             <span className="num text-sm font-bold">{lot.lotNo}</span>
                             <Chip tone={chip.tone}>{chip.label}</Chip>
                           </div>
-                          <div className="text-sm text-ink-muted mt-0.5 line-clamp-1">{lot.description}</div>
+                          <div className="text-sm font-semibold text-ink mt-0.5 line-clamp-1">{lot.description}</div>
                           {result.outcome === 'sta' && (
                             <div className="text-xs text-ink-faint mt-0.5">
                               Your {isTender ? 'offer' : 'H1'} was below reserve — the seller has {cat.bidValidityDays} days to accept or decline.

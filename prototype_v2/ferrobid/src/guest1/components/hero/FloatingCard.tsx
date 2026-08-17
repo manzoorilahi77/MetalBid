@@ -19,7 +19,11 @@ const ENTRANCE_EASE = [0.22, 1, 0.36, 1] as const
 
 /**
  * The card shell, matched to the panels in the original render: a frosted
- * near-white surface, hairline edge and a soft, wide shadow.
+ * surface, hairline edge and a soft, wide shadow.
+ *
+ * The surface, edge and top sheen come from `--hero-card-*` (styles/index.css)
+ * rather than fixed whites, so the panes turn to smoked glass with the theme
+ * instead of staying three lightboxes on a dark hero.
  *
  * Every dimension is expressed in `cqw` (percent of the hero's width) rather
  * than pixels, so the card scales in exact lock-step with the artwork behind it
@@ -56,11 +60,12 @@ function FloatingCardComponent({
         aria-label={label}
         className={[
           'h-full w-full rounded-[1.35cqw] px-[1.45cqw] py-[1.35cqw]',
-          'border border-white/85 bg-gradient-to-b from-white/90 to-white/76',
+          'border border-[var(--hero-card-edge)]',
+          'bg-[linear-gradient(to_bottom,var(--hero-card-top),var(--hero-card-bottom))]',
           'backdrop-blur-[0.9cqw] transition-shadow duration-700 ease-out',
           glowing
-            ? 'shadow-[inset_0_0.08cqw_0_rgba(255,255,255,0.95),0_0.1cqw_0.28cqw_rgba(28,25,23,0.06),0_0.9cqw_1.7cqw_-0.5cqw_rgba(28,25,23,0.13),0_2.6cqw_5cqw_-1.5cqw_rgba(28,25,23,0.22)]'
-            : 'shadow-[inset_0_0.08cqw_0_rgba(255,255,255,0.9),0_0.1cqw_0.28cqw_rgba(28,25,23,0.05),0_0.7cqw_1.4cqw_-0.5cqw_rgba(28,25,23,0.09),0_2.2cqw_4.2cqw_-1.5cqw_rgba(28,25,23,0.16)]',
+            ? 'shadow-[inset_0_0.08cqw_0_var(--hero-card-sheen),0_0.1cqw_0.28cqw_rgba(28,25,23,0.06),0_0.9cqw_1.7cqw_-0.5cqw_rgba(28,25,23,0.13),0_2.6cqw_5cqw_-1.5cqw_rgba(28,25,23,0.22)]'
+            : 'shadow-[inset_0_0.08cqw_0_var(--hero-card-sheen),0_0.1cqw_0.28cqw_rgba(28,25,23,0.05),0_0.7cqw_1.4cqw_-0.5cqw_rgba(28,25,23,0.09),0_2.2cqw_4.2cqw_-1.5cqw_rgba(28,25,23,0.16)]',
         ].join(' ')}
       >
         {children}

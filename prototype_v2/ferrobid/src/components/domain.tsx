@@ -7,6 +7,7 @@ import { inrCompact, relTime } from '../lib/format'
 import { emdDeadlineMs, emdDeadlineSoon, emdOpensAtMs, emdWindowClosed, emdWindowNotOpen } from '../lib/emd'
 import { categoryImageUrl } from '../data/categoryImages'
 import { useNow } from '../lib/useTick'
+import { useGuestGate } from './GuestGate'
 import { Button, Chip, Countdown, PhotoThumb, StatusChip, cx } from './ui'
 
 /** Marketplace catalogue card — Home rail + Browse grid. Pass `showBuyerActions`
@@ -24,6 +25,7 @@ export function CatalogueCard({ cat, className, showBuyerActions }: { cat: Catal
   const selections = useStore((s) => s.selections)
   const toggleWatchlist = useStore((s) => s.toggleWatchlist)
   const pushToast = useStore((s) => s.pushToast)
+  const guest = useGuestGate()
   const catLots = lots.filter((l) => l.catalogueId === cat.id)
   const seller = users.find((u) => u.id === cat.sellerId)
   const ui = catalogueUiStatus(cat, now, catLots)
@@ -91,7 +93,19 @@ export function CatalogueCard({ cat, className, showBuyerActions }: { cat: Catal
 
       {showBuyerActions && (
         <div className="flex items-center gap-1 px-3 pb-3 pt-1 border-t border-line">
-          {ui === 'upcoming' && (
+          {/* A guest sees the star on every card, whatever the auction's state:
+              it is the action they came to try, and pressing it is how they find
+              out what a subscription is for. */}
+          {guest.isGuest ? (
+            <button
+              onClick={() => guest.block('shortlist')}
+              aria-label="Shortlist this catalogue"
+              title="Subscribe to shortlist this catalogue"
+              className="p-2 rounded-lg text-ink-faint hover:text-ember hover:bg-surface-2 transition-colors"
+            >
+              <Star size={16} />
+            </button>
+          ) : ui === 'upcoming' && (
             <button
               onClick={() => { if (!emdLocked && !notOpen) toggleWatchlist(cat.id) }}
               disabled={emdLocked || notOpen}

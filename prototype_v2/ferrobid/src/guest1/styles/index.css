@@ -43,17 +43,16 @@
   --radius-card: 16px;
 }
 
-/* Dark mode token values — defined but NOT auto-activated.
-   Gated behind [data-theme="dark"] rather than `prefers-color-scheme`
-   intentionally: this codebase styles most surfaces (card/section
-   backgrounds) with hardcoded literals rather than var(--bg-*), only text
-   colors flow through the CSS variables consistently. Auto-switching on OS
-   preference right now would flip text to light-on-light against those
-   still-hardcoded light backgrounds and make the site unreadable for anyone
-   with system dark mode on. Wiring these values up for real needs a follow-up
-   pass converting the hardcoded surface colors to var()-based ones — until
-   then, add [data-theme="dark"] to <html> (e.g. via a theme toggle) once
-   that pass is done, and this block will apply correctly.
+/* Dark mode token values, driven by the header's theme toggle
+   (hooks/useGuest1Theme).
+
+   Gated behind [data-theme="dark"] rather than `prefers-color-scheme`: the
+   toggle is the contract, so the OS preference never overrides a visitor who
+   picked a side. Every section surface below now flows through these tokens —
+   the handful of places that still needed a genuinely different value in dark
+   (rather than a flipped token) are collected in the "DARK MODE" block at the
+   foot of this file, so there is one place to look rather than a dark rule
+   trailing every component.
 
    Selector is `:root[data-theme="dark"]`, not just `[data-theme="dark"]`:
    both have to win over the plain `:root` block below on equal specificity,
@@ -84,6 +83,58 @@
   --color-success: #34a76f;
   --color-warning: #d97b1f;
   --color-danger: #e35a5a;
+
+  /* The tinted-wash family behind status chips (bg-steel-soft, bg-ember-soft…).
+     These are declared in the MANAGER app's src/index.css, whose dark values
+     are gated on its own `.dark` class — a selector this app's toggle never
+     sets, so without these the live-auction ticker's bid chips stayed a pale
+     blue wash under dark steel text. Re-declaring the base names here is
+     enough: the `--color-*-soft` aliases the utilities actually read are
+     `var(--*-soft)`, so they resolve to whatever won on :root. Values match
+     the manager's dark set so the two apps agree on one palette. */
+  --ember-soft: #3a241c;
+  --steel-soft: #1e2a3d;
+  --success-soft: #1c2f25;
+  --warning-soft: #332916;
+  --danger-soft: #38201d;
+  /* Same story for the deepened pair: this app declares its own
+     --color-steel-strong, but never had an --ember-strong, so `text-ember-strong`
+     (the "Today's Coverage" eyebrow) fell through to the manager's light
+     #c74424 and sat at 3.2:1. */
+  --ember-strong: #f57e5a;
+
+  /* Announcement category accents. The light values are mid-tone inks chosen
+     to read on a white card; on a dark card the same hues have to come *up*
+     rather than down, so each gets a lighter partner and a tinted-glass
+     backing instead of the near-white wash. */
+  --anc-feature: #93b4e6;
+  --anc-feature-bg: rgb(58 90 140 / 0.22);
+  --anc-promo: #f08b62;
+  --anc-promo-bg: rgb(184 69 31 / 0.22);
+  --anc-maintenance: #d9a862;
+  --anc-maintenance-bg: rgb(150 99 26 / 0.22);
+  --anc-milestone: #62c294;
+  --anc-milestone-bg: rgb(44 122 87 / 0.22);
+  --anc-policy: #b0a89e;
+  --anc-policy-bg: rgb(92 87 80 / 0.24);
+
+  /* Hero illustration panels. In light mode they are frosted white glass over
+     the render; in dark they become smoked glass, so they still read as panes
+     lifted off the artwork rather than three lightboxes on a dark page. */
+  --hero-card-top: rgb(42 38 33 / 0.94);
+  --hero-card-bottom: rgb(34 31 27 / 0.88);
+  --hero-card-edge: rgb(255 255 255 / 0.14);
+  --hero-card-sheen: rgb(255 255 255 / 0.10);
+  --hero-card-ink: #f2efea;
+  --hero-card-ink-muted: #b3aca4;
+  --hero-card-ink-faint: #7d766e;
+  /* Rules, progress tracks and inactive step beads inside the panels. Drawn
+     with light at low alpha rather than a grey literal — on smoked glass a
+     fixed #e6e4e1 hairline reads as a bright scratch. */
+  --hero-card-rule: rgb(255 255 255 / 0.10);
+  --hero-card-rule-strong: rgb(255 255 255 / 0.20);
+  --hero-card-ok: #4fbe8b;
+  --hero-card-ok-bg: rgb(30 127 79 / 0.28);
 }
 
 :root {
@@ -118,6 +169,34 @@
      kept separate from --primary so the analytics widgets read as a
      dashboard rather than another marketing CTA. */
   --accent-maroon: #7b2d20;
+
+  /* Announcement category accents — the light-mode pair of the block above.
+     These live here rather than inline in AnnouncementsSection so the two
+     themes are declared side by side and a category can't gain a dark value
+     without a light one. */
+  --anc-feature: #3a5a8c;
+  --anc-feature-bg: #eef2f9;
+  --anc-promo: #b8451f;
+  --anc-promo-bg: #faf0ea;
+  --anc-maintenance: #96631a;
+  --anc-maintenance-bg: #f8f2e6;
+  --anc-milestone: #2c7a57;
+  --anc-milestone-bg: #ecf5ef;
+  --anc-policy: #5c5750;
+  --anc-policy-bg: #f2f0ec;
+
+  /* Hero illustration panels — frosted white glass over the render. */
+  --hero-card-top: rgb(255 255 255 / 0.90);
+  --hero-card-bottom: rgb(255 255 255 / 0.76);
+  --hero-card-edge: rgb(255 255 255 / 0.85);
+  --hero-card-sheen: rgb(255 255 255 / 0.90);
+  --hero-card-ink: #1f2328;
+  --hero-card-ink-muted: #4b5058;
+  --hero-card-ink-faint: #8b8f96;
+  --hero-card-rule: #e6e4e1;
+  --hero-card-rule-strong: #d5d1cc;
+  --hero-card-ok: #1e7f4f;
+  --hero-card-ok-bg: #e8f3ec;
 
   --shadow-sm: 0 1px 2px 0 rgb(28 25 23 / 0.04);
   --shadow-md: 0 4px 12px -1px rgb(28 25 23 / 0.06), 0 2px 4px -2px rgb(28 25 23 / 0.05);
@@ -342,8 +421,10 @@ ul {
   transform: translateX(3px);
 }
 .view-all:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(228, 87, 46, 0.18); }
+/* Half-opaque glass over whatever band it sits on, so the token — not a fixed
+   white — is what decides which way it frosts. */
 .btn-outline {
-  background: rgba(255, 255, 255, 0.6);
+  background: color-mix(in srgb, var(--color-surface) 60%, transparent);
   backdrop-filter: blur(4px);
   border: 1px solid rgba(228, 87, 46, 0.2);
   color: var(--dark);
@@ -410,6 +491,19 @@ ul {
   align-items: center;
   gap: 10px;
 }
+
+/* ── Brand lock-up ────────────────────────────────────────────────────────
+   One mark, two files. The wordmark has to flip black -> white for dark mode
+   while the ember shield stays ember, so a filter is no good: `invert` would
+   take the orange to blue. Ship both PNGs and let the theme pick. */
+.brand-logo {
+  display: block;
+  width: auto;
+  object-fit: contain;
+}
+.brand-logo-dark { display: none; }
+[data-theme='dark'] .brand-logo-light { display: none; }
+[data-theme='dark'] .brand-logo-dark { display: block; }
 .nav-logo-icon {
   width: 34px;
   height: 34px;
@@ -604,7 +698,10 @@ ul {
   margin-top: var(--space-4);
   margin-bottom: var(--space-5);
   margin-left: -0.12em; /* offset the capital "T" side-bearing so it lines up with the other lines */
-  color: #44403c;
+  /* Token, not the old #44403c literal: that near-black sat at 1.7:1 against
+     the dark canvas — the hero's second line was effectively invisible with
+     the theme flipped. */
+  color: var(--text-muted);
 }
 /* The single-line treatment only fits where the column is wide enough for the
    88-char sentence; below 1440px it wraps naturally instead of overflowing. */
@@ -618,7 +715,7 @@ ul {
   gap: 8px;
   font-size: var(--text-sm);
   font-weight: 600;
-  color: #44403c;
+  color: var(--text-muted);
   letter-spacing: 0.01em;
   margin-bottom: var(--space-5);
 }
@@ -3458,7 +3555,7 @@ ul {
   font-family: Georgia, 'Times New Roman', 'Noto Serif', serif;
   font-size: 15.5px;
   line-height: 1.75;
-  color: #33302c;
+  color: var(--color-ink);
   text-align: justify;
   hyphens: auto;
 }
@@ -3509,7 +3606,7 @@ ul {
   font-family: Georgia, 'Times New Roman', 'Noto Serif', serif;
   font-size: 14.5px;
   line-height: 1.72;
-  color: #45403b;
+  color: var(--text-muted);
   text-align: justify;
   hyphens: auto;
   margin-top: 16px;
@@ -4854,4 +4951,96 @@ ul {
   .soon-card { width: calc(100vw - 32px); padding: 28px 20px 22px; }
   .soon-form { flex-direction: column; }
   .soon-cta { width: 100%; justify-content: center; }
+}
+
+/* ==========================================================================
+   DARK MODE — the places a flipped token isn't enough
+   ==========================================================================
+   Everything above re-themes for free: section bands, cards, borders and text
+   all read their colour from the tokens at the top of this file, which the
+   [data-theme="dark"] block re-declares. What lands here is the remainder —
+   surfaces whose *pixels* are light rather than their CSS, and the one blend
+   mode that has to be compensated for. Kept together so the dark pass is one
+   place to read rather than a trailing rule under every component.
+   ========================================================================== */
+
+/* ---- Photography ---------------------------------------------------------
+   A photo shot on a bright day is a lamp on a dark page: the page dims around
+   it but the picture does not, so it glares and drags the eye off the copy.
+   Every content image is therefore brought down a step and desaturated very
+   slightly — enough to sit in the same light as the page, not so much that the
+   material stops being legible (a buyer is here to judge scrap by eye).
+
+   Deliberately NOT dimmed:
+   · .brand-logo — already ships as two files, light and dark (see the
+     .brand-logo-light/.brand-logo-dark swap above). Dimming would fight it.
+   · [data-no-dim] — an escape hatch for artwork that is already dark.
+   · Store badges — supplied pre-rendered on black, and held back by their own
+     rule below rather than by a compound :not().
+
+   The exclusions are wrapped in :where() so they add no specificity: this is
+   the floor every image falls to, and any picture that needs its own treatment
+   (the two below) must be able to say so with a plain class selector. */
+:root[data-theme="dark"] img:where(:not(.brand-logo, [data-no-dim])) {
+  filter: brightness(0.88) contrast(1.02) saturate(0.94);
+}
+:root[data-theme="dark"] .soon-badges img {
+  filter: grayscale(0.3);
+}
+
+/* ---- Marketing art with a white backdrop baked in ------------------------
+   The three "Why Choose" panels are single flat JPEGs — headline, body copy
+   and illustration are all pixels, on white. Nothing in CSS can re-theme
+   them, so they get the deepest dim of anything on the page plus a vignette
+   pulled in from the card edge, which seats the white into the dark band
+   instead of letting it end on a hard bright rectangle.
+
+   Brightness is the only lever here, and it is pushed further than anywhere
+   else on the page — the baked-in copy is near-black on white, so scaling the
+   whole plate down keeps their ratio to each other while bringing the plate
+   itself to roughly the tone of the cards beside it. */
+:root[data-theme="dark"] .why-choose-card-img {
+  filter: brightness(0.6) contrast(1.12) saturate(0.86);
+}
+:root[data-theme="dark"] .why-choose-card::after {
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06),
+              inset 0 0 60px -18px rgb(0 0 0 / 0.55),
+              inset 0 -44px 52px -30px rgb(0 0 0 / 0.5);
+}
+
+/* ---- The hero plate ------------------------------------------------------
+   The render carries its own near-white backdrop and is composited with
+   `mix-blend-multiply` (see components/hero/HeroImage.tsx), which is what
+   erases that backdrop against the section behind it — white multiplied by
+   anything is that thing. This keeps working in dark mode, and better: the
+   backdrop multiplies away to the dark canvas exactly as it did to the light
+   one.
+
+   The catch is that multiply darkens the *subject* too, and against a near
+   black canvas the steel and copper go to mud. Lifting the source before the
+   blend restores them; pure white stays pure white however far it is lifted,
+   so the backdrop still erases cleanly and no seam appears.
+
+   This is a correction to the blend, not photo dimming — hence `!important`
+   over the blanket rule above, which would otherwise darken it twice. */
+:root[data-theme="dark"] .hero-visual img {
+  filter: brightness(1.42) contrast(0.94) saturate(1.05) !important;
+}
+
+/* The baked-card erasers must stay pure white to keep multiplying away — the
+   blanket dim above would tint them and leave three grey ghosts on the plate. */
+:root[data-theme="dark"] .hero-visual span[aria-hidden="true"] {
+  filter: none !important;
+}
+
+/* ---- Elevation -----------------------------------------------------------
+   The shadow scale is built from near-black at low alpha, which is invisible
+   on a dark ground — cards lose their lift and the page flattens into one
+   sheet. Dark UIs separate with light instead: a hairline top highlight, and
+   a deeper, wider shadow to hold the drop. */
+:root[data-theme="dark"] {
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.4);
+  --shadow-md: 0 4px 12px -1px rgb(0 0 0 / 0.45), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+  --shadow-lg: 0 10px 30px -3px rgb(0 0 0 / 0.55), 0 4px 8px -4px rgb(0 0 0 / 0.4);
+  --shadow-float: 0 18px 40px -16px rgb(0 0 0 / 0.65), 0 4px 12px -4px rgb(0 0 0 / 0.45);
 }

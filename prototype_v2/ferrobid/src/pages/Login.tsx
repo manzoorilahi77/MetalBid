@@ -2,7 +2,7 @@
    the user into the matching role portal. */
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Flame, ShieldCheck, User as UserIcon, Lock, ArrowRight } from 'lucide-react'
+import { ShieldCheck, User as UserIcon, Lock, ArrowRight } from 'lucide-react'
 import { Page } from '../layout/Chrome'
 import { Button, Field, Input } from '../components/ui'
 import { DEMO_LOGINS, DEMO_PASSWORD, ROLE_HOME, ROLE_LABEL, useStore } from '../store/store'
@@ -41,9 +41,16 @@ export default function Login() {
       <div className="max-w-md mx-auto pt-6 sm:pt-14 animate-fade-up">
         {/* brand mark */}
         <div className="flex flex-col items-center mb-6">
-          <span className="size-12 rounded-2xl bg-ember grid place-items-center text-white shadow-sm">
-            <Flame size={26} strokeWidth={2.5} />
-          </span>
+          <img
+            src={`${import.meta.env.BASE_URL}headericon.png`}
+            alt="ferroBid"
+            className="h-11 w-auto object-contain dark:hidden"
+          />
+          <img
+            src={`${import.meta.env.BASE_URL}footericon.png`}
+            alt="ferroBid"
+            className="h-11 w-auto object-contain hidden dark:block"
+          />
           <h1 className="font-display text-2xl font-bold mt-3">Sign in to ferroBid</h1>
           <p className="text-sm text-ink-muted mt-1 text-center">
             Enter your user ID and password to open your portal.

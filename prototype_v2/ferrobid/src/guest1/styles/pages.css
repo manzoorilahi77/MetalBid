@@ -93,22 +93,32 @@
   min-height: 100vh;
 }
 
+/* minmax(0, 1fr) — not a bare 1fr — on every content track below. A bare `1fr`
+   floors at the track's min-content, so one wide card or a long seller name
+   inflates the column past the container and pushes the right-hand cards off
+   screen. minmax(0, …) lets the track shrink to the space it actually has. */
 .marketplace-layout {
   display: grid;
-  grid-template-columns: 280px 1fr;
+  grid-template-columns: 280px minmax(0, 1fr);
   gap: 32px;
   padding-top: 40px;
 }
 
 .marketplace-layout.live-layout {
-  grid-template-columns: 1fr 340px;
+  grid-template-columns: minmax(0, 1fr) 340px;
 }
 
 @media (max-width: 1100px) {
   .marketplace-layout.live-layout {
-    grid-template-columns: 1fr 280px;
+    grid-template-columns: minmax(0, 1fr) 280px;
     gap: 24px;
   }
+}
+
+/* Grid items default to min-width:auto; both columns must be free to shrink. */
+.marketplace-sidebar,
+.marketplace-content {
+  min-width: 0;
 }
 
 .marketplace-sidebar {
@@ -172,12 +182,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
   margin-bottom: 32px;
-  gap: 24px;
+  gap: 16px 24px;
 }
 
 .search-bar-expanded {
-  flex: 1;
+  flex: 1 1 260px;
+  min-width: 0;
   display: flex;
   align-items: center;
   background: var(--color-surface);
@@ -195,6 +207,7 @@
 
 .search-bar-expanded input {
   flex: 1;
+  min-width: 0; /* an <input>'s default intrinsic width otherwise floors the bar */
   border: none;
   outline: none;
   padding: 0 12px;
@@ -210,9 +223,25 @@
 
 .auction-grid-large {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 24px;
   margin-bottom: 48px;
+}
+
+/* Each card sits inside a framer motion wrapper, so the wrapper is the grid
+   item — it needs the min-width reset too, or the card's width leaks through. */
+.auction-grid-large > * {
+  min-width: 0;
+}
+
+/* AuctionCard is shared with the homepage carousel, where `.auction-card`
+   carries `flex: 0 0 calc(25% - 12px)` and `min-width: 260px` for the
+   horizontal scroller. In this grid those two are what blow the columns out
+   past the container, so neutralise them here only. */
+.auction-grid-large .auction-card {
+  flex: initial;
+  min-width: 0;
+  width: 100%;
 }
 
 .pagination {
@@ -577,25 +606,32 @@
   position: absolute;
   top: 10px;
   left: 10px;
-  background: rgba(228, 87, 46, 0.15);
+  /* Near-solid ember with white text. The old 15%-opacity ember fill under
+     ember text sat over an unpredictable photograph — at 10px/800 the label
+     never resolved. The badge has to carry its own contrast, not borrow it
+     from whatever the lot happens to look like. */
+  background: rgba(200, 66, 27, 0.94);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(228, 87, 46, 0.3);
-  color: var(--color-ember);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  color: #fff;
   font-size: 10px;
   font-weight: 800;
-  padding: 4px 8px;
+  letter-spacing: 0.4px;
+  line-height: 1;
+  padding: 6px 9px;
   border-radius: 6px;
   display: flex;
   align-items: center;
   gap: 6px;
   z-index: 2;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
 }
 
 .live-dot {
   width: 6px;
   height: 6px;
-  background: var(--color-ember);
+  flex: none;
+  background: #fff;
   border-radius: 50%;
 }
 
@@ -604,24 +640,27 @@
   position: absolute;
   top: 10px;
   left: 10px;
-  background: rgba(43, 76, 126, 0.12);
+  background: rgba(32, 58, 98, 0.94);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(43, 76, 126, 0.3);
-  color: var(--color-steel);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  color: #fff;
   font-size: 10px;
   font-weight: 800;
-  padding: 4px 8px;
+  letter-spacing: 0.4px;
+  line-height: 1;
+  padding: 6px 9px;
   border-radius: 6px;
   display: flex;
   align-items: center;
   gap: 6px;
   z-index: 2;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
 }
 .upcoming-dot {
   width: 6px;
   height: 6px;
-  background: var(--color-steel);
+  flex: none;
+  background: #fff;
   border-radius: 50%;
 }
 
@@ -629,10 +668,11 @@
   animation: pulse-red 2s infinite;
 }
 
+/* White ring — the dot now sits on an ember fill, where an ember halo is invisible. */
 @keyframes pulse-red {
-  0% { box-shadow: 0 0 0 0 rgba(228, 87, 46, 0.7); }
-  70% { box-shadow: 0 0 0 6px rgba(228, 87, 46, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(228, 87, 46, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.75); }
+  70% { box-shadow: 0 0 0 5px rgba(255, 255, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
 }
 
 .auction-time-glass {
@@ -664,6 +704,8 @@
 .auction-meta {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  gap: 8px;
   margin-bottom: 8px; /* Tighter */
 }
 
@@ -672,15 +714,21 @@
   font-weight: 800;
   color: var(--primary);
   letter-spacing: 0.5px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .auction-qty {
+  flex: none;
   font-size: 10px;
   font-weight: 700;
   color: var(--dark);
   background: rgba(228, 87, 46, 0.1);
   padding: 2px 6px;
   border-radius: 4px;
+  white-space: nowrap;
 }
 
 .auction-title {
@@ -697,7 +745,7 @@
 
 .auction-details-grid {
   display: grid;
-  grid-template-columns: 1fr; /* Stack vertically for tight space */
+  grid-template-columns: minmax(0, 1fr); /* Stack vertically for tight space */
   gap: 6px;
   margin-bottom: 16px;
 }
@@ -706,9 +754,23 @@
   display: flex;
   align-items: center;
   gap: 6px;
+  min-width: 0;
   font-size: 11px;
   color: var(--text-muted);
   font-weight: 500;
+}
+
+/* Seller and location strings are user data of unbounded length — truncate
+   rather than let them set the card's width. */
+.detail-item > svg {
+  flex: none;
+}
+
+.detail-item > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .auction-price-row {
@@ -716,8 +778,18 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 10px;
   border-top: 1px solid rgba(0,0,0,0.06);
   padding-top: 12px;
+}
+
+.auction-price-row .price-block {
+  min-width: 0;
+}
+
+.auction-price-row .btn {
+  flex: none;
+  white-space: nowrap;
 }
 
 .price-label {
@@ -740,17 +812,32 @@
 }
 
 /* --- Responsive Layouts --- */
-@media (max-width: 1024px) {
+/* Drop to two columns while the 280px sidebar is still on screen: below
+   ~1200px a third column leaves each card under 220px, which crushes the
+   price row. The sidebar collapses at 768px, so 3-up is fine again there. */
+@media (max-width: 1200px) {
   .auction-grid-large {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1024px) {
+  .marketplace-layout {
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: 24px;
   }
 }
 
 @media (max-width: 768px) {
   .marketplace-layout,
   .marketplace-layout.live-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     padding-top: 24px;
+  }
+
+  /* Sidebar is gone — the full width is back, so 2-up still fits comfortably. */
+  .auction-grid-large {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .marketplace-sidebar {
@@ -771,9 +858,14 @@
     margin-bottom: 16px;
   }
 
+  /* Stack via wrapping, not `flex-direction: column` — in a column flex
+     container the search bar's flex-basis would be read as a height. */
   .marketplace-top-controls {
-    flex-direction: column;
     align-items: stretch;
+  }
+
+  .search-bar-expanded {
+    flex: 1 1 100%;
   }
 
   .page-hero-title {
@@ -789,7 +881,7 @@
 
 @media (max-width: 600px) {
   .auction-grid-large {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 

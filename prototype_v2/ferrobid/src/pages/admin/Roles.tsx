@@ -26,7 +26,7 @@ import type { RoleDef } from '../../types'
 
 /** Roles that exist to render the public site rather than to be held by a
  *  person — shown, but never counted as staff or offered for removal. */
-const PUBLIC_ROLES = new Set(['guest', 'guest1', 'guest2'])
+const PUBLIC_ROLES = new Set(['guest', 'guest1'])
 
 export default function Roles() {
   const now = useNow()
