@@ -93,6 +93,16 @@ Helpers: `selectionSummary(state, buyerId, catalogueId)` → `{count, required, 
 - Reserve rates are hidden from buyers — never render `reserveRate` on buyer-facing pages (admin/seller pages may).
 - Delivery orders `do-001` (lifting_scheduled), `do-002` (payment_pending), `do-003` (completed) all for u-buyer-1.
 
+## Twelve months of history (`npm run mock:history`)
+
+Behind the demo scenario sits a year of trading, appended by `scripts/generate-history.mjs`. Everything it writes is `h`-prefixed (`hcat-`, `hlot-`, `hbid-`, `hdo-`, `hir-`, `hled-`, `hdsp-`, `haud-`, `hann-`, `hntf-`, `hslot-`, `u-hbuyer-*`, `u-hseller-*`, `u-hfield-*`, `u-hauc-*`, `u-hsub-*`), which is also how it finds and strips its own previous output — so the script is idempotent and never touches the demo records in front of it.
+
+- 102 closed auctions from ~354 days ago to ~12 days ago, ramping 3/month at launch to 14/month; 997 lots (705 sold · 174 STA · 118 unsold), 4,993 bids, 997 inspection reports, 662 delivery orders aged across the fulfilment chain, ~₹133 Cr cleared.
+- 68 more buyers (76 total) and 15 more sellers (22 total), signing up month by month, plus the ops staff the volume justifies. A few land on the watchlist or in KYC, two default — a real roster is never all-clean.
+- Wallet ledgers are arrived at, not typed: a history buyer's `balance` is the sum of their ledger. The hand-authored demo wallets keep their stated balance — the history posted behind them nets to zero.
+- **Do NOT run `npm run mock`** to refresh this. `generate-mock.mjs` is older than parts of the committed mock data (the auction-manager/finance/CEO accounts, cat-23…cat-30) and re-running it would delete them. `mock:history` reads and appends instead.
+- Commission settlements, seller decisions and invoices are still *derived in the store* from whatever is in the mock files (`seedSellerDecisions`, `seedCommissionSettlements`, `seedInvoices`). They date off each auction's own close, and anything older than the ageing window is decided and settled — so a year of history does not read as a desk that never collects.
+
 ## Voice & content
 
 Indian B2B metal-trade domain language: EMD, H1, STA, as-is-where-is, weighment, lifting, delivery order (DO), GST/TCS, e-way bill, yard, gate pass. Amounts in ₹ (lakh/crore). Always show the "quantity is indicative — final on weighment" idea where quantities appear in buyer flows.

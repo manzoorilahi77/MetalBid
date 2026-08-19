@@ -41,5 +41,85 @@
     "body": "Yard security requires prior gate-pass booking. Maximum 2 representatives per bidding firm. Carry photo ID matching the booking.",
     "at": "2026-07-15T06:30:00.000Z",
     "severity": "warning"
+  },
+  {
+    "id": "hann-01",
+    "scope": "platform",
+    "title": "ferroBid is live",
+    "body": "The platform is open for its first e-auctions. Sellers can list, buyers can inspect and bid, and every lot carries a field-inspection report.",
+    "at": "2025-07-31T16:30:00.000Z",
+    "severity": "info"
+  },
+  {
+    "id": "hann-02",
+    "scope": "platform",
+    "title": "Pre-bid EMD is now lot-wise",
+    "body": "EMD is funded against each lot rather than against the catalogue, so a bidder only ever blocks money on what they actually intend to bid on.",
+    "at": "2025-08-30T16:30:00.000Z",
+    "severity": "info"
+  },
+  {
+    "id": "hann-03",
+    "scope": "platform",
+    "title": "Anti-snipe extension standardised",
+    "body": "Every catalogue now states its anti-snipe window on the auction card. A bid inside the window extends the lot by that many minutes.",
+    "at": "2025-10-09T16:30:00.000Z",
+    "severity": "info"
+  },
+  {
+    "id": "hann-04",
+    "scope": "platform",
+    "title": "Sealed tender sales added",
+    "body": "Selected catalogues now run as sealed tenders — one offer per bidder, no visible ladder, opened together at close.",
+    "at": "2025-11-18T16:30:00.000Z",
+    "severity": "info"
+  },
+  {
+    "id": "hann-05",
+    "scope": "platform",
+    "title": "Weighment tolerance published",
+    "body": "Final quantity is settled on weighment. The tolerance and the pro-rata adjustment method are now stated in the standard terms.",
+    "at": "2025-12-28T16:30:00.000Z",
+    "severity": "info"
+  },
+  {
+    "id": "hann-06",
+    "scope": "platform",
+    "title": "Festive week auction calendar",
+    "body": "No auctions will close between the 9th and the 12th. Inspection visits continue as scheduled at all yards.",
+    "at": "2026-02-06T16:30:00.000Z",
+    "severity": "warning"
+  },
+  {
+    "id": "hann-07",
+    "scope": "platform",
+    "title": "EMD refund timeline halved",
+    "body": "EMD for unsuccessful bidders is auto-released within 24 hours of catalogue close, down from 72 hours.",
+    "at": "2026-03-18T16:30:00.000Z",
+    "severity": "info"
+  },
+  {
+    "id": "hann-08",
+    "scope": "platform",
+    "title": "GST rate change on scrap",
+    "body": "Please note the revised GST treatment applicable from this quarter. Invoices raised after the effective date carry the new rate.",
+    "at": "2026-04-17T16:30:00.000Z",
+    "severity": "warning"
+  },
+  {
+    "id": "hann-09",
+    "scope": "platform",
+    "title": "Delivery orders now carry a lifting checklist",
+    "body": "Weighbridge, loading and gross weighment are recorded against every delivery order before handover is confirmed.",
+    "at": "2026-05-17T16:30:00.000Z",
+    "severity": "info"
+  },
+  {
+    "id": "hann-10",
+    "scope": "platform",
+    "title": "Buyer premium disclosed on every lot",
+    "body": "The buyer premium is now shown on the lot card and on the delivery order, so the landed cost is visible before a bid is placed.",
+    "at": "2026-06-16T16:30:00.000Z",
+    "severity": "info"
   }
 ]

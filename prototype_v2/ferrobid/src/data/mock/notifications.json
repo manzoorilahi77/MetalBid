@@ -95,5 +95,185 @@
     "body": "Inspected lots from ECoR and MSTC are pending your approval before cataloguing.",
     "at": "2026-07-16T01:30:00.000Z",
     "read": false
+  },
+  {
+    "id": "hntf-w01",
+    "userId": "u-buyer-1",
+    "kind": "bid",
+    "title": "You won LOT-01 in AUC-2200",
+    "body": "H1 confirmed at ₹36,150/MT. Delivery order raised — since lifted and closed out.",
+    "at": "2026-01-29T15:51:00.000Z",
+    "read": true,
+    "href": "/buyer/auction-status"
+  },
+  {
+    "id": "hntf-w02",
+    "userId": "u-buyer-1",
+    "kind": "bid",
+    "title": "You won LOT-05 in AUC-2203",
+    "body": "H1 confirmed at ₹26,900/MT. Delivery order raised — since lifted and closed out.",
+    "at": "2026-02-01T21:44:00.000Z",
+    "read": true,
+    "href": "/buyer/auction-status"
+  },
+  {
+    "id": "hntf-w03",
+    "userId": "u-buyer-1",
+    "kind": "bid",
+    "title": "You won LOT-08 in AUC-2224",
+    "body": "H1 confirmed at ₹36,450/MT. Delivery order raised — since lifted and closed out.",
+    "at": "2026-02-24T06:03:00.000Z",
+    "read": true,
+    "href": "/buyer/auction-status"
+  },
+  {
+    "id": "hntf-w04",
+    "userId": "u-buyer-1",
+    "kind": "bid",
+    "title": "You won LOT-08 in AUC-2233",
+    "body": "H1 confirmed at ₹17,200/MT. Delivery order raised — since lifted and closed out.",
+    "at": "2026-03-05T08:33:00.000Z",
+    "read": true,
+    "href": "/buyer/auction-status"
+  },
+  {
+    "id": "hntf-w05",
+    "userId": "u-buyer-1",
+    "kind": "bid",
+    "title": "You won LOT-05 in AUC-2245",
+    "body": "H1 confirmed at ₹195/KG. Delivery order raised — since lifted and closed out.",
+    "at": "2026-03-17T07:49:00.000Z",
+    "read": true,
+    "href": "/buyer/auction-status"
+  },
+  {
+    "id": "hntf-w06",
+    "userId": "u-buyer-1",
+    "kind": "bid",
+    "title": "You won LOT-08 in AUC-2254",
+    "body": "H1 confirmed at ₹33,450/MT. Delivery order raised — since lifted and closed out.",
+    "at": "2026-03-25T18:16:00.000Z",
+    "read": true,
+    "href": "/buyer/auction-status"
+  },
+  {
+    "id": "hntf-w07",
+    "userId": "u-buyer-1",
+    "kind": "bid",
+    "title": "You won LOT-13 in AUC-2266",
+    "body": "H1 confirmed at ₹53,400/MT. Delivery order raised — since lifted and closed out.",
+    "at": "2026-04-05T14:38:00.000Z",
+    "read": true,
+    "href": "/buyer/auction-status"
+  },
+  {
+    "id": "hntf-w08",
+    "userId": "u-buyer-1",
+    "kind": "bid",
+    "title": "You won LOT-11 in AUC-2284",
+    "body": "H1 confirmed at ₹241/KG. Delivery order raised — since lifted and closed out.",
+    "at": "2026-04-21T17:02:00.000Z",
+    "read": true,
+    "href": "/buyer/auction-status"
+  },
+  {
+    "id": "hntf-s01",
+    "userId": "u-seller-4",
+    "kind": "lifecycle",
+    "title": "AUC-2353 closed",
+    "body": "6 lots cleared at or above reserve. Settlement summary is on your workspace.",
+    "at": "2026-06-15T16:05:00.000Z",
+    "read": true,
+    "href": "/seller/settlement"
+  },
+  {
+    "id": "hntf-s02",
+    "userId": "u-seller-1",
+    "kind": "lifecycle",
+    "title": "AUC-2236 closed",
+    "body": "8 lots cleared at or above reserve. Settlement summary is on your workspace.",
+    "at": "2026-03-08T07:49:00.000Z",
+    "read": true,
+    "href": "/seller/settlement"
+  },
+  {
+    "id": "hntf-s03",
+    "userId": "u-seller-5",
+    "kind": "lifecycle",
+    "title": "AUC-2275 closed",
+    "body": "5 lots cleared at or above reserve. Settlement summary is on your workspace.",
+    "at": "2026-04-13T17:13:00.000Z",
+    "read": true,
+    "href": "/seller/settlement"
+  },
+  {
+    "id": "hntf-s04",
+    "userId": "u-hseller-06",
+    "kind": "lifecycle",
+    "title": "AUC-2158 closed",
+    "body": "6 lots cleared at or above reserve. Settlement summary is on your workspace.",
+    "at": "2025-12-08T04:21:00.000Z",
+    "read": true,
+    "href": "/seller/settlement"
+  },
+  {
+    "id": "hntf-s05",
+    "userId": "u-seller-6",
+    "kind": "lifecycle",
+    "title": "AUC-2167 closed",
+    "body": "8 lots cleared at or above reserve. Settlement summary is on your workspace.",
+    "at": "2025-12-20T21:03:00.000Z",
+    "read": true,
+    "href": "/seller/settlement"
+  },
+  {
+    "id": "hntf-s06",
+    "userId": "u-hseller-05",
+    "kind": "lifecycle",
+    "title": "AUC-2293 closed",
+    "body": "6 lots cleared at or above reserve. Settlement summary is on your workspace.",
+    "at": "2026-04-29T02:49:00.000Z",
+    "read": true,
+    "href": "/seller/settlement"
+  },
+  {
+    "id": "hntf-s07",
+    "userId": "u-hseller-07",
+    "kind": "lifecycle",
+    "title": "AUC-2344 closed",
+    "body": "8 lots cleared at or above reserve. Settlement summary is on your workspace.",
+    "at": "2026-06-08T17:56:00.000Z",
+    "read": true,
+    "href": "/seller/settlement"
+  },
+  {
+    "id": "hntf-s08",
+    "userId": "u-hseller-01",
+    "kind": "lifecycle",
+    "title": "AUC-2311 closed",
+    "body": "7 lots cleared at or above reserve. Settlement summary is on your workspace.",
+    "at": "2026-05-14T06:21:00.000Z",
+    "read": true,
+    "href": "/seller/settlement"
+  },
+  {
+    "id": "hntf-s09",
+    "userId": "u-hseller-05",
+    "kind": "lifecycle",
+    "title": "AUC-2149 closed",
+    "body": "3 lots cleared at or above reserve. Settlement summary is on your workspace.",
+    "at": "2025-11-25T04:10:00.000Z",
+    "read": true,
+    "href": "/seller/settlement"
+  },
+  {
+    "id": "hntf-s10",
+    "userId": "u-seller-3",
+    "kind": "lifecycle",
+    "title": "AUC-2173 closed",
+    "body": "7 lots cleared at or above reserve. Settlement summary is on your workspace.",
+    "at": "2025-12-28T02:41:00.000Z",
+    "read": true,
+    "href": "/seller/settlement"
   }
 ]

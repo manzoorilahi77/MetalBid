@@ -40,5 +40,1059 @@
         "at": "2026-07-12T06:30:00.000Z"
       }
     ]
+  },
+  {
+    "id": "hdsp-001",
+    "userId": "u-hbuyer-034",
+    "subject": "Weighment shortfall against awarded quantity on LOT-05",
+    "category": "quantity",
+    "lotId": "hlot-0623",
+    "status": "resolved",
+    "createdAt": "2026-04-25T20:59:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "Weighbridge slip is 6% under the awarded indicative quantity. Requesting pro-rata adjustment on the balance payment as per clause 6.",
+        "at": "2026-04-25T20:59:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have asked the yard for the weighment slips and the seller for their side of the record. We will come back within two working days.",
+        "at": "2026-04-26T10:22:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Weighment slips and yard register reconciled. Pro-rata adjustment of the material value approved and passed to Finance.",
+        "at": "2026-04-28T20:59:00.000Z"
+      }
+    ],
+    "assignedToId": "u-hsub-02",
+    "outcome": "upheld",
+    "resolution": "Weighment slips and yard register reconciled. Pro-rata adjustment of the material value approved and passed to Finance.",
+    "resolvedAt": "2026-04-27T20:59:00.000Z",
+    "resolvedById": "u-hsub-02"
+  },
+  {
+    "id": "hdsp-002",
+    "userId": "u-hbuyer-043",
+    "subject": "Grade variance on LOT-06 — material not as catalogued",
+    "category": "quality",
+    "lotId": "hlot-0934",
+    "status": "resolved",
+    "createdAt": "2026-07-07T10:08:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "A part of the consignment is off-grade against the catalogue description. Photos from the weighbridge attached.",
+        "at": "2026-07-07T10:08:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have asked the yard for the weighment slips and the seller for their side of the record. We will come back within two working days.",
+        "at": "2026-07-07T14:42:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Field inspection report re-read with the seller. Variance accepted in part; a goodwill credit was issued against the next sale.",
+        "at": "2026-07-10T10:08:00.000Z"
+      }
+    ],
+    "assignedToId": "u-sub-1",
+    "outcome": "declined",
+    "resolution": "Field inspection report re-read with the seller. Variance accepted in part; a goodwill credit was issued against the next sale.",
+    "resolvedAt": "2026-07-09T10:08:00.000Z",
+    "resolvedById": "u-sub-1"
+  },
+  {
+    "id": "hdsp-003",
+    "userId": "u-hbuyer-024",
+    "subject": "Gate pass delay at WCL Central Stores Yard",
+    "category": "lifting",
+    "lotId": "hlot-0873",
+    "status": "resolved",
+    "createdAt": "2026-06-21T00:38:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "Trucks waited at the gate on the lifting day. Requesting a waiver of ground rent for the idle day.",
+        "at": "2026-06-21T00:38:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have asked the yard for the weighment slips and the seller for their side of the record. We will come back within two working days.",
+        "at": "2026-06-21T08:29:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Seller confirmed the delay was on the yard side. One day of ground rent waived.",
+        "at": "2026-06-29T00:38:00.000Z"
+      }
+    ],
+    "assignedToId": "u-sub-1",
+    "outcome": "refund_due",
+    "resolution": "Seller confirmed the delay was on the yard side. One day of ground rent waived.",
+    "resolvedAt": "2026-06-27T00:38:00.000Z",
+    "resolvedById": "u-sub-1"
+  },
+  {
+    "id": "hdsp-004",
+    "userId": "u-hbuyer-053",
+    "subject": "Duplicate debit against AUC-2365 payment",
+    "category": "payment",
+    "lotId": "hlot-0890",
+    "status": "resolved",
+    "createdAt": "2026-06-27T14:25:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "Two debits appear against the same UTR for this delivery order. Requesting a refund of the duplicate.",
+        "at": "2026-06-27T14:25:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have asked the yard for the weighment slips and the seller for their side of the record. We will come back within two working days.",
+        "at": "2026-06-27T17:30:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Bank statement confirmed the duplicate credit. Refund raised and paid to the registered account.",
+        "at": "2026-06-30T14:25:00.000Z"
+      }
+    ],
+    "assignedToId": "u-sub-1",
+    "outcome": "goodwill",
+    "resolution": "Bank statement confirmed the duplicate credit. Refund raised and paid to the registered account.",
+    "resolvedAt": "2026-07-02T14:25:00.000Z",
+    "resolvedById": "u-sub-1"
+  },
+  {
+    "id": "hdsp-005",
+    "userId": "u-hbuyer-010",
+    "subject": "E-way bill not generated for LOT-01",
+    "category": "other",
+    "lotId": "hlot-0967",
+    "status": "resolved",
+    "createdAt": "2026-07-07T08:18:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "Vehicle stopped at the check post — the e-way bill against this delivery order was not issued.",
+        "at": "2026-07-07T08:18:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have asked the yard for the weighment slips and the seller for their side of the record. We will come back within two working days.",
+        "at": "2026-07-07T13:23:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Seller regenerated the e-way bill the same day. Documentation checklist updated to catch this before lifting.",
+        "at": "2026-07-13T08:18:00.000Z"
+      }
+    ],
+    "assignedToId": "u-sub-1",
+    "outcome": "upheld",
+    "resolution": "Seller regenerated the e-way bill the same day. Documentation checklist updated to catch this before lifting.",
+    "resolvedAt": "2026-07-16T08:18:00.000Z",
+    "resolvedById": "u-sub-1"
+  },
+  {
+    "id": "hdsp-006",
+    "userId": "u-buyer-5",
+    "subject": "Short quantity in second trip — LOT-08",
+    "category": "quantity",
+    "lotId": "hlot-0268",
+    "status": "resolved",
+    "createdAt": "2026-01-08T15:43:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "The second trip weighed under the balance quantity shown on the delivery order.",
+        "at": "2026-01-08T15:43:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have asked the yard for the weighment slips and the seller for their side of the record. We will come back within two working days.",
+        "at": "2026-01-08T21:45:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Both weighbridge slips totalled against the DO. Balance was within the stated tolerance; explained to the buyer with the slips attached.",
+        "at": "2026-01-14T15:43:00.000Z"
+      }
+    ],
+    "assignedToId": "u-sub-1",
+    "outcome": "declined",
+    "resolution": "Both weighbridge slips totalled against the DO. Balance was within the stated tolerance; explained to the buyer with the slips attached.",
+    "resolvedAt": "2026-01-15T15:43:00.000Z",
+    "resolvedById": "u-sub-1"
+  },
+  {
+    "id": "hdsp-007",
+    "userId": "u-hbuyer-001",
+    "subject": "Weighment shortfall against awarded quantity on LOT-09",
+    "category": "quantity",
+    "lotId": "hlot-0132",
+    "status": "resolved",
+    "createdAt": "2025-10-28T10:33:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "Weighbridge slip is 9% under the awarded indicative quantity. Requesting pro-rata adjustment on the balance payment as per clause 6.",
+        "at": "2025-10-28T10:33:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have asked the yard for the weighment slips and the seller for their side of the record. We will come back within two working days.",
+        "at": "2025-10-28T17:37:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Weighment slips and yard register reconciled. Pro-rata adjustment of the material value approved and passed to Finance.",
+        "at": "2025-11-05T10:33:00.000Z"
+      }
+    ],
+    "assignedToId": "u-sub-1",
+    "outcome": "refund_due",
+    "resolution": "Weighment slips and yard register reconciled. Pro-rata adjustment of the material value approved and passed to Finance.",
+    "resolvedAt": "2025-10-31T10:33:00.000Z",
+    "resolvedById": "u-sub-1"
+  },
+  {
+    "id": "hdsp-008",
+    "userId": "u-hbuyer-034",
+    "subject": "Grade variance on LOT-02 — material not as catalogued",
+    "category": "quality",
+    "lotId": "hlot-0634",
+    "status": "resolved",
+    "createdAt": "2026-04-28T04:50:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "A part of the consignment is off-grade against the catalogue description. Photos from the weighbridge attached.",
+        "at": "2026-04-28T04:50:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have asked the yard for the weighment slips and the seller for their side of the record. We will come back within two working days.",
+        "at": "2026-04-28T13:34:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Field inspection report re-read with the seller. Variance accepted in part; a goodwill credit was issued against the next sale.",
+        "at": "2026-05-03T04:50:00.000Z"
+      }
+    ],
+    "assignedToId": "u-sub-1",
+    "outcome": "goodwill",
+    "resolution": "Field inspection report re-read with the seller. Variance accepted in part; a goodwill credit was issued against the next sale.",
+    "resolvedAt": "2026-05-06T04:50:00.000Z",
+    "resolvedById": "u-sub-1"
+  },
+  {
+    "id": "hdsp-009",
+    "userId": "u-hbuyer-001",
+    "subject": "Gate pass delay at RSTPS Ash Yard",
+    "category": "lifting",
+    "lotId": "hlot-0123",
+    "status": "resolved",
+    "createdAt": "2025-10-23T11:25:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "Trucks waited at the gate on the lifting day. Requesting a waiver of ground rent for the idle day.",
+        "at": "2025-10-23T11:25:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have asked the yard for the weighment slips and the seller for their side of the record. We will come back within two working days.",
+        "at": "2025-10-23T15:04:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Seller confirmed the delay was on the yard side. One day of ground rent waived.",
+        "at": "2025-10-31T11:25:00.000Z"
+      }
+    ],
+    "assignedToId": "u-hsub-02",
+    "outcome": "upheld",
+    "resolution": "Seller confirmed the delay was on the yard side. One day of ground rent waived.",
+    "resolvedAt": "2025-11-01T11:25:00.000Z",
+    "resolvedById": "u-hsub-02"
+  },
+  {
+    "id": "hdsp-010",
+    "userId": "u-hbuyer-006",
+    "subject": "Duplicate debit against AUC-2230 payment",
+    "category": "payment",
+    "lotId": "hlot-0443",
+    "status": "resolved",
+    "createdAt": "2026-03-07T10:44:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "Two debits appear against the same UTR for this delivery order. Requesting a refund of the duplicate.",
+        "at": "2026-03-07T10:44:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have asked the yard for the weighment slips and the seller for their side of the record. We will come back within two working days.",
+        "at": "2026-03-07T12:54:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Bank statement confirmed the duplicate credit. Refund raised and paid to the registered account.",
+        "at": "2026-03-10T10:44:00.000Z"
+      }
+    ],
+    "assignedToId": "u-sub-1",
+    "outcome": "declined",
+    "resolution": "Bank statement confirmed the duplicate credit. Refund raised and paid to the registered account.",
+    "resolvedAt": "2026-03-12T10:44:00.000Z",
+    "resolvedById": "u-sub-1"
+  },
+  {
+    "id": "hdsp-011",
+    "userId": "u-hbuyer-005",
+    "subject": "E-way bill not generated for LOT-02",
+    "category": "other",
+    "lotId": "hlot-0117",
+    "status": "resolved",
+    "createdAt": "2025-10-28T09:38:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "Vehicle stopped at the check post — the e-way bill against this delivery order was not issued.",
+        "at": "2025-10-28T09:38:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have asked the yard for the weighment slips and the seller for their side of the record. We will come back within two working days.",
+        "at": "2025-10-28T14:49:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Seller regenerated the e-way bill the same day. Documentation checklist updated to catch this before lifting.",
+        "at": "2025-11-06T09:38:00.000Z"
+      }
+    ],
+    "assignedToId": "u-hsub-02",
+    "outcome": "refund_due",
+    "resolution": "Seller regenerated the e-way bill the same day. Documentation checklist updated to catch this before lifting.",
+    "resolvedAt": "2025-11-05T09:38:00.000Z",
+    "resolvedById": "u-hsub-02"
+  },
+  {
+    "id": "hdsp-012",
+    "userId": "u-hbuyer-001",
+    "subject": "Short quantity in second trip — LOT-07",
+    "category": "quantity",
+    "lotId": "hlot-0072",
+    "status": "resolved",
+    "createdAt": "2025-09-24T18:03:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "The second trip weighed under the balance quantity shown on the delivery order.",
+        "at": "2025-09-24T18:03:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have asked the yard for the weighment slips and the seller for their side of the record. We will come back within two working days.",
+        "at": "2025-09-25T03:27:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Both weighbridge slips totalled against the DO. Balance was within the stated tolerance; explained to the buyer with the slips attached.",
+        "at": "2025-10-03T18:03:00.000Z"
+      }
+    ],
+    "assignedToId": "u-hsub-01",
+    "outcome": "goodwill",
+    "resolution": "Both weighbridge slips totalled against the DO. Balance was within the stated tolerance; explained to the buyer with the slips attached.",
+    "resolvedAt": "2025-10-01T18:03:00.000Z",
+    "resolvedById": "u-hsub-01"
+  },
+  {
+    "id": "hdsp-013",
+    "userId": "u-hbuyer-007",
+    "subject": "Weighment shortfall against awarded quantity on LOT-14",
+    "category": "quantity",
+    "lotId": "hlot-0378",
+    "status": "resolved",
+    "createdAt": "2026-02-17T00:12:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "Weighbridge slip is 7% under the awarded indicative quantity. Requesting pro-rata adjustment on the balance payment as per clause 6.",
+        "at": "2026-02-17T00:12:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have asked the yard for the weighment slips and the seller for their side of the record. We will come back within two working days.",
+        "at": "2026-02-17T15:02:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Weighment slips and yard register reconciled. Pro-rata adjustment of the material value approved and passed to Finance.",
+        "at": "2026-02-23T00:12:00.000Z"
+      }
+    ],
+    "assignedToId": "u-hsub-02",
+    "outcome": "upheld",
+    "resolution": "Weighment slips and yard register reconciled. Pro-rata adjustment of the material value approved and passed to Finance.",
+    "resolvedAt": "2026-02-24T00:12:00.000Z",
+    "resolvedById": "u-hsub-02"
+  },
+  {
+    "id": "hdsp-014",
+    "userId": "u-buyer-5",
+    "subject": "Grade variance on LOT-10 — material not as catalogued",
+    "category": "quality",
+    "lotId": "hlot-0270",
+    "status": "resolved",
+    "createdAt": "2026-01-06T16:05:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "A part of the consignment is off-grade against the catalogue description. Photos from the weighbridge attached.",
+        "at": "2026-01-06T16:05:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have asked the yard for the weighment slips and the seller for their side of the record. We will come back within two working days.",
+        "at": "2026-01-07T06:07:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Field inspection report re-read with the seller. Variance accepted in part; a goodwill credit was issued against the next sale.",
+        "at": "2026-01-11T16:05:00.000Z"
+      }
+    ],
+    "assignedToId": "u-hsub-01",
+    "outcome": "declined",
+    "resolution": "Field inspection report re-read with the seller. Variance accepted in part; a goodwill credit was issued against the next sale.",
+    "resolvedAt": "2026-01-11T16:05:00.000Z",
+    "resolvedById": "u-hsub-01"
+  },
+  {
+    "id": "hdsp-015",
+    "userId": "u-hbuyer-005",
+    "subject": "Gate pass delay at BSP Scrap Yard 3",
+    "category": "lifting",
+    "lotId": "hlot-0320",
+    "status": "resolved",
+    "createdAt": "2026-01-27T22:31:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "Trucks waited at the gate on the lifting day. Requesting a waiver of ground rent for the idle day.",
+        "at": "2026-01-27T22:31:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have asked the yard for the weighment slips and the seller for their side of the record. We will come back within two working days.",
+        "at": "2026-01-28T10:45:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Seller confirmed the delay was on the yard side. One day of ground rent waived.",
+        "at": "2026-02-01T22:31:00.000Z"
+      }
+    ],
+    "assignedToId": "u-sub-1",
+    "outcome": "refund_due",
+    "resolution": "Seller confirmed the delay was on the yard side. One day of ground rent waived.",
+    "resolvedAt": "2026-02-05T22:31:00.000Z",
+    "resolvedById": "u-sub-1"
+  },
+  {
+    "id": "hdsp-016",
+    "userId": "u-hbuyer-027",
+    "subject": "Duplicate debit against AUC-2395 payment",
+    "category": "payment",
+    "lotId": "hlot-0991",
+    "status": "resolved",
+    "createdAt": "2026-07-06T09:57:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "Two debits appear against the same UTR for this delivery order. Requesting a refund of the duplicate.",
+        "at": "2026-07-06T09:57:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have asked the yard for the weighment slips and the seller for their side of the record. We will come back within two working days.",
+        "at": "2026-07-06T12:17:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Bank statement confirmed the duplicate credit. Refund raised and paid to the registered account.",
+        "at": "2026-07-08T09:57:00.000Z"
+      }
+    ],
+    "assignedToId": "u-hsub-02",
+    "outcome": "goodwill",
+    "resolution": "Bank statement confirmed the duplicate credit. Refund raised and paid to the registered account.",
+    "resolvedAt": "2026-07-11T09:57:00.000Z",
+    "resolvedById": "u-hsub-02"
+  },
+  {
+    "id": "hdsp-017",
+    "userId": "u-hbuyer-008",
+    "subject": "E-way bill not generated for LOT-08",
+    "category": "other",
+    "lotId": "hlot-0141",
+    "status": "resolved",
+    "createdAt": "2025-11-07T10:35:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "Vehicle stopped at the check post — the e-way bill against this delivery order was not issued.",
+        "at": "2025-11-07T10:35:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have asked the yard for the weighment slips and the seller for their side of the record. We will come back within two working days.",
+        "at": "2025-11-07T13:06:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Seller regenerated the e-way bill the same day. Documentation checklist updated to catch this before lifting.",
+        "at": "2025-11-12T10:35:00.000Z"
+      }
+    ],
+    "assignedToId": "u-hsub-02",
+    "outcome": "upheld",
+    "resolution": "Seller regenerated the e-way bill the same day. Documentation checklist updated to catch this before lifting.",
+    "resolvedAt": "2025-11-11T10:35:00.000Z",
+    "resolvedById": "u-hsub-02"
+  },
+  {
+    "id": "hdsp-018",
+    "userId": "u-hbuyer-006",
+    "subject": "Short quantity in second trip — LOT-09",
+    "category": "quantity",
+    "lotId": "hlot-0517",
+    "status": "resolved",
+    "createdAt": "2026-03-27T04:17:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "The second trip weighed under the balance quantity shown on the delivery order.",
+        "at": "2026-03-27T04:17:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have asked the yard for the weighment slips and the seller for their side of the record. We will come back within two working days.",
+        "at": "2026-03-27T13:56:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Both weighbridge slips totalled against the DO. Balance was within the stated tolerance; explained to the buyer with the slips attached.",
+        "at": "2026-04-01T04:17:00.000Z"
+      }
+    ],
+    "assignedToId": "u-sub-1",
+    "outcome": "declined",
+    "resolution": "Both weighbridge slips totalled against the DO. Balance was within the stated tolerance; explained to the buyer with the slips attached.",
+    "resolvedAt": "2026-04-01T04:17:00.000Z",
+    "resolvedById": "u-sub-1"
+  },
+  {
+    "id": "hdsp-019",
+    "userId": "u-hbuyer-025",
+    "subject": "Weighment shortfall against awarded quantity on LOT-09",
+    "category": "quantity",
+    "lotId": "hlot-0710",
+    "status": "resolved",
+    "createdAt": "2026-05-15T17:12:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "Weighbridge slip is 7% under the awarded indicative quantity. Requesting pro-rata adjustment on the balance payment as per clause 6.",
+        "at": "2026-05-15T17:12:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have asked the yard for the weighment slips and the seller for their side of the record. We will come back within two working days.",
+        "at": "2026-05-16T04:51:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Weighment slips and yard register reconciled. Pro-rata adjustment of the material value approved and passed to Finance.",
+        "at": "2026-05-19T17:12:00.000Z"
+      }
+    ],
+    "assignedToId": "u-hsub-02",
+    "outcome": "refund_due",
+    "resolution": "Weighment slips and yard register reconciled. Pro-rata adjustment of the material value approved and passed to Finance.",
+    "resolvedAt": "2026-05-20T17:12:00.000Z",
+    "resolvedById": "u-hsub-02"
+  },
+  {
+    "id": "hdsp-020",
+    "userId": "u-hbuyer-001",
+    "subject": "Grade variance on LOT-07 — material not as catalogued",
+    "category": "quality",
+    "lotId": "hlot-0881",
+    "status": "resolved",
+    "createdAt": "2026-06-25T05:01:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "A part of the consignment is off-grade against the catalogue description. Photos from the weighbridge attached.",
+        "at": "2026-06-25T05:01:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have asked the yard for the weighment slips and the seller for their side of the record. We will come back within two working days.",
+        "at": "2026-06-25T10:53:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Field inspection report re-read with the seller. Variance accepted in part; a goodwill credit was issued against the next sale.",
+        "at": "2026-07-03T05:01:00.000Z"
+      }
+    ],
+    "assignedToId": "u-hsub-01",
+    "outcome": "goodwill",
+    "resolution": "Field inspection report re-read with the seller. Variance accepted in part; a goodwill credit was issued against the next sale.",
+    "resolvedAt": "2026-07-03T05:01:00.000Z",
+    "resolvedById": "u-hsub-01"
+  },
+  {
+    "id": "hdsp-021",
+    "userId": "u-buyer-6",
+    "subject": "Gate pass delay at VJNR Yard B",
+    "category": "lifting",
+    "lotId": "hlot-0795",
+    "status": "resolved",
+    "createdAt": "2026-06-03T19:25:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "Trucks waited at the gate on the lifting day. Requesting a waiver of ground rent for the idle day.",
+        "at": "2026-06-03T19:25:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have asked the yard for the weighment slips and the seller for their side of the record. We will come back within two working days.",
+        "at": "2026-06-04T05:48:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Seller confirmed the delay was on the yard side. One day of ground rent waived.",
+        "at": "2026-06-12T19:25:00.000Z"
+      }
+    ],
+    "assignedToId": "u-hsub-01",
+    "outcome": "upheld",
+    "resolution": "Seller confirmed the delay was on the yard side. One day of ground rent waived.",
+    "resolvedAt": "2026-06-09T19:25:00.000Z",
+    "resolvedById": "u-hsub-01"
+  },
+  {
+    "id": "hdsp-022",
+    "userId": "u-hbuyer-034",
+    "subject": "Duplicate debit against AUC-2272 payment",
+    "category": "payment",
+    "lotId": "hlot-0590",
+    "status": "resolved",
+    "createdAt": "2026-04-14T07:02:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "Two debits appear against the same UTR for this delivery order. Requesting a refund of the duplicate.",
+        "at": "2026-04-14T07:02:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have asked the yard for the weighment slips and the seller for their side of the record. We will come back within two working days.",
+        "at": "2026-04-14T18:12:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Bank statement confirmed the duplicate credit. Refund raised and paid to the registered account.",
+        "at": "2026-04-17T07:02:00.000Z"
+      }
+    ],
+    "assignedToId": "u-hsub-02",
+    "outcome": "declined",
+    "resolution": "Bank statement confirmed the duplicate credit. Refund raised and paid to the registered account.",
+    "resolvedAt": "2026-04-22T07:02:00.000Z",
+    "resolvedById": "u-hsub-02"
+  },
+  {
+    "id": "hdsp-023",
+    "userId": "u-hbuyer-063",
+    "subject": "E-way bill not generated for LOT-01",
+    "category": "other",
+    "lotId": "hlot-0896",
+    "status": "resolved",
+    "createdAt": "2026-06-27T18:49:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "Vehicle stopped at the check post — the e-way bill against this delivery order was not issued.",
+        "at": "2026-06-27T18:49:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have asked the yard for the weighment slips and the seller for their side of the record. We will come back within two working days.",
+        "at": "2026-06-28T06:14:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Seller regenerated the e-way bill the same day. Documentation checklist updated to catch this before lifting.",
+        "at": "2026-06-29T18:49:00.000Z"
+      }
+    ],
+    "assignedToId": "u-hsub-01",
+    "outcome": "refund_due",
+    "resolution": "Seller regenerated the e-way bill the same day. Documentation checklist updated to catch this before lifting.",
+    "resolvedAt": "2026-07-06T18:49:00.000Z",
+    "resolvedById": "u-hsub-01"
+  },
+  {
+    "id": "hdsp-024",
+    "userId": "u-hbuyer-001",
+    "subject": "Short quantity in second trip — LOT-13",
+    "category": "quantity",
+    "lotId": "hlot-0377",
+    "status": "resolved",
+    "createdAt": "2026-02-14T23:22:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "The second trip weighed under the balance quantity shown on the delivery order.",
+        "at": "2026-02-14T23:22:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have asked the yard for the weighment slips and the seller for their side of the record. We will come back within two working days.",
+        "at": "2026-02-15T13:35:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Both weighbridge slips totalled against the DO. Balance was within the stated tolerance; explained to the buyer with the slips attached.",
+        "at": "2026-02-19T23:22:00.000Z"
+      }
+    ],
+    "assignedToId": "u-sub-1",
+    "outcome": "goodwill",
+    "resolution": "Both weighbridge slips totalled against the DO. Balance was within the stated tolerance; explained to the buyer with the slips attached.",
+    "resolvedAt": "2026-02-22T23:22:00.000Z",
+    "resolvedById": "u-sub-1"
+  },
+  {
+    "id": "hdsp-025",
+    "userId": "u-hbuyer-008",
+    "subject": "Weighment shortfall against awarded quantity on LOT-05",
+    "category": "quantity",
+    "lotId": "hlot-0186",
+    "status": "resolved",
+    "createdAt": "2025-12-03T19:11:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "Weighbridge slip is 4% under the awarded indicative quantity. Requesting pro-rata adjustment on the balance payment as per clause 6.",
+        "at": "2025-12-03T19:11:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have asked the yard for the weighment slips and the seller for their side of the record. We will come back within two working days.",
+        "at": "2025-12-03T22:52:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Weighment slips and yard register reconciled. Pro-rata adjustment of the material value approved and passed to Finance.",
+        "at": "2025-12-10T19:11:00.000Z"
+      }
+    ],
+    "assignedToId": "u-sub-1",
+    "outcome": "upheld",
+    "resolution": "Weighment slips and yard register reconciled. Pro-rata adjustment of the material value approved and passed to Finance.",
+    "resolvedAt": "2025-12-06T19:11:00.000Z",
+    "resolvedById": "u-sub-1"
+  },
+  {
+    "id": "hdsp-026",
+    "userId": "u-hbuyer-033",
+    "subject": "Grade variance on LOT-12 — material not as catalogued",
+    "category": "quality",
+    "lotId": "hlot-0427",
+    "status": "resolved",
+    "createdAt": "2026-02-27T07:32:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "A part of the consignment is off-grade against the catalogue description. Photos from the weighbridge attached.",
+        "at": "2026-02-27T07:32:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have asked the yard for the weighment slips and the seller for their side of the record. We will come back within two working days.",
+        "at": "2026-02-27T17:44:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Field inspection report re-read with the seller. Variance accepted in part; a goodwill credit was issued against the next sale.",
+        "at": "2026-03-03T07:32:00.000Z"
+      }
+    ],
+    "assignedToId": "u-sub-1",
+    "outcome": "declined",
+    "resolution": "Field inspection report re-read with the seller. Variance accepted in part; a goodwill credit was issued against the next sale.",
+    "resolvedAt": "2026-03-04T07:32:00.000Z",
+    "resolvedById": "u-sub-1"
+  },
+  {
+    "id": "hdsp-027",
+    "userId": "u-hbuyer-045",
+    "subject": "Gate pass delay at VJNR Yard B",
+    "category": "lifting",
+    "lotId": "hlot-0852",
+    "status": "resolved",
+    "createdAt": "2026-06-18T21:17:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "Trucks waited at the gate on the lifting day. Requesting a waiver of ground rent for the idle day.",
+        "at": "2026-06-18T21:17:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have asked the yard for the weighment slips and the seller for their side of the record. We will come back within two working days.",
+        "at": "2026-06-19T05:02:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Seller confirmed the delay was on the yard side. One day of ground rent waived.",
+        "at": "2026-06-23T21:17:00.000Z"
+      }
+    ],
+    "assignedToId": "u-hsub-02",
+    "outcome": "refund_due",
+    "resolution": "Seller confirmed the delay was on the yard side. One day of ground rent waived.",
+    "resolvedAt": "2026-06-25T21:17:00.000Z",
+    "resolvedById": "u-hsub-02"
+  },
+  {
+    "id": "hdsp-028",
+    "userId": "u-hbuyer-035",
+    "subject": "Duplicate debit against AUC-2332 payment",
+    "category": "payment",
+    "lotId": "hlot-0798",
+    "status": "resolved",
+    "createdAt": "2026-06-03T18:51:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "Two debits appear against the same UTR for this delivery order. Requesting a refund of the duplicate.",
+        "at": "2026-06-03T18:51:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have asked the yard for the weighment slips and the seller for their side of the record. We will come back within two working days.",
+        "at": "2026-06-03T21:55:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Bank statement confirmed the duplicate credit. Refund raised and paid to the registered account.",
+        "at": "2026-06-11T18:51:00.000Z"
+      }
+    ],
+    "assignedToId": "u-sub-1",
+    "outcome": "goodwill",
+    "resolution": "Bank statement confirmed the duplicate credit. Refund raised and paid to the registered account.",
+    "resolvedAt": "2026-06-12T18:51:00.000Z",
+    "resolvedById": "u-sub-1"
+  },
+  {
+    "id": "hdsp-029",
+    "userId": "u-hbuyer-034",
+    "subject": "E-way bill not generated for LOT-04",
+    "category": "other",
+    "lotId": "hlot-0479",
+    "status": "resolved",
+    "createdAt": "2026-03-18T11:23:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "Vehicle stopped at the check post — the e-way bill against this delivery order was not issued.",
+        "at": "2026-03-18T11:23:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have asked the yard for the weighment slips and the seller for their side of the record. We will come back within two working days.",
+        "at": "2026-03-19T01:50:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Seller regenerated the e-way bill the same day. Documentation checklist updated to catch this before lifting.",
+        "at": "2026-03-20T11:23:00.000Z"
+      }
+    ],
+    "assignedToId": "u-sub-1",
+    "outcome": "upheld",
+    "resolution": "Seller regenerated the e-way bill the same day. Documentation checklist updated to catch this before lifting.",
+    "resolvedAt": "2026-03-21T11:23:00.000Z",
+    "resolvedById": "u-sub-1"
+  },
+  {
+    "id": "hdsp-030",
+    "userId": "u-hbuyer-008",
+    "subject": "Short quantity in second trip — LOT-04",
+    "category": "quantity",
+    "lotId": "hlot-0180",
+    "status": "resolved",
+    "createdAt": "2025-11-27T06:50:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "The second trip weighed under the balance quantity shown on the delivery order.",
+        "at": "2025-11-27T06:50:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have asked the yard for the weighment slips and the seller for their side of the record. We will come back within two working days.",
+        "at": "2025-11-27T14:33:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Both weighbridge slips totalled against the DO. Balance was within the stated tolerance; explained to the buyer with the slips attached.",
+        "at": "2025-12-03T06:50:00.000Z"
+      }
+    ],
+    "assignedToId": "u-hsub-01",
+    "outcome": "declined",
+    "resolution": "Both weighbridge slips totalled against the DO. Balance was within the stated tolerance; explained to the buyer with the slips attached.",
+    "resolvedAt": "2025-12-03T06:50:00.000Z",
+    "resolvedById": "u-hsub-01"
+  },
+  {
+    "id": "hdsp-031",
+    "userId": "u-hbuyer-001",
+    "subject": "Weighment shortfall against awarded quantity on LOT-01",
+    "category": "quantity",
+    "lotId": "hlot-0116",
+    "status": "resolved",
+    "createdAt": "2025-10-27T12:27:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "Weighbridge slip is 6% under the awarded indicative quantity. Requesting pro-rata adjustment on the balance payment as per clause 6.",
+        "at": "2025-10-27T12:27:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have asked the yard for the weighment slips and the seller for their side of the record. We will come back within two working days.",
+        "at": "2025-10-27T22:43:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Weighment slips and yard register reconciled. Pro-rata adjustment of the material value approved and passed to Finance.",
+        "at": "2025-11-01T12:27:00.000Z"
+      }
+    ],
+    "assignedToId": "u-sub-1",
+    "outcome": "refund_due",
+    "resolution": "Weighment slips and yard register reconciled. Pro-rata adjustment of the material value approved and passed to Finance.",
+    "resolvedAt": "2025-10-31T12:27:00.000Z",
+    "resolvedById": "u-sub-1"
+  },
+  {
+    "id": "hdsp-032",
+    "userId": "u-hbuyer-003",
+    "subject": "Grade variance on LOT-02 — material not as catalogued",
+    "category": "quality",
+    "lotId": "hlot-0059",
+    "status": "resolved",
+    "createdAt": "2025-09-17T04:54:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "A part of the consignment is off-grade against the catalogue description. Photos from the weighbridge attached.",
+        "at": "2025-09-17T04:54:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have asked the yard for the weighment slips and the seller for their side of the record. We will come back within two working days.",
+        "at": "2025-09-17T12:51:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Field inspection report re-read with the seller. Variance accepted in part; a goodwill credit was issued against the next sale.",
+        "at": "2025-09-20T04:54:00.000Z"
+      }
+    ],
+    "assignedToId": "u-hsub-02",
+    "outcome": "goodwill",
+    "resolution": "Field inspection report re-read with the seller. Variance accepted in part; a goodwill credit was issued against the next sale.",
+    "resolvedAt": "2025-09-24T04:54:00.000Z",
+    "resolvedById": "u-hsub-02"
+  },
+  {
+    "id": "hdsp-033",
+    "userId": "u-hbuyer-032",
+    "subject": "Gate pass delay at RSTPS Ash Yard",
+    "category": "lifting",
+    "lotId": "hlot-0762",
+    "status": "resolved",
+    "createdAt": "2026-05-22T06:30:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "Trucks waited at the gate on the lifting day. Requesting a waiver of ground rent for the idle day.",
+        "at": "2026-05-22T06:30:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have asked the yard for the weighment slips and the seller for their side of the record. We will come back within two working days.",
+        "at": "2026-05-22T14:11:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Seller confirmed the delay was on the yard side. One day of ground rent waived.",
+        "at": "2026-05-30T06:30:00.000Z"
+      }
+    ],
+    "assignedToId": "u-sub-1",
+    "outcome": "upheld",
+    "resolution": "Seller confirmed the delay was on the yard side. One day of ground rent waived.",
+    "resolvedAt": "2026-05-24T06:30:00.000Z",
+    "resolvedById": "u-sub-1"
+  },
+  {
+    "id": "hdsp-034",
+    "userId": "u-buyer-2",
+    "subject": "Duplicate debit against AUC-2128 payment",
+    "category": "payment",
+    "lotId": "hlot-0121",
+    "status": "resolved",
+    "createdAt": "2025-10-28T09:40:00.000Z",
+    "messages": [
+      {
+        "from": "user",
+        "body": "Two debits appear against the same UTR for this delivery order. Requesting a refund of the duplicate.",
+        "at": "2025-10-28T09:40:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Acknowledged. We have asked the yard for the weighment slips and the seller for their side of the record. We will come back within two working days.",
+        "at": "2025-10-28T18:36:00.000Z"
+      },
+      {
+        "from": "support",
+        "body": "Bank statement confirmed the duplicate credit. Refund raised and paid to the registered account.",
+        "at": "2025-11-02T09:40:00.000Z"
+      }
+    ],
+    "assignedToId": "u-sub-1",
+    "outcome": "declined",
+    "resolution": "Bank statement confirmed the duplicate credit. Refund raised and paid to the registered account.",
+    "resolvedAt": "2025-11-03T09:40:00.000Z",
+    "resolvedById": "u-sub-1"
   }
 ]

@@ -8,5 +8,455 @@
     "persons": 2,
     "status": "booked",
     "passCode": "FB-GATE-7C42"
+  },
+  {
+    "id": "hslot-001",
+    "catalogueId": "hcat-088",
+    "userId": "u-hbuyer-026",
+    "date": "2026-06-13T02:27:00.000Z",
+    "window": "10:00–13:00 IST",
+    "persons": 2,
+    "status": "attended",
+    "passCode": "FB-GATE-G291"
+  },
+  {
+    "id": "hslot-002",
+    "catalogueId": "hcat-054",
+    "userId": "u-hbuyer-030",
+    "date": "2026-03-18T11:55:00.000Z",
+    "window": "10:00–13:00 IST",
+    "persons": 1,
+    "status": "attended",
+    "passCode": "FB-GATE-Y623"
+  },
+  {
+    "id": "hslot-003",
+    "catalogueId": "hcat-039",
+    "userId": "u-hbuyer-004",
+    "date": "2026-02-01T17:48:00.000Z",
+    "window": "11:00–14:00 IST",
+    "persons": 2,
+    "status": "attended",
+    "passCode": "FB-GATE-Q875"
+  },
+  {
+    "id": "hslot-004",
+    "catalogueId": "hcat-096",
+    "userId": "u-hbuyer-048",
+    "date": "2026-06-28T11:17:00.000Z",
+    "window": "13:00–16:00 IST",
+    "persons": 2,
+    "status": "attended",
+    "passCode": "FB-GATE-L758"
+  },
+  {
+    "id": "hslot-005",
+    "catalogueId": "hcat-038",
+    "userId": "u-hbuyer-068",
+    "date": "2026-01-28T11:44:00.000Z",
+    "window": "13:00–16:00 IST",
+    "persons": 1,
+    "status": "attended",
+    "passCode": "FB-GATE-B904"
+  },
+  {
+    "id": "hslot-006",
+    "catalogueId": "hcat-092",
+    "userId": "u-hbuyer-011",
+    "date": "2026-06-21T21:10:00.000Z",
+    "window": "13:00–16:00 IST",
+    "persons": 1,
+    "status": "attended",
+    "passCode": "FB-GATE-K294"
+  },
+  {
+    "id": "hslot-007",
+    "catalogueId": "hcat-076",
+    "userId": "u-hbuyer-029",
+    "date": "2026-05-17T13:07:00.000Z",
+    "window": "11:00–14:00 IST",
+    "persons": 2,
+    "status": "attended",
+    "passCode": "FB-GATE-P702"
+  },
+  {
+    "id": "hslot-008",
+    "catalogueId": "hcat-078",
+    "userId": "u-buyer-7",
+    "date": "2026-05-20T03:28:00.000Z",
+    "window": "13:00–16:00 IST",
+    "persons": 2,
+    "status": "attended",
+    "passCode": "FB-GATE-Y255"
+  },
+  {
+    "id": "hslot-009",
+    "catalogueId": "hcat-020",
+    "userId": "u-hbuyer-056",
+    "date": "2025-11-22T17:15:00.000Z",
+    "window": "11:00–14:00 IST",
+    "persons": 3,
+    "status": "attended",
+    "passCode": "FB-GATE-E626"
+  },
+  {
+    "id": "hslot-010",
+    "catalogueId": "hcat-102",
+    "userId": "u-hbuyer-057",
+    "date": "2026-06-29T18:39:00.000Z",
+    "window": "13:00–16:00 IST",
+    "persons": 1,
+    "status": "attended",
+    "passCode": "FB-GATE-E324"
+  },
+  {
+    "id": "hslot-011",
+    "catalogueId": "hcat-027",
+    "userId": "u-hbuyer-042",
+    "date": "2025-12-20T01:42:00.000Z",
+    "window": "10:00–13:00 IST",
+    "persons": 1,
+    "status": "attended",
+    "passCode": "FB-GATE-X143"
+  },
+  {
+    "id": "hslot-012",
+    "catalogueId": "hcat-075",
+    "userId": "u-buyer-4",
+    "date": "2026-05-12T02:33:00.000Z",
+    "window": "11:00–14:00 IST",
+    "persons": 3,
+    "status": "attended",
+    "passCode": "FB-GATE-W670"
+  },
+  {
+    "id": "hslot-013",
+    "catalogueId": "hcat-065",
+    "userId": "u-hbuyer-038",
+    "date": "2026-04-18T05:50:00.000Z",
+    "window": "10:00–13:00 IST",
+    "persons": 2,
+    "status": "attended",
+    "passCode": "FB-GATE-Y823"
+  },
+  {
+    "id": "hslot-014",
+    "catalogueId": "hcat-067",
+    "userId": "u-hbuyer-037",
+    "date": "2026-04-22T06:17:00.000Z",
+    "window": "10:00–13:00 IST",
+    "persons": 1,
+    "status": "attended",
+    "passCode": "FB-GATE-X966"
+  },
+  {
+    "id": "hslot-015",
+    "catalogueId": "hcat-016",
+    "userId": "u-hbuyer-012",
+    "date": "2025-11-02T20:38:00.000Z",
+    "window": "11:00–14:00 IST",
+    "persons": 2,
+    "status": "attended",
+    "passCode": "FB-GATE-R660"
+  },
+  {
+    "id": "hslot-016",
+    "catalogueId": "hcat-007",
+    "userId": "u-hbuyer-042",
+    "date": "2025-09-14T15:43:00.000Z",
+    "window": "10:00–13:00 IST",
+    "persons": 3,
+    "status": "attended",
+    "passCode": "FB-GATE-E898"
+  },
+  {
+    "id": "hslot-017",
+    "catalogueId": "hcat-006",
+    "userId": "u-hbuyer-033",
+    "date": "2025-09-05T02:23:00.000Z",
+    "window": "11:00–14:00 IST",
+    "persons": 3,
+    "status": "attended",
+    "passCode": "FB-GATE-H257"
+  },
+  {
+    "id": "hslot-018",
+    "catalogueId": "hcat-022",
+    "userId": "u-hbuyer-047",
+    "date": "2025-12-01T08:36:00.000Z",
+    "window": "11:00–14:00 IST",
+    "persons": 3,
+    "status": "attended",
+    "passCode": "FB-GATE-B621"
+  },
+  {
+    "id": "hslot-019",
+    "catalogueId": "hcat-089",
+    "userId": "u-hbuyer-029",
+    "date": "2026-06-13T08:23:00.000Z",
+    "window": "10:00–13:00 IST",
+    "persons": 3,
+    "status": "attended",
+    "passCode": "FB-GATE-B818"
+  },
+  {
+    "id": "hslot-020",
+    "catalogueId": "hcat-001",
+    "userId": "u-hbuyer-009",
+    "date": "2025-07-23T07:25:00.000Z",
+    "window": "11:00–14:00 IST",
+    "persons": 1,
+    "status": "attended",
+    "passCode": "FB-GATE-P840"
+  },
+  {
+    "id": "hslot-021",
+    "catalogueId": "hcat-021",
+    "userId": "u-hbuyer-063",
+    "date": "2025-11-25T01:32:00.000Z",
+    "window": "11:00–14:00 IST",
+    "persons": 3,
+    "status": "attended",
+    "passCode": "FB-GATE-T192"
+  },
+  {
+    "id": "hslot-022",
+    "catalogueId": "hcat-008",
+    "userId": "u-hbuyer-032",
+    "date": "2025-09-20T04:16:00.000Z",
+    "window": "11:00–14:00 IST",
+    "persons": 1,
+    "status": "attended",
+    "passCode": "FB-GATE-B759"
+  },
+  {
+    "id": "hslot-023",
+    "catalogueId": "hcat-073",
+    "userId": "u-hbuyer-013",
+    "date": "2026-05-06T01:59:00.000Z",
+    "window": "10:00–13:00 IST",
+    "persons": 1,
+    "status": "attended",
+    "passCode": "FB-GATE-W686"
+  },
+  {
+    "id": "hslot-024",
+    "catalogueId": "hcat-028",
+    "userId": "u-hbuyer-041",
+    "date": "2025-12-26T12:37:00.000Z",
+    "window": "13:00–16:00 IST",
+    "persons": 1,
+    "status": "attended",
+    "passCode": "FB-GATE-J999"
+  },
+  {
+    "id": "hslot-025",
+    "catalogueId": "hcat-066",
+    "userId": "u-hbuyer-028",
+    "date": "2026-04-21T11:59:00.000Z",
+    "window": "13:00–16:00 IST",
+    "persons": 2,
+    "status": "attended",
+    "passCode": "FB-GATE-L985"
+  },
+  {
+    "id": "hslot-026",
+    "catalogueId": "hcat-058",
+    "userId": "u-buyer-4",
+    "date": "2026-03-31T09:38:00.000Z",
+    "window": "10:00–13:00 IST",
+    "persons": 2,
+    "status": "attended",
+    "passCode": "FB-GATE-N679"
+  },
+  {
+    "id": "hslot-027",
+    "catalogueId": "hcat-004",
+    "userId": "u-hbuyer-025",
+    "date": "2025-08-23T02:03:00.000Z",
+    "window": "10:00–13:00 IST",
+    "persons": 3,
+    "status": "attended",
+    "passCode": "FB-GATE-C143"
+  },
+  {
+    "id": "hslot-028",
+    "catalogueId": "hcat-029",
+    "userId": "u-hbuyer-048",
+    "date": "2025-12-28T08:51:00.000Z",
+    "window": "10:00–13:00 IST",
+    "persons": 3,
+    "status": "attended",
+    "passCode": "FB-GATE-Z358"
+  },
+  {
+    "id": "hslot-029",
+    "catalogueId": "hcat-086",
+    "userId": "u-hbuyer-002",
+    "date": "2026-06-06T10:59:00.000Z",
+    "window": "13:00–16:00 IST",
+    "persons": 1,
+    "status": "attended",
+    "passCode": "FB-GATE-P357"
+  },
+  {
+    "id": "hslot-030",
+    "catalogueId": "hcat-057",
+    "userId": "u-hbuyer-045",
+    "date": "2026-03-29T12:02:00.000Z",
+    "window": "13:00–16:00 IST",
+    "persons": 3,
+    "status": "attended",
+    "passCode": "FB-GATE-H960"
+  },
+  {
+    "id": "hslot-031",
+    "catalogueId": "hcat-011",
+    "userId": "u-hbuyer-063",
+    "date": "2025-10-09T12:14:00.000Z",
+    "window": "13:00–16:00 IST",
+    "persons": 3,
+    "status": "attended",
+    "passCode": "FB-GATE-R769"
+  },
+  {
+    "id": "hslot-032",
+    "catalogueId": "hcat-064",
+    "userId": "u-hbuyer-016",
+    "date": "2026-04-16T14:31:00.000Z",
+    "window": "10:00–13:00 IST",
+    "persons": 3,
+    "status": "attended",
+    "passCode": "FB-GATE-L837"
+  },
+  {
+    "id": "hslot-033",
+    "catalogueId": "hcat-097",
+    "userId": "u-hbuyer-059",
+    "date": "2026-07-02T18:07:00.000Z",
+    "window": "13:00–16:00 IST",
+    "persons": 2,
+    "status": "attended",
+    "passCode": "FB-GATE-K720"
+  },
+  {
+    "id": "hslot-034",
+    "catalogueId": "hcat-060",
+    "userId": "u-hbuyer-048",
+    "date": "2026-04-05T20:16:00.000Z",
+    "window": "11:00–14:00 IST",
+    "persons": 3,
+    "status": "attended",
+    "passCode": "FB-GATE-K784"
+  },
+  {
+    "id": "hslot-035",
+    "catalogueId": "hcat-070",
+    "userId": "u-buyer-8",
+    "date": "2026-04-29T12:45:00.000Z",
+    "window": "10:00–13:00 IST",
+    "persons": 2,
+    "status": "attended",
+    "passCode": "FB-GATE-M999"
+  },
+  {
+    "id": "hslot-036",
+    "catalogueId": "hcat-005",
+    "userId": "u-hbuyer-054",
+    "date": "2025-08-28T11:44:00.000Z",
+    "window": "11:00–14:00 IST",
+    "persons": 2,
+    "status": "attended",
+    "passCode": "FB-GATE-R469"
+  },
+  {
+    "id": "hslot-037",
+    "catalogueId": "hcat-077",
+    "userId": "u-hbuyer-042",
+    "date": "2026-05-16T18:31:00.000Z",
+    "window": "10:00–13:00 IST",
+    "persons": 3,
+    "status": "attended",
+    "passCode": "FB-GATE-D214"
+  },
+  {
+    "id": "hslot-038",
+    "catalogueId": "hcat-003",
+    "userId": "u-hbuyer-059",
+    "date": "2025-08-12T13:03:00.000Z",
+    "window": "10:00–13:00 IST",
+    "persons": 2,
+    "status": "attended",
+    "passCode": "FB-GATE-P238"
+  },
+  {
+    "id": "hslot-039",
+    "catalogueId": "hcat-046",
+    "userId": "u-hbuyer-030",
+    "date": "2026-02-20T16:05:00.000Z",
+    "window": "10:00–13:00 IST",
+    "persons": 3,
+    "status": "attended",
+    "passCode": "FB-GATE-Y494"
+  },
+  {
+    "id": "hslot-040",
+    "catalogueId": "hcat-015",
+    "userId": "u-buyer-6",
+    "date": "2025-10-26T21:44:00.000Z",
+    "window": "11:00–14:00 IST",
+    "persons": 2,
+    "status": "attended",
+    "passCode": "FB-GATE-F631"
+  },
+  {
+    "id": "hslot-041",
+    "catalogueId": "hcat-047",
+    "userId": "u-hbuyer-023",
+    "date": "2026-02-27T19:36:00.000Z",
+    "window": "13:00–16:00 IST",
+    "persons": 2,
+    "status": "attended",
+    "passCode": "FB-GATE-H547"
+  },
+  {
+    "id": "hslot-042",
+    "catalogueId": "hcat-072",
+    "userId": "u-hbuyer-068",
+    "date": "2026-05-03T13:26:00.000Z",
+    "window": "11:00–14:00 IST",
+    "persons": 1,
+    "status": "attended",
+    "passCode": "FB-GATE-E191"
+  },
+  {
+    "id": "hslot-043",
+    "catalogueId": "hcat-013",
+    "userId": "u-hbuyer-032",
+    "date": "2025-10-18T21:12:00.000Z",
+    "window": "10:00–13:00 IST",
+    "persons": 3,
+    "status": "attended",
+    "passCode": "FB-GATE-F299"
+  },
+  {
+    "id": "hslot-044",
+    "catalogueId": "hcat-095",
+    "userId": "u-hbuyer-037",
+    "date": "2026-06-29T05:06:00.000Z",
+    "window": "13:00–16:00 IST",
+    "persons": 1,
+    "status": "attended",
+    "passCode": "FB-GATE-K413"
+  },
+  {
+    "id": "hslot-045",
+    "catalogueId": "hcat-030",
+    "userId": "u-hbuyer-005",
+    "date": "2026-01-01T00:45:00.000Z",
+    "window": "11:00–14:00 IST",
+    "persons": 3,
+    "status": "attended",
+    "passCode": "FB-GATE-F921"
   }
 ]

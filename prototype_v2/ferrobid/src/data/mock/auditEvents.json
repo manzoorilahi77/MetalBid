@@ -106,5 +106,3551 @@
     "target": "UNL-113",
     "detail": "Held Condemned Cranes — ownership document mismatch",
     "severity": "warning"
+  },
+  {
+    "id": "haud-0367",
+    "at": "2026-09-29T17:49:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "user.watchlist",
+    "target": "u-hbuyer-063",
+    "detail": "Sundaram Recycling placed on the watchlist — late payment on two delivery orders",
+    "severity": "warning"
+  },
+  {
+    "id": "haud-0358",
+    "at": "2026-08-27T19:15:00.000Z",
+    "actorId": "u-hsub-02",
+    "action": "user.watchlist",
+    "target": "u-hbuyer-055",
+    "detail": "Sagar Steel Traders placed on the watchlist — late payment on two delivery orders",
+    "severity": "warning"
+  },
+  {
+    "id": "haud-0368",
+    "at": "2026-07-13T09:46:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "kyc.review",
+    "target": "u-hbuyer-064",
+    "detail": "KYC verified — GSTIN and PAN matched for Nakoda Ispat",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0370",
+    "at": "2026-07-10T05:03:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "kyc.review",
+    "target": "u-hbuyer-066",
+    "detail": "KYC verified — GSTIN and PAN matched for Poddar Ispat",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0285",
+    "at": "2026-07-06T05:57:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2383",
+    "detail": "Approved settlement and delivery-order issue for 10 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0288",
+    "at": "2026-07-05T13:54:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2386",
+    "detail": "Approved settlement and delivery-order issue for 9 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0291",
+    "at": "2026-07-04T21:29:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.sta_refer",
+    "target": "AUC-2389",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0296",
+    "at": "2026-07-04T20:48:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.sta_refer",
+    "target": "AUC-2395",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0287",
+    "at": "2026-07-04T19:02:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.sta_refer",
+    "target": "AUC-2386",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0363",
+    "at": "2026-07-04T18:35:00.000Z",
+    "actorId": "u-hsub-02",
+    "action": "kyc.review",
+    "target": "u-hbuyer-060",
+    "detail": "KYC verified — GSTIN and PAN matched for Narmada Ispat",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0277",
+    "at": "2026-07-04T17:39:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2377",
+    "detail": "Approved settlement and delivery-order issue for 6 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0280",
+    "at": "2026-07-04T17:25:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.sta_refer",
+    "target": "AUC-2380",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0293",
+    "at": "2026-07-04T09:05:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.sta_refer",
+    "target": "AUC-2392",
+    "detail": "3 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0284",
+    "at": "2026-07-04T08:42:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.sta_refer",
+    "target": "AUC-2383",
+    "detail": "2 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0282",
+    "at": "2026-07-04T05:47:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.extend",
+    "target": "AUC-2383",
+    "detail": "Anti-snipe auto-extension ×3 on LOT-13 (final 3 minutes)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0290",
+    "at": "2026-07-04T05:45:00.000Z",
+    "actorId": "u-hsub-02",
+    "action": "bid.flag",
+    "target": "AUC-2389",
+    "detail": "Flagged rapid bid pattern on LOT-02 for review",
+    "severity": "warning"
+  },
+  {
+    "id": "haud-0295",
+    "at": "2026-07-04T05:43:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.extend",
+    "target": "AUC-2395",
+    "detail": "Anti-snipe auto-extension ×2 on LOT-02 (final 5 minutes)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0279",
+    "at": "2026-07-04T03:45:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.pause",
+    "target": "AUC-2380",
+    "detail": "Paused 17 min — payment-gateway incident",
+    "severity": "warning"
+  },
+  {
+    "id": "haud-0283",
+    "at": "2026-07-04T03:15:00.000Z",
+    "actorId": "u-sub-1",
+    "action": "bid.flag",
+    "target": "AUC-2383",
+    "detail": "Flagged rapid bid pattern on LOT-14 for review",
+    "severity": "warning"
+  },
+  {
+    "id": "haud-0276",
+    "at": "2026-07-03T00:48:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.sta_refer",
+    "target": "AUC-2377",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0289",
+    "at": "2026-07-02T21:39:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "catalogue.publish",
+    "target": "AUC-2389",
+    "detail": "Published NMDC — Radiators, Cable & Utensil Scrap with 5 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0286",
+    "at": "2026-07-02T21:00:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2386",
+    "detail": "Published ONGC — Plant & Machinery, Condemned Assets with 11 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0275",
+    "at": "2026-07-02T20:24:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "bid.flag",
+    "target": "AUC-2377",
+    "detail": "Flagged rapid bid pattern on LOT-07 for review",
+    "severity": "warning"
+  },
+  {
+    "id": "haud-0292",
+    "at": "2026-07-02T19:18:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2392",
+    "detail": "Published RINL — Structural Scrap & Skull with 13 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0274",
+    "at": "2026-07-02T19:04:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.pause",
+    "target": "AUC-2377",
+    "detail": "Paused 15 min — payment-gateway incident",
+    "severity": "warning"
+  },
+  {
+    "id": "haud-0278",
+    "at": "2026-07-02T16:45:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2380",
+    "detail": "Published BHEL — Workshop Machinery Disposal with 13 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0273",
+    "at": "2026-07-01T15:58:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2377",
+    "detail": "Published NMDC — Copper, Brass & Cable Scrap with 9 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0294",
+    "at": "2026-07-01T00:56:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2395",
+    "detail": "Published Northern Railway — PSC Sleeper & Brake Block Scrap with 13 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0371",
+    "at": "2026-06-30T21:02:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "kyc.review",
+    "target": "u-hbuyer-067",
+    "detail": "KYC verified — GSTIN and PAN matched for Bansal Ispat",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0281",
+    "at": "2026-06-30T18:36:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2383",
+    "detail": "Published Mahindra & Mahindra — SS Offcuts, Coil Ends & Turnings with 14 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0272",
+    "at": "2026-06-30T18:31:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.sta_refer",
+    "target": "AUC-2374",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0271",
+    "at": "2026-06-30T16:28:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.extend",
+    "target": "AUC-2374",
+    "detail": "Anti-snipe auto-extension ×3 on LOT-05 (final 3 minutes)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0369",
+    "at": "2026-06-30T06:18:00.000Z",
+    "actorId": "u-sub-1",
+    "action": "kyc.review",
+    "target": "u-hbuyer-065",
+    "detail": "KYC verified — GSTIN and PAN matched for Maruti Metal Works",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0270",
+    "at": "2026-06-29T06:50:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2374",
+    "detail": "Published ONGC — Workshop Machinery Disposal with 5 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0269",
+    "at": "2026-06-29T01:21:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.sta_refer",
+    "target": "AUC-2371",
+    "detail": "4 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0268",
+    "at": "2026-06-28T13:35:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.pause",
+    "target": "AUC-2371",
+    "detail": "Paused 20 min — payment-gateway incident",
+    "severity": "warning"
+  },
+  {
+    "id": "haud-0372",
+    "at": "2026-06-28T02:37:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "kyc.review",
+    "target": "u-hbuyer-068",
+    "detail": "KYC verified — GSTIN and PAN matched for Nakoda Recycling",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0365",
+    "at": "2026-06-27T22:51:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "kyc.review",
+    "target": "u-hbuyer-062",
+    "detail": "KYC verified — GSTIN and PAN matched for Sagar Scrap Traders",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0347",
+    "at": "2026-06-27T16:48:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "user.watchlist",
+    "target": "u-hbuyer-045",
+    "detail": "Ganga Metallics placed on the watchlist — late payment on two delivery orders",
+    "severity": "warning"
+  },
+  {
+    "id": "haud-0266",
+    "at": "2026-06-27T03:39:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.sta_refer",
+    "target": "AUC-2368",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0265",
+    "at": "2026-06-26T12:59:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.extend",
+    "target": "AUC-2368",
+    "detail": "Anti-snipe auto-extension ×3 on LOT-02 (final 3 minutes)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0267",
+    "at": "2026-06-25T10:09:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2371",
+    "detail": "Published Northern Railway — Points, Crossings & Rail Cuttings with 11 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0264",
+    "at": "2026-06-23T23:38:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "catalogue.publish",
+    "target": "AUC-2368",
+    "detail": "Published IOCL — Fuel Handling Disposals with 8 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0387",
+    "at": "2026-06-23T18:41:00.000Z",
+    "actorId": "u-sub-1",
+    "action": "seller.verify",
+    "target": "u-hseller-15",
+    "detail": "Seller verified — Bharat Forge — Mundhwa Works, disposal authorisation and GSTIN on file",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0262",
+    "at": "2026-06-23T13:57:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2362",
+    "detail": "Approved settlement and delivery-order issue for 10 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0366",
+    "at": "2026-06-22T05:39:00.000Z",
+    "actorId": "u-hsub-02",
+    "action": "kyc.review",
+    "target": "u-hbuyer-063",
+    "detail": "KYC verified — GSTIN and PAN matched for Sundaram Recycling",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0263",
+    "at": "2026-06-22T02:47:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "catalogue.publish",
+    "target": "AUC-2365",
+    "detail": "Published RINL — HMS 1 & 2 with Plate Cuttings with 10 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0261",
+    "at": "2026-06-20T21:58:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2362",
+    "detail": "Published NTPC — Coal Rejects, Fly Ash & Used Oil with 11 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0260",
+    "at": "2026-06-20T20:24:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2359",
+    "detail": "Approved settlement and delivery-order issue for 8 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0259",
+    "at": "2026-06-20T02:53:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.sta_refer",
+    "target": "AUC-2359",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0364",
+    "at": "2026-06-20T00:46:00.000Z",
+    "actorId": "u-sub-1",
+    "action": "kyc.review",
+    "target": "u-hbuyer-061",
+    "detail": "KYC verified — GSTIN and PAN matched for Deccan Enterprises",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0257",
+    "at": "2026-06-19T22:03:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2356",
+    "detail": "Approved settlement and delivery-order issue for 5 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0254",
+    "at": "2026-06-18T09:08:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2353",
+    "detail": "Approved settlement and delivery-order issue for 6 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0256",
+    "at": "2026-06-18T04:11:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.sta_refer",
+    "target": "AUC-2356",
+    "detail": "2 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0255",
+    "at": "2026-06-16T15:03:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "catalogue.publish",
+    "target": "AUC-2356",
+    "detail": "Published ONGC — Workshop Machinery Disposal with 7 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0258",
+    "at": "2026-06-16T08:06:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2359",
+    "detail": "Published WCL — Coal Rejects, Fly Ash & Used Oil with 11 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0253",
+    "at": "2026-06-14T09:46:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "catalogue.publish",
+    "target": "AUC-2353",
+    "detail": "Published JSW Steel — Aluminium, Copper & Ferro Alloy Lots with 6 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0360",
+    "at": "2026-06-14T04:17:00.000Z",
+    "actorId": "u-sub-1",
+    "action": "kyc.review",
+    "target": "u-hbuyer-057",
+    "detail": "KYC verified — GSTIN and PAN matched for Chordia Steel Traders",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0251",
+    "at": "2026-06-11T05:58:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.sta_refer",
+    "target": "AUC-2347",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0250",
+    "at": "2026-06-10T22:00:00.000Z",
+    "actorId": "u-hsub-02",
+    "action": "bid.flag",
+    "target": "AUC-2347",
+    "detail": "Flagged rapid bid pattern on LOT-05 for review",
+    "severity": "warning"
+  },
+  {
+    "id": "haud-0248",
+    "at": "2026-06-10T03:34:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2344",
+    "detail": "Approved settlement and delivery-order issue for 8 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0252",
+    "at": "2026-06-09T20:14:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2350",
+    "detail": "Published SAIL — Mixed MS Scrap, Turnings & TMT Rejects with 6 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0249",
+    "at": "2026-06-08T18:14:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2347",
+    "detail": "Published Hindalco — Aluminium, Copper & Ferro Alloy Lots with 9 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0361",
+    "at": "2026-06-08T02:16:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "kyc.review",
+    "target": "u-hbuyer-058",
+    "detail": "KYC verified — GSTIN and PAN matched for Goyal Metals",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0362",
+    "at": "2026-06-07T06:39:00.000Z",
+    "actorId": "u-sub-1",
+    "action": "kyc.review",
+    "target": "u-hbuyer-059",
+    "detail": "KYC verified — GSTIN and PAN matched for Vardhman Ispat",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0246",
+    "at": "2026-06-06T18:33:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.sta_refer",
+    "target": "AUC-2341",
+    "detail": "2 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0247",
+    "at": "2026-06-06T11:56:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "catalogue.publish",
+    "target": "AUC-2344",
+    "detail": "Published Vedanta — Non-Ferrous Mixed Disposal with 9 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0245",
+    "at": "2026-06-06T08:23:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.pause",
+    "target": "AUC-2341",
+    "detail": "Paused 14 min — seller clarification on a lot description",
+    "severity": "warning"
+  },
+  {
+    "id": "haud-0359",
+    "at": "2026-06-06T02:14:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "kyc.review",
+    "target": "u-hbuyer-056",
+    "detail": "KYC verified — GSTIN and PAN matched for Chordia Casting Works",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0244",
+    "at": "2026-06-05T01:40:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "catalogue.publish",
+    "target": "AUC-2341",
+    "detail": "Published Mahindra & Mahindra — SS Offcuts, Coil Ends & Turnings with 11 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0355",
+    "at": "2026-06-05T01:07:00.000Z",
+    "actorId": "u-sub-1",
+    "action": "kyc.review",
+    "target": "u-hbuyer-053",
+    "detail": "KYC verified — GSTIN and PAN matched for Rathi Metals",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0243",
+    "at": "2026-06-04T18:00:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.sta_refer",
+    "target": "AUC-2338",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0242",
+    "at": "2026-06-04T03:12:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.extend",
+    "target": "AUC-2338",
+    "detail": "Anti-snipe auto-extension ×2 on LOT-01 (final 5 minutes)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0240",
+    "at": "2026-06-02T01:28:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.sta_refer",
+    "target": "AUC-2335",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0241",
+    "at": "2026-06-01T21:01:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "catalogue.publish",
+    "target": "AUC-2338",
+    "detail": "Published Northern Railway — Condemned Rolling Stock & Track Fittings with 7 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0356",
+    "at": "2026-06-01T05:26:00.000Z",
+    "actorId": "u-hsub-02",
+    "action": "kyc.review",
+    "target": "u-hbuyer-054",
+    "detail": "KYC verified — GSTIN and PAN matched for Shree Industries",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0239",
+    "at": "2026-05-31T13:01:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2335",
+    "detail": "Published Jindal Stainless — Off-Spec Coils & Stainless Trims with 8 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0238",
+    "at": "2026-05-30T22:03:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.sta_refer",
+    "target": "AUC-2332",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0386",
+    "at": "2026-05-30T18:34:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "seller.verify",
+    "target": "u-hseller-14",
+    "detail": "Seller verified — Jindal Stainless — Hisar Works, disposal authorisation and GSTIN on file",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0236",
+    "at": "2026-05-29T12:56:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2329",
+    "detail": "Approved settlement and delivery-order issue for 6 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0235",
+    "at": "2026-05-28T07:09:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.sta_refer",
+    "target": "AUC-2329",
+    "detail": "2 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0234",
+    "at": "2026-05-28T02:23:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.extend",
+    "target": "AUC-2329",
+    "detail": "Anti-snipe auto-extension ×1 on LOT-07 (final 3 minutes)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0232",
+    "at": "2026-05-27T01:28:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2326",
+    "detail": "Approved settlement and delivery-order issue for 3 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0237",
+    "at": "2026-05-27T00:47:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2332",
+    "detail": "Published JSW Steel — Aluminium, Copper & Ferro Alloy Lots with 9 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0231",
+    "at": "2026-05-26T09:27:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.sta_refer",
+    "target": "AUC-2326",
+    "detail": "2 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0357",
+    "at": "2026-05-25T01:42:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "kyc.review",
+    "target": "u-hbuyer-055",
+    "detail": "KYC verified — GSTIN and PAN matched for Sagar Steel Traders",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0233",
+    "at": "2026-05-24T12:48:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "catalogue.publish",
+    "target": "AUC-2329",
+    "detail": "Published East Coast Railway — PSC Sleeper & Brake Block Scrap with 10 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0230",
+    "at": "2026-05-24T06:16:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2326",
+    "detail": "Published RINL — Melting Shop Scrap & CI Borings with 5 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0354",
+    "at": "2026-05-24T01:41:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "kyc.review",
+    "target": "u-hbuyer-052",
+    "detail": "KYC pending — clarification requested from Rathi Ferro Works",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0229",
+    "at": "2026-05-23T19:37:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.sta_refer",
+    "target": "AUC-2323",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0227",
+    "at": "2026-05-23T13:01:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.extend",
+    "target": "AUC-2323",
+    "detail": "Anti-snipe auto-extension ×1 on LOT-07 (final 5 minutes)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0228",
+    "at": "2026-05-23T12:31:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.pause",
+    "target": "AUC-2323",
+    "detail": "Paused 5 min — seller clarification on a lot description",
+    "severity": "warning"
+  },
+  {
+    "id": "haud-0225",
+    "at": "2026-05-22T01:57:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2320",
+    "detail": "Approved settlement and delivery-order issue for 10 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0226",
+    "at": "2026-05-21T07:31:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2323",
+    "detail": "Published ONGC — EOT Crane Parts & Storage Tanks with 9 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0224",
+    "at": "2026-05-21T07:23:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.sta_refer",
+    "target": "AUC-2320",
+    "detail": "2 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0223",
+    "at": "2026-05-21T04:08:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.extend",
+    "target": "AUC-2320",
+    "detail": "Anti-snipe auto-extension ×1 on LOT-13 (final 5 minutes)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0221",
+    "at": "2026-05-20T17:46:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2317",
+    "detail": "Approved settlement and delivery-order issue for 10 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0330",
+    "at": "2026-05-19T21:27:00.000Z",
+    "actorId": "u-hsub-02",
+    "action": "user.watchlist",
+    "target": "u-hbuyer-033",
+    "detail": "Jai Steel Traders placed on the watchlist — late payment on two delivery orders",
+    "severity": "warning"
+  },
+  {
+    "id": "haud-0220",
+    "at": "2026-05-19T10:21:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.sta_refer",
+    "target": "AUC-2317",
+    "detail": "3 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0222",
+    "at": "2026-05-18T18:11:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "catalogue.publish",
+    "target": "AUC-2320",
+    "detail": "Published NTPC — Fuel Handling Disposals with 13 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0353",
+    "at": "2026-05-17T23:24:00.000Z",
+    "actorId": "u-sub-1",
+    "action": "kyc.review",
+    "target": "u-hbuyer-051",
+    "detail": "KYC pending — clarification requested from Thakkar Alloys",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0334",
+    "at": "2026-05-17T18:46:00.000Z",
+    "actorId": "u-super-1",
+    "action": "user.blacklist",
+    "target": "u-hbuyer-036",
+    "detail": "Moved Bansal Metals to defaulters — EMD forfeited after a lifting default",
+    "severity": "critical"
+  },
+  {
+    "id": "haud-0219",
+    "at": "2026-05-17T12:17:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2317",
+    "detail": "Published NALCO — Al Sheet Offcuts & Ingot Rejects with 14 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0345",
+    "at": "2026-05-17T08:48:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "kyc.review",
+    "target": "u-hbuyer-044",
+    "detail": "KYC verified — GSTIN and PAN matched for Jai Casting Works",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0218",
+    "at": "2026-05-16T14:27:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.sta_refer",
+    "target": "AUC-2314",
+    "detail": "5 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0217",
+    "at": "2026-05-16T08:26:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.pause",
+    "target": "AUC-2314",
+    "detail": "Paused 17 min — yard confirmed a quantity correction",
+    "severity": "warning"
+  },
+  {
+    "id": "haud-0352",
+    "at": "2026-05-16T05:28:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "kyc.review",
+    "target": "u-hbuyer-050",
+    "detail": "KYC verified — GSTIN and PAN matched for Shree Ferro Works",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0215",
+    "at": "2026-05-15T07:43:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2311",
+    "detail": "Approved settlement and delivery-order issue for 7 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0214",
+    "at": "2026-05-14T09:12:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.sta_refer",
+    "target": "AUC-2311",
+    "detail": "4 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0216",
+    "at": "2026-05-14T04:46:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "catalogue.publish",
+    "target": "AUC-2314",
+    "detail": "Published South Central Railway — PSC Sleeper & Brake Block Scrap with 14 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0213",
+    "at": "2026-05-14T04:42:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.extend",
+    "target": "AUC-2311",
+    "detail": "Anti-snipe auto-extension ×1 on LOT-07 (final 5 minutes)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0212",
+    "at": "2026-05-12T20:38:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2311",
+    "detail": "Published RINL — HMS 1 & 2 with Plate Cuttings with 14 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0211",
+    "at": "2026-05-12T01:07:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.sta_refer",
+    "target": "AUC-2308",
+    "detail": "3 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0208",
+    "at": "2026-05-11T18:07:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2305",
+    "detail": "Approved settlement and delivery-order issue for 9 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0210",
+    "at": "2026-05-11T13:52:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.extend",
+    "target": "AUC-2308",
+    "detail": "Anti-snipe auto-extension ×1 on LOT-07 (final 3 minutes)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0348",
+    "at": "2026-05-11T08:16:00.000Z",
+    "actorId": "u-sub-1",
+    "action": "kyc.review",
+    "target": "u-hbuyer-046",
+    "detail": "KYC verified — GSTIN and PAN matched for Bharat Steel Traders",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0346",
+    "at": "2026-05-10T23:11:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "kyc.review",
+    "target": "u-hbuyer-045",
+    "detail": "KYC verified — GSTIN and PAN matched for Ganga Metallics",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0207",
+    "at": "2026-05-09T05:13:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.sta_refer",
+    "target": "AUC-2305",
+    "detail": "2 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0209",
+    "at": "2026-05-07T23:53:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "catalogue.publish",
+    "target": "AUC-2308",
+    "detail": "Published RINL — Structural Scrap & Skull with 11 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0205",
+    "at": "2026-05-07T12:21:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2302",
+    "detail": "Approved settlement and delivery-order issue for 7 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0204",
+    "at": "2026-05-06T23:14:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.sta_refer",
+    "target": "AUC-2302",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0337",
+    "at": "2026-05-06T18:29:00.000Z",
+    "actorId": "u-super-1",
+    "action": "user.blacklist",
+    "target": "u-hbuyer-038",
+    "detail": "Moved Om Casting Works to defaulters — EMD forfeited after a lifting default",
+    "severity": "critical"
+  },
+  {
+    "id": "haud-0203",
+    "at": "2026-05-06T16:43:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.extend",
+    "target": "AUC-2302",
+    "detail": "Anti-snipe auto-extension ×3 on LOT-02 (final 5 minutes)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0341",
+    "at": "2026-05-05T22:13:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "user.watchlist",
+    "target": "u-hbuyer-041",
+    "detail": "Balaji Scrap Traders placed on the watchlist — late payment on two delivery orders",
+    "severity": "warning"
+  },
+  {
+    "id": "haud-0202",
+    "at": "2026-05-05T11:33:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2302",
+    "detail": "Published SAIL — Mixed MS Scrap, Turnings & TMT Rejects with 10 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0206",
+    "at": "2026-05-05T09:23:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2305",
+    "detail": "Published BHEL — Plant & Machinery, Condemned Assets with 13 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0201",
+    "at": "2026-05-05T03:15:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2299",
+    "detail": "Approved settlement and delivery-order issue for 10 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0350",
+    "at": "2026-05-04T23:55:00.000Z",
+    "actorId": "u-sub-1",
+    "action": "kyc.review",
+    "target": "u-hbuyer-048",
+    "detail": "KYC verified — GSTIN and PAN matched for Arihant Casting Works",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0200",
+    "at": "2026-05-04T07:27:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.sta_refer",
+    "target": "AUC-2299",
+    "detail": "2 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0343",
+    "at": "2026-05-03T17:04:00.000Z",
+    "actorId": "u-hsub-02",
+    "action": "user.watchlist",
+    "target": "u-hbuyer-042",
+    "detail": "Ambika Metals placed on the watchlist — late payment on two delivery orders",
+    "severity": "warning"
+  },
+  {
+    "id": "haud-0199",
+    "at": "2026-04-30T13:23:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "catalogue.publish",
+    "target": "AUC-2299",
+    "detail": "Published NMDC — Radiators, Cable & Utensil Scrap with 13 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0351",
+    "at": "2026-04-30T06:30:00.000Z",
+    "actorId": "u-sub-1",
+    "action": "kyc.review",
+    "target": "u-hbuyer-049",
+    "detail": "KYC verified — GSTIN and PAN matched for Konark Recycling",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0197",
+    "at": "2026-04-29T22:46:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2293",
+    "detail": "Approved settlement and delivery-order issue for 6 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0196",
+    "at": "2026-04-29T15:21:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.sta_refer",
+    "target": "AUC-2293",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0198",
+    "at": "2026-04-29T08:45:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "catalogue.publish",
+    "target": "AUC-2296",
+    "detail": "Published Ordnance Factory — Plant & Machinery, Condemned Assets with 13 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0195",
+    "at": "2026-04-29T01:17:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.extend",
+    "target": "AUC-2293",
+    "detail": "Anti-snipe auto-extension ×2 on LOT-01 (final 3 minutes)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0193",
+    "at": "2026-04-27T13:02:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2290",
+    "detail": "Approved settlement and delivery-order issue for 5 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0385",
+    "at": "2026-04-27T12:25:00.000Z",
+    "actorId": "u-hsub-02",
+    "action": "seller.verify",
+    "target": "u-hseller-13",
+    "detail": "Seller verified — IOCL — Panipat Refinery, disposal authorisation and GSTIN on file",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0194",
+    "at": "2026-04-26T21:03:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "catalogue.publish",
+    "target": "AUC-2293",
+    "detail": "Published Mahindra & Mahindra — 304 / 316 Offcuts & CRC End Cuts with 7 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0192",
+    "at": "2026-04-26T15:44:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "bid.flag",
+    "target": "AUC-2290",
+    "detail": "Flagged rapid bid pattern on LOT-03 for review",
+    "severity": "warning"
+  },
+  {
+    "id": "haud-0190",
+    "at": "2026-04-26T10:15:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2287",
+    "detail": "Approved settlement and delivery-order issue for 5 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0349",
+    "at": "2026-04-24T08:42:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "kyc.review",
+    "target": "u-hbuyer-047",
+    "detail": "KYC verified — GSTIN and PAN matched for Kaveri Steels",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0189",
+    "at": "2026-04-24T02:36:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.sta_refer",
+    "target": "AUC-2287",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0191",
+    "at": "2026-04-23T10:32:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2290",
+    "detail": "Published Tata Steel — SS Offcuts, Coil Ends & Turnings with 5 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0187",
+    "at": "2026-04-22T21:34:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2284",
+    "detail": "Approved settlement and delivery-order issue for 8 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0188",
+    "at": "2026-04-22T19:24:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "catalogue.publish",
+    "target": "AUC-2287",
+    "detail": "Published Northern Railway — Points, Crossings & Rail Cuttings with 8 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0186",
+    "at": "2026-04-21T18:55:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.sta_refer",
+    "target": "AUC-2284",
+    "detail": "3 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0184",
+    "at": "2026-04-21T15:58:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.extend",
+    "target": "AUC-2284",
+    "detail": "Anti-snipe auto-extension ×2 on LOT-14 (final 3 minutes)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0185",
+    "at": "2026-04-21T15:31:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.pause",
+    "target": "AUC-2284",
+    "detail": "Paused 18 min — payment-gateway incident",
+    "severity": "warning"
+  },
+  {
+    "id": "haud-0182",
+    "at": "2026-04-20T20:26:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2281",
+    "detail": "Approved settlement and delivery-order issue for 4 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0183",
+    "at": "2026-04-20T10:19:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2284",
+    "detail": "Published Mahindra & Mahindra — Stainless Skeletons & Briquettes with 14 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0344",
+    "at": "2026-04-19T23:40:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "kyc.review",
+    "target": "u-hbuyer-043",
+    "detail": "KYC verified — GSTIN and PAN matched for Deccan Metals",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0181",
+    "at": "2026-04-19T10:01:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.sta_refer",
+    "target": "AUC-2281",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0179",
+    "at": "2026-04-18T17:03:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2278",
+    "detail": "Approved settlement and delivery-order issue for 7 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0178",
+    "at": "2026-04-16T15:34:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.sta_refer",
+    "target": "AUC-2278",
+    "detail": "4 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0180",
+    "at": "2026-04-16T14:50:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "catalogue.publish",
+    "target": "AUC-2281",
+    "detail": "Published BHEL — Compressors, DG Sets & Lathes with 6 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0175",
+    "at": "2026-04-16T09:59:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2275",
+    "detail": "Approved settlement and delivery-order issue for 5 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0177",
+    "at": "2026-04-16T07:53:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.extend",
+    "target": "AUC-2278",
+    "detail": "Anti-snipe auto-extension ×3 on LOT-10 (final 3 minutes)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0174",
+    "at": "2026-04-14T03:51:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.sta_refer",
+    "target": "AUC-2275",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0176",
+    "at": "2026-04-12T22:11:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "catalogue.publish",
+    "target": "AUC-2278",
+    "detail": "Published RINL — HMS 1 & 2 with Plate Cuttings with 11 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0173",
+    "at": "2026-04-12T08:10:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2275",
+    "detail": "Published NTPC — Coal Rejects, Fly Ash & Used Oil with 10 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0335",
+    "at": "2026-04-12T06:09:00.000Z",
+    "actorId": "u-hsub-02",
+    "action": "kyc.review",
+    "target": "u-hbuyer-037",
+    "detail": "KYC verified — GSTIN and PAN matched for Bharat Metals",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0172",
+    "at": "2026-04-11T08:29:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.sta_refer",
+    "target": "AUC-2272",
+    "detail": "4 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0338",
+    "at": "2026-04-10T21:21:00.000Z",
+    "actorId": "u-hsub-02",
+    "action": "kyc.review",
+    "target": "u-hbuyer-039",
+    "detail": "KYC verified — GSTIN and PAN matched for Om Metals",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0170",
+    "at": "2026-04-10T17:06:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2269",
+    "detail": "Approved settlement and delivery-order issue for 8 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0340",
+    "at": "2026-04-08T22:38:00.000Z",
+    "actorId": "u-sub-1",
+    "action": "kyc.review",
+    "target": "u-hbuyer-041",
+    "detail": "KYC pending — clarification requested from Balaji Scrap Traders",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0169",
+    "at": "2026-04-08T20:09:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.sta_refer",
+    "target": "AUC-2269",
+    "detail": "2 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0171",
+    "at": "2026-04-08T13:02:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2272",
+    "detail": "Published Hindalco — Al Sheet Offcuts & Ingot Rejects with 7 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0168",
+    "at": "2026-04-08T06:23:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.extend",
+    "target": "AUC-2269",
+    "detail": "Anti-snipe auto-extension ×2 on LOT-01 (final 3 minutes)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0384",
+    "at": "2026-04-08T05:29:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "seller.verify",
+    "target": "u-hseller-12",
+    "detail": "Seller verified — NMDC — Bacheli Complex, disposal authorisation and GSTIN on file",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0342",
+    "at": "2026-04-07T02:15:00.000Z",
+    "actorId": "u-hsub-02",
+    "action": "kyc.review",
+    "target": "u-hbuyer-042",
+    "detail": "KYC verified — GSTIN and PAN matched for Ambika Metals",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0167",
+    "at": "2026-04-06T19:24:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2269",
+    "detail": "Published Vedanta — Zinc Dross & FeSiMg Fines with 10 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0166",
+    "at": "2026-04-06T17:29:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2266",
+    "detail": "Approved settlement and delivery-order issue for 8 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0165",
+    "at": "2026-04-06T05:08:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.sta_refer",
+    "target": "AUC-2266",
+    "detail": "2 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0164",
+    "at": "2026-04-03T07:08:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2266",
+    "detail": "Published Ashok Leyland — Stainless Skeletons & Briquettes with 13 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0339",
+    "at": "2026-04-03T06:18:00.000Z",
+    "actorId": "u-sub-1",
+    "action": "kyc.review",
+    "target": "u-hbuyer-040",
+    "detail": "KYC verified — GSTIN and PAN matched for Maruti Ferro Works",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0163",
+    "at": "2026-04-03T02:45:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.sta_refer",
+    "target": "AUC-2263",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0162",
+    "at": "2026-04-02T20:20:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.extend",
+    "target": "AUC-2263",
+    "detail": "Anti-snipe auto-extension ×1 on LOT-05 (final 5 minutes)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0160",
+    "at": "2026-03-31T17:11:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2260",
+    "detail": "Approved settlement and delivery-order issue for 6 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0161",
+    "at": "2026-03-31T15:01:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "catalogue.publish",
+    "target": "AUC-2263",
+    "detail": "Published BHEL — EOT Crane Parts & Storage Tanks with 12 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0336",
+    "at": "2026-03-30T06:39:00.000Z",
+    "actorId": "u-sub-1",
+    "action": "kyc.review",
+    "target": "u-hbuyer-038",
+    "detail": "KYC verified — GSTIN and PAN matched for Om Casting Works",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0159",
+    "at": "2026-03-29T12:20:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "catalogue.publish",
+    "target": "AUC-2260",
+    "detail": "Published Tata Steel — Stainless Skeletons & Briquettes with 6 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0158",
+    "at": "2026-03-28T19:54:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.sta_refer",
+    "target": "AUC-2257",
+    "detail": "4 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0391",
+    "at": "2026-03-28T06:30:00.000Z",
+    "actorId": "u-super-1",
+    "action": "user.create",
+    "target": "u-hfield-04",
+    "detail": "Created field exec account for Divya Menon (Coimbatore)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0157",
+    "at": "2026-03-28T06:03:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "bid.flag",
+    "target": "AUC-2257",
+    "detail": "Flagged rapid bid pattern on LOT-12 for review",
+    "severity": "warning"
+  },
+  {
+    "id": "haud-0155",
+    "at": "2026-03-27T02:14:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2254",
+    "detail": "Approved settlement and delivery-order issue for 5 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0154",
+    "at": "2026-03-26T04:31:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.sta_refer",
+    "target": "AUC-2254",
+    "detail": "2 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0156",
+    "at": "2026-03-24T20:14:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "catalogue.publish",
+    "target": "AUC-2257",
+    "detail": "Published Ashok Leyland — Stainless Skeletons & Briquettes with 14 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0152",
+    "at": "2026-03-23T14:54:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2251",
+    "detail": "Approved settlement and delivery-order issue for 9 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0151",
+    "at": "2026-03-23T07:56:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.sta_refer",
+    "target": "AUC-2251",
+    "detail": "3 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0153",
+    "at": "2026-03-23T03:23:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2254",
+    "detail": "Published RINL — Melting Shop Scrap & CI Borings with 8 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0150",
+    "at": "2026-03-22T22:16:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.extend",
+    "target": "AUC-2251",
+    "detail": "Anti-snipe auto-extension ×1 on LOT-06 (final 5 minutes)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0333",
+    "at": "2026-03-22T11:03:00.000Z",
+    "actorId": "u-hsub-02",
+    "action": "kyc.review",
+    "target": "u-hbuyer-036",
+    "detail": "KYC verified — GSTIN and PAN matched for Bansal Metals",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0148",
+    "at": "2026-03-20T19:22:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2248",
+    "detail": "Approved settlement and delivery-order issue for 6 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0149",
+    "at": "2026-03-20T14:46:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2251",
+    "detail": "Published NALCO — Al Sheet Offcuts & Ingot Rejects with 13 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0147",
+    "at": "2026-03-20T09:31:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.sta_refer",
+    "target": "AUC-2248",
+    "detail": "3 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0146",
+    "at": "2026-03-20T03:12:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.extend",
+    "target": "AUC-2248",
+    "detail": "Anti-snipe auto-extension ×3 on LOT-03 (final 3 minutes)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0145",
+    "at": "2026-03-18T22:20:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2248",
+    "detail": "Published South Central Railway — Points, Crossings & Rail Cuttings with 11 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0328",
+    "at": "2026-03-18T20:36:00.000Z",
+    "actorId": "u-sub-1",
+    "action": "kyc.review",
+    "target": "u-hbuyer-032",
+    "detail": "KYC verified — GSTIN and PAN matched for Deccan Industries",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0144",
+    "at": "2026-03-17T12:24:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.sta_refer",
+    "target": "AUC-2245",
+    "detail": "4 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0142",
+    "at": "2026-03-16T18:12:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2242",
+    "detail": "Approved settlement and delivery-order issue for 11 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0141",
+    "at": "2026-03-14T14:48:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.sta_refer",
+    "target": "AUC-2242",
+    "detail": "3 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0143",
+    "at": "2026-03-14T00:12:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "catalogue.publish",
+    "target": "AUC-2245",
+    "detail": "Published JSW Steel — Al Sheet Offcuts & Ingot Rejects with 8 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0139",
+    "at": "2026-03-13T16:50:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2239",
+    "detail": "Approved settlement and delivery-order issue for 4 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0326",
+    "at": "2026-03-13T04:44:00.000Z",
+    "actorId": "u-sub-1",
+    "action": "kyc.review",
+    "target": "u-hbuyer-030",
+    "detail": "KYC verified — GSTIN and PAN matched for Ganga Casting Works",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0140",
+    "at": "2026-03-12T21:40:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2242",
+    "detail": "Published Mahindra & Mahindra — SS Offcuts, Coil Ends & Turnings with 14 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0327",
+    "at": "2026-03-12T20:55:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "kyc.review",
+    "target": "u-hbuyer-031",
+    "detail": "KYC pending — clarification requested from Anand Scrap Traders",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0138",
+    "at": "2026-03-11T17:31:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.sta_refer",
+    "target": "AUC-2239",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0332",
+    "at": "2026-03-09T01:42:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "kyc.review",
+    "target": "u-hbuyer-035",
+    "detail": "KYC verified — GSTIN and PAN matched for Anand Smelters",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0325",
+    "at": "2026-03-09T00:17:00.000Z",
+    "actorId": "u-hsub-02",
+    "action": "kyc.review",
+    "target": "u-hbuyer-029",
+    "detail": "KYC verified — GSTIN and PAN matched for Narmada Enterprises",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0136",
+    "at": "2026-03-08T22:15:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2236",
+    "detail": "Approved settlement and delivery-order issue for 8 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0137",
+    "at": "2026-03-08T00:49:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "catalogue.publish",
+    "target": "AUC-2239",
+    "detail": "Published ONGC — EOT Crane Parts & Storage Tanks with 7 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0134",
+    "at": "2026-03-05T19:14:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.sta_refer",
+    "target": "AUC-2233",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0133",
+    "at": "2026-03-05T07:06:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.extend",
+    "target": "AUC-2233",
+    "detail": "Anti-snipe auto-extension ×3 on LOT-05 (final 3 minutes)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0135",
+    "at": "2026-03-04T20:18:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2236",
+    "detail": "Published SAIL — Structural Scrap & Skull with 10 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0131",
+    "at": "2026-03-02T20:13:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.sta_refer",
+    "target": "AUC-2230",
+    "detail": "4 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0132",
+    "at": "2026-03-01T17:54:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "catalogue.publish",
+    "target": "AUC-2233",
+    "detail": "Published East Coast Railway — PSC Sleeper & Brake Block Scrap with 11 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0129",
+    "at": "2026-03-01T10:07:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2227",
+    "detail": "Approved settlement and delivery-order issue for 8 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0130",
+    "at": "2026-03-01T00:08:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2230",
+    "detail": "Published NTPC — Washery Rejects & Bottom Ash with 10 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0331",
+    "at": "2026-02-28T23:30:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "kyc.review",
+    "target": "u-hbuyer-034",
+    "detail": "KYC verified — GSTIN and PAN matched for Balaji Metals",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0128",
+    "at": "2026-02-27T13:10:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.sta_refer",
+    "target": "AUC-2227",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0127",
+    "at": "2026-02-27T04:16:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.extend",
+    "target": "AUC-2227",
+    "detail": "Anti-snipe auto-extension ×2 on LOT-02 (final 5 minutes)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0394",
+    "at": "2026-02-26T06:30:00.000Z",
+    "actorId": "u-super-1",
+    "action": "user.create",
+    "target": "u-hsub-02",
+    "detail": "Created sub admin account for Vikas Thakur (Indore)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0382",
+    "at": "2026-02-25T23:34:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "seller.verify",
+    "target": "u-hseller-10",
+    "detail": "Seller verified — Ordnance Factory — Medak, disposal authorisation and GSTIN on file",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0125",
+    "at": "2026-02-25T03:11:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2224",
+    "detail": "Approved settlement and delivery-order issue for 9 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0124",
+    "at": "2026-02-24T17:22:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.sta_refer",
+    "target": "AUC-2224",
+    "detail": "3 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0383",
+    "at": "2026-02-23T23:36:00.000Z",
+    "actorId": "u-hsub-02",
+    "action": "seller.verify",
+    "target": "u-hseller-11",
+    "detail": "Seller verified — South Central Railway — Lallaguda Workshop, disposal authorisation and GSTIN on file",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0126",
+    "at": "2026-02-23T15:30:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2227",
+    "detail": "Published SAIL — HMS 1 & 2 with Plate Cuttings with 10 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0123",
+    "at": "2026-02-22T16:00:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "catalogue.publish",
+    "target": "AUC-2224",
+    "detail": "Published Northern Railway — Condemned Rolling Stock & Track Fittings with 12 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0329",
+    "at": "2026-02-22T04:55:00.000Z",
+    "actorId": "u-sub-1",
+    "action": "kyc.review",
+    "target": "u-hbuyer-033",
+    "detail": "KYC verified — GSTIN and PAN matched for Jai Steel Traders",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0122",
+    "at": "2026-02-21T17:30:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.sta_refer",
+    "target": "AUC-2221",
+    "detail": "3 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0121",
+    "at": "2026-02-21T05:11:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.extend",
+    "target": "AUC-2221",
+    "detail": "Anti-snipe auto-extension ×3 on LOT-09 (final 3 minutes)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0120",
+    "at": "2026-02-19T22:40:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "catalogue.publish",
+    "target": "AUC-2221",
+    "detail": "Published Hindalco — Zinc Dross & FeSiMg Fines with 12 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0119",
+    "at": "2026-02-18T12:34:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.sta_refer",
+    "target": "AUC-2218",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0117",
+    "at": "2026-02-17T23:35:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2215",
+    "detail": "Approved settlement and delivery-order issue for 12 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0118",
+    "at": "2026-02-16T20:47:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2218",
+    "detail": "Published NALCO — Al Sheet Offcuts & Ingot Rejects with 12 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0320",
+    "at": "2026-02-16T00:21:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "kyc.review",
+    "target": "u-hbuyer-024",
+    "detail": "KYC verified — GSTIN and PAN matched for Anand Ispat",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0116",
+    "at": "2026-02-15T10:50:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.sta_refer",
+    "target": "AUC-2215",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0115",
+    "at": "2026-02-15T05:16:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.extend",
+    "target": "AUC-2215",
+    "detail": "Anti-snipe auto-extension ×1 on LOT-06 (final 5 minutes)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0113",
+    "at": "2026-02-12T02:41:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.sta_refer",
+    "target": "AUC-2212",
+    "detail": "2 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0114",
+    "at": "2026-02-11T22:02:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "catalogue.publish",
+    "target": "AUC-2215",
+    "detail": "Published RINL — Melting Shop Scrap & CI Borings with 13 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0111",
+    "at": "2026-02-10T20:09:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2209",
+    "detail": "Approved settlement and delivery-order issue for 10 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0321",
+    "at": "2026-02-09T09:50:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "kyc.review",
+    "target": "u-hbuyer-025",
+    "detail": "KYC verified — GSTIN and PAN matched for Maruti Industries",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0110",
+    "at": "2026-02-08T17:14:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.sta_refer",
+    "target": "AUC-2209",
+    "detail": "2 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0112",
+    "at": "2026-02-08T08:12:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "catalogue.publish",
+    "target": "AUC-2212",
+    "detail": "Published SAIL — HMS 1 & 2 with Plate Cuttings with 14 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0109",
+    "at": "2026-02-08T07:48:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.pause",
+    "target": "AUC-2209",
+    "detail": "Paused 7 min — seller clarification on a lot description",
+    "severity": "warning"
+  },
+  {
+    "id": "haud-0107",
+    "at": "2026-02-05T13:48:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.sta_refer",
+    "target": "AUC-2206",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0106",
+    "at": "2026-02-05T04:41:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.extend",
+    "target": "AUC-2206",
+    "detail": "Anti-snipe auto-extension ×1 on LOT-04 (final 3 minutes)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0108",
+    "at": "2026-02-05T01:40:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "catalogue.publish",
+    "target": "AUC-2209",
+    "detail": "Published Hindalco — Non-Ferrous Mixed Disposal with 14 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0105",
+    "at": "2026-02-03T00:28:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2206",
+    "detail": "Published SAIL — Mixed MS Scrap, Turnings & TMT Rejects with 5 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0322",
+    "at": "2026-02-02T15:19:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "kyc.review",
+    "target": "u-hbuyer-026",
+    "detail": "KYC verified — GSTIN and PAN matched for Maruti Metal Corp",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0319",
+    "at": "2026-02-02T08:14:00.000Z",
+    "actorId": "u-sub-1",
+    "action": "kyc.review",
+    "target": "u-hbuyer-023",
+    "detail": "KYC verified — GSTIN and PAN matched for Vardhman Metallics",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0104",
+    "at": "2026-02-02T00:15:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.sta_refer",
+    "target": "AUC-2203",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0102",
+    "at": "2026-02-01T21:02:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.extend",
+    "target": "AUC-2203",
+    "detail": "Anti-snipe auto-extension ×2 on LOT-03 (final 3 minutes)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0103",
+    "at": "2026-02-01T16:29:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.pause",
+    "target": "AUC-2203",
+    "detail": "Paused 8 min — seller clarification on a lot description",
+    "severity": "warning"
+  },
+  {
+    "id": "haud-0324",
+    "at": "2026-01-31T22:14:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "kyc.review",
+    "target": "u-hbuyer-028",
+    "detail": "KYC verified — GSTIN and PAN matched for Shree Recycling",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0101",
+    "at": "2026-01-31T14:11:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "catalogue.publish",
+    "target": "AUC-2203",
+    "detail": "Published Northern Railway — Condemned Rolling Stock & Track Fittings with 7 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0100",
+    "at": "2026-01-30T03:40:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.sta_refer",
+    "target": "AUC-2200",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0098",
+    "at": "2026-01-27T12:14:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2197",
+    "detail": "Approved settlement and delivery-order issue for 6 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0099",
+    "at": "2026-01-27T10:31:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2200",
+    "detail": "Published Northern Railway — Released Rails, Wagons & OHE Copper with 9 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0390",
+    "at": "2026-01-27T06:30:00.000Z",
+    "actorId": "u-super-1",
+    "action": "user.create",
+    "target": "u-hfield-03",
+    "detail": "Created field exec account for Mohd Arif (Kanpur)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0097",
+    "at": "2026-01-26T04:07:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.sta_refer",
+    "target": "AUC-2197",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0323",
+    "at": "2026-01-25T04:08:00.000Z",
+    "actorId": "u-sub-1",
+    "action": "kyc.review",
+    "target": "u-hbuyer-027",
+    "detail": "KYC verified — GSTIN and PAN matched for Sundaram Metal Works",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0095",
+    "at": "2026-01-24T04:39:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2194",
+    "detail": "Approved settlement and delivery-order issue for 9 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0094",
+    "at": "2026-01-23T00:12:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.sta_refer",
+    "target": "AUC-2194",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0096",
+    "at": "2026-01-22T16:47:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2197",
+    "detail": "Published NALCO — Al Sheet Offcuts & Ingot Rejects with 7 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0092",
+    "at": "2026-01-21T09:59:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2191",
+    "detail": "Approved settlement and delivery-order issue for 5 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0093",
+    "at": "2026-01-20T15:11:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2194",
+    "detail": "Published SAIL — Mixed MS Scrap, Turnings & TMT Rejects with 11 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0381",
+    "at": "2026-01-20T06:29:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "seller.verify",
+    "target": "u-hseller-09",
+    "detail": "Seller verified — ONGC — Hazira Plant, disposal authorisation and GSTIN on file",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0091",
+    "at": "2026-01-16T07:33:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2191",
+    "detail": "Published NTPC — Washery Rejects & Bottom Ash with 8 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0090",
+    "at": "2026-01-16T03:00:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.sta_refer",
+    "target": "AUC-2188",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0315",
+    "at": "2026-01-15T14:10:00.000Z",
+    "actorId": "u-sub-1",
+    "action": "kyc.review",
+    "target": "u-hbuyer-019",
+    "detail": "KYC verified — GSTIN and PAN matched for Kothari Alloys",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0318",
+    "at": "2026-01-15T08:42:00.000Z",
+    "actorId": "u-hsub-02",
+    "action": "kyc.review",
+    "target": "u-hbuyer-022",
+    "detail": "KYC verified — GSTIN and PAN matched for Ganga Trading Co",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0317",
+    "at": "2026-01-14T08:42:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "kyc.review",
+    "target": "u-hbuyer-021",
+    "detail": "KYC verified — GSTIN and PAN matched for Bharat Metallics",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0089",
+    "at": "2026-01-13T12:30:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "catalogue.publish",
+    "target": "AUC-2188",
+    "detail": "Published Tata Steel — Off-Spec Coils & Stainless Trims with 5 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0087",
+    "at": "2026-01-09T21:37:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2182",
+    "detail": "Approved settlement and delivery-order issue for 9 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0314",
+    "at": "2026-01-09T19:49:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "kyc.review",
+    "target": "u-hbuyer-018",
+    "detail": "KYC verified — GSTIN and PAN matched for Arihant Trading Co",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0088",
+    "at": "2026-01-09T02:52:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "catalogue.publish",
+    "target": "AUC-2185",
+    "detail": "Published RINL — Mixed MS Scrap, Turnings & TMT Rejects with 13 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0086",
+    "at": "2026-01-08T17:05:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.sta_refer",
+    "target": "AUC-2182",
+    "detail": "4 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0084",
+    "at": "2026-01-06T02:44:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2179",
+    "detail": "Approved settlement and delivery-order issue for 4 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0083",
+    "at": "2026-01-05T00:24:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.sta_refer",
+    "target": "AUC-2179",
+    "detail": "7 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0085",
+    "at": "2026-01-04T23:44:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "catalogue.publish",
+    "target": "AUC-2182",
+    "detail": "Published Vedanta — Non-Ferrous Mixed Disposal with 13 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0082",
+    "at": "2026-01-04T13:40:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.extend",
+    "target": "AUC-2179",
+    "detail": "Anti-snipe auto-extension ×2 on LOT-12 (final 3 minutes)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0081",
+    "at": "2026-01-01T06:17:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "catalogue.publish",
+    "target": "AUC-2179",
+    "detail": "Published Mahindra & Mahindra — Off-Spec Coils & Stainless Trims with 12 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0080",
+    "at": "2026-01-01T03:30:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.sta_refer",
+    "target": "AUC-2176",
+    "detail": "5 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0079",
+    "at": "2025-12-30T10:25:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2176",
+    "detail": "Published Mahindra & Mahindra — Off-Spec Coils & Stainless Trims with 9 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0078",
+    "at": "2025-12-28T06:24:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.sta_refer",
+    "target": "AUC-2173",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0316",
+    "at": "2025-12-27T16:55:00.000Z",
+    "actorId": "u-sub-1",
+    "action": "kyc.review",
+    "target": "u-hbuyer-020",
+    "detail": "KYC verified — GSTIN and PAN matched for Ambika Steels",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0077",
+    "at": "2025-12-26T14:51:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2173",
+    "detail": "Published East Coast Railway — Condemned Rolling Stock & Track Fittings with 8 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0076",
+    "at": "2025-12-24T15:10:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.sta_refer",
+    "target": "AUC-2170",
+    "detail": "2 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0074",
+    "at": "2025-12-24T11:09:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.extend",
+    "target": "AUC-2170",
+    "detail": "Anti-snipe auto-extension ×2 on LOT-12 (final 3 minutes)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0075",
+    "at": "2025-12-24T10:05:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.pause",
+    "target": "AUC-2170",
+    "detail": "Paused 8 min — seller clarification on a lot description",
+    "severity": "warning"
+  },
+  {
+    "id": "haud-0380",
+    "at": "2025-12-24T06:50:00.000Z",
+    "actorId": "u-hsub-02",
+    "action": "seller.verify",
+    "target": "u-hseller-08",
+    "detail": "Seller verified — WCL — Nagpur Area Stores, disposal authorisation and GSTIN on file",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0073",
+    "at": "2025-12-22T01:12:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2170",
+    "detail": "Published JSW Steel — Zinc Dross & FeSiMg Fines with 13 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0072",
+    "at": "2025-12-21T22:47:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2167",
+    "detail": "Approved settlement and delivery-order issue for 8 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0071",
+    "at": "2025-12-21T01:37:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.sta_refer",
+    "target": "AUC-2167",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0070",
+    "at": "2025-12-20T14:47:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.pause",
+    "target": "AUC-2167",
+    "detail": "Paused 16 min — yard confirmed a quantity correction",
+    "severity": "warning"
+  },
+  {
+    "id": "haud-0069",
+    "at": "2025-12-17T09:49:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "catalogue.publish",
+    "target": "AUC-2167",
+    "detail": "Published MSTC — Non-Ferrous Yard Clearance with 12 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0068",
+    "at": "2025-12-16T20:53:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.sta_refer",
+    "target": "AUC-2164",
+    "detail": "2 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0067",
+    "at": "2025-12-16T13:34:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.extend",
+    "target": "AUC-2164",
+    "detail": "Anti-snipe auto-extension ×1 on LOT-05 (final 3 minutes)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0309",
+    "at": "2025-12-15T22:49:00.000Z",
+    "actorId": "u-sub-1",
+    "action": "kyc.review",
+    "target": "u-hbuyer-013",
+    "detail": "KYC verified — GSTIN and PAN matched for Lodha Steel Traders",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0065",
+    "at": "2025-12-14T05:22:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2161",
+    "detail": "Approved settlement and delivery-order issue for 9 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0066",
+    "at": "2025-12-14T04:34:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2164",
+    "detail": "Published NTPC — Washery Rejects & Bottom Ash with 6 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0064",
+    "at": "2025-12-12T17:03:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.sta_refer",
+    "target": "AUC-2161",
+    "detail": "2 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0063",
+    "at": "2025-12-08T22:56:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2161",
+    "detail": "Published NTPC — Washery Rejects & Bottom Ash with 12 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0062",
+    "at": "2025-12-08T19:47:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2158",
+    "detail": "Approved settlement and delivery-order issue for 6 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0310",
+    "at": "2025-12-08T13:17:00.000Z",
+    "actorId": "u-hsub-02",
+    "action": "kyc.review",
+    "target": "u-hbuyer-014",
+    "detail": "KYC verified — GSTIN and PAN matched for Kaveri Industries",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0061",
+    "at": "2025-12-08T04:38:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.sta_refer",
+    "target": "AUC-2158",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0060",
+    "at": "2025-12-08T00:19:00.000Z",
+    "actorId": "u-hsub-02",
+    "action": "bid.flag",
+    "target": "AUC-2158",
+    "detail": "Flagged rapid bid pattern on LOT-04 for review",
+    "severity": "warning"
+  },
+  {
+    "id": "haud-0059",
+    "at": "2025-12-05T13:20:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "catalogue.publish",
+    "target": "AUC-2158",
+    "detail": "Published Ashok Leyland — SS Offcuts, Coil Ends & Turnings with 9 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0312",
+    "at": "2025-12-05T10:51:00.000Z",
+    "actorId": "u-hsub-02",
+    "action": "kyc.review",
+    "target": "u-hbuyer-016",
+    "detail": "KYC verified — GSTIN and PAN matched for Anand Casting Works",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0379",
+    "at": "2025-12-04T12:50:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "seller.verify",
+    "target": "u-hseller-07",
+    "detail": "Seller verified — Vedanta — Jharsuguda Aluminium, disposal authorisation and GSTIN on file",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0058",
+    "at": "2025-12-04T08:26:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.sta_refer",
+    "target": "AUC-2155",
+    "detail": "2 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0057",
+    "at": "2025-12-02T08:31:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "catalogue.publish",
+    "target": "AUC-2155",
+    "detail": "Published Northern Railway — PSC Sleeper & Brake Block Scrap with 5 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0056",
+    "at": "2025-12-01T21:33:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2152",
+    "detail": "Approved settlement and delivery-order issue for 4 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0378",
+    "at": "2025-12-01T05:53:00.000Z",
+    "actorId": "u-sub-1",
+    "action": "seller.verify",
+    "target": "u-hseller-06",
+    "detail": "Seller verified — Ashok Leyland — Hosur Unit II, disposal authorisation and GSTIN on file",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0313",
+    "at": "2025-12-01T01:18:00.000Z",
+    "actorId": "u-hsub-02",
+    "action": "kyc.review",
+    "target": "u-hbuyer-017",
+    "detail": "KYC verified — GSTIN and PAN matched for Kaveri Steel Traders",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0311",
+    "at": "2025-11-28T17:53:00.000Z",
+    "actorId": "u-sub-1",
+    "action": "kyc.review",
+    "target": "u-hbuyer-015",
+    "detail": "KYC verified — GSTIN and PAN matched for Sundaram Steels",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0055",
+    "at": "2025-11-28T02:12:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2152",
+    "detail": "Published RINL — Mixed MS Scrap, Turnings & TMT Rejects with 5 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0054",
+    "at": "2025-11-26T15:07:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2149",
+    "detail": "Approved settlement and delivery-order issue for 3 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0053",
+    "at": "2025-11-25T14:10:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.sta_refer",
+    "target": "AUC-2149",
+    "detail": "2 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0052",
+    "at": "2025-11-22T20:52:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2149",
+    "detail": "Published Mahindra & Mahindra — SS Offcuts, Coil Ends & Turnings with 5 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0051",
+    "at": "2025-11-21T22:45:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2146",
+    "detail": "Approved settlement and delivery-order issue for 7 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0050",
+    "at": "2025-11-21T01:50:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.sta_refer",
+    "target": "AUC-2146",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0049",
+    "at": "2025-11-18T11:43:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2146",
+    "detail": "Published MSTC — Copper, Brass & Cable Scrap with 10 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0392",
+    "at": "2025-11-18T06:30:00.000Z",
+    "actorId": "u-super-1",
+    "action": "user.create",
+    "target": "u-hauc-01",
+    "detail": "Created auction manager account for Rohan Deshpande (Pune)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0048",
+    "at": "2025-11-17T02:07:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2143",
+    "detail": "Approved settlement and delivery-order issue for 7 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0047",
+    "at": "2025-11-16T17:10:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.sta_refer",
+    "target": "AUC-2143",
+    "detail": "2 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0307",
+    "at": "2025-11-16T05:39:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "kyc.review",
+    "target": "u-hbuyer-011",
+    "detail": "KYC verified — GSTIN and PAN matched for Konark Ispat",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0046",
+    "at": "2025-11-12T20:24:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2143",
+    "detail": "Published East Coast Railway — PSC Sleeper & Brake Block Scrap with 10 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0045",
+    "at": "2025-11-11T18:30:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.sta_refer",
+    "target": "AUC-2140",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0389",
+    "at": "2025-11-08T06:30:00.000Z",
+    "actorId": "u-super-1",
+    "action": "user.create",
+    "target": "u-hfield-02",
+    "detail": "Created field exec account for Neelam Sethi (Bhubaneswar)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0044",
+    "at": "2025-11-08T00:36:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2140",
+    "detail": "Published NALCO — Non-Ferrous Mixed Disposal with 8 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0043",
+    "at": "2025-11-07T17:43:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2137",
+    "detail": "Approved settlement and delivery-order issue for 5 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0305",
+    "at": "2025-11-07T10:55:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "kyc.review",
+    "target": "u-hbuyer-009",
+    "detail": "KYC verified — GSTIN and PAN matched for Modi Metals",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0042",
+    "at": "2025-11-06T07:20:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.sta_refer",
+    "target": "AUC-2137",
+    "detail": "2 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0041",
+    "at": "2025-11-04T22:24:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2137",
+    "detail": "Published BHEL — Compressors, DG Sets & Lathes with 7 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0306",
+    "at": "2025-11-04T02:09:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "kyc.review",
+    "target": "u-hbuyer-010",
+    "detail": "KYC verified — GSTIN and PAN matched for Kothari Ferro Works",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0308",
+    "at": "2025-10-30T07:18:00.000Z",
+    "actorId": "u-hsub-02",
+    "action": "kyc.review",
+    "target": "u-hbuyer-012",
+    "detail": "KYC verified — GSTIN and PAN matched for Anand Enterprises",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0040",
+    "at": "2025-10-29T22:14:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "catalogue.publish",
+    "target": "AUC-2134",
+    "detail": "Published Northern Railway — Points, Crossings & Rail Cuttings with 8 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0039",
+    "at": "2025-10-27T13:25:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.sta_refer",
+    "target": "AUC-2131",
+    "detail": "3 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0038",
+    "at": "2025-10-27T06:17:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.extend",
+    "target": "AUC-2131",
+    "detail": "Anti-snipe auto-extension ×1 on LOT-08 (final 5 minutes)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0037",
+    "at": "2025-10-24T17:26:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "catalogue.publish",
+    "target": "AUC-2131",
+    "detail": "Published East Coast Railway — Released Rails, Wagons & OHE Copper with 10 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0036",
+    "at": "2025-10-24T01:30:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2128",
+    "detail": "Approved settlement and delivery-order issue for 7 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0035",
+    "at": "2025-10-22T10:28:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.sta_refer",
+    "target": "AUC-2128",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0034",
+    "at": "2025-10-22T04:15:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.pause",
+    "target": "AUC-2128",
+    "detail": "Paused 19 min — payment-gateway incident",
+    "severity": "warning"
+  },
+  {
+    "id": "haud-0377",
+    "at": "2025-10-22T01:15:00.000Z",
+    "actorId": "u-sub-1",
+    "action": "seller.verify",
+    "target": "u-hseller-05",
+    "detail": "Seller verified — Mahindra & Mahindra — Nashik Plant, disposal authorisation and GSTIN on file",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0033",
+    "at": "2025-10-19T23:21:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2128",
+    "detail": "Published NTPC — Unburnt Coal & Ash Products with 8 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0032",
+    "at": "2025-10-17T15:13:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2125",
+    "detail": "Approved settlement and delivery-order issue for 10 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0031",
+    "at": "2025-10-17T11:12:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.sta_refer",
+    "target": "AUC-2125",
+    "detail": "1 lot referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0030",
+    "at": "2025-10-16T23:10:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.extend",
+    "target": "AUC-2125",
+    "detail": "Anti-snipe auto-extension ×1 on LOT-09 (final 3 minutes)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0029",
+    "at": "2025-10-13T11:57:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "catalogue.publish",
+    "target": "AUC-2125",
+    "detail": "Published JSW Steel — Al Sheet Offcuts & Ingot Rejects with 12 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0028",
+    "at": "2025-10-11T21:45:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2122",
+    "detail": "Approved settlement and delivery-order issue for 3 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0027",
+    "at": "2025-10-11T10:58:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.sta_refer",
+    "target": "AUC-2122",
+    "detail": "2 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0026",
+    "at": "2025-10-10T22:26:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.extend",
+    "target": "AUC-2122",
+    "detail": "Anti-snipe auto-extension ×3 on LOT-02 (final 3 minutes)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0304",
+    "at": "2025-10-09T22:26:00.000Z",
+    "actorId": "u-hsub-02",
+    "action": "kyc.review",
+    "target": "u-hbuyer-008",
+    "detail": "KYC verified — GSTIN and PAN matched for Rathi Enterprises",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0025",
+    "at": "2025-10-09T12:58:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "catalogue.publish",
+    "target": "AUC-2122",
+    "detail": "Published BHEL — Workshop Machinery Disposal with 6 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0024",
+    "at": "2025-10-06T21:17:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2119",
+    "detail": "Approved settlement and delivery-order issue for 4 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0023",
+    "at": "2025-10-05T03:18:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "auction.sta_refer",
+    "target": "AUC-2119",
+    "detail": "3 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0022",
+    "at": "2025-10-01T09:43:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "catalogue.publish",
+    "target": "AUC-2119",
+    "detail": "Published MSTC — Cu Armature & Brass Shell Scrap with 7 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0021",
+    "at": "2025-09-30T13:52:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2116",
+    "detail": "Approved settlement and delivery-order issue for 4 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0020",
+    "at": "2025-09-29T01:44:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.sta_refer",
+    "target": "AUC-2116",
+    "detail": "4 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0019",
+    "at": "2025-09-26T04:54:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "catalogue.publish",
+    "target": "AUC-2116",
+    "detail": "Published MSTC — Radiators, Cable & Utensil Scrap with 13 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0302",
+    "at": "2025-09-25T12:44:00.000Z",
+    "actorId": "u-sub-1",
+    "action": "kyc.review",
+    "target": "u-hbuyer-006",
+    "detail": "KYC verified — GSTIN and PAN matched for Anand Metal Works",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0303",
+    "at": "2025-09-25T00:00:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "kyc.review",
+    "target": "u-hbuyer-007",
+    "detail": "KYC verified — GSTIN and PAN matched for Kaveri Trading Co",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0018",
+    "at": "2025-09-22T14:07:00.000Z",
+    "actorId": "u-sub-1",
+    "action": "bid.flag",
+    "target": "AUC-2113",
+    "detail": "Flagged rapid bid pattern on LOT-10 for review",
+    "severity": "warning"
+  },
+  {
+    "id": "haud-0376",
+    "at": "2025-09-20T08:13:00.000Z",
+    "actorId": "u-sub-1",
+    "action": "seller.verify",
+    "target": "u-hseller-04",
+    "detail": "Seller verified — Northern Railway — Jagadhri Workshop, disposal authorisation and GSTIN on file",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0017",
+    "at": "2025-09-20T06:47:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2113",
+    "detail": "Published RINL — HMS 1 & 2 with Plate Cuttings with 12 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0393",
+    "at": "2025-09-19T06:30:00.000Z",
+    "actorId": "u-super-1",
+    "action": "user.create",
+    "target": "u-hsub-01",
+    "detail": "Created sub admin account for Faiza Ahmed (Lucknow)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0300",
+    "at": "2025-09-19T02:05:00.000Z",
+    "actorId": "u-sub-1",
+    "action": "kyc.review",
+    "target": "u-hbuyer-004",
+    "detail": "KYC verified — GSTIN and PAN matched for Goyal Ispat",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0016",
+    "at": "2025-09-17T05:26:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "settlement.approve",
+    "target": "AUC-2110",
+    "detail": "Approved settlement and delivery-order issue for 8 sold lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0015",
+    "at": "2025-09-16T02:14:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.pause",
+    "target": "AUC-2110",
+    "detail": "Paused 4 min — yard confirmed a quantity correction",
+    "severity": "warning"
+  },
+  {
+    "id": "haud-0014",
+    "at": "2025-09-14T23:50:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2110",
+    "detail": "Published Hindalco — Non-Ferrous Mixed Disposal with 8 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0299",
+    "at": "2025-09-13T20:32:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "kyc.review",
+    "target": "u-hbuyer-003",
+    "detail": "KYC verified — GSTIN and PAN matched for Maruti Enterprises",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0301",
+    "at": "2025-09-08T21:24:00.000Z",
+    "actorId": "u-hsub-02",
+    "action": "kyc.review",
+    "target": "u-hbuyer-005",
+    "detail": "KYC verified — GSTIN and PAN matched for Goyal Ferro Works",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0013",
+    "at": "2025-09-08T13:47:00.000Z",
+    "actorId": "u-hsub-01",
+    "action": "bid.flag",
+    "target": "AUC-2107",
+    "detail": "Flagged rapid bid pattern on LOT-07 for review",
+    "severity": "warning"
+  },
+  {
+    "id": "haud-0012",
+    "at": "2025-09-08T09:59:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.pause",
+    "target": "AUC-2107",
+    "detail": "Paused 18 min — payment-gateway incident",
+    "severity": "warning"
+  },
+  {
+    "id": "haud-0011",
+    "at": "2025-09-07T08:53:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2107",
+    "detail": "Published BHEL — Plant & Machinery, Condemned Assets with 9 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0010",
+    "at": "2025-08-30T08:53:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "catalogue.publish",
+    "target": "AUC-2104",
+    "detail": "Published MSTC — Copper, Brass & Cable Scrap with 8 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0009",
+    "at": "2025-08-25T04:27:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.sta_refer",
+    "target": "AUC-2101",
+    "detail": "4 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0008",
+    "at": "2025-08-24T15:15:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.extend",
+    "target": "AUC-2101",
+    "detail": "Anti-snipe auto-extension ×1 on LOT-08 (final 5 minutes)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0375",
+    "at": "2025-08-24T12:07:00.000Z",
+    "actorId": "u-hsub-02",
+    "action": "seller.verify",
+    "target": "u-hseller-03",
+    "detail": "Seller verified — NALCO — Angul Smelter, disposal authorisation and GSTIN on file",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0007",
+    "at": "2025-08-23T09:39:00.000Z",
+    "actorId": "u-exec-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2101",
+    "detail": "Published Hindalco — Zinc Dross & FeSiMg Fines with 12 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0388",
+    "at": "2025-08-20T06:30:00.000Z",
+    "actorId": "u-super-1",
+    "action": "user.create",
+    "target": "u-hfield-01",
+    "detail": "Created field exec account for Prakash Bora (Visakhapatnam)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0006",
+    "at": "2025-08-16T05:27:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.sta_refer",
+    "target": "AUC-2098",
+    "detail": "3 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0005",
+    "at": "2025-08-14T14:20:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2098",
+    "detail": "Published East Coast Railway — Points, Crossings & Rail Cuttings with 12 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0297",
+    "at": "2025-08-07T21:05:00.000Z",
+    "actorId": "u-hsub-02",
+    "action": "kyc.review",
+    "target": "u-hbuyer-001",
+    "detail": "KYC verified — GSTIN and PAN matched for Poddar Metals",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0004",
+    "at": "2025-08-05T19:18:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "auction.extend",
+    "target": "AUC-2095",
+    "detail": "Anti-snipe auto-extension ×1 on LOT-04 (final 3 minutes)",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0003",
+    "at": "2025-08-04T05:54:00.000Z",
+    "actorId": "u-auction-1",
+    "action": "catalogue.publish",
+    "target": "AUC-2095",
+    "detail": "Published NTPC — Coal Rejects, Fly Ash & Used Oil with 8 lots",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0373",
+    "at": "2025-07-29T16:39:00.000Z",
+    "actorId": "u-hsub-02",
+    "action": "seller.verify",
+    "target": "u-hseller-01",
+    "detail": "Seller verified — RINL — Visakhapatnam Steel Plant, disposal authorisation and GSTIN on file",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0374",
+    "at": "2025-07-29T05:35:00.000Z",
+    "actorId": "u-sub-1",
+    "action": "seller.verify",
+    "target": "u-hseller-02",
+    "detail": "Seller verified — Hindalco — Renukoot Works, disposal authorisation and GSTIN on file",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0002",
+    "at": "2025-07-27T03:25:00.000Z",
+    "actorId": "u-auction-2",
+    "action": "auction.sta_refer",
+    "target": "AUC-2092",
+    "detail": "2 lots referred to the seller — H1 below reserve",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0298",
+    "at": "2025-07-24T03:23:00.000Z",
+    "actorId": "u-sub-1",
+    "action": "kyc.review",
+    "target": "u-hbuyer-002",
+    "detail": "KYC verified — GSTIN and PAN matched for Narmada Metal Corp",
+    "severity": "info"
+  },
+  {
+    "id": "haud-0001",
+    "at": "2025-07-23T14:22:00.000Z",
+    "actorId": "u-hauc-01",
+    "action": "catalogue.publish",
+    "target": "AUC-2092",
+    "detail": "Published MSTC — Copper, Brass & Cable Scrap with 8 lots",
+    "severity": "info"
   }
 ]

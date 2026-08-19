@@ -540,15 +540,26 @@ function seedRefunds(): RefundRequest[] {
 /** Seller decisions on cleared lots in closed auctions. Deterministic, and it
  *  never overwrites a decision the mock data already states. */
 function seedSellerDecisions(): Lot[] {
-  const closed = new Set(seed.catalogues.filter((c) => c.status === 'closed').map((c) => c.id))
+  const closedAt = new Map(
+    seed.catalogues.filter((c) => c.status === 'closed').map((c) => [c.id, Date.parse(c.endsAt)]),
+  )
   return seed.lots.map((l) => {
     if (l.sellerDecision) return l
-    if (!closed.has(l.catalogueId)) return l
+    const closed = closedAt.get(l.catalogueId)
+    if (closed == null) return l
     if (l.status !== 'sold' && l.status !== 'sta') return l
     const h = hash(l.id)
+    /* A price left undecided is a live piece of work, and work does not sit for
+       a year — beyond the decision window every historical lot has been
+       answered one way or the other. Only recent closes are still open. */
+    const decided = Date.now() - closed > 21 * 86_400_000
     // A seller accepts most prices. They reject where the lot cleared below
     // their reserve, which is exactly what "subject to approval" means.
-    if (l.status === 'sta') return h % 3 === 0 ? l : { ...l, sellerDecision: 'rejected' as const }
+    if (l.status === 'sta') {
+      if (decided) return h % 4 === 0 ? { ...l, sellerDecision: 'accepted' as const } : { ...l, sellerDecision: 'rejected' as const }
+      return h % 3 === 0 ? l : { ...l, sellerDecision: 'rejected' as const }
+    }
+    if (decided) return h % 17 === 0 ? { ...l, sellerDecision: 'rejected' as const } : { ...l, sellerDecision: 'accepted' as const }
     return h % 9 === 0 ? l : { ...l, sellerDecision: 'accepted' as const }
   })
 }
@@ -567,14 +578,29 @@ function seedCommissionSettlements(lots: Lot[]): CommissionSettlement[] {
       return sum + Math.max(0, cleared - l.reserveRate * l.indicativeQty) * rate
     }, 0))
     if (amount <= 0) continue
-    // Cycle the states so every tab on the Commission screen has rows: two
-    // confirmed (income the P&L can recognise), one recorded and waiting, one
-    // queried, one left entirely unpaid so there is something to chase.
-    const state = i % 5
+    /* Cycle the states so every tab on the Commission screen has rows: two
+       confirmed (income the P&L can recognise), one recorded and waiting, one
+       queried, one left entirely unpaid so there is something to chase.
+
+       Only auctions that closed recently get the unsettled states. A year of
+       history cycled the same way would show commission still unconfirmed from
+       nine months ago, which reads as a desk that never collects rather than a
+       desk with work on it — so anything older than the ageing window is
+       settled and confirmed, bar the occasional genuine bad debt. */
+    const daysSinceClose = (Date.now() - Date.parse(cat.endsAt)) / 86_400_000
+    const aged = daysSinceClose > 60
+    const state = aged ? (hash(`${cat.id}s`) % 11 === 0 ? 4 : hash(`${cat.id}s`) % 2) : i % 5
     i += 1
     if (state === 4) continue // owed, nothing recorded — the chase case
     const mode: CommissionSettlement['mode'] = state === 1 ? 'emd' : 'transfer'
-    const at = minutesAgo(60 * (12 + i * 9))
+    /* A settlement is dated off the auction it settles, never off "now" — with
+       a year of closed auctions behind us, stamping them all in the last few
+       weeks would book twelve months of commission into this month's P&L. The
+       seller pays a few days after close; Finance sees the credit a day or two
+       after that, and neither instant is ever allowed into the future. */
+    const closedAt = Date.parse(cat.endsAt)
+    const at = new Date(Math.min(Date.now(), closedAt + (2 + (hash(cat.id) % 6)) * 86_400_000)).toISOString()
+    const confirmedAt = new Date(Math.min(Date.now(), Date.parse(at) + (1 + (hash(`${cat.id}c`) % 3)) * 86_400_000)).toISOString()
     rows.push({
       id: `settle-seed-${i}`,
       catalogueId: cat.id,
@@ -585,7 +611,7 @@ function seedCommissionSettlements(lots: Lot[]): CommissionSettlement[] {
       reference: mode === 'emd' ? `EMD-NET-${cat.code}` : `${cat.code}-${utrFor(cat.id).slice(3, 12)}`,
       status: state === 2 ? 'recorded' : state === 3 ? 'queried' : 'confirmed',
       ...(state === 0 || state === 1
-        ? { confirmedBy: 'u-fin-1', confirmedAt: minutesAgo(60 * (6 + i * 7)) }
+        ? { confirmedBy: 'u-fin-1', confirmedAt }
         : {}),
       ...(state === 3
         ? { queryNote: 'No credit matching this reference appears on the settlement account for that date. Please confirm the UTR.' }
@@ -600,7 +626,8 @@ function seedCommissionSettlements(lots: Lot[]): CommissionSettlement[] {
 function seedInvoices(): Invoice[] {
   return seed.deliveryOrders
     .filter((d) => d.paidAmount > 0)
-    .slice(0, 5)
+    // Oldest first, so the invoice numbers run in the order the sales did.
+    .sort((a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt))
     .map((d, i) => ({
       id: `inv-seed-${i + 1}`,
       number: `FB/INV/26/${String(1001 + i)}`,

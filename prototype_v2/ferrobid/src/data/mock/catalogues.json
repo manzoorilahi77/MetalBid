@@ -1619,5 +1619,5388 @@
     ],
     "termsSetId": "ts-standard",
     "description": "E-auction of ferrous scrap and rebar cuttings on as-is-where-is basis. Every lot inspected and approved; one lot accepted directly under a trusted-seller bypass. Quantity indicative — final on weighment."
+  },
+  {
+    "id": "hcat-001",
+    "code": "AUC-2092",
+    "title": "MSTC — Copper, Brass & Cable Scrap",
+    "sellerId": "u-seller-6",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2025-07-23T20:59:00.000Z",
+    "endsAt": "2025-07-26T20:59:00.000Z",
+    "emdDeadline": "2025-07-22T20:59:00.000Z",
+    "inspectionFrom": "2025-07-18T20:59:00.000Z",
+    "inspectionTo": "2025-07-22T20:59:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "T. Ghosh",
+      "phone": "+91 90070 18836",
+      "role": "Yard Supervisor"
+    },
+    "yardName": "MSTC Paradip Yard",
+    "yardAddress": "MSTC Stockyard, Paradip Port Area, Jagatsinghpur, Odisha 754142",
+    "region": "Paradip, OD",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "hlot-0001",
+      "hlot-0002",
+      "hlot-0003",
+      "hlot-0004",
+      "hlot-0005",
+      "hlot-0006",
+      "hlot-0007",
+      "hlot-0008"
+    ],
+    "documents": [
+      {
+        "id": "hcat-001-doc-1",
+        "name": "AUC-2092 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.3 MB"
+      },
+      {
+        "id": "hcat-001-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "849 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of copper, brass & cable scrap on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-002",
+    "code": "AUC-2095",
+    "title": "NTPC — Coal Rejects, Fly Ash & Used Oil",
+    "sellerId": "u-seller-5",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2025-08-04T19:33:00.000Z",
+    "endsAt": "2025-08-05T19:33:00.000Z",
+    "emdDeadline": "2025-08-03T19:33:00.000Z",
+    "inspectionFrom": "2025-07-30T19:33:00.000Z",
+    "inspectionTo": "2025-08-03T19:33:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "G. Srinivas",
+      "phone": "+91 87903 55240",
+      "role": "AGM (Fuel Handling)"
+    },
+    "yardName": "RSTPS Ash Yard",
+    "yardAddress": "NTPC Ramagundam, Jyothinagar, Peddapalli, Telangana 505215",
+    "region": "Ramagundam, TS",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0009",
+      "hlot-0010",
+      "hlot-0011",
+      "hlot-0012",
+      "hlot-0013",
+      "hlot-0014",
+      "hlot-0015",
+      "hlot-0016"
+    ],
+    "documents": [
+      {
+        "id": "hcat-002-doc-1",
+        "name": "AUC-2095 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.1 MB"
+      },
+      {
+        "id": "hcat-002-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "896 KB"
+      }
+    ],
+    "termsSetId": "ts-hazmat",
+    "description": "E-auction of coal rejects, fly ash & used oil on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-003",
+    "code": "AUC-2098",
+    "title": "East Coast Railway — Points, Crossings & Rail Cuttings",
+    "sellerId": "u-seller-3",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2025-08-14T22:38:00.000Z",
+    "endsAt": "2025-08-15T22:38:00.000Z",
+    "emdDeadline": "2025-08-13T22:38:00.000Z",
+    "inspectionFrom": "2025-08-09T22:38:00.000Z",
+    "inspectionTo": "2025-08-13T22:38:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "B. Pradhan",
+      "phone": "+91 89178 30425",
+      "role": "SSE / Depot Material Superintendent"
+    },
+    "yardName": "Mancheswar Depot",
+    "yardAddress": "Carriage Repair Workshop, Mancheswar, Bhubaneswar, Odisha 751017",
+    "region": "Bhubaneswar, OD",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 14,
+    "lotIds": [
+      "hlot-0017",
+      "hlot-0018",
+      "hlot-0019",
+      "hlot-0020",
+      "hlot-0021",
+      "hlot-0022",
+      "hlot-0023",
+      "hlot-0024",
+      "hlot-0025",
+      "hlot-0026",
+      "hlot-0027",
+      "hlot-0028"
+    ],
+    "documents": [
+      {
+        "id": "hcat-003-doc-1",
+        "name": "AUC-2098 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "3.2 MB"
+      },
+      {
+        "id": "hcat-003-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "827 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of points, crossings & rail cuttings on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-004",
+    "code": "AUC-2101",
+    "title": "Hindalco — Zinc Dross & FeSiMg Fines",
+    "sellerId": "u-hseller-02",
+    "type": "tender",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2025-08-23T15:58:00.000Z",
+    "endsAt": "2025-08-24T15:58:00.000Z",
+    "emdDeadline": "2025-08-22T15:58:00.000Z",
+    "inspectionFrom": "2025-08-18T15:58:00.000Z",
+    "inspectionTo": "2025-08-22T15:58:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Vikram Khan",
+      "phone": "+91 96262 43623",
+      "role": "Stores Superintendent"
+    },
+    "yardName": "Renukoot Smelter Yard",
+    "yardAddress": "Hindalco Industries, Renukoot, Sonbhadra, Uttar Pradesh 231217",
+    "region": "Renukoot, UP",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "hlot-0029",
+      "hlot-0030",
+      "hlot-0031",
+      "hlot-0032",
+      "hlot-0033",
+      "hlot-0034",
+      "hlot-0035",
+      "hlot-0036",
+      "hlot-0037",
+      "hlot-0038",
+      "hlot-0039",
+      "hlot-0040"
+    ],
+    "documents": [
+      {
+        "id": "hcat-004-doc-1",
+        "name": "AUC-2101 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.3 MB"
+      },
+      {
+        "id": "hcat-004-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "704 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of zinc dross & fesimg fines on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-005",
+    "code": "AUC-2104",
+    "title": "MSTC — Copper, Brass & Cable Scrap",
+    "sellerId": "u-seller-6",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2025-08-30T23:03:00.000Z",
+    "endsAt": "2025-08-31T23:03:00.000Z",
+    "emdDeadline": "2025-08-29T23:03:00.000Z",
+    "inspectionFrom": "2025-08-25T23:03:00.000Z",
+    "inspectionTo": "2025-08-29T23:03:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "T. Ghosh",
+      "phone": "+91 90070 18836",
+      "role": "Yard Supervisor"
+    },
+    "yardName": "MSTC Paradip Yard",
+    "yardAddress": "MSTC Stockyard, Paradip Port Area, Jagatsinghpur, Odisha 754142",
+    "region": "Paradip, OD",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0041",
+      "hlot-0042",
+      "hlot-0043",
+      "hlot-0044",
+      "hlot-0045",
+      "hlot-0046",
+      "hlot-0047",
+      "hlot-0048"
+    ],
+    "documents": [
+      {
+        "id": "hcat-005-doc-1",
+        "name": "AUC-2104 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.7 MB"
+      },
+      {
+        "id": "hcat-005-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "707 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of copper, brass & cable scrap on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-006",
+    "code": "AUC-2107",
+    "title": "BHEL — Plant & Machinery, Condemned Assets",
+    "sellerId": "u-seller-7",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2025-09-07T14:50:00.000Z",
+    "endsAt": "2025-09-08T14:50:00.000Z",
+    "emdDeadline": "2025-09-06T14:50:00.000Z",
+    "inspectionFrom": "2025-09-02T14:50:00.000Z",
+    "inspectionTo": "2025-09-06T14:50:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "R. Elango",
+      "phone": "+91 94430 20951",
+      "role": "Sr. Engineer (Disposals)"
+    },
+    "yardName": "BHEL Unit II Yard",
+    "yardAddress": "BHEL Tiruchirappalli, Kailasapuram, Tamil Nadu 620014",
+    "region": "Trichy, TN",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "hlot-0049",
+      "hlot-0050",
+      "hlot-0051",
+      "hlot-0052",
+      "hlot-0053",
+      "hlot-0054",
+      "hlot-0055",
+      "hlot-0056",
+      "hlot-0057"
+    ],
+    "documents": [
+      {
+        "id": "hcat-006-doc-1",
+        "name": "AUC-2107 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.4 MB"
+      },
+      {
+        "id": "hcat-006-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "666 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of plant & machinery, condemned assets on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-007",
+    "code": "AUC-2110",
+    "title": "Hindalco — Non-Ferrous Mixed Disposal",
+    "sellerId": "u-hseller-02",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2025-09-15T03:39:00.000Z",
+    "endsAt": "2025-09-16T03:39:00.000Z",
+    "emdDeadline": "2025-09-14T03:39:00.000Z",
+    "inspectionFrom": "2025-09-10T03:39:00.000Z",
+    "inspectionTo": "2025-09-14T03:39:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Vikram Khan",
+      "phone": "+91 96262 43623",
+      "role": "Stores Superintendent"
+    },
+    "yardName": "Renukoot Smelter Yard",
+    "yardAddress": "Hindalco Industries, Renukoot, Sonbhadra, Uttar Pradesh 231217",
+    "region": "Renukoot, UP",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0058",
+      "hlot-0059",
+      "hlot-0060",
+      "hlot-0061",
+      "hlot-0062",
+      "hlot-0063",
+      "hlot-0064",
+      "hlot-0065"
+    ],
+    "documents": [
+      {
+        "id": "hcat-007-doc-1",
+        "name": "AUC-2110 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.4 MB"
+      },
+      {
+        "id": "hcat-007-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "826 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of non-ferrous mixed disposal on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-008",
+    "code": "AUC-2113",
+    "title": "RINL — HMS 1 & 2 with Plate Cuttings",
+    "sellerId": "u-hseller-01",
+    "type": "tender",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2025-09-20T16:31:00.000Z",
+    "endsAt": "2025-09-22T16:31:00.000Z",
+    "emdDeadline": "2025-09-19T16:31:00.000Z",
+    "inspectionFrom": "2025-09-15T16:31:00.000Z",
+    "inspectionTo": "2025-09-19T16:31:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Tejinder Deshmukh",
+      "phone": "+91 72737 17182",
+      "role": "Sr. Engineer (Salvage & Disposals)"
+    },
+    "yardName": "VSP Scrap Yard 2",
+    "yardAddress": "Gate 3, RINL Visakhapatnam Steel Plant, Visakhapatnam, Andhra Pradesh 530031",
+    "region": "Visakhapatnam, AP",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0066",
+      "hlot-0067",
+      "hlot-0068",
+      "hlot-0069",
+      "hlot-0070",
+      "hlot-0071",
+      "hlot-0072",
+      "hlot-0073",
+      "hlot-0074",
+      "hlot-0075",
+      "hlot-0076",
+      "hlot-0077"
+    ],
+    "documents": [
+      {
+        "id": "hcat-008-doc-1",
+        "name": "AUC-2113 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.0 MB"
+      },
+      {
+        "id": "hcat-008-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "713 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of hms 1 & 2 with plate cuttings on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-009",
+    "code": "AUC-2116",
+    "title": "MSTC — Radiators, Cable & Utensil Scrap",
+    "sellerId": "u-seller-6",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2025-09-26T19:30:00.000Z",
+    "endsAt": "2025-09-28T19:30:00.000Z",
+    "emdDeadline": "2025-09-25T19:30:00.000Z",
+    "inspectionFrom": "2025-09-21T19:30:00.000Z",
+    "inspectionTo": "2025-09-25T19:30:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "T. Ghosh",
+      "phone": "+91 90070 18836",
+      "role": "Yard Supervisor"
+    },
+    "yardName": "MSTC Paradip Yard",
+    "yardAddress": "MSTC Stockyard, Paradip Port Area, Jagatsinghpur, Odisha 754142",
+    "region": "Paradip, OD",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0078",
+      "hlot-0079",
+      "hlot-0080",
+      "hlot-0081",
+      "hlot-0082",
+      "hlot-0083",
+      "hlot-0084",
+      "hlot-0085",
+      "hlot-0086",
+      "hlot-0087",
+      "hlot-0088",
+      "hlot-0089",
+      "hlot-0090"
+    ],
+    "documents": [
+      {
+        "id": "hcat-009-doc-1",
+        "name": "AUC-2116 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.7 MB"
+      },
+      {
+        "id": "hcat-009-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "641 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of radiators, cable & utensil scrap on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-010",
+    "code": "AUC-2119",
+    "title": "MSTC — Cu Armature & Brass Shell Scrap",
+    "sellerId": "u-seller-6",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2025-10-01T16:31:00.000Z",
+    "endsAt": "2025-10-04T16:31:00.000Z",
+    "emdDeadline": "2025-09-30T16:31:00.000Z",
+    "inspectionFrom": "2025-09-26T16:31:00.000Z",
+    "inspectionTo": "2025-09-30T16:31:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "T. Ghosh",
+      "phone": "+91 90070 18836",
+      "role": "Yard Supervisor"
+    },
+    "yardName": "MSTC Paradip Yard",
+    "yardAddress": "MSTC Stockyard, Paradip Port Area, Jagatsinghpur, Odisha 754142",
+    "region": "Paradip, OD",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "hlot-0091",
+      "hlot-0092",
+      "hlot-0093",
+      "hlot-0094",
+      "hlot-0095",
+      "hlot-0096",
+      "hlot-0097"
+    ],
+    "documents": [
+      {
+        "id": "hcat-010-doc-1",
+        "name": "AUC-2119 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.9 MB"
+      },
+      {
+        "id": "hcat-010-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "809 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of cu armature & brass shell scrap on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-011",
+    "code": "AUC-2122",
+    "title": "BHEL — Workshop Machinery Disposal",
+    "sellerId": "u-seller-7",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2025-10-09T22:38:00.000Z",
+    "endsAt": "2025-10-10T22:38:00.000Z",
+    "emdDeadline": "2025-10-08T22:38:00.000Z",
+    "inspectionFrom": "2025-10-04T22:38:00.000Z",
+    "inspectionTo": "2025-10-08T22:38:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "R. Elango",
+      "phone": "+91 94430 20951",
+      "role": "Sr. Engineer (Disposals)"
+    },
+    "yardName": "BHEL Unit II Yard",
+    "yardAddress": "BHEL Tiruchirappalli, Kailasapuram, Tamil Nadu 620014",
+    "region": "Trichy, TN",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 14,
+    "lotIds": [
+      "hlot-0098",
+      "hlot-0099",
+      "hlot-0100",
+      "hlot-0101",
+      "hlot-0102",
+      "hlot-0103"
+    ],
+    "documents": [
+      {
+        "id": "hcat-011-doc-1",
+        "name": "AUC-2122 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.4 MB"
+      },
+      {
+        "id": "hcat-011-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "765 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of workshop machinery disposal on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-012",
+    "code": "AUC-2125",
+    "title": "JSW Steel — Al Sheet Offcuts & Ingot Rejects",
+    "sellerId": "u-seller-4",
+    "type": "tender",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2025-10-13T23:18:00.000Z",
+    "endsAt": "2025-10-16T23:18:00.000Z",
+    "emdDeadline": "2025-10-12T23:18:00.000Z",
+    "inspectionFrom": "2025-10-08T23:18:00.000Z",
+    "inspectionTo": "2025-10-12T23:18:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "H. Kulkarni",
+      "phone": "+91 90360 71182",
+      "role": "Manager, Commercial (Disposals)"
+    },
+    "yardName": "VJNR Yard B",
+    "yardAddress": "JSW Steel Vijayanagar Works, Toranagallu, Bellary, Karnataka 583275",
+    "region": "Bellary, KA",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "hlot-0104",
+      "hlot-0105",
+      "hlot-0106",
+      "hlot-0107",
+      "hlot-0108",
+      "hlot-0109",
+      "hlot-0110",
+      "hlot-0111",
+      "hlot-0112",
+      "hlot-0113",
+      "hlot-0114",
+      "hlot-0115"
+    ],
+    "documents": [
+      {
+        "id": "hcat-012-doc-1",
+        "name": "AUC-2125 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.7 MB"
+      },
+      {
+        "id": "hcat-012-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "687 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of al sheet offcuts & ingot rejects on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-013",
+    "code": "AUC-2128",
+    "title": "NTPC — Unburnt Coal & Ash Products",
+    "sellerId": "u-seller-5",
+    "type": "tender",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2025-10-20T07:23:00.000Z",
+    "endsAt": "2025-10-22T07:23:00.000Z",
+    "emdDeadline": "2025-10-19T07:23:00.000Z",
+    "inspectionFrom": "2025-10-15T07:23:00.000Z",
+    "inspectionTo": "2025-10-19T07:23:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "G. Srinivas",
+      "phone": "+91 87903 55240",
+      "role": "AGM (Fuel Handling)"
+    },
+    "yardName": "RSTPS Ash Yard",
+    "yardAddress": "NTPC Ramagundam, Jyothinagar, Peddapalli, Telangana 505215",
+    "region": "Ramagundam, TS",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0116",
+      "hlot-0117",
+      "hlot-0118",
+      "hlot-0119",
+      "hlot-0120",
+      "hlot-0121",
+      "hlot-0122",
+      "hlot-0123"
+    ],
+    "documents": [
+      {
+        "id": "hcat-013-doc-1",
+        "name": "AUC-2128 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.1 MB"
+      },
+      {
+        "id": "hcat-013-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "828 KB"
+      }
+    ],
+    "termsSetId": "ts-hazmat",
+    "description": "E-auction of unburnt coal & ash products on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-014",
+    "code": "AUC-2131",
+    "title": "East Coast Railway — Released Rails, Wagons & OHE Copper",
+    "sellerId": "u-seller-3",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2025-10-25T06:33:00.000Z",
+    "endsAt": "2025-10-27T06:33:00.000Z",
+    "emdDeadline": "2025-10-24T06:33:00.000Z",
+    "inspectionFrom": "2025-10-20T06:33:00.000Z",
+    "inspectionTo": "2025-10-24T06:33:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "B. Pradhan",
+      "phone": "+91 89178 30425",
+      "role": "SSE / Depot Material Superintendent"
+    },
+    "yardName": "Mancheswar Depot",
+    "yardAddress": "Carriage Repair Workshop, Mancheswar, Bhubaneswar, Odisha 751017",
+    "region": "Bhubaneswar, OD",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "hlot-0124",
+      "hlot-0125",
+      "hlot-0126",
+      "hlot-0127",
+      "hlot-0128",
+      "hlot-0129",
+      "hlot-0130",
+      "hlot-0131",
+      "hlot-0132",
+      "hlot-0133"
+    ],
+    "documents": [
+      {
+        "id": "hcat-014-doc-1",
+        "name": "AUC-2131 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.7 MB"
+      },
+      {
+        "id": "hcat-014-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "931 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of released rails, wagons & ohe copper on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-015",
+    "code": "AUC-2134",
+    "title": "Northern Railway — Points, Crossings & Rail Cuttings",
+    "sellerId": "u-hseller-04",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2025-10-30T07:35:00.000Z",
+    "endsAt": "2025-11-01T07:35:00.000Z",
+    "emdDeadline": "2025-10-29T07:35:00.000Z",
+    "inspectionFrom": "2025-10-25T07:35:00.000Z",
+    "inspectionTo": "2025-10-29T07:35:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Balbir Verma",
+      "phone": "+91 91321 43964",
+      "role": "Yard In-charge (Inspection & Lifting)"
+    },
+    "yardName": "Jagadhri Workshop Yard",
+    "yardAddress": "Carriage Workshop, Jagadhri, Yamunanagar, Haryana 135002",
+    "region": "Yamunanagar, HR",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "hlot-0134",
+      "hlot-0135",
+      "hlot-0136",
+      "hlot-0137",
+      "hlot-0138",
+      "hlot-0139",
+      "hlot-0140",
+      "hlot-0141"
+    ],
+    "documents": [
+      {
+        "id": "hcat-015-doc-1",
+        "name": "AUC-2134 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.8 MB"
+      },
+      {
+        "id": "hcat-015-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "843 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of points, crossings & rail cuttings on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-016",
+    "code": "AUC-2137",
+    "title": "BHEL — Compressors, DG Sets & Lathes",
+    "sellerId": "u-seller-7",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2025-11-05T05:48:00.000Z",
+    "endsAt": "2025-11-06T05:48:00.000Z",
+    "emdDeadline": "2025-11-04T05:48:00.000Z",
+    "inspectionFrom": "2025-10-31T05:48:00.000Z",
+    "inspectionTo": "2025-11-04T05:48:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "R. Elango",
+      "phone": "+91 94430 20951",
+      "role": "Sr. Engineer (Disposals)"
+    },
+    "yardName": "BHEL Unit II Yard",
+    "yardAddress": "BHEL Tiruchirappalli, Kailasapuram, Tamil Nadu 620014",
+    "region": "Trichy, TN",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 14,
+    "lotIds": [
+      "hlot-0142",
+      "hlot-0143",
+      "hlot-0144",
+      "hlot-0145",
+      "hlot-0146",
+      "hlot-0147",
+      "hlot-0148"
+    ],
+    "documents": [
+      {
+        "id": "hcat-016-doc-1",
+        "name": "AUC-2137 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "3.4 MB"
+      },
+      {
+        "id": "hcat-016-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "755 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of compressors, dg sets & lathes on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-017",
+    "code": "AUC-2140",
+    "title": "NALCO — Non-Ferrous Mixed Disposal",
+    "sellerId": "u-hseller-03",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2025-11-08T11:12:00.000Z",
+    "endsAt": "2025-11-11T11:12:00.000Z",
+    "emdDeadline": "2025-11-07T11:12:00.000Z",
+    "inspectionFrom": "2025-11-03T11:12:00.000Z",
+    "inspectionTo": "2025-11-07T11:12:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Karthik Das",
+      "phone": "+91 72550 60870",
+      "role": "Dy. Manager, By-products"
+    },
+    "yardName": "Angul Disposal Yard",
+    "yardAddress": "NALCO Smelter Plant, Angul, Odisha 759145",
+    "region": "Angul, OD",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 14,
+    "lotIds": [
+      "hlot-0149",
+      "hlot-0150",
+      "hlot-0151",
+      "hlot-0152",
+      "hlot-0153",
+      "hlot-0154",
+      "hlot-0155",
+      "hlot-0156"
+    ],
+    "documents": [
+      {
+        "id": "hcat-017-doc-1",
+        "name": "AUC-2140 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "3.1 MB"
+      },
+      {
+        "id": "hcat-017-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "870 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of non-ferrous mixed disposal on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-018",
+    "code": "AUC-2143",
+    "title": "East Coast Railway — PSC Sleeper & Brake Block Scrap",
+    "sellerId": "u-seller-3",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2025-11-13T08:56:00.000Z",
+    "endsAt": "2025-11-16T08:56:00.000Z",
+    "emdDeadline": "2025-11-12T08:56:00.000Z",
+    "inspectionFrom": "2025-11-08T08:56:00.000Z",
+    "inspectionTo": "2025-11-12T08:56:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "B. Pradhan",
+      "phone": "+91 89178 30425",
+      "role": "SSE / Depot Material Superintendent"
+    },
+    "yardName": "Mancheswar Depot",
+    "yardAddress": "Carriage Repair Workshop, Mancheswar, Bhubaneswar, Odisha 751017",
+    "region": "Bhubaneswar, OD",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "hlot-0157",
+      "hlot-0158",
+      "hlot-0159",
+      "hlot-0160",
+      "hlot-0161",
+      "hlot-0162",
+      "hlot-0163",
+      "hlot-0164",
+      "hlot-0165",
+      "hlot-0166"
+    ],
+    "documents": [
+      {
+        "id": "hcat-018-doc-1",
+        "name": "AUC-2143 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "3.3 MB"
+      },
+      {
+        "id": "hcat-018-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "617 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of psc sleeper & brake block scrap on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-019",
+    "code": "AUC-2146",
+    "title": "MSTC — Copper, Brass & Cable Scrap",
+    "sellerId": "u-seller-6",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2025-11-18T20:59:00.000Z",
+    "endsAt": "2025-11-20T20:59:00.000Z",
+    "emdDeadline": "2025-11-17T20:59:00.000Z",
+    "inspectionFrom": "2025-11-13T20:59:00.000Z",
+    "inspectionTo": "2025-11-17T20:59:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "T. Ghosh",
+      "phone": "+91 90070 18836",
+      "role": "Yard Supervisor"
+    },
+    "yardName": "MSTC Paradip Yard",
+    "yardAddress": "MSTC Stockyard, Paradip Port Area, Jagatsinghpur, Odisha 754142",
+    "region": "Paradip, OD",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 14,
+    "lotIds": [
+      "hlot-0167",
+      "hlot-0168",
+      "hlot-0169",
+      "hlot-0170",
+      "hlot-0171",
+      "hlot-0172",
+      "hlot-0173",
+      "hlot-0174",
+      "hlot-0175",
+      "hlot-0176"
+    ],
+    "documents": [
+      {
+        "id": "hcat-019-doc-1",
+        "name": "AUC-2146 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.2 MB"
+      },
+      {
+        "id": "hcat-019-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "939 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of copper, brass & cable scrap on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-020",
+    "code": "AUC-2149",
+    "title": "Mahindra & Mahindra — SS Offcuts, Coil Ends & Turnings",
+    "sellerId": "u-hseller-05",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2025-11-23T03:10:00.000Z",
+    "endsAt": "2025-11-25T03:10:00.000Z",
+    "emdDeadline": "2025-11-22T03:10:00.000Z",
+    "inspectionFrom": "2025-11-18T03:10:00.000Z",
+    "inspectionTo": "2025-11-22T03:10:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Iqbal Shah",
+      "phone": "+91 80757 76764",
+      "role": "Yard In-charge (Inspection & Lifting)"
+    },
+    "yardName": "Nashik Plant Scrap Bay",
+    "yardAddress": "Mahindra Nashik Plant, Satpur MIDC, Nashik, Maharashtra 422007",
+    "region": "Nashik, MH",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0177",
+      "hlot-0178",
+      "hlot-0179",
+      "hlot-0180",
+      "hlot-0181"
+    ],
+    "documents": [
+      {
+        "id": "hcat-020-doc-1",
+        "name": "AUC-2149 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.3 MB"
+      },
+      {
+        "id": "hcat-020-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "692 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of ss offcuts, coil ends & turnings on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-021",
+    "code": "AUC-2152",
+    "title": "RINL — Mixed MS Scrap, Turnings & TMT Rejects",
+    "sellerId": "u-hseller-01",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2025-11-28T14:26:00.000Z",
+    "endsAt": "2025-11-29T14:26:00.000Z",
+    "emdDeadline": "2025-11-27T14:26:00.000Z",
+    "inspectionFrom": "2025-11-23T14:26:00.000Z",
+    "inspectionTo": "2025-11-27T14:26:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Tejinder Deshmukh",
+      "phone": "+91 72737 17182",
+      "role": "Sr. Engineer (Salvage & Disposals)"
+    },
+    "yardName": "VSP Scrap Yard 2",
+    "yardAddress": "Gate 3, RINL Visakhapatnam Steel Plant, Visakhapatnam, Andhra Pradesh 530031",
+    "region": "Visakhapatnam, AP",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 14,
+    "lotIds": [
+      "hlot-0182",
+      "hlot-0183",
+      "hlot-0184",
+      "hlot-0185",
+      "hlot-0186"
+    ],
+    "documents": [
+      {
+        "id": "hcat-021-doc-1",
+        "name": "AUC-2152 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.7 MB"
+      },
+      {
+        "id": "hcat-021-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "885 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of mixed ms scrap, turnings & tmt rejects on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-022",
+    "code": "AUC-2155",
+    "title": "Northern Railway — PSC Sleeper & Brake Block Scrap",
+    "sellerId": "u-hseller-04",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2025-12-02T21:51:00.000Z",
+    "endsAt": "2025-12-03T21:51:00.000Z",
+    "emdDeadline": "2025-12-01T21:51:00.000Z",
+    "inspectionFrom": "2025-11-27T21:51:00.000Z",
+    "inspectionTo": "2025-12-01T21:51:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Balbir Verma",
+      "phone": "+91 91321 43964",
+      "role": "Yard In-charge (Inspection & Lifting)"
+    },
+    "yardName": "Jagadhri Workshop Yard",
+    "yardAddress": "Carriage Workshop, Jagadhri, Yamunanagar, Haryana 135002",
+    "region": "Yamunanagar, HR",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "hlot-0187",
+      "hlot-0188",
+      "hlot-0189",
+      "hlot-0190",
+      "hlot-0191"
+    ],
+    "documents": [
+      {
+        "id": "hcat-022-doc-1",
+        "name": "AUC-2155 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.2 MB"
+      },
+      {
+        "id": "hcat-022-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "605 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of psc sleeper & brake block scrap on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-023",
+    "code": "AUC-2158",
+    "title": "Ashok Leyland — SS Offcuts, Coil Ends & Turnings",
+    "sellerId": "u-hseller-06",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2025-12-06T03:21:00.000Z",
+    "endsAt": "2025-12-08T03:21:00.000Z",
+    "emdDeadline": "2025-12-05T03:21:00.000Z",
+    "inspectionFrom": "2025-12-01T03:21:00.000Z",
+    "inspectionTo": "2025-12-05T03:21:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Pramod Menon",
+      "phone": "+91 72523 65213",
+      "role": "Stores Superintendent"
+    },
+    "yardName": "Hosur Unit II Yard",
+    "yardAddress": "Ashok Leyland Hosur Unit II, Hosur, Tamil Nadu 635109",
+    "region": "Hosur, TN",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "hlot-0192",
+      "hlot-0193",
+      "hlot-0194",
+      "hlot-0195",
+      "hlot-0196",
+      "hlot-0197",
+      "hlot-0198",
+      "hlot-0199",
+      "hlot-0200"
+    ],
+    "documents": [
+      {
+        "id": "hcat-023-doc-1",
+        "name": "AUC-2158 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.5 MB"
+      },
+      {
+        "id": "hcat-023-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "717 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of ss offcuts, coil ends & turnings on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-024",
+    "code": "AUC-2161",
+    "title": "NTPC — Washery Rejects & Bottom Ash",
+    "sellerId": "u-seller-5",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2025-12-09T06:37:00.000Z",
+    "endsAt": "2025-12-12T06:37:00.000Z",
+    "emdDeadline": "2025-12-08T06:37:00.000Z",
+    "inspectionFrom": "2025-12-04T06:37:00.000Z",
+    "inspectionTo": "2025-12-08T06:37:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "G. Srinivas",
+      "phone": "+91 87903 55240",
+      "role": "AGM (Fuel Handling)"
+    },
+    "yardName": "RSTPS Ash Yard",
+    "yardAddress": "NTPC Ramagundam, Jyothinagar, Peddapalli, Telangana 505215",
+    "region": "Ramagundam, TS",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0201",
+      "hlot-0202",
+      "hlot-0203",
+      "hlot-0204",
+      "hlot-0205",
+      "hlot-0206",
+      "hlot-0207",
+      "hlot-0208",
+      "hlot-0209",
+      "hlot-0210",
+      "hlot-0211",
+      "hlot-0212"
+    ],
+    "documents": [
+      {
+        "id": "hcat-024-doc-1",
+        "name": "AUC-2161 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.8 MB"
+      },
+      {
+        "id": "hcat-024-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "829 KB"
+      }
+    ],
+    "termsSetId": "ts-hazmat",
+    "description": "E-auction of washery rejects & bottom ash on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-025",
+    "code": "AUC-2164",
+    "title": "NTPC — Washery Rejects & Bottom Ash",
+    "sellerId": "u-seller-5",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2025-12-14T14:01:00.000Z",
+    "endsAt": "2025-12-16T14:01:00.000Z",
+    "emdDeadline": "2025-12-13T14:01:00.000Z",
+    "inspectionFrom": "2025-12-09T14:01:00.000Z",
+    "inspectionTo": "2025-12-13T14:01:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "G. Srinivas",
+      "phone": "+91 87903 55240",
+      "role": "AGM (Fuel Handling)"
+    },
+    "yardName": "RSTPS Ash Yard",
+    "yardAddress": "NTPC Ramagundam, Jyothinagar, Peddapalli, Telangana 505215",
+    "region": "Ramagundam, TS",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 14,
+    "lotIds": [
+      "hlot-0213",
+      "hlot-0214",
+      "hlot-0215",
+      "hlot-0216",
+      "hlot-0217",
+      "hlot-0218"
+    ],
+    "documents": [
+      {
+        "id": "hcat-025-doc-1",
+        "name": "AUC-2164 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.8 MB"
+      },
+      {
+        "id": "hcat-025-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "650 KB"
+      }
+    ],
+    "termsSetId": "ts-hazmat",
+    "description": "E-auction of washery rejects & bottom ash on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-026",
+    "code": "AUC-2167",
+    "title": "MSTC — Non-Ferrous Yard Clearance",
+    "sellerId": "u-seller-6",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2025-12-17T20:03:00.000Z",
+    "endsAt": "2025-12-20T20:03:00.000Z",
+    "emdDeadline": "2025-12-16T20:03:00.000Z",
+    "inspectionFrom": "2025-12-12T20:03:00.000Z",
+    "inspectionTo": "2025-12-16T20:03:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "T. Ghosh",
+      "phone": "+91 90070 18836",
+      "role": "Yard Supervisor"
+    },
+    "yardName": "MSTC Paradip Yard",
+    "yardAddress": "MSTC Stockyard, Paradip Port Area, Jagatsinghpur, Odisha 754142",
+    "region": "Paradip, OD",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 14,
+    "lotIds": [
+      "hlot-0219",
+      "hlot-0220",
+      "hlot-0221",
+      "hlot-0222",
+      "hlot-0223",
+      "hlot-0224",
+      "hlot-0225",
+      "hlot-0226",
+      "hlot-0227",
+      "hlot-0228",
+      "hlot-0229",
+      "hlot-0230"
+    ],
+    "documents": [
+      {
+        "id": "hcat-026-doc-1",
+        "name": "AUC-2167 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.2 MB"
+      },
+      {
+        "id": "hcat-026-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "692 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of non-ferrous yard clearance on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-027",
+    "code": "AUC-2170",
+    "title": "JSW Steel — Zinc Dross & FeSiMg Fines",
+    "sellerId": "u-seller-4",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2025-12-22T11:33:00.000Z",
+    "endsAt": "2025-12-24T11:33:00.000Z",
+    "emdDeadline": "2025-12-21T11:33:00.000Z",
+    "inspectionFrom": "2025-12-17T11:33:00.000Z",
+    "inspectionTo": "2025-12-21T11:33:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "H. Kulkarni",
+      "phone": "+91 90360 71182",
+      "role": "Manager, Commercial (Disposals)"
+    },
+    "yardName": "VJNR Yard B",
+    "yardAddress": "JSW Steel Vijayanagar Works, Toranagallu, Bellary, Karnataka 583275",
+    "region": "Bellary, KA",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "hlot-0231",
+      "hlot-0232",
+      "hlot-0233",
+      "hlot-0234",
+      "hlot-0235",
+      "hlot-0236",
+      "hlot-0237",
+      "hlot-0238",
+      "hlot-0239",
+      "hlot-0240",
+      "hlot-0241",
+      "hlot-0242",
+      "hlot-0243"
+    ],
+    "documents": [
+      {
+        "id": "hcat-027-doc-1",
+        "name": "AUC-2170 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.7 MB"
+      },
+      {
+        "id": "hcat-027-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "744 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of zinc dross & fesimg fines on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-028",
+    "code": "AUC-2173",
+    "title": "East Coast Railway — Condemned Rolling Stock & Track Fittings",
+    "sellerId": "u-seller-3",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2025-12-27T01:41:00.000Z",
+    "endsAt": "2025-12-28T01:41:00.000Z",
+    "emdDeadline": "2025-12-26T01:41:00.000Z",
+    "inspectionFrom": "2025-12-22T01:41:00.000Z",
+    "inspectionTo": "2025-12-26T01:41:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "B. Pradhan",
+      "phone": "+91 89178 30425",
+      "role": "SSE / Depot Material Superintendent"
+    },
+    "yardName": "Mancheswar Depot",
+    "yardAddress": "Carriage Repair Workshop, Mancheswar, Bhubaneswar, Odisha 751017",
+    "region": "Bhubaneswar, OD",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 14,
+    "lotIds": [
+      "hlot-0244",
+      "hlot-0245",
+      "hlot-0246",
+      "hlot-0247",
+      "hlot-0248",
+      "hlot-0249",
+      "hlot-0250",
+      "hlot-0251"
+    ],
+    "documents": [
+      {
+        "id": "hcat-028-doc-1",
+        "name": "AUC-2173 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "3.2 MB"
+      },
+      {
+        "id": "hcat-028-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "863 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of condemned rolling stock & track fittings on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-029",
+    "code": "AUC-2176",
+    "title": "Mahindra & Mahindra — Off-Spec Coils & Stainless Trims",
+    "sellerId": "u-hseller-05",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2025-12-30T21:12:00.000Z",
+    "endsAt": "2025-12-31T21:12:00.000Z",
+    "emdDeadline": "2025-12-29T21:12:00.000Z",
+    "inspectionFrom": "2025-12-25T21:12:00.000Z",
+    "inspectionTo": "2025-12-29T21:12:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Iqbal Shah",
+      "phone": "+91 80757 76764",
+      "role": "Yard In-charge (Inspection & Lifting)"
+    },
+    "yardName": "Nashik Plant Scrap Bay",
+    "yardAddress": "Mahindra Nashik Plant, Satpur MIDC, Nashik, Maharashtra 422007",
+    "region": "Nashik, MH",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0252",
+      "hlot-0253",
+      "hlot-0254",
+      "hlot-0255",
+      "hlot-0256",
+      "hlot-0257",
+      "hlot-0258",
+      "hlot-0259",
+      "hlot-0260"
+    ],
+    "documents": [
+      {
+        "id": "hcat-029-doc-1",
+        "name": "AUC-2176 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.2 MB"
+      },
+      {
+        "id": "hcat-029-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "733 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of off-spec coils & stainless trims on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-030",
+    "code": "AUC-2179",
+    "title": "Mahindra & Mahindra — Off-Spec Coils & Stainless Trims",
+    "sellerId": "u-hseller-05",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-01-01T13:52:00.000Z",
+    "endsAt": "2026-01-04T13:52:00.000Z",
+    "emdDeadline": "2025-12-31T13:52:00.000Z",
+    "inspectionFrom": "2025-12-27T13:52:00.000Z",
+    "inspectionTo": "2025-12-31T13:52:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Iqbal Shah",
+      "phone": "+91 80757 76764",
+      "role": "Yard In-charge (Inspection & Lifting)"
+    },
+    "yardName": "Nashik Plant Scrap Bay",
+    "yardAddress": "Mahindra Nashik Plant, Satpur MIDC, Nashik, Maharashtra 422007",
+    "region": "Nashik, MH",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 14,
+    "lotIds": [
+      "hlot-0261",
+      "hlot-0262",
+      "hlot-0263",
+      "hlot-0264",
+      "hlot-0265",
+      "hlot-0266",
+      "hlot-0267",
+      "hlot-0268",
+      "hlot-0269",
+      "hlot-0270",
+      "hlot-0271",
+      "hlot-0272"
+    ],
+    "documents": [
+      {
+        "id": "hcat-030-doc-1",
+        "name": "AUC-2179 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "3.3 MB"
+      },
+      {
+        "id": "hcat-030-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "637 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of off-spec coils & stainless trims on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-031",
+    "code": "AUC-2182",
+    "title": "Vedanta — Non-Ferrous Mixed Disposal",
+    "sellerId": "u-hseller-07",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-01-05T07:43:00.000Z",
+    "endsAt": "2026-01-08T07:43:00.000Z",
+    "emdDeadline": "2026-01-04T07:43:00.000Z",
+    "inspectionFrom": "2025-12-31T07:43:00.000Z",
+    "inspectionTo": "2026-01-04T07:43:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Karthik Joshi",
+      "phone": "+91 88132 36923",
+      "role": "Yard In-charge (Inspection & Lifting)"
+    },
+    "yardName": "Jharsuguda Pot-line Yard",
+    "yardAddress": "Vedanta Aluminium, Bhurkhamunda, Jharsuguda, Odisha 768202",
+    "region": "Jharsuguda, OD",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0273",
+      "hlot-0274",
+      "hlot-0275",
+      "hlot-0276",
+      "hlot-0277",
+      "hlot-0278",
+      "hlot-0279",
+      "hlot-0280",
+      "hlot-0281",
+      "hlot-0282",
+      "hlot-0283",
+      "hlot-0284",
+      "hlot-0285"
+    ],
+    "documents": [
+      {
+        "id": "hcat-031-doc-1",
+        "name": "AUC-2182 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.2 MB"
+      },
+      {
+        "id": "hcat-031-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "695 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of non-ferrous mixed disposal on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-032",
+    "code": "AUC-2185",
+    "title": "RINL — Mixed MS Scrap, Turnings & TMT Rejects",
+    "sellerId": "u-hseller-01",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-01-09T07:36:00.000Z",
+    "endsAt": "2026-01-12T07:36:00.000Z",
+    "emdDeadline": "2026-01-08T07:36:00.000Z",
+    "inspectionFrom": "2026-01-04T07:36:00.000Z",
+    "inspectionTo": "2026-01-08T07:36:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Tejinder Deshmukh",
+      "phone": "+91 72737 17182",
+      "role": "Sr. Engineer (Salvage & Disposals)"
+    },
+    "yardName": "VSP Scrap Yard 2",
+    "yardAddress": "Gate 3, RINL Visakhapatnam Steel Plant, Visakhapatnam, Andhra Pradesh 530031",
+    "region": "Visakhapatnam, AP",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0286",
+      "hlot-0287",
+      "hlot-0288",
+      "hlot-0289",
+      "hlot-0290",
+      "hlot-0291",
+      "hlot-0292",
+      "hlot-0293",
+      "hlot-0294",
+      "hlot-0295",
+      "hlot-0296",
+      "hlot-0297",
+      "hlot-0298"
+    ],
+    "documents": [
+      {
+        "id": "hcat-032-doc-1",
+        "name": "AUC-2185 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "3.0 MB"
+      },
+      {
+        "id": "hcat-032-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "728 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of mixed ms scrap, turnings & tmt rejects on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-033",
+    "code": "AUC-2188",
+    "title": "Tata Steel — Off-Spec Coils & Stainless Trims",
+    "sellerId": "u-seller-2",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-01-13T20:49:00.000Z",
+    "endsAt": "2026-01-15T20:49:00.000Z",
+    "emdDeadline": "2026-01-12T20:49:00.000Z",
+    "inspectionFrom": "2026-01-08T20:49:00.000Z",
+    "inspectionTo": "2026-01-12T20:49:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "M. Oraon",
+      "phone": "+91 82102 44561",
+      "role": "Dy. Manager, By-products"
+    },
+    "yardName": "Burma Mines Yard",
+    "yardAddress": "Burma Mines, Tata Steel Works, Jamshedpur, Jharkhand 831007",
+    "region": "Jamshedpur, JH",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 14,
+    "lotIds": [
+      "hlot-0299",
+      "hlot-0300",
+      "hlot-0301",
+      "hlot-0302",
+      "hlot-0303"
+    ],
+    "documents": [
+      {
+        "id": "hcat-033-doc-1",
+        "name": "AUC-2188 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.7 MB"
+      },
+      {
+        "id": "hcat-033-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "774 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of off-spec coils & stainless trims on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-034",
+    "code": "AUC-2191",
+    "title": "NTPC — Washery Rejects & Bottom Ash",
+    "sellerId": "u-seller-5",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-01-16T11:39:00.000Z",
+    "endsAt": "2026-01-19T11:39:00.000Z",
+    "emdDeadline": "2026-01-15T11:39:00.000Z",
+    "inspectionFrom": "2026-01-11T11:39:00.000Z",
+    "inspectionTo": "2026-01-15T11:39:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "G. Srinivas",
+      "phone": "+91 87903 55240",
+      "role": "AGM (Fuel Handling)"
+    },
+    "yardName": "RSTPS Ash Yard",
+    "yardAddress": "NTPC Ramagundam, Jyothinagar, Peddapalli, Telangana 505215",
+    "region": "Ramagundam, TS",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0304",
+      "hlot-0305",
+      "hlot-0306",
+      "hlot-0307",
+      "hlot-0308",
+      "hlot-0309",
+      "hlot-0310",
+      "hlot-0311"
+    ],
+    "documents": [
+      {
+        "id": "hcat-034-doc-1",
+        "name": "AUC-2191 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "3.0 MB"
+      },
+      {
+        "id": "hcat-034-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "815 KB"
+      }
+    ],
+    "termsSetId": "ts-hazmat",
+    "description": "E-auction of washery rejects & bottom ash on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-035",
+    "code": "AUC-2194",
+    "title": "SAIL — Mixed MS Scrap, Turnings & TMT Rejects",
+    "sellerId": "u-seller-1",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-01-20T20:29:00.000Z",
+    "endsAt": "2026-01-22T20:29:00.000Z",
+    "emdDeadline": "2026-01-19T20:29:00.000Z",
+    "inspectionFrom": "2026-01-15T20:29:00.000Z",
+    "inspectionTo": "2026-01-19T20:29:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "S. K. Sahu",
+      "phone": "+91 94252 10883",
+      "role": "Yard In-charge (Inspection & Lifting)"
+    },
+    "yardName": "BSP Scrap Yard 3",
+    "yardAddress": "Gate 7, SAIL Bhilai Steel Plant, Bhilai, Chhattisgarh 490001",
+    "region": "Bhilai, CG",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 14,
+    "lotIds": [
+      "hlot-0312",
+      "hlot-0313",
+      "hlot-0314",
+      "hlot-0315",
+      "hlot-0316",
+      "hlot-0317",
+      "hlot-0318",
+      "hlot-0319",
+      "hlot-0320",
+      "hlot-0321",
+      "hlot-0322"
+    ],
+    "documents": [
+      {
+        "id": "hcat-035-doc-1",
+        "name": "AUC-2194 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.9 MB"
+      },
+      {
+        "id": "hcat-035-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "863 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of mixed ms scrap, turnings & tmt rejects on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-036",
+    "code": "AUC-2197",
+    "title": "NALCO — Al Sheet Offcuts & Ingot Rejects",
+    "sellerId": "u-hseller-03",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-01-23T00:50:00.000Z",
+    "endsAt": "2026-01-26T00:50:00.000Z",
+    "emdDeadline": "2026-01-22T00:50:00.000Z",
+    "inspectionFrom": "2026-01-18T00:50:00.000Z",
+    "inspectionTo": "2026-01-22T00:50:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Karthik Das",
+      "phone": "+91 72550 60870",
+      "role": "Dy. Manager, By-products"
+    },
+    "yardName": "Angul Disposal Yard",
+    "yardAddress": "NALCO Smelter Plant, Angul, Odisha 759145",
+    "region": "Angul, OD",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "hlot-0323",
+      "hlot-0324",
+      "hlot-0325",
+      "hlot-0326",
+      "hlot-0327",
+      "hlot-0328",
+      "hlot-0329"
+    ],
+    "documents": [
+      {
+        "id": "hcat-036-doc-1",
+        "name": "AUC-2197 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.8 MB"
+      },
+      {
+        "id": "hcat-036-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "927 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of al sheet offcuts & ingot rejects on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-037",
+    "code": "AUC-2200",
+    "title": "Northern Railway — Released Rails, Wagons & OHE Copper",
+    "sellerId": "u-hseller-04",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-01-27T15:21:00.000Z",
+    "endsAt": "2026-01-29T15:21:00.000Z",
+    "emdDeadline": "2026-01-26T15:21:00.000Z",
+    "inspectionFrom": "2026-01-22T15:21:00.000Z",
+    "inspectionTo": "2026-01-26T15:21:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Balbir Verma",
+      "phone": "+91 91321 43964",
+      "role": "Yard In-charge (Inspection & Lifting)"
+    },
+    "yardName": "Jagadhri Workshop Yard",
+    "yardAddress": "Carriage Workshop, Jagadhri, Yamunanagar, Haryana 135002",
+    "region": "Yamunanagar, HR",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0330",
+      "hlot-0331",
+      "hlot-0332",
+      "hlot-0333",
+      "hlot-0334",
+      "hlot-0335",
+      "hlot-0336",
+      "hlot-0337",
+      "hlot-0338"
+    ],
+    "documents": [
+      {
+        "id": "hcat-037-doc-1",
+        "name": "AUC-2200 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "3.2 MB"
+      },
+      {
+        "id": "hcat-037-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "869 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of released rails, wagons & ohe copper on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-038",
+    "code": "AUC-2203",
+    "title": "Northern Railway — Condemned Rolling Stock & Track Fittings",
+    "sellerId": "u-hseller-04",
+    "type": "tender",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-01-31T21:14:00.000Z",
+    "endsAt": "2026-02-01T21:14:00.000Z",
+    "emdDeadline": "2026-01-30T21:14:00.000Z",
+    "inspectionFrom": "2026-01-26T21:14:00.000Z",
+    "inspectionTo": "2026-01-30T21:14:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Balbir Verma",
+      "phone": "+91 91321 43964",
+      "role": "Yard In-charge (Inspection & Lifting)"
+    },
+    "yardName": "Jagadhri Workshop Yard",
+    "yardAddress": "Carriage Workshop, Jagadhri, Yamunanagar, Haryana 135002",
+    "region": "Yamunanagar, HR",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 14,
+    "lotIds": [
+      "hlot-0339",
+      "hlot-0340",
+      "hlot-0341",
+      "hlot-0342",
+      "hlot-0343",
+      "hlot-0344",
+      "hlot-0345"
+    ],
+    "documents": [
+      {
+        "id": "hcat-038-doc-1",
+        "name": "AUC-2203 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.4 MB"
+      },
+      {
+        "id": "hcat-038-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "846 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of condemned rolling stock & track fittings on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-039",
+    "code": "AUC-2206",
+    "title": "SAIL — Mixed MS Scrap, Turnings & TMT Rejects",
+    "sellerId": "u-seller-1",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-02-03T05:04:00.000Z",
+    "endsAt": "2026-02-05T05:04:00.000Z",
+    "emdDeadline": "2026-02-02T05:04:00.000Z",
+    "inspectionFrom": "2026-01-29T05:04:00.000Z",
+    "inspectionTo": "2026-02-02T05:04:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "S. K. Sahu",
+      "phone": "+91 94252 10883",
+      "role": "Yard In-charge (Inspection & Lifting)"
+    },
+    "yardName": "BSP Scrap Yard 3",
+    "yardAddress": "Gate 7, SAIL Bhilai Steel Plant, Bhilai, Chhattisgarh 490001",
+    "region": "Bhilai, CG",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "hlot-0346",
+      "hlot-0347",
+      "hlot-0348",
+      "hlot-0349",
+      "hlot-0350"
+    ],
+    "documents": [
+      {
+        "id": "hcat-039-doc-1",
+        "name": "AUC-2206 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.1 MB"
+      },
+      {
+        "id": "hcat-039-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "914 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of mixed ms scrap, turnings & tmt rejects on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-040",
+    "code": "AUC-2209",
+    "title": "Hindalco — Non-Ferrous Mixed Disposal",
+    "sellerId": "u-hseller-02",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-02-05T09:06:00.000Z",
+    "endsAt": "2026-02-08T09:06:00.000Z",
+    "emdDeadline": "2026-02-04T09:06:00.000Z",
+    "inspectionFrom": "2026-01-31T09:06:00.000Z",
+    "inspectionTo": "2026-02-04T09:06:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Vikram Khan",
+      "phone": "+91 96262 43623",
+      "role": "Stores Superintendent"
+    },
+    "yardName": "Renukoot Smelter Yard",
+    "yardAddress": "Hindalco Industries, Renukoot, Sonbhadra, Uttar Pradesh 231217",
+    "region": "Renukoot, UP",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 14,
+    "lotIds": [
+      "hlot-0351",
+      "hlot-0352",
+      "hlot-0353",
+      "hlot-0354",
+      "hlot-0355",
+      "hlot-0356",
+      "hlot-0357",
+      "hlot-0358",
+      "hlot-0359",
+      "hlot-0360",
+      "hlot-0361",
+      "hlot-0362",
+      "hlot-0363",
+      "hlot-0364"
+    ],
+    "documents": [
+      {
+        "id": "hcat-040-doc-1",
+        "name": "AUC-2209 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.5 MB"
+      },
+      {
+        "id": "hcat-040-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "869 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of non-ferrous mixed disposal on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-041",
+    "code": "AUC-2212",
+    "title": "SAIL — HMS 1 & 2 with Plate Cuttings",
+    "sellerId": "u-seller-1",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-02-08T19:01:00.000Z",
+    "endsAt": "2026-02-11T19:01:00.000Z",
+    "emdDeadline": "2026-02-07T19:01:00.000Z",
+    "inspectionFrom": "2026-02-03T19:01:00.000Z",
+    "inspectionTo": "2026-02-07T19:01:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "S. K. Sahu",
+      "phone": "+91 94252 10883",
+      "role": "Yard In-charge (Inspection & Lifting)"
+    },
+    "yardName": "BSP Scrap Yard 3",
+    "yardAddress": "Gate 7, SAIL Bhilai Steel Plant, Bhilai, Chhattisgarh 490001",
+    "region": "Bhilai, CG",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 14,
+    "lotIds": [
+      "hlot-0365",
+      "hlot-0366",
+      "hlot-0367",
+      "hlot-0368",
+      "hlot-0369",
+      "hlot-0370",
+      "hlot-0371",
+      "hlot-0372",
+      "hlot-0373",
+      "hlot-0374",
+      "hlot-0375",
+      "hlot-0376",
+      "hlot-0377",
+      "hlot-0378"
+    ],
+    "documents": [
+      {
+        "id": "hcat-041-doc-1",
+        "name": "AUC-2212 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.7 MB"
+      },
+      {
+        "id": "hcat-041-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "676 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of hms 1 & 2 with plate cuttings on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-042",
+    "code": "AUC-2215",
+    "title": "RINL — Melting Shop Scrap & CI Borings",
+    "sellerId": "u-hseller-01",
+    "type": "tender",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-02-12T06:10:00.000Z",
+    "endsAt": "2026-02-15T06:10:00.000Z",
+    "emdDeadline": "2026-02-11T06:10:00.000Z",
+    "inspectionFrom": "2026-02-07T06:10:00.000Z",
+    "inspectionTo": "2026-02-11T06:10:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Tejinder Deshmukh",
+      "phone": "+91 72737 17182",
+      "role": "Sr. Engineer (Salvage & Disposals)"
+    },
+    "yardName": "VSP Scrap Yard 2",
+    "yardAddress": "Gate 3, RINL Visakhapatnam Steel Plant, Visakhapatnam, Andhra Pradesh 530031",
+    "region": "Visakhapatnam, AP",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 14,
+    "lotIds": [
+      "hlot-0379",
+      "hlot-0380",
+      "hlot-0381",
+      "hlot-0382",
+      "hlot-0383",
+      "hlot-0384",
+      "hlot-0385",
+      "hlot-0386",
+      "hlot-0387",
+      "hlot-0388",
+      "hlot-0389",
+      "hlot-0390",
+      "hlot-0391"
+    ],
+    "documents": [
+      {
+        "id": "hcat-042-doc-1",
+        "name": "AUC-2215 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.8 MB"
+      },
+      {
+        "id": "hcat-042-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "757 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of melting shop scrap & ci borings on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-043",
+    "code": "AUC-2218",
+    "title": "NALCO — Al Sheet Offcuts & Ingot Rejects",
+    "sellerId": "u-hseller-03",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-02-17T11:28:00.000Z",
+    "endsAt": "2026-02-18T11:28:00.000Z",
+    "emdDeadline": "2026-02-16T11:28:00.000Z",
+    "inspectionFrom": "2026-02-12T11:28:00.000Z",
+    "inspectionTo": "2026-02-16T11:28:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Karthik Das",
+      "phone": "+91 72550 60870",
+      "role": "Dy. Manager, By-products"
+    },
+    "yardName": "Angul Disposal Yard",
+    "yardAddress": "NALCO Smelter Plant, Angul, Odisha 759145",
+    "region": "Angul, OD",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 14,
+    "lotIds": [
+      "hlot-0392",
+      "hlot-0393",
+      "hlot-0394",
+      "hlot-0395",
+      "hlot-0396",
+      "hlot-0397",
+      "hlot-0398",
+      "hlot-0399",
+      "hlot-0400",
+      "hlot-0401",
+      "hlot-0402",
+      "hlot-0403"
+    ],
+    "documents": [
+      {
+        "id": "hcat-043-doc-1",
+        "name": "AUC-2218 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "3.0 MB"
+      },
+      {
+        "id": "hcat-043-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "927 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of al sheet offcuts & ingot rejects on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-044",
+    "code": "AUC-2221",
+    "title": "Hindalco — Zinc Dross & FeSiMg Fines",
+    "sellerId": "u-hseller-02",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-02-20T05:31:00.000Z",
+    "endsAt": "2026-02-21T05:31:00.000Z",
+    "emdDeadline": "2026-02-19T05:31:00.000Z",
+    "inspectionFrom": "2026-02-15T05:31:00.000Z",
+    "inspectionTo": "2026-02-19T05:31:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Vikram Khan",
+      "phone": "+91 96262 43623",
+      "role": "Stores Superintendent"
+    },
+    "yardName": "Renukoot Smelter Yard",
+    "yardAddress": "Hindalco Industries, Renukoot, Sonbhadra, Uttar Pradesh 231217",
+    "region": "Renukoot, UP",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 14,
+    "lotIds": [
+      "hlot-0404",
+      "hlot-0405",
+      "hlot-0406",
+      "hlot-0407",
+      "hlot-0408",
+      "hlot-0409",
+      "hlot-0410",
+      "hlot-0411",
+      "hlot-0412",
+      "hlot-0413",
+      "hlot-0414",
+      "hlot-0415"
+    ],
+    "documents": [
+      {
+        "id": "hcat-044-doc-1",
+        "name": "AUC-2221 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "3.1 MB"
+      },
+      {
+        "id": "hcat-044-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "831 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of zinc dross & fesimg fines on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-045",
+    "code": "AUC-2224",
+    "title": "Northern Railway — Condemned Rolling Stock & Track Fittings",
+    "sellerId": "u-hseller-04",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-02-23T05:33:00.000Z",
+    "endsAt": "2026-02-24T05:33:00.000Z",
+    "emdDeadline": "2026-02-22T05:33:00.000Z",
+    "inspectionFrom": "2026-02-18T05:33:00.000Z",
+    "inspectionTo": "2026-02-22T05:33:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Balbir Verma",
+      "phone": "+91 91321 43964",
+      "role": "Yard In-charge (Inspection & Lifting)"
+    },
+    "yardName": "Jagadhri Workshop Yard",
+    "yardAddress": "Carriage Workshop, Jagadhri, Yamunanagar, Haryana 135002",
+    "region": "Yamunanagar, HR",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0416",
+      "hlot-0417",
+      "hlot-0418",
+      "hlot-0419",
+      "hlot-0420",
+      "hlot-0421",
+      "hlot-0422",
+      "hlot-0423",
+      "hlot-0424",
+      "hlot-0425",
+      "hlot-0426",
+      "hlot-0427"
+    ],
+    "documents": [
+      {
+        "id": "hcat-045-doc-1",
+        "name": "AUC-2224 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.5 MB"
+      },
+      {
+        "id": "hcat-045-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "664 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of condemned rolling stock & track fittings on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-046",
+    "code": "AUC-2227",
+    "title": "SAIL — HMS 1 & 2 with Plate Cuttings",
+    "sellerId": "u-seller-1",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-02-24T04:47:00.000Z",
+    "endsAt": "2026-02-27T04:47:00.000Z",
+    "emdDeadline": "2026-02-23T04:47:00.000Z",
+    "inspectionFrom": "2026-02-19T04:47:00.000Z",
+    "inspectionTo": "2026-02-23T04:47:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "S. K. Sahu",
+      "phone": "+91 94252 10883",
+      "role": "Yard In-charge (Inspection & Lifting)"
+    },
+    "yardName": "BSP Scrap Yard 3",
+    "yardAddress": "Gate 7, SAIL Bhilai Steel Plant, Bhilai, Chhattisgarh 490001",
+    "region": "Bhilai, CG",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0428",
+      "hlot-0429",
+      "hlot-0430",
+      "hlot-0431",
+      "hlot-0432",
+      "hlot-0433",
+      "hlot-0434",
+      "hlot-0435",
+      "hlot-0436",
+      "hlot-0437"
+    ],
+    "documents": [
+      {
+        "id": "hcat-046-doc-1",
+        "name": "AUC-2227 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.5 MB"
+      },
+      {
+        "id": "hcat-046-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "842 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of hms 1 & 2 with plate cuttings on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-047",
+    "code": "AUC-2230",
+    "title": "NTPC — Washery Rejects & Bottom Ash",
+    "sellerId": "u-seller-5",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-03-01T05:31:00.000Z",
+    "endsAt": "2026-03-02T05:31:00.000Z",
+    "emdDeadline": "2026-02-28T05:31:00.000Z",
+    "inspectionFrom": "2026-02-24T05:31:00.000Z",
+    "inspectionTo": "2026-02-28T05:31:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "G. Srinivas",
+      "phone": "+91 87903 55240",
+      "role": "AGM (Fuel Handling)"
+    },
+    "yardName": "RSTPS Ash Yard",
+    "yardAddress": "NTPC Ramagundam, Jyothinagar, Peddapalli, Telangana 505215",
+    "region": "Ramagundam, TS",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0438",
+      "hlot-0439",
+      "hlot-0440",
+      "hlot-0441",
+      "hlot-0442",
+      "hlot-0443",
+      "hlot-0444",
+      "hlot-0445",
+      "hlot-0446",
+      "hlot-0447"
+    ],
+    "documents": [
+      {
+        "id": "hcat-047-doc-1",
+        "name": "AUC-2230 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.0 MB"
+      },
+      {
+        "id": "hcat-047-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "658 KB"
+      }
+    ],
+    "termsSetId": "ts-hazmat",
+    "description": "E-auction of washery rejects & bottom ash on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-048",
+    "code": "AUC-2233",
+    "title": "East Coast Railway — PSC Sleeper & Brake Block Scrap",
+    "sellerId": "u-seller-3",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-03-02T08:03:00.000Z",
+    "endsAt": "2026-03-05T08:03:00.000Z",
+    "emdDeadline": "2026-03-01T08:03:00.000Z",
+    "inspectionFrom": "2026-02-25T08:03:00.000Z",
+    "inspectionTo": "2026-03-01T08:03:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "B. Pradhan",
+      "phone": "+91 89178 30425",
+      "role": "SSE / Depot Material Superintendent"
+    },
+    "yardName": "Mancheswar Depot",
+    "yardAddress": "Carriage Repair Workshop, Mancheswar, Bhubaneswar, Odisha 751017",
+    "region": "Bhubaneswar, OD",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0448",
+      "hlot-0449",
+      "hlot-0450",
+      "hlot-0451",
+      "hlot-0452",
+      "hlot-0453",
+      "hlot-0454",
+      "hlot-0455",
+      "hlot-0456",
+      "hlot-0457",
+      "hlot-0458"
+    ],
+    "documents": [
+      {
+        "id": "hcat-048-doc-1",
+        "name": "AUC-2233 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.9 MB"
+      },
+      {
+        "id": "hcat-048-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "740 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of psc sleeper & brake block scrap on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-049",
+    "code": "AUC-2236",
+    "title": "SAIL — Structural Scrap & Skull",
+    "sellerId": "u-seller-1",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-03-05T06:49:00.000Z",
+    "endsAt": "2026-03-08T06:49:00.000Z",
+    "emdDeadline": "2026-03-04T06:49:00.000Z",
+    "inspectionFrom": "2026-02-28T06:49:00.000Z",
+    "inspectionTo": "2026-03-04T06:49:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "S. K. Sahu",
+      "phone": "+91 94252 10883",
+      "role": "Yard In-charge (Inspection & Lifting)"
+    },
+    "yardName": "BSP Scrap Yard 3",
+    "yardAddress": "Gate 7, SAIL Bhilai Steel Plant, Bhilai, Chhattisgarh 490001",
+    "region": "Bhilai, CG",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0459",
+      "hlot-0460",
+      "hlot-0461",
+      "hlot-0462",
+      "hlot-0463",
+      "hlot-0464",
+      "hlot-0465",
+      "hlot-0466",
+      "hlot-0467",
+      "hlot-0468"
+    ],
+    "documents": [
+      {
+        "id": "hcat-049-doc-1",
+        "name": "AUC-2236 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.8 MB"
+      },
+      {
+        "id": "hcat-049-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "932 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of structural scrap & skull on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-050",
+    "code": "AUC-2239",
+    "title": "ONGC — EOT Crane Parts & Storage Tanks",
+    "sellerId": "u-hseller-09",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-03-08T10:39:00.000Z",
+    "endsAt": "2026-03-11T10:39:00.000Z",
+    "emdDeadline": "2026-03-07T10:39:00.000Z",
+    "inspectionFrom": "2026-03-03T10:39:00.000Z",
+    "inspectionTo": "2026-03-07T10:39:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Salim Gill",
+      "phone": "+91 77465 62507",
+      "role": "Dy. Manager, By-products"
+    },
+    "yardName": "Hazira Disposal Yard",
+    "yardAddress": "ONGC Hazira Gas Processing Complex, Surat, Gujarat 394518",
+    "region": "Hazira, GJ",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "hlot-0469",
+      "hlot-0470",
+      "hlot-0471",
+      "hlot-0472",
+      "hlot-0473",
+      "hlot-0474",
+      "hlot-0475"
+    ],
+    "documents": [
+      {
+        "id": "hcat-050-doc-1",
+        "name": "AUC-2239 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "3.3 MB"
+      },
+      {
+        "id": "hcat-050-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "738 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of eot crane parts & storage tanks on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-051",
+    "code": "AUC-2242",
+    "title": "Mahindra & Mahindra — SS Offcuts, Coil Ends & Turnings",
+    "sellerId": "u-hseller-05",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-03-13T08:43:00.000Z",
+    "endsAt": "2026-03-14T08:43:00.000Z",
+    "emdDeadline": "2026-03-12T08:43:00.000Z",
+    "inspectionFrom": "2026-03-08T08:43:00.000Z",
+    "inspectionTo": "2026-03-12T08:43:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Iqbal Shah",
+      "phone": "+91 80757 76764",
+      "role": "Yard In-charge (Inspection & Lifting)"
+    },
+    "yardName": "Nashik Plant Scrap Bay",
+    "yardAddress": "Mahindra Nashik Plant, Satpur MIDC, Nashik, Maharashtra 422007",
+    "region": "Nashik, MH",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "hlot-0476",
+      "hlot-0477",
+      "hlot-0478",
+      "hlot-0479",
+      "hlot-0480",
+      "hlot-0481",
+      "hlot-0482",
+      "hlot-0483",
+      "hlot-0484",
+      "hlot-0485",
+      "hlot-0486",
+      "hlot-0487",
+      "hlot-0488",
+      "hlot-0489"
+    ],
+    "documents": [
+      {
+        "id": "hcat-051-doc-1",
+        "name": "AUC-2242 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "3.0 MB"
+      },
+      {
+        "id": "hcat-051-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "864 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of ss offcuts, coil ends & turnings on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-052",
+    "code": "AUC-2245",
+    "title": "JSW Steel — Al Sheet Offcuts & Ingot Rejects",
+    "sellerId": "u-seller-4",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-03-14T07:19:00.000Z",
+    "endsAt": "2026-03-17T07:19:00.000Z",
+    "emdDeadline": "2026-03-13T07:19:00.000Z",
+    "inspectionFrom": "2026-03-09T07:19:00.000Z",
+    "inspectionTo": "2026-03-13T07:19:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "H. Kulkarni",
+      "phone": "+91 90360 71182",
+      "role": "Manager, Commercial (Disposals)"
+    },
+    "yardName": "VJNR Yard B",
+    "yardAddress": "JSW Steel Vijayanagar Works, Toranagallu, Bellary, Karnataka 583275",
+    "region": "Bellary, KA",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0490",
+      "hlot-0491",
+      "hlot-0492",
+      "hlot-0493",
+      "hlot-0494",
+      "hlot-0495",
+      "hlot-0496",
+      "hlot-0497"
+    ],
+    "documents": [
+      {
+        "id": "hcat-052-doc-1",
+        "name": "AUC-2245 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.8 MB"
+      },
+      {
+        "id": "hcat-052-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "774 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of al sheet offcuts & ingot rejects on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-053",
+    "code": "AUC-2248",
+    "title": "South Central Railway — Points, Crossings & Rail Cuttings",
+    "sellerId": "u-hseller-11",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-03-19T03:41:00.000Z",
+    "endsAt": "2026-03-20T03:41:00.000Z",
+    "emdDeadline": "2026-03-18T03:41:00.000Z",
+    "inspectionFrom": "2026-03-14T03:41:00.000Z",
+    "inspectionTo": "2026-03-18T03:41:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Chandran Khan",
+      "phone": "+91 97202 54640",
+      "role": "Stores Superintendent"
+    },
+    "yardName": "Lallaguda Workshop Yard",
+    "yardAddress": "Carriage Repair Workshop, Lallaguda, Secunderabad, Telangana 500017",
+    "region": "Secunderabad, TS",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0498",
+      "hlot-0499",
+      "hlot-0500",
+      "hlot-0501",
+      "hlot-0502",
+      "hlot-0503",
+      "hlot-0504",
+      "hlot-0505",
+      "hlot-0506",
+      "hlot-0507",
+      "hlot-0508"
+    ],
+    "documents": [
+      {
+        "id": "hcat-053-doc-1",
+        "name": "AUC-2248 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.3 MB"
+      },
+      {
+        "id": "hcat-053-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "607 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of points, crossings & rail cuttings on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-054",
+    "code": "AUC-2251",
+    "title": "NALCO — Al Sheet Offcuts & Ingot Rejects",
+    "sellerId": "u-hseller-03",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-03-20T22:37:00.000Z",
+    "endsAt": "2026-03-22T22:37:00.000Z",
+    "emdDeadline": "2026-03-19T22:37:00.000Z",
+    "inspectionFrom": "2026-03-15T22:37:00.000Z",
+    "inspectionTo": "2026-03-19T22:37:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Karthik Das",
+      "phone": "+91 72550 60870",
+      "role": "Dy. Manager, By-products"
+    },
+    "yardName": "Angul Disposal Yard",
+    "yardAddress": "NALCO Smelter Plant, Angul, Odisha 759145",
+    "region": "Angul, OD",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "hlot-0509",
+      "hlot-0510",
+      "hlot-0511",
+      "hlot-0512",
+      "hlot-0513",
+      "hlot-0514",
+      "hlot-0515",
+      "hlot-0516",
+      "hlot-0517",
+      "hlot-0518",
+      "hlot-0519",
+      "hlot-0520",
+      "hlot-0521"
+    ],
+    "documents": [
+      {
+        "id": "hcat-054-doc-1",
+        "name": "AUC-2251 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.9 MB"
+      },
+      {
+        "id": "hcat-054-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "916 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of al sheet offcuts & ingot rejects on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-055",
+    "code": "AUC-2254",
+    "title": "RINL — Melting Shop Scrap & CI Borings",
+    "sellerId": "u-hseller-01",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-03-23T17:46:00.000Z",
+    "endsAt": "2026-03-25T17:46:00.000Z",
+    "emdDeadline": "2026-03-22T17:46:00.000Z",
+    "inspectionFrom": "2026-03-18T17:46:00.000Z",
+    "inspectionTo": "2026-03-22T17:46:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Tejinder Deshmukh",
+      "phone": "+91 72737 17182",
+      "role": "Sr. Engineer (Salvage & Disposals)"
+    },
+    "yardName": "VSP Scrap Yard 2",
+    "yardAddress": "Gate 3, RINL Visakhapatnam Steel Plant, Visakhapatnam, Andhra Pradesh 530031",
+    "region": "Visakhapatnam, AP",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0522",
+      "hlot-0523",
+      "hlot-0524",
+      "hlot-0525",
+      "hlot-0526",
+      "hlot-0527",
+      "hlot-0528",
+      "hlot-0529"
+    ],
+    "documents": [
+      {
+        "id": "hcat-055-doc-1",
+        "name": "AUC-2254 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.9 MB"
+      },
+      {
+        "id": "hcat-055-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "853 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of melting shop scrap & ci borings on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-056",
+    "code": "AUC-2257",
+    "title": "Ashok Leyland — Stainless Skeletons & Briquettes",
+    "sellerId": "u-hseller-06",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-03-25T09:12:00.000Z",
+    "endsAt": "2026-03-28T09:12:00.000Z",
+    "emdDeadline": "2026-03-24T09:12:00.000Z",
+    "inspectionFrom": "2026-03-20T09:12:00.000Z",
+    "inspectionTo": "2026-03-24T09:12:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Pramod Menon",
+      "phone": "+91 72523 65213",
+      "role": "Stores Superintendent"
+    },
+    "yardName": "Hosur Unit II Yard",
+    "yardAddress": "Ashok Leyland Hosur Unit II, Hosur, Tamil Nadu 635109",
+    "region": "Hosur, TN",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 14,
+    "lotIds": [
+      "hlot-0530",
+      "hlot-0531",
+      "hlot-0532",
+      "hlot-0533",
+      "hlot-0534",
+      "hlot-0535",
+      "hlot-0536",
+      "hlot-0537",
+      "hlot-0538",
+      "hlot-0539",
+      "hlot-0540",
+      "hlot-0541",
+      "hlot-0542",
+      "hlot-0543"
+    ],
+    "documents": [
+      {
+        "id": "hcat-056-doc-1",
+        "name": "AUC-2257 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.5 MB"
+      },
+      {
+        "id": "hcat-056-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "653 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of stainless skeletons & briquettes on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-057",
+    "code": "AUC-2260",
+    "title": "Tata Steel — Stainless Skeletons & Briquettes",
+    "sellerId": "u-seller-2",
+    "type": "tender",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-03-29T23:07:00.000Z",
+    "endsAt": "2026-03-30T23:07:00.000Z",
+    "emdDeadline": "2026-03-28T23:07:00.000Z",
+    "inspectionFrom": "2026-03-24T23:07:00.000Z",
+    "inspectionTo": "2026-03-28T23:07:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "M. Oraon",
+      "phone": "+91 82102 44561",
+      "role": "Dy. Manager, By-products"
+    },
+    "yardName": "Burma Mines Yard",
+    "yardAddress": "Burma Mines, Tata Steel Works, Jamshedpur, Jharkhand 831007",
+    "region": "Jamshedpur, JH",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 14,
+    "lotIds": [
+      "hlot-0544",
+      "hlot-0545",
+      "hlot-0546",
+      "hlot-0547",
+      "hlot-0548",
+      "hlot-0549"
+    ],
+    "documents": [
+      {
+        "id": "hcat-057-doc-1",
+        "name": "AUC-2260 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.3 MB"
+      },
+      {
+        "id": "hcat-057-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "855 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of stainless skeletons & briquettes on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-058",
+    "code": "AUC-2263",
+    "title": "BHEL — EOT Crane Parts & Storage Tanks",
+    "sellerId": "u-seller-7",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-03-31T20:35:00.000Z",
+    "endsAt": "2026-04-02T20:35:00.000Z",
+    "emdDeadline": "2026-03-30T20:35:00.000Z",
+    "inspectionFrom": "2026-03-26T20:35:00.000Z",
+    "inspectionTo": "2026-03-30T20:35:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "R. Elango",
+      "phone": "+91 94430 20951",
+      "role": "Sr. Engineer (Disposals)"
+    },
+    "yardName": "BHEL Unit II Yard",
+    "yardAddress": "BHEL Tiruchirappalli, Kailasapuram, Tamil Nadu 620014",
+    "region": "Trichy, TN",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 14,
+    "lotIds": [
+      "hlot-0550",
+      "hlot-0551",
+      "hlot-0552",
+      "hlot-0553",
+      "hlot-0554",
+      "hlot-0555",
+      "hlot-0556",
+      "hlot-0557",
+      "hlot-0558",
+      "hlot-0559",
+      "hlot-0560",
+      "hlot-0561"
+    ],
+    "documents": [
+      {
+        "id": "hcat-058-doc-1",
+        "name": "AUC-2263 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "3.0 MB"
+      },
+      {
+        "id": "hcat-058-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "796 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of eot crane parts & storage tanks on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-059",
+    "code": "AUC-2266",
+    "title": "Ashok Leyland — Stainless Skeletons & Briquettes",
+    "sellerId": "u-hseller-06",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-04-03T14:08:00.000Z",
+    "endsAt": "2026-04-05T14:08:00.000Z",
+    "emdDeadline": "2026-04-02T14:08:00.000Z",
+    "inspectionFrom": "2026-03-29T14:08:00.000Z",
+    "inspectionTo": "2026-04-02T14:08:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Pramod Menon",
+      "phone": "+91 72523 65213",
+      "role": "Stores Superintendent"
+    },
+    "yardName": "Hosur Unit II Yard",
+    "yardAddress": "Ashok Leyland Hosur Unit II, Hosur, Tamil Nadu 635109",
+    "region": "Hosur, TN",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0562",
+      "hlot-0563",
+      "hlot-0564",
+      "hlot-0565",
+      "hlot-0566",
+      "hlot-0567",
+      "hlot-0568",
+      "hlot-0569",
+      "hlot-0570",
+      "hlot-0571",
+      "hlot-0572",
+      "hlot-0573",
+      "hlot-0574"
+    ],
+    "documents": [
+      {
+        "id": "hcat-059-doc-1",
+        "name": "AUC-2266 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.8 MB"
+      },
+      {
+        "id": "hcat-059-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "675 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of stainless skeletons & briquettes on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-060",
+    "code": "AUC-2269",
+    "title": "Vedanta — Zinc Dross & FeSiMg Fines",
+    "sellerId": "u-hseller-07",
+    "type": "tender",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-04-07T07:22:00.000Z",
+    "endsAt": "2026-04-08T07:22:00.000Z",
+    "emdDeadline": "2026-04-06T07:22:00.000Z",
+    "inspectionFrom": "2026-04-02T07:22:00.000Z",
+    "inspectionTo": "2026-04-06T07:22:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Karthik Joshi",
+      "phone": "+91 88132 36923",
+      "role": "Yard In-charge (Inspection & Lifting)"
+    },
+    "yardName": "Jharsuguda Pot-line Yard",
+    "yardAddress": "Vedanta Aluminium, Bhurkhamunda, Jharsuguda, Odisha 768202",
+    "region": "Jharsuguda, OD",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "hlot-0575",
+      "hlot-0576",
+      "hlot-0577",
+      "hlot-0578",
+      "hlot-0579",
+      "hlot-0580",
+      "hlot-0581",
+      "hlot-0582",
+      "hlot-0583",
+      "hlot-0584"
+    ],
+    "documents": [
+      {
+        "id": "hcat-060-doc-1",
+        "name": "AUC-2269 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.4 MB"
+      },
+      {
+        "id": "hcat-060-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "601 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of zinc dross & fesimg fines on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-061",
+    "code": "AUC-2272",
+    "title": "Hindalco — Al Sheet Offcuts & Ingot Rejects",
+    "sellerId": "u-hseller-02",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-04-09T03:46:00.000Z",
+    "endsAt": "2026-04-11T03:46:00.000Z",
+    "emdDeadline": "2026-04-08T03:46:00.000Z",
+    "inspectionFrom": "2026-04-04T03:46:00.000Z",
+    "inspectionTo": "2026-04-08T03:46:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Vikram Khan",
+      "phone": "+91 96262 43623",
+      "role": "Stores Superintendent"
+    },
+    "yardName": "Renukoot Smelter Yard",
+    "yardAddress": "Hindalco Industries, Renukoot, Sonbhadra, Uttar Pradesh 231217",
+    "region": "Renukoot, UP",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "hlot-0585",
+      "hlot-0586",
+      "hlot-0587",
+      "hlot-0588",
+      "hlot-0589",
+      "hlot-0590",
+      "hlot-0591"
+    ],
+    "documents": [
+      {
+        "id": "hcat-061-doc-1",
+        "name": "AUC-2272 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.4 MB"
+      },
+      {
+        "id": "hcat-061-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "866 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of al sheet offcuts & ingot rejects on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-062",
+    "code": "AUC-2275",
+    "title": "NTPC — Coal Rejects, Fly Ash & Used Oil",
+    "sellerId": "u-seller-5",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-04-12T16:13:00.000Z",
+    "endsAt": "2026-04-13T16:13:00.000Z",
+    "emdDeadline": "2026-04-11T16:13:00.000Z",
+    "inspectionFrom": "2026-04-07T16:13:00.000Z",
+    "inspectionTo": "2026-04-11T16:13:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "G. Srinivas",
+      "phone": "+91 87903 55240",
+      "role": "AGM (Fuel Handling)"
+    },
+    "yardName": "RSTPS Ash Yard",
+    "yardAddress": "NTPC Ramagundam, Jyothinagar, Peddapalli, Telangana 505215",
+    "region": "Ramagundam, TS",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "hlot-0592",
+      "hlot-0593",
+      "hlot-0594",
+      "hlot-0595",
+      "hlot-0596",
+      "hlot-0597",
+      "hlot-0598",
+      "hlot-0599",
+      "hlot-0600",
+      "hlot-0601"
+    ],
+    "documents": [
+      {
+        "id": "hcat-062-doc-1",
+        "name": "AUC-2275 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "3.2 MB"
+      },
+      {
+        "id": "hcat-062-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "851 KB"
+      }
+    ],
+    "termsSetId": "ts-hazmat",
+    "description": "E-auction of coal rejects, fly ash & used oil on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-063",
+    "code": "AUC-2278",
+    "title": "RINL — HMS 1 & 2 with Plate Cuttings",
+    "sellerId": "u-hseller-01",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-04-13T08:49:00.000Z",
+    "endsAt": "2026-04-16T08:49:00.000Z",
+    "emdDeadline": "2026-04-12T08:49:00.000Z",
+    "inspectionFrom": "2026-04-08T08:49:00.000Z",
+    "inspectionTo": "2026-04-12T08:49:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Tejinder Deshmukh",
+      "phone": "+91 72737 17182",
+      "role": "Sr. Engineer (Salvage & Disposals)"
+    },
+    "yardName": "VSP Scrap Yard 2",
+    "yardAddress": "Gate 3, RINL Visakhapatnam Steel Plant, Visakhapatnam, Andhra Pradesh 530031",
+    "region": "Visakhapatnam, AP",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0602",
+      "hlot-0603",
+      "hlot-0604",
+      "hlot-0605",
+      "hlot-0606",
+      "hlot-0607",
+      "hlot-0608",
+      "hlot-0609",
+      "hlot-0610",
+      "hlot-0611",
+      "hlot-0612"
+    ],
+    "documents": [
+      {
+        "id": "hcat-063-doc-1",
+        "name": "AUC-2278 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.5 MB"
+      },
+      {
+        "id": "hcat-063-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "666 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of hms 1 & 2 with plate cuttings on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-064",
+    "code": "AUC-2281",
+    "title": "BHEL — Compressors, DG Sets & Lathes",
+    "sellerId": "u-seller-7",
+    "type": "tender",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-04-17T00:00:00.000Z",
+    "endsAt": "2026-04-19T00:00:00.000Z",
+    "emdDeadline": "2026-04-16T00:00:00.000Z",
+    "inspectionFrom": "2026-04-12T00:00:00.000Z",
+    "inspectionTo": "2026-04-16T00:00:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "R. Elango",
+      "phone": "+91 94430 20951",
+      "role": "Sr. Engineer (Disposals)"
+    },
+    "yardName": "BHEL Unit II Yard",
+    "yardAddress": "BHEL Tiruchirappalli, Kailasapuram, Tamil Nadu 620014",
+    "region": "Trichy, TN",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0613",
+      "hlot-0614",
+      "hlot-0615",
+      "hlot-0616",
+      "hlot-0617",
+      "hlot-0618"
+    ],
+    "documents": [
+      {
+        "id": "hcat-064-doc-1",
+        "name": "AUC-2281 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.5 MB"
+      },
+      {
+        "id": "hcat-064-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "899 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of compressors, dg sets & lathes on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-065",
+    "code": "AUC-2284",
+    "title": "Mahindra & Mahindra — Stainless Skeletons & Briquettes",
+    "sellerId": "u-hseller-05",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-04-20T16:32:00.000Z",
+    "endsAt": "2026-04-21T16:32:00.000Z",
+    "emdDeadline": "2026-04-19T16:32:00.000Z",
+    "inspectionFrom": "2026-04-15T16:32:00.000Z",
+    "inspectionTo": "2026-04-19T16:32:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Iqbal Shah",
+      "phone": "+91 80757 76764",
+      "role": "Yard In-charge (Inspection & Lifting)"
+    },
+    "yardName": "Nashik Plant Scrap Bay",
+    "yardAddress": "Mahindra Nashik Plant, Satpur MIDC, Nashik, Maharashtra 422007",
+    "region": "Nashik, MH",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 14,
+    "lotIds": [
+      "hlot-0619",
+      "hlot-0620",
+      "hlot-0621",
+      "hlot-0622",
+      "hlot-0623",
+      "hlot-0624",
+      "hlot-0625",
+      "hlot-0626",
+      "hlot-0627",
+      "hlot-0628",
+      "hlot-0629",
+      "hlot-0630",
+      "hlot-0631",
+      "hlot-0632"
+    ],
+    "documents": [
+      {
+        "id": "hcat-065-doc-1",
+        "name": "AUC-2284 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "3.3 MB"
+      },
+      {
+        "id": "hcat-065-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "721 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of stainless skeletons & briquettes on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-066",
+    "code": "AUC-2287",
+    "title": "Northern Railway — Points, Crossings & Rail Cuttings",
+    "sellerId": "u-hseller-04",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-04-22T23:23:00.000Z",
+    "endsAt": "2026-04-23T23:23:00.000Z",
+    "emdDeadline": "2026-04-21T23:23:00.000Z",
+    "inspectionFrom": "2026-04-17T23:23:00.000Z",
+    "inspectionTo": "2026-04-21T23:23:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Balbir Verma",
+      "phone": "+91 91321 43964",
+      "role": "Yard In-charge (Inspection & Lifting)"
+    },
+    "yardName": "Jagadhri Workshop Yard",
+    "yardAddress": "Carriage Workshop, Jagadhri, Yamunanagar, Haryana 135002",
+    "region": "Yamunanagar, HR",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 14,
+    "lotIds": [
+      "hlot-0633",
+      "hlot-0634",
+      "hlot-0635",
+      "hlot-0636",
+      "hlot-0637",
+      "hlot-0638",
+      "hlot-0639",
+      "hlot-0640"
+    ],
+    "documents": [
+      {
+        "id": "hcat-066-doc-1",
+        "name": "AUC-2287 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.1 MB"
+      },
+      {
+        "id": "hcat-066-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "695 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of points, crossings & rail cuttings on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-067",
+    "code": "AUC-2290",
+    "title": "Tata Steel — SS Offcuts, Coil Ends & Turnings",
+    "sellerId": "u-seller-2",
+    "type": "tender",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-04-23T16:38:00.000Z",
+    "endsAt": "2026-04-26T16:38:00.000Z",
+    "emdDeadline": "2026-04-22T16:38:00.000Z",
+    "inspectionFrom": "2026-04-18T16:38:00.000Z",
+    "inspectionTo": "2026-04-22T16:38:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "M. Oraon",
+      "phone": "+91 82102 44561",
+      "role": "Dy. Manager, By-products"
+    },
+    "yardName": "Burma Mines Yard",
+    "yardAddress": "Burma Mines, Tata Steel Works, Jamshedpur, Jharkhand 831007",
+    "region": "Jamshedpur, JH",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0641",
+      "hlot-0642",
+      "hlot-0643",
+      "hlot-0644",
+      "hlot-0645"
+    ],
+    "documents": [
+      {
+        "id": "hcat-067-doc-1",
+        "name": "AUC-2290 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.9 MB"
+      },
+      {
+        "id": "hcat-067-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "888 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of ss offcuts, coil ends & turnings on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-068",
+    "code": "AUC-2293",
+    "title": "Mahindra & Mahindra — 304 / 316 Offcuts & CRC End Cuts",
+    "sellerId": "u-hseller-05",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-04-27T01:49:00.000Z",
+    "endsAt": "2026-04-29T01:49:00.000Z",
+    "emdDeadline": "2026-04-26T01:49:00.000Z",
+    "inspectionFrom": "2026-04-22T01:49:00.000Z",
+    "inspectionTo": "2026-04-26T01:49:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Iqbal Shah",
+      "phone": "+91 80757 76764",
+      "role": "Yard In-charge (Inspection & Lifting)"
+    },
+    "yardName": "Nashik Plant Scrap Bay",
+    "yardAddress": "Mahindra Nashik Plant, Satpur MIDC, Nashik, Maharashtra 422007",
+    "region": "Nashik, MH",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 14,
+    "lotIds": [
+      "hlot-0646",
+      "hlot-0647",
+      "hlot-0648",
+      "hlot-0649",
+      "hlot-0650",
+      "hlot-0651",
+      "hlot-0652"
+    ],
+    "documents": [
+      {
+        "id": "hcat-068-doc-1",
+        "name": "AUC-2293 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.6 MB"
+      },
+      {
+        "id": "hcat-068-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "887 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of 304 / 316 offcuts & crc end cuts on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-069",
+    "code": "AUC-2296",
+    "title": "Ordnance Factory — Plant & Machinery, Condemned Assets",
+    "sellerId": "u-hseller-10",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-04-29T16:05:00.000Z",
+    "endsAt": "2026-05-01T16:05:00.000Z",
+    "emdDeadline": "2026-04-28T16:05:00.000Z",
+    "inspectionFrom": "2026-04-24T16:05:00.000Z",
+    "inspectionTo": "2026-04-28T16:05:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Prakash Desai",
+      "phone": "+91 82872 41264",
+      "role": "Yard In-charge (Inspection & Lifting)"
+    },
+    "yardName": "OFMK Salvage Yard",
+    "yardAddress": "Ordnance Factory Medak, Yeddumailaram, Sangareddy, Telangana 502205",
+    "region": "Medak, TS",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "hlot-0653",
+      "hlot-0654",
+      "hlot-0655",
+      "hlot-0656",
+      "hlot-0657",
+      "hlot-0658",
+      "hlot-0659",
+      "hlot-0660",
+      "hlot-0661",
+      "hlot-0662",
+      "hlot-0663",
+      "hlot-0664",
+      "hlot-0665"
+    ],
+    "documents": [
+      {
+        "id": "hcat-069-doc-1",
+        "name": "AUC-2296 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.7 MB"
+      },
+      {
+        "id": "hcat-069-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "650 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of plant & machinery, condemned assets on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-070",
+    "code": "AUC-2299",
+    "title": "NMDC — Radiators, Cable & Utensil Scrap",
+    "sellerId": "u-hseller-12",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-05-01T02:28:00.000Z",
+    "endsAt": "2026-05-04T02:28:00.000Z",
+    "emdDeadline": "2026-04-30T02:28:00.000Z",
+    "inspectionFrom": "2026-04-26T02:28:00.000Z",
+    "inspectionTo": "2026-04-30T02:28:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Bhaskar Gupta",
+      "phone": "+91 94963 93564",
+      "role": "Stores Superintendent"
+    },
+    "yardName": "Bacheli Stores Yard",
+    "yardAddress": "NMDC Bacheli Complex, Dantewada, Chhattisgarh 494553",
+    "region": "Bacheli, CG",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "hlot-0666",
+      "hlot-0667",
+      "hlot-0668",
+      "hlot-0669",
+      "hlot-0670",
+      "hlot-0671",
+      "hlot-0672",
+      "hlot-0673",
+      "hlot-0674",
+      "hlot-0675",
+      "hlot-0676",
+      "hlot-0677",
+      "hlot-0678"
+    ],
+    "documents": [
+      {
+        "id": "hcat-070-doc-1",
+        "name": "AUC-2299 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "3.3 MB"
+      },
+      {
+        "id": "hcat-070-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "640 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of radiators, cable & utensil scrap on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-071",
+    "code": "AUC-2302",
+    "title": "SAIL — Mixed MS Scrap, Turnings & TMT Rejects",
+    "sellerId": "u-seller-1",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-05-05T17:14:00.000Z",
+    "endsAt": "2026-05-06T17:14:00.000Z",
+    "emdDeadline": "2026-05-04T17:14:00.000Z",
+    "inspectionFrom": "2026-04-30T17:14:00.000Z",
+    "inspectionTo": "2026-05-04T17:14:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "S. K. Sahu",
+      "phone": "+91 94252 10883",
+      "role": "Yard In-charge (Inspection & Lifting)"
+    },
+    "yardName": "BSP Scrap Yard 3",
+    "yardAddress": "Gate 7, SAIL Bhilai Steel Plant, Bhilai, Chhattisgarh 490001",
+    "region": "Bhilai, CG",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "hlot-0679",
+      "hlot-0680",
+      "hlot-0681",
+      "hlot-0682",
+      "hlot-0683",
+      "hlot-0684",
+      "hlot-0685",
+      "hlot-0686",
+      "hlot-0687",
+      "hlot-0688"
+    ],
+    "documents": [
+      {
+        "id": "hcat-071-doc-1",
+        "name": "AUC-2302 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.9 MB"
+      },
+      {
+        "id": "hcat-071-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "744 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of mixed ms scrap, turnings & tmt rejects on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-072",
+    "code": "AUC-2305",
+    "title": "BHEL — Plant & Machinery, Condemned Assets",
+    "sellerId": "u-seller-7",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-05-06T00:12:00.000Z",
+    "endsAt": "2026-05-09T00:12:00.000Z",
+    "emdDeadline": "2026-05-05T00:12:00.000Z",
+    "inspectionFrom": "2026-05-01T00:12:00.000Z",
+    "inspectionTo": "2026-05-05T00:12:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "R. Elango",
+      "phone": "+91 94430 20951",
+      "role": "Sr. Engineer (Disposals)"
+    },
+    "yardName": "BHEL Unit II Yard",
+    "yardAddress": "BHEL Tiruchirappalli, Kailasapuram, Tamil Nadu 620014",
+    "region": "Trichy, TN",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "hlot-0689",
+      "hlot-0690",
+      "hlot-0691",
+      "hlot-0692",
+      "hlot-0693",
+      "hlot-0694",
+      "hlot-0695",
+      "hlot-0696",
+      "hlot-0697",
+      "hlot-0698",
+      "hlot-0699",
+      "hlot-0700",
+      "hlot-0701"
+    ],
+    "documents": [
+      {
+        "id": "hcat-072-doc-1",
+        "name": "AUC-2305 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "3.3 MB"
+      },
+      {
+        "id": "hcat-072-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "823 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of plant & machinery, condemned assets on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-073",
+    "code": "AUC-2308",
+    "title": "RINL — Structural Scrap & Skull",
+    "sellerId": "u-hseller-01",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-05-08T14:05:00.000Z",
+    "endsAt": "2026-05-11T14:05:00.000Z",
+    "emdDeadline": "2026-05-07T14:05:00.000Z",
+    "inspectionFrom": "2026-05-03T14:05:00.000Z",
+    "inspectionTo": "2026-05-07T14:05:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Tejinder Deshmukh",
+      "phone": "+91 72737 17182",
+      "role": "Sr. Engineer (Salvage & Disposals)"
+    },
+    "yardName": "VSP Scrap Yard 2",
+    "yardAddress": "Gate 3, RINL Visakhapatnam Steel Plant, Visakhapatnam, Andhra Pradesh 530031",
+    "region": "Visakhapatnam, AP",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0702",
+      "hlot-0703",
+      "hlot-0704",
+      "hlot-0705",
+      "hlot-0706",
+      "hlot-0707",
+      "hlot-0708",
+      "hlot-0709",
+      "hlot-0710",
+      "hlot-0711",
+      "hlot-0712"
+    ],
+    "documents": [
+      {
+        "id": "hcat-073-doc-1",
+        "name": "AUC-2308 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.4 MB"
+      },
+      {
+        "id": "hcat-073-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "604 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of structural scrap & skull on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-074",
+    "code": "AUC-2311",
+    "title": "RINL — HMS 1 & 2 with Plate Cuttings",
+    "sellerId": "u-hseller-01",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-05-13T05:21:00.000Z",
+    "endsAt": "2026-05-14T05:21:00.000Z",
+    "emdDeadline": "2026-05-12T05:21:00.000Z",
+    "inspectionFrom": "2026-05-08T05:21:00.000Z",
+    "inspectionTo": "2026-05-12T05:21:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Tejinder Deshmukh",
+      "phone": "+91 72737 17182",
+      "role": "Sr. Engineer (Salvage & Disposals)"
+    },
+    "yardName": "VSP Scrap Yard 2",
+    "yardAddress": "Gate 3, RINL Visakhapatnam Steel Plant, Visakhapatnam, Andhra Pradesh 530031",
+    "region": "Visakhapatnam, AP",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 14,
+    "lotIds": [
+      "hlot-0713",
+      "hlot-0714",
+      "hlot-0715",
+      "hlot-0716",
+      "hlot-0717",
+      "hlot-0718",
+      "hlot-0719",
+      "hlot-0720",
+      "hlot-0721",
+      "hlot-0722",
+      "hlot-0723",
+      "hlot-0724",
+      "hlot-0725",
+      "hlot-0726"
+    ],
+    "documents": [
+      {
+        "id": "hcat-074-doc-1",
+        "name": "AUC-2311 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.5 MB"
+      },
+      {
+        "id": "hcat-074-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "695 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of hms 1 & 2 with plate cuttings on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-075",
+    "code": "AUC-2314",
+    "title": "South Central Railway — PSC Sleeper & Brake Block Scrap",
+    "sellerId": "u-hseller-11",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-05-14T12:30:00.000Z",
+    "endsAt": "2026-05-16T12:30:00.000Z",
+    "emdDeadline": "2026-05-13T12:30:00.000Z",
+    "inspectionFrom": "2026-05-09T12:30:00.000Z",
+    "inspectionTo": "2026-05-13T12:30:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Chandran Khan",
+      "phone": "+91 97202 54640",
+      "role": "Stores Superintendent"
+    },
+    "yardName": "Lallaguda Workshop Yard",
+    "yardAddress": "Carriage Repair Workshop, Lallaguda, Secunderabad, Telangana 500017",
+    "region": "Secunderabad, TS",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0727",
+      "hlot-0728",
+      "hlot-0729",
+      "hlot-0730",
+      "hlot-0731",
+      "hlot-0732",
+      "hlot-0733",
+      "hlot-0734",
+      "hlot-0735",
+      "hlot-0736",
+      "hlot-0737",
+      "hlot-0738",
+      "hlot-0739",
+      "hlot-0740"
+    ],
+    "documents": [
+      {
+        "id": "hcat-075-doc-1",
+        "name": "AUC-2314 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.8 MB"
+      },
+      {
+        "id": "hcat-075-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "636 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of psc sleeper & brake block scrap on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-076",
+    "code": "AUC-2317",
+    "title": "NALCO — Al Sheet Offcuts & Ingot Rejects",
+    "sellerId": "u-hseller-03",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-05-17T23:02:00.000Z",
+    "endsAt": "2026-05-18T23:02:00.000Z",
+    "emdDeadline": "2026-05-16T23:02:00.000Z",
+    "inspectionFrom": "2026-05-12T23:02:00.000Z",
+    "inspectionTo": "2026-05-16T23:02:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Karthik Das",
+      "phone": "+91 72550 60870",
+      "role": "Dy. Manager, By-products"
+    },
+    "yardName": "Angul Disposal Yard",
+    "yardAddress": "NALCO Smelter Plant, Angul, Odisha 759145",
+    "region": "Angul, OD",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 14,
+    "lotIds": [
+      "hlot-0741",
+      "hlot-0742",
+      "hlot-0743",
+      "hlot-0744",
+      "hlot-0745",
+      "hlot-0746",
+      "hlot-0747",
+      "hlot-0748",
+      "hlot-0749",
+      "hlot-0750",
+      "hlot-0751",
+      "hlot-0752",
+      "hlot-0753",
+      "hlot-0754"
+    ],
+    "documents": [
+      {
+        "id": "hcat-076-doc-1",
+        "name": "AUC-2317 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.4 MB"
+      },
+      {
+        "id": "hcat-076-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "758 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of al sheet offcuts & ingot rejects on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-077",
+    "code": "AUC-2320",
+    "title": "NTPC — Fuel Handling Disposals",
+    "sellerId": "u-seller-5",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-05-19T05:00:00.000Z",
+    "endsAt": "2026-05-21T05:00:00.000Z",
+    "emdDeadline": "2026-05-18T05:00:00.000Z",
+    "inspectionFrom": "2026-05-14T05:00:00.000Z",
+    "inspectionTo": "2026-05-18T05:00:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "G. Srinivas",
+      "phone": "+91 87903 55240",
+      "role": "AGM (Fuel Handling)"
+    },
+    "yardName": "RSTPS Ash Yard",
+    "yardAddress": "NTPC Ramagundam, Jyothinagar, Peddapalli, Telangana 505215",
+    "region": "Ramagundam, TS",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 14,
+    "lotIds": [
+      "hlot-0755",
+      "hlot-0756",
+      "hlot-0757",
+      "hlot-0758",
+      "hlot-0759",
+      "hlot-0760",
+      "hlot-0761",
+      "hlot-0762",
+      "hlot-0763",
+      "hlot-0764",
+      "hlot-0765",
+      "hlot-0766",
+      "hlot-0767"
+    ],
+    "documents": [
+      {
+        "id": "hcat-077-doc-1",
+        "name": "AUC-2320 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.6 MB"
+      },
+      {
+        "id": "hcat-077-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "750 KB"
+      }
+    ],
+    "termsSetId": "ts-hazmat",
+    "description": "E-auction of fuel handling disposals on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-078",
+    "code": "AUC-2323",
+    "title": "ONGC — EOT Crane Parts & Storage Tanks",
+    "sellerId": "u-hseller-09",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-05-21T13:37:00.000Z",
+    "endsAt": "2026-05-23T13:37:00.000Z",
+    "emdDeadline": "2026-05-20T13:37:00.000Z",
+    "inspectionFrom": "2026-05-16T13:37:00.000Z",
+    "inspectionTo": "2026-05-20T13:37:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Salim Gill",
+      "phone": "+91 77465 62507",
+      "role": "Dy. Manager, By-products"
+    },
+    "yardName": "Hazira Disposal Yard",
+    "yardAddress": "ONGC Hazira Gas Processing Complex, Surat, Gujarat 394518",
+    "region": "Hazira, GJ",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 14,
+    "lotIds": [
+      "hlot-0768",
+      "hlot-0769",
+      "hlot-0770",
+      "hlot-0771",
+      "hlot-0772",
+      "hlot-0773",
+      "hlot-0774",
+      "hlot-0775",
+      "hlot-0776"
+    ],
+    "documents": [
+      {
+        "id": "hcat-078-doc-1",
+        "name": "AUC-2323 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.1 MB"
+      },
+      {
+        "id": "hcat-078-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "884 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of eot crane parts & storage tanks on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-079",
+    "code": "AUC-2326",
+    "title": "RINL — Melting Shop Scrap & CI Borings",
+    "sellerId": "u-hseller-01",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-05-24T19:52:00.000Z",
+    "endsAt": "2026-05-25T19:52:00.000Z",
+    "emdDeadline": "2026-05-23T19:52:00.000Z",
+    "inspectionFrom": "2026-05-19T19:52:00.000Z",
+    "inspectionTo": "2026-05-23T19:52:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Tejinder Deshmukh",
+      "phone": "+91 72737 17182",
+      "role": "Sr. Engineer (Salvage & Disposals)"
+    },
+    "yardName": "VSP Scrap Yard 2",
+    "yardAddress": "Gate 3, RINL Visakhapatnam Steel Plant, Visakhapatnam, Andhra Pradesh 530031",
+    "region": "Visakhapatnam, AP",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "hlot-0777",
+      "hlot-0778",
+      "hlot-0779",
+      "hlot-0780",
+      "hlot-0781"
+    ],
+    "documents": [
+      {
+        "id": "hcat-079-doc-1",
+        "name": "AUC-2326 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.6 MB"
+      },
+      {
+        "id": "hcat-079-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "771 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of melting shop scrap & ci borings on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-080",
+    "code": "AUC-2329",
+    "title": "East Coast Railway — PSC Sleeper & Brake Block Scrap",
+    "sellerId": "u-seller-3",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-05-25T02:34:00.000Z",
+    "endsAt": "2026-05-28T02:34:00.000Z",
+    "emdDeadline": "2026-05-24T02:34:00.000Z",
+    "inspectionFrom": "2026-05-20T02:34:00.000Z",
+    "inspectionTo": "2026-05-24T02:34:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "B. Pradhan",
+      "phone": "+91 89178 30425",
+      "role": "SSE / Depot Material Superintendent"
+    },
+    "yardName": "Mancheswar Depot",
+    "yardAddress": "Carriage Repair Workshop, Mancheswar, Bhubaneswar, Odisha 751017",
+    "region": "Bhubaneswar, OD",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 14,
+    "lotIds": [
+      "hlot-0782",
+      "hlot-0783",
+      "hlot-0784",
+      "hlot-0785",
+      "hlot-0786",
+      "hlot-0787",
+      "hlot-0788",
+      "hlot-0789",
+      "hlot-0790",
+      "hlot-0791"
+    ],
+    "documents": [
+      {
+        "id": "hcat-080-doc-1",
+        "name": "AUC-2329 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.0 MB"
+      },
+      {
+        "id": "hcat-080-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "761 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of psc sleeper & brake block scrap on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-081",
+    "code": "AUC-2332",
+    "title": "JSW Steel — Aluminium, Copper & Ferro Alloy Lots",
+    "sellerId": "u-seller-4",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-05-27T14:39:00.000Z",
+    "endsAt": "2026-05-30T14:39:00.000Z",
+    "emdDeadline": "2026-05-26T14:39:00.000Z",
+    "inspectionFrom": "2026-05-22T14:39:00.000Z",
+    "inspectionTo": "2026-05-26T14:39:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "H. Kulkarni",
+      "phone": "+91 90360 71182",
+      "role": "Manager, Commercial (Disposals)"
+    },
+    "yardName": "VJNR Yard B",
+    "yardAddress": "JSW Steel Vijayanagar Works, Toranagallu, Bellary, Karnataka 583275",
+    "region": "Bellary, KA",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "hlot-0792",
+      "hlot-0793",
+      "hlot-0794",
+      "hlot-0795",
+      "hlot-0796",
+      "hlot-0797",
+      "hlot-0798",
+      "hlot-0799",
+      "hlot-0800"
+    ],
+    "documents": [
+      {
+        "id": "hcat-081-doc-1",
+        "name": "AUC-2332 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.3 MB"
+      },
+      {
+        "id": "hcat-081-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "686 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of aluminium, copper & ferro alloy lots on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-082",
+    "code": "AUC-2335",
+    "title": "Jindal Stainless — Off-Spec Coils & Stainless Trims",
+    "sellerId": "u-hseller-14",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-05-31T22:52:00.000Z",
+    "endsAt": "2026-06-01T22:52:00.000Z",
+    "emdDeadline": "2026-05-30T22:52:00.000Z",
+    "inspectionFrom": "2026-05-26T22:52:00.000Z",
+    "inspectionTo": "2026-05-30T22:52:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Anil Warrier",
+      "phone": "+91 73352 28039",
+      "role": "Manager, Commercial (Disposals)"
+    },
+    "yardName": "Hisar Works Yard 4",
+    "yardAddress": "Jindal Stainless Ltd, Hisar, Haryana 125005",
+    "region": "Hisar, HR",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0801",
+      "hlot-0802",
+      "hlot-0803",
+      "hlot-0804",
+      "hlot-0805",
+      "hlot-0806",
+      "hlot-0807",
+      "hlot-0808"
+    ],
+    "documents": [
+      {
+        "id": "hcat-082-doc-1",
+        "name": "AUC-2335 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.0 MB"
+      },
+      {
+        "id": "hcat-082-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "685 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of off-spec coils & stainless trims on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-083",
+    "code": "AUC-2338",
+    "title": "Northern Railway — Condemned Rolling Stock & Track Fittings",
+    "sellerId": "u-hseller-04",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-06-02T03:35:00.000Z",
+    "endsAt": "2026-06-04T03:35:00.000Z",
+    "emdDeadline": "2026-06-01T03:35:00.000Z",
+    "inspectionFrom": "2026-05-28T03:35:00.000Z",
+    "inspectionTo": "2026-06-01T03:35:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Balbir Verma",
+      "phone": "+91 91321 43964",
+      "role": "Yard In-charge (Inspection & Lifting)"
+    },
+    "yardName": "Jagadhri Workshop Yard",
+    "yardAddress": "Carriage Workshop, Jagadhri, Yamunanagar, Haryana 135002",
+    "region": "Yamunanagar, HR",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0809",
+      "hlot-0810",
+      "hlot-0811",
+      "hlot-0812",
+      "hlot-0813",
+      "hlot-0814",
+      "hlot-0815"
+    ],
+    "documents": [
+      {
+        "id": "hcat-083-doc-1",
+        "name": "AUC-2338 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.2 MB"
+      },
+      {
+        "id": "hcat-083-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "752 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of condemned rolling stock & track fittings on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-084",
+    "code": "AUC-2341",
+    "title": "Mahindra & Mahindra — SS Offcuts, Coil Ends & Turnings",
+    "sellerId": "u-hseller-05",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-06-05T12:50:00.000Z",
+    "endsAt": "2026-06-06T12:50:00.000Z",
+    "emdDeadline": "2026-06-04T12:50:00.000Z",
+    "inspectionFrom": "2026-05-31T12:50:00.000Z",
+    "inspectionTo": "2026-06-04T12:50:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Iqbal Shah",
+      "phone": "+91 80757 76764",
+      "role": "Yard In-charge (Inspection & Lifting)"
+    },
+    "yardName": "Nashik Plant Scrap Bay",
+    "yardAddress": "Mahindra Nashik Plant, Satpur MIDC, Nashik, Maharashtra 422007",
+    "region": "Nashik, MH",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 14,
+    "lotIds": [
+      "hlot-0816",
+      "hlot-0817",
+      "hlot-0818",
+      "hlot-0819",
+      "hlot-0820",
+      "hlot-0821",
+      "hlot-0822",
+      "hlot-0823",
+      "hlot-0824",
+      "hlot-0825",
+      "hlot-0826"
+    ],
+    "documents": [
+      {
+        "id": "hcat-084-doc-1",
+        "name": "AUC-2341 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "3.0 MB"
+      },
+      {
+        "id": "hcat-084-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "873 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of ss offcuts, coil ends & turnings on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-085",
+    "code": "AUC-2344",
+    "title": "Vedanta — Non-Ferrous Mixed Disposal",
+    "sellerId": "u-hseller-07",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-06-06T16:56:00.000Z",
+    "endsAt": "2026-06-08T16:56:00.000Z",
+    "emdDeadline": "2026-06-05T16:56:00.000Z",
+    "inspectionFrom": "2026-06-01T16:56:00.000Z",
+    "inspectionTo": "2026-06-05T16:56:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Karthik Joshi",
+      "phone": "+91 88132 36923",
+      "role": "Yard In-charge (Inspection & Lifting)"
+    },
+    "yardName": "Jharsuguda Pot-line Yard",
+    "yardAddress": "Vedanta Aluminium, Bhurkhamunda, Jharsuguda, Odisha 768202",
+    "region": "Jharsuguda, OD",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "hlot-0827",
+      "hlot-0828",
+      "hlot-0829",
+      "hlot-0830",
+      "hlot-0831",
+      "hlot-0832",
+      "hlot-0833",
+      "hlot-0834",
+      "hlot-0835"
+    ],
+    "documents": [
+      {
+        "id": "hcat-085-doc-1",
+        "name": "AUC-2344 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.9 MB"
+      },
+      {
+        "id": "hcat-085-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "722 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of non-ferrous mixed disposal on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-086",
+    "code": "AUC-2347",
+    "title": "Hindalco — Aluminium, Copper & Ferro Alloy Lots",
+    "sellerId": "u-hseller-02",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-06-08T23:02:00.000Z",
+    "endsAt": "2026-06-10T23:02:00.000Z",
+    "emdDeadline": "2026-06-07T23:02:00.000Z",
+    "inspectionFrom": "2026-06-03T23:02:00.000Z",
+    "inspectionTo": "2026-06-07T23:02:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Vikram Khan",
+      "phone": "+91 96262 43623",
+      "role": "Stores Superintendent"
+    },
+    "yardName": "Renukoot Smelter Yard",
+    "yardAddress": "Hindalco Industries, Renukoot, Sonbhadra, Uttar Pradesh 231217",
+    "region": "Renukoot, UP",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 14,
+    "lotIds": [
+      "hlot-0836",
+      "hlot-0837",
+      "hlot-0838",
+      "hlot-0839",
+      "hlot-0840",
+      "hlot-0841",
+      "hlot-0842",
+      "hlot-0843",
+      "hlot-0844"
+    ],
+    "documents": [
+      {
+        "id": "hcat-086-doc-1",
+        "name": "AUC-2347 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.8 MB"
+      },
+      {
+        "id": "hcat-086-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "851 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of aluminium, copper & ferro alloy lots on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-087",
+    "code": "AUC-2350",
+    "title": "SAIL — Mixed MS Scrap, Turnings & TMT Rejects",
+    "sellerId": "u-seller-1",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-06-10T06:09:00.000Z",
+    "endsAt": "2026-06-13T06:09:00.000Z",
+    "emdDeadline": "2026-06-09T06:09:00.000Z",
+    "inspectionFrom": "2026-06-05T06:09:00.000Z",
+    "inspectionTo": "2026-06-09T06:09:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "S. K. Sahu",
+      "phone": "+91 94252 10883",
+      "role": "Yard In-charge (Inspection & Lifting)"
+    },
+    "yardName": "BSP Scrap Yard 3",
+    "yardAddress": "Gate 7, SAIL Bhilai Steel Plant, Bhilai, Chhattisgarh 490001",
+    "region": "Bhilai, CG",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0845",
+      "hlot-0846",
+      "hlot-0847",
+      "hlot-0848",
+      "hlot-0849",
+      "hlot-0850"
+    ],
+    "documents": [
+      {
+        "id": "hcat-087-doc-1",
+        "name": "AUC-2350 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.5 MB"
+      },
+      {
+        "id": "hcat-087-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "758 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of mixed ms scrap, turnings & tmt rejects on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-088",
+    "code": "AUC-2353",
+    "title": "JSW Steel — Aluminium, Copper & Ferro Alloy Lots",
+    "sellerId": "u-seller-4",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-06-14T15:05:00.000Z",
+    "endsAt": "2026-06-15T15:05:00.000Z",
+    "emdDeadline": "2026-06-13T15:05:00.000Z",
+    "inspectionFrom": "2026-06-09T15:05:00.000Z",
+    "inspectionTo": "2026-06-13T15:05:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "H. Kulkarni",
+      "phone": "+91 90360 71182",
+      "role": "Manager, Commercial (Disposals)"
+    },
+    "yardName": "VJNR Yard B",
+    "yardAddress": "JSW Steel Vijayanagar Works, Toranagallu, Bellary, Karnataka 583275",
+    "region": "Bellary, KA",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0851",
+      "hlot-0852",
+      "hlot-0853",
+      "hlot-0854",
+      "hlot-0855",
+      "hlot-0856"
+    ],
+    "documents": [
+      {
+        "id": "hcat-088-doc-1",
+        "name": "AUC-2353 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.1 MB"
+      },
+      {
+        "id": "hcat-088-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "716 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of aluminium, copper & ferro alloy lots on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-089",
+    "code": "AUC-2356",
+    "title": "ONGC — Workshop Machinery Disposal",
+    "sellerId": "u-hseller-09",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-06-16T22:20:00.000Z",
+    "endsAt": "2026-06-17T22:20:00.000Z",
+    "emdDeadline": "2026-06-15T22:20:00.000Z",
+    "inspectionFrom": "2026-06-11T22:20:00.000Z",
+    "inspectionTo": "2026-06-15T22:20:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Salim Gill",
+      "phone": "+91 77465 62507",
+      "role": "Dy. Manager, By-products"
+    },
+    "yardName": "Hazira Disposal Yard",
+    "yardAddress": "ONGC Hazira Gas Processing Complex, Surat, Gujarat 394518",
+    "region": "Hazira, GJ",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "hlot-0857",
+      "hlot-0858",
+      "hlot-0859",
+      "hlot-0860",
+      "hlot-0861",
+      "hlot-0862",
+      "hlot-0863"
+    ],
+    "documents": [
+      {
+        "id": "hcat-089-doc-1",
+        "name": "AUC-2356 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.9 MB"
+      },
+      {
+        "id": "hcat-089-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "619 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of workshop machinery disposal on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-090",
+    "code": "AUC-2359",
+    "title": "WCL — Coal Rejects, Fly Ash & Used Oil",
+    "sellerId": "u-hseller-08",
+    "type": "tender",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-06-16T22:01:00.000Z",
+    "endsAt": "2026-06-19T22:01:00.000Z",
+    "emdDeadline": "2026-06-15T22:01:00.000Z",
+    "inspectionFrom": "2026-06-11T22:01:00.000Z",
+    "inspectionTo": "2026-06-15T22:01:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Rakesh Khan",
+      "phone": "+91 82845 30319",
+      "role": "Manager, Commercial (Disposals)"
+    },
+    "yardName": "WCL Central Stores Yard",
+    "yardAddress": "Western Coalfields Ltd, Civil Lines, Nagpur, Maharashtra 440001",
+    "region": "Nagpur, MH",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "hlot-0864",
+      "hlot-0865",
+      "hlot-0866",
+      "hlot-0867",
+      "hlot-0868",
+      "hlot-0869",
+      "hlot-0870",
+      "hlot-0871",
+      "hlot-0872",
+      "hlot-0873",
+      "hlot-0874"
+    ],
+    "documents": [
+      {
+        "id": "hcat-090-doc-1",
+        "name": "AUC-2359 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.4 MB"
+      },
+      {
+        "id": "hcat-090-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "933 KB"
+      }
+    ],
+    "termsSetId": "ts-hazmat",
+    "description": "E-auction of coal rejects, fly ash & used oil on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-091",
+    "code": "AUC-2362",
+    "title": "NTPC — Coal Rejects, Fly Ash & Used Oil",
+    "sellerId": "u-seller-5",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-06-21T01:55:00.000Z",
+    "endsAt": "2026-06-22T01:55:00.000Z",
+    "emdDeadline": "2026-06-20T01:55:00.000Z",
+    "inspectionFrom": "2026-06-16T01:55:00.000Z",
+    "inspectionTo": "2026-06-20T01:55:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "G. Srinivas",
+      "phone": "+91 87903 55240",
+      "role": "AGM (Fuel Handling)"
+    },
+    "yardName": "RSTPS Ash Yard",
+    "yardAddress": "NTPC Ramagundam, Jyothinagar, Peddapalli, Telangana 505215",
+    "region": "Ramagundam, TS",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0875",
+      "hlot-0876",
+      "hlot-0877",
+      "hlot-0878",
+      "hlot-0879",
+      "hlot-0880",
+      "hlot-0881",
+      "hlot-0882",
+      "hlot-0883",
+      "hlot-0884",
+      "hlot-0885"
+    ],
+    "documents": [
+      {
+        "id": "hcat-091-doc-1",
+        "name": "AUC-2362 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "3.4 MB"
+      },
+      {
+        "id": "hcat-091-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "730 KB"
+      }
+    ],
+    "termsSetId": "ts-hazmat",
+    "description": "E-auction of coal rejects, fly ash & used oil on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-092",
+    "code": "AUC-2365",
+    "title": "RINL — HMS 1 & 2 with Plate Cuttings",
+    "sellerId": "u-hseller-01",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-06-22T08:58:00.000Z",
+    "endsAt": "2026-06-24T08:58:00.000Z",
+    "emdDeadline": "2026-06-21T08:58:00.000Z",
+    "inspectionFrom": "2026-06-17T08:58:00.000Z",
+    "inspectionTo": "2026-06-21T08:58:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Tejinder Deshmukh",
+      "phone": "+91 72737 17182",
+      "role": "Sr. Engineer (Salvage & Disposals)"
+    },
+    "yardName": "VSP Scrap Yard 2",
+    "yardAddress": "Gate 3, RINL Visakhapatnam Steel Plant, Visakhapatnam, Andhra Pradesh 530031",
+    "region": "Visakhapatnam, AP",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 14,
+    "lotIds": [
+      "hlot-0886",
+      "hlot-0887",
+      "hlot-0888",
+      "hlot-0889",
+      "hlot-0890",
+      "hlot-0891",
+      "hlot-0892",
+      "hlot-0893",
+      "hlot-0894",
+      "hlot-0895"
+    ],
+    "documents": [
+      {
+        "id": "hcat-092-doc-1",
+        "name": "AUC-2365 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.3 MB"
+      },
+      {
+        "id": "hcat-092-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "777 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of hms 1 & 2 with plate cuttings on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-093",
+    "code": "AUC-2368",
+    "title": "IOCL — Fuel Handling Disposals",
+    "sellerId": "u-hseller-13",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-06-24T13:31:00.000Z",
+    "endsAt": "2026-06-26T13:31:00.000Z",
+    "emdDeadline": "2026-06-23T13:31:00.000Z",
+    "inspectionFrom": "2026-06-19T13:31:00.000Z",
+    "inspectionTo": "2026-06-23T13:31:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Aarti Sahu",
+      "phone": "+91 98604 43663",
+      "role": "Manager, Commercial (Disposals)"
+    },
+    "yardName": "Panipat Refinery Scrap Yard",
+    "yardAddress": "IOCL Panipat Refinery & Petrochemical Complex, Panipat, Haryana 132140",
+    "region": "Panipat, HR",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0896",
+      "hlot-0897",
+      "hlot-0898",
+      "hlot-0899",
+      "hlot-0900",
+      "hlot-0901",
+      "hlot-0902",
+      "hlot-0903"
+    ],
+    "documents": [
+      {
+        "id": "hcat-093-doc-1",
+        "name": "AUC-2368 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.7 MB"
+      },
+      {
+        "id": "hcat-093-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "602 KB"
+      }
+    ],
+    "termsSetId": "ts-hazmat",
+    "description": "E-auction of fuel handling disposals on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-094",
+    "code": "AUC-2371",
+    "title": "Northern Railway — Points, Crossings & Rail Cuttings",
+    "sellerId": "u-hseller-04",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-06-25T15:28:00.000Z",
+    "endsAt": "2026-06-28T15:28:00.000Z",
+    "emdDeadline": "2026-06-24T15:28:00.000Z",
+    "inspectionFrom": "2026-06-20T15:28:00.000Z",
+    "inspectionTo": "2026-06-24T15:28:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Balbir Verma",
+      "phone": "+91 91321 43964",
+      "role": "Yard In-charge (Inspection & Lifting)"
+    },
+    "yardName": "Jagadhri Workshop Yard",
+    "yardAddress": "Carriage Workshop, Jagadhri, Yamunanagar, Haryana 135002",
+    "region": "Yamunanagar, HR",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0904",
+      "hlot-0905",
+      "hlot-0906",
+      "hlot-0907",
+      "hlot-0908",
+      "hlot-0909",
+      "hlot-0910",
+      "hlot-0911",
+      "hlot-0912",
+      "hlot-0913",
+      "hlot-0914"
+    ],
+    "documents": [
+      {
+        "id": "hcat-094-doc-1",
+        "name": "AUC-2371 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.2 MB"
+      },
+      {
+        "id": "hcat-094-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "929 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of points, crossings & rail cuttings on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-095",
+    "code": "AUC-2374",
+    "title": "ONGC — Workshop Machinery Disposal",
+    "sellerId": "u-hseller-09",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-06-29T16:54:00.000Z",
+    "endsAt": "2026-06-30T16:54:00.000Z",
+    "emdDeadline": "2026-06-28T16:54:00.000Z",
+    "inspectionFrom": "2026-06-24T16:54:00.000Z",
+    "inspectionTo": "2026-06-28T16:54:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Salim Gill",
+      "phone": "+91 77465 62507",
+      "role": "Dy. Manager, By-products"
+    },
+    "yardName": "Hazira Disposal Yard",
+    "yardAddress": "ONGC Hazira Gas Processing Complex, Surat, Gujarat 394518",
+    "region": "Hazira, GJ",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "hlot-0915",
+      "hlot-0916",
+      "hlot-0917",
+      "hlot-0918",
+      "hlot-0919"
+    ],
+    "documents": [
+      {
+        "id": "hcat-095-doc-1",
+        "name": "AUC-2374 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.4 MB"
+      },
+      {
+        "id": "hcat-095-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "712 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of workshop machinery disposal on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-096",
+    "code": "AUC-2377",
+    "title": "NMDC — Copper, Brass & Cable Scrap",
+    "sellerId": "u-hseller-12",
+    "type": "tender",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-07-01T22:26:00.000Z",
+    "endsAt": "2026-07-02T22:26:00.000Z",
+    "emdDeadline": "2026-06-30T22:26:00.000Z",
+    "inspectionFrom": "2026-06-26T22:26:00.000Z",
+    "inspectionTo": "2026-06-30T22:26:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Bhaskar Gupta",
+      "phone": "+91 94963 93564",
+      "role": "Stores Superintendent"
+    },
+    "yardName": "Bacheli Stores Yard",
+    "yardAddress": "NMDC Bacheli Complex, Dantewada, Chhattisgarh 494553",
+    "region": "Bacheli, CG",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "hlot-0920",
+      "hlot-0921",
+      "hlot-0922",
+      "hlot-0923",
+      "hlot-0924",
+      "hlot-0925",
+      "hlot-0926",
+      "hlot-0927",
+      "hlot-0928"
+    ],
+    "documents": [
+      {
+        "id": "hcat-096-doc-1",
+        "name": "AUC-2377 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.9 MB"
+      },
+      {
+        "id": "hcat-096-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "697 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of copper, brass & cable scrap on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-097",
+    "code": "AUC-2380",
+    "title": "BHEL — Workshop Machinery Disposal",
+    "sellerId": "u-seller-7",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-07-03T06:30:00.000Z",
+    "endsAt": "2026-07-04T06:30:00.000Z",
+    "emdDeadline": "2026-07-02T06:30:00.000Z",
+    "inspectionFrom": "2026-06-28T06:30:00.000Z",
+    "inspectionTo": "2026-07-02T06:30:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "R. Elango",
+      "phone": "+91 94430 20951",
+      "role": "Sr. Engineer (Disposals)"
+    },
+    "yardName": "BHEL Unit II Yard",
+    "yardAddress": "BHEL Tiruchirappalli, Kailasapuram, Tamil Nadu 620014",
+    "region": "Trichy, TN",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "hlot-0929",
+      "hlot-0930",
+      "hlot-0931",
+      "hlot-0932",
+      "hlot-0933",
+      "hlot-0934",
+      "hlot-0935",
+      "hlot-0936",
+      "hlot-0937",
+      "hlot-0938",
+      "hlot-0939",
+      "hlot-0940",
+      "hlot-0941"
+    ],
+    "documents": [
+      {
+        "id": "hcat-097-doc-1",
+        "name": "AUC-2380 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.9 MB"
+      },
+      {
+        "id": "hcat-097-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "819 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of workshop machinery disposal on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-098",
+    "code": "AUC-2383",
+    "title": "Mahindra & Mahindra — SS Offcuts, Coil Ends & Turnings",
+    "sellerId": "u-hseller-05",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-07-01T06:30:00.000Z",
+    "endsAt": "2026-07-04T06:30:00.000Z",
+    "emdDeadline": "2026-06-30T06:30:00.000Z",
+    "inspectionFrom": "2026-06-26T06:30:00.000Z",
+    "inspectionTo": "2026-06-30T06:30:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Iqbal Shah",
+      "phone": "+91 80757 76764",
+      "role": "Yard In-charge (Inspection & Lifting)"
+    },
+    "yardName": "Nashik Plant Scrap Bay",
+    "yardAddress": "Mahindra Nashik Plant, Satpur MIDC, Nashik, Maharashtra 422007",
+    "region": "Nashik, MH",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0942",
+      "hlot-0943",
+      "hlot-0944",
+      "hlot-0945",
+      "hlot-0946",
+      "hlot-0947",
+      "hlot-0948",
+      "hlot-0949",
+      "hlot-0950",
+      "hlot-0951",
+      "hlot-0952",
+      "hlot-0953",
+      "hlot-0954",
+      "hlot-0955"
+    ],
+    "documents": [
+      {
+        "id": "hcat-098-doc-1",
+        "name": "AUC-2383 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.4 MB"
+      },
+      {
+        "id": "hcat-098-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "692 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of ss offcuts, coil ends & turnings on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-099",
+    "code": "AUC-2386",
+    "title": "ONGC — Plant & Machinery, Condemned Assets",
+    "sellerId": "u-hseller-09",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-07-03T06:30:00.000Z",
+    "endsAt": "2026-07-04T06:30:00.000Z",
+    "emdDeadline": "2026-07-02T06:30:00.000Z",
+    "inspectionFrom": "2026-06-28T06:30:00.000Z",
+    "inspectionTo": "2026-07-02T06:30:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Salim Gill",
+      "phone": "+91 77465 62507",
+      "role": "Dy. Manager, By-products"
+    },
+    "yardName": "Hazira Disposal Yard",
+    "yardAddress": "ONGC Hazira Gas Processing Complex, Surat, Gujarat 394518",
+    "region": "Hazira, GJ",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0956",
+      "hlot-0957",
+      "hlot-0958",
+      "hlot-0959",
+      "hlot-0960",
+      "hlot-0961",
+      "hlot-0962",
+      "hlot-0963",
+      "hlot-0964",
+      "hlot-0965",
+      "hlot-0966"
+    ],
+    "documents": [
+      {
+        "id": "hcat-099-doc-1",
+        "name": "AUC-2386 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "1.6 MB"
+      },
+      {
+        "id": "hcat-099-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "627 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of plant & machinery, condemned assets on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-100",
+    "code": "AUC-2389",
+    "title": "NMDC — Radiators, Cable & Utensil Scrap",
+    "sellerId": "u-hseller-12",
+    "type": "tender",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-07-03T06:30:00.000Z",
+    "endsAt": "2026-07-04T06:30:00.000Z",
+    "emdDeadline": "2026-07-02T06:30:00.000Z",
+    "inspectionFrom": "2026-06-28T06:30:00.000Z",
+    "inspectionTo": "2026-07-02T06:30:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Bhaskar Gupta",
+      "phone": "+91 94963 93564",
+      "role": "Stores Superintendent"
+    },
+    "yardName": "Bacheli Stores Yard",
+    "yardAddress": "NMDC Bacheli Complex, Dantewada, Chhattisgarh 494553",
+    "region": "Bacheli, CG",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 7,
+    "lotIds": [
+      "hlot-0967",
+      "hlot-0968",
+      "hlot-0969",
+      "hlot-0970",
+      "hlot-0971"
+    ],
+    "documents": [
+      {
+        "id": "hcat-100-doc-1",
+        "name": "AUC-2389 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.1 MB"
+      },
+      {
+        "id": "hcat-100-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "742 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of radiators, cable & utensil scrap on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-101",
+    "code": "AUC-2392",
+    "title": "RINL — Structural Scrap & Skull",
+    "sellerId": "u-hseller-01",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-07-03T06:30:00.000Z",
+    "endsAt": "2026-07-04T06:30:00.000Z",
+    "emdDeadline": "2026-07-02T06:30:00.000Z",
+    "inspectionFrom": "2026-06-28T06:30:00.000Z",
+    "inspectionTo": "2026-07-02T06:30:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Tejinder Deshmukh",
+      "phone": "+91 72737 17182",
+      "role": "Sr. Engineer (Salvage & Disposals)"
+    },
+    "yardName": "VSP Scrap Yard 2",
+    "yardAddress": "Gate 3, RINL Visakhapatnam Steel Plant, Visakhapatnam, Andhra Pradesh 530031",
+    "region": "Visakhapatnam, AP",
+    "antiSnipeMinutes": 3,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0972",
+      "hlot-0973",
+      "hlot-0974",
+      "hlot-0975",
+      "hlot-0976",
+      "hlot-0977",
+      "hlot-0978",
+      "hlot-0979",
+      "hlot-0980",
+      "hlot-0981",
+      "hlot-0982",
+      "hlot-0983",
+      "hlot-0984"
+    ],
+    "documents": [
+      {
+        "id": "hcat-101-doc-1",
+        "name": "AUC-2392 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "2.7 MB"
+      },
+      {
+        "id": "hcat-101-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "913 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of structural scrap & skull on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
+  },
+  {
+    "id": "hcat-102",
+    "code": "AUC-2395",
+    "title": "Northern Railway — PSC Sleeper & Brake Block Scrap",
+    "sellerId": "u-hseller-04",
+    "type": "forward",
+    "status": "closed",
+    "assignedFieldExecId": null,
+    "startsAt": "2026-07-01T06:30:00.000Z",
+    "endsAt": "2026-07-04T06:30:00.000Z",
+    "emdDeadline": "2026-06-30T06:30:00.000Z",
+    "inspectionFrom": "2026-06-26T06:30:00.000Z",
+    "inspectionTo": "2026-06-30T06:30:00.000Z",
+    "inspectionHours": "10:00–16:00 IST",
+    "inspectionContact": {
+      "name": "Balbir Verma",
+      "phone": "+91 91321 43964",
+      "role": "Yard In-charge (Inspection & Lifting)"
+    },
+    "yardName": "Jagadhri Workshop Yard",
+    "yardAddress": "Carriage Workshop, Jagadhri, Yamunanagar, Haryana 135002",
+    "region": "Yamunanagar, HR",
+    "antiSnipeMinutes": 5,
+    "bidValidityDays": 10,
+    "lotIds": [
+      "hlot-0985",
+      "hlot-0986",
+      "hlot-0987",
+      "hlot-0988",
+      "hlot-0989",
+      "hlot-0990",
+      "hlot-0991",
+      "hlot-0992",
+      "hlot-0993",
+      "hlot-0994",
+      "hlot-0995",
+      "hlot-0996",
+      "hlot-0997"
+    ],
+    "documents": [
+      {
+        "id": "hcat-102-doc-1",
+        "name": "AUC-2395 Catalogue & Annexure.pdf",
+        "type": "pdf",
+        "size": "3.1 MB"
+      },
+      {
+        "id": "hcat-102-doc-2",
+        "name": "Yard Map & Gate Directions.pdf",
+        "type": "pdf",
+        "size": "622 KB"
+      }
+    ],
+    "termsSetId": "ts-standard",
+    "description": "E-auction of psc sleeper & brake block scrap on as-is-where-is basis. Physical inspection completed and reports attached against each lot. Auction closed — H1 rates below are final, quantity settled on weighment."
   }
 ]

@@ -1,3 +1,10 @@
 .worktrees/
 .claude/
 .gstack/
+
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+
+node_modules/

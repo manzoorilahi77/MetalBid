@@ -85,5 +85,533 @@
       "lot-019",
       "lot-020"
     ]
+  },
+  {
+    "buyerId": "u-hbuyer-035",
+    "catalogueId": "cat-15",
+    "lotIds": [
+      "lot-168",
+      "lot-166"
+    ],
+    "emdFundedLotIds": [
+      "lot-168"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-017",
+    "catalogueId": "cat-2",
+    "lotIds": [
+      "lot-028",
+      "lot-025",
+      "lot-032"
+    ],
+    "emdFundedLotIds": [
+      "lot-028",
+      "lot-025",
+      "lot-032"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-054",
+    "catalogueId": "cat-9",
+    "lotIds": [
+      "lot-103",
+      "lot-106",
+      "lot-099",
+      "lot-107"
+    ],
+    "emdFundedLotIds": [
+      "lot-103",
+      "lot-106",
+      "lot-099"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-054",
+    "catalogueId": "cat-19",
+    "lotIds": [
+      "lot-215",
+      "lot-209",
+      "lot-212"
+    ],
+    "emdFundedLotIds": [
+      "lot-215"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-059",
+    "catalogueId": "cat-3",
+    "lotIds": [
+      "lot-037",
+      "lot-036",
+      "lot-043"
+    ],
+    "emdFundedLotIds": [
+      "lot-037"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-044",
+    "catalogueId": "cat-5",
+    "lotIds": [
+      "lot-063",
+      "lot-070",
+      "lot-068",
+      "lot-061"
+    ],
+    "emdFundedLotIds": [
+      "lot-063",
+      "lot-070"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-044",
+    "catalogueId": "cat-13",
+    "lotIds": [
+      "lot-142",
+      "lot-138",
+      "lot-150",
+      "lot-149",
+      "lot-148"
+    ],
+    "emdFundedLotIds": [
+      "lot-142",
+      "lot-138",
+      "lot-150"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-062",
+    "catalogueId": "cat-24",
+    "lotIds": [
+      "lot-274",
+      "lot-273",
+      "lot-276",
+      "lot-275",
+      "lot-272"
+    ],
+    "emdFundedLotIds": [
+      "lot-274",
+      "lot-273",
+      "lot-276",
+      "lot-275"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-060",
+    "catalogueId": "cat-18",
+    "lotIds": [
+      "lot-199",
+      "lot-202",
+      "lot-204",
+      "lot-206",
+      "lot-207"
+    ],
+    "emdFundedLotIds": [
+      "lot-199",
+      "lot-202",
+      "lot-204"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-060",
+    "catalogueId": "cat-2",
+    "lotIds": [
+      "lot-025",
+      "lot-020",
+      "lot-019",
+      "lot-028"
+    ],
+    "emdFundedLotIds": [
+      "lot-025",
+      "lot-020"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-024",
+    "catalogueId": "cat-16",
+    "lotIds": [
+      "lot-179",
+      "lot-175",
+      "lot-188",
+      "lot-183"
+    ],
+    "emdFundedLotIds": [
+      "lot-179",
+      "lot-175"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-042",
+    "catalogueId": "cat-11",
+    "lotIds": [
+      "lot-124",
+      "lot-122",
+      "lot-126",
+      "lot-121"
+    ],
+    "emdFundedLotIds": [
+      "lot-124",
+      "lot-122",
+      "lot-126"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-040",
+    "catalogueId": "cat-21",
+    "lotIds": [
+      "lot-234",
+      "lot-239",
+      "lot-237",
+      "lot-232"
+    ],
+    "emdFundedLotIds": [
+      "lot-234",
+      "lot-239",
+      "lot-237"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-040",
+    "catalogueId": "cat-15",
+    "lotIds": [
+      "lot-167",
+      "lot-170",
+      "lot-172",
+      "lot-173"
+    ],
+    "emdFundedLotIds": [
+      "lot-167",
+      "lot-170"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-029",
+    "catalogueId": "cat-25",
+    "lotIds": [
+      "lot-281",
+      "lot-280",
+      "lot-282",
+      "lot-279",
+      "lot-283"
+    ],
+    "emdFundedLotIds": [
+      "lot-281",
+      "lot-280",
+      "lot-282",
+      "lot-279",
+      "lot-283"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-010",
+    "catalogueId": "cat-2",
+    "lotIds": [
+      "lot-026",
+      "lot-028"
+    ],
+    "emdFundedLotIds": [
+      "lot-026"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-010",
+    "catalogueId": "cat-4",
+    "lotIds": [
+      "lot-050",
+      "lot-055",
+      "lot-052",
+      "lot-059"
+    ],
+    "emdFundedLotIds": [
+      "lot-050",
+      "lot-055",
+      "lot-052"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-020",
+    "catalogueId": "cat-24",
+    "lotIds": [
+      "lot-272",
+      "lot-276",
+      "lot-274"
+    ],
+    "emdFundedLotIds": [
+      "lot-272",
+      "lot-276",
+      "lot-274"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-020",
+    "catalogueId": "cat-1",
+    "lotIds": [
+      "lot-017",
+      "lot-010",
+      "lot-016"
+    ],
+    "emdFundedLotIds": [
+      "lot-017",
+      "lot-010",
+      "lot-016"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-001",
+    "catalogueId": "cat-10",
+    "lotIds": [
+      "lot-116",
+      "lot-109",
+      "lot-119",
+      "lot-113",
+      "lot-115"
+    ],
+    "emdFundedLotIds": [
+      "lot-116",
+      "lot-109",
+      "lot-119"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-016",
+    "catalogueId": "cat-24",
+    "lotIds": [
+      "lot-272",
+      "lot-276",
+      "lot-275"
+    ],
+    "emdFundedLotIds": [
+      "lot-272",
+      "lot-276",
+      "lot-275"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-043",
+    "catalogueId": "cat-24",
+    "lotIds": [
+      "lot-277",
+      "lot-274",
+      "lot-275"
+    ],
+    "emdFundedLotIds": [
+      "lot-277",
+      "lot-274",
+      "lot-275"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-006",
+    "catalogueId": "cat-9",
+    "lotIds": [
+      "lot-103",
+      "lot-104",
+      "lot-102"
+    ],
+    "emdFundedLotIds": [
+      "lot-103"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-006",
+    "catalogueId": "cat-5",
+    "lotIds": [
+      "lot-063",
+      "lot-069"
+    ],
+    "emdFundedLotIds": [
+      "lot-063",
+      "lot-069"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-019",
+    "catalogueId": "cat-13",
+    "lotIds": [
+      "lot-147",
+      "lot-142",
+      "lot-151",
+      "lot-144"
+    ],
+    "emdFundedLotIds": [
+      "lot-147",
+      "lot-142"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-019",
+    "catalogueId": "cat-20",
+    "lotIds": [
+      "lot-219",
+      "lot-224",
+      "lot-226",
+      "lot-223",
+      "lot-220"
+    ],
+    "emdFundedLotIds": [
+      "lot-219",
+      "lot-224",
+      "lot-226",
+      "lot-223"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-032",
+    "catalogueId": "cat-3",
+    "lotIds": [
+      "lot-044",
+      "lot-035",
+      "lot-042",
+      "lot-034",
+      "lot-036"
+    ],
+    "emdFundedLotIds": [
+      "lot-044",
+      "lot-035",
+      "lot-042",
+      "lot-034"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-032",
+    "catalogueId": "cat-1",
+    "lotIds": [
+      "lot-018",
+      "lot-016",
+      "lot-009"
+    ],
+    "emdFundedLotIds": [
+      "lot-018",
+      "lot-016"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-067",
+    "catalogueId": "cat-3",
+    "lotIds": [
+      "lot-040",
+      "lot-041",
+      "lot-044",
+      "lot-033"
+    ],
+    "emdFundedLotIds": [
+      "lot-040",
+      "lot-041",
+      "lot-044"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-033",
+    "catalogueId": "cat-19",
+    "lotIds": [
+      "lot-214",
+      "lot-209",
+      "lot-211",
+      "lot-215"
+    ],
+    "emdFundedLotIds": [
+      "lot-214",
+      "lot-209",
+      "lot-211"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-045",
+    "catalogueId": "cat-5",
+    "lotIds": [
+      "lot-069",
+      "lot-067",
+      "lot-066",
+      "lot-063",
+      "lot-068"
+    ],
+    "emdFundedLotIds": [
+      "lot-069",
+      "lot-067",
+      "lot-066",
+      "lot-063"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-045",
+    "catalogueId": "cat-21",
+    "lotIds": [
+      "lot-240",
+      "lot-235",
+      "lot-237"
+    ],
+    "emdFundedLotIds": [
+      "lot-240",
+      "lot-235"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-023",
+    "catalogueId": "cat-9",
+    "lotIds": [
+      "lot-101",
+      "lot-105",
+      "lot-104",
+      "lot-107",
+      "lot-103"
+    ],
+    "emdFundedLotIds": [
+      "lot-101",
+      "lot-105",
+      "lot-104"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-026",
+    "catalogueId": "cat-11",
+    "lotIds": [
+      "lot-121",
+      "lot-120"
+    ],
+    "emdFundedLotIds": [
+      "lot-121"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-026",
+    "catalogueId": "cat-19",
+    "lotIds": [
+      "lot-216",
+      "lot-212",
+      "lot-209"
+    ],
+    "emdFundedLotIds": [
+      "lot-216",
+      "lot-212",
+      "lot-209"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-065",
+    "catalogueId": "cat-22",
+    "lotIds": [
+      "lot-246",
+      "lot-252",
+      "lot-250",
+      "lot-249"
+    ],
+    "emdFundedLotIds": [
+      "lot-246",
+      "lot-252"
+    ]
+  },
+  {
+    "buyerId": "u-hbuyer-025",
+    "catalogueId": "cat-5",
+    "lotIds": [
+      "lot-067",
+      "lot-069",
+      "lot-062"
+    ],
+    "emdFundedLotIds": [
+      "lot-067",
+      "lot-069"
+    ]
   }
 ]

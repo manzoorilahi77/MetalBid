@@ -1,0 +1,14 @@
+{
+  "name": "ferrobid-server",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "db:test": "node scripts/test-connection.mjs",
+    "db:migrate": "node scripts/migrate.mjs",
+    "db:pool-check": "node scripts/pool-check.mjs"
+  },
+  "dependencies": {
+    "mysql2": "^3.11.5"
+  }
+}
