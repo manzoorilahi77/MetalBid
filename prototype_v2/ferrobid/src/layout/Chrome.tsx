@@ -15,6 +15,7 @@ import { inrCompact, relTime } from '../lib/format'
 import { AppComingSoonModal, Avatar, Chip, cx } from '../components/ui'
 import { useBidroomGate } from '../components/BidroomGate'
 import { GuestPreviewBanner, GuestWalletChip, useGuestGate } from '../components/GuestGate'
+import { ImpersonationBanner } from '../components/ImpersonationBanner'
 
 /* The shipped menu now lives in ./nav, and the store seeds its page registry
    from it. Chrome renders the registry — which the Super Admin's Page manager
@@ -139,7 +140,14 @@ function ProfileMenu() {
                 {it.icon} {it.label}
               </button>
             ))}
-            <button onClick={() => { logout(); setOpen(false); nav('/') }}
+            {/* `/home/auth` — the public site's own sign-in page — not `/`.
+                Signing out at `/` lands on the marketing homepage (Guest1Gate
+                normalizes a bare root to `#/home`), which is a step away from
+                the one thing someone who just signed out is most likely to want
+                next. The manager router has no `/home/*` route: pushing it is
+                what hands the screen to the isolated Guest1 app, which then
+                matches `/auth` under its own `basename="/home"`. */}
+            <button onClick={() => { logout(); setOpen(false); nav('/home/auth') }}
               className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm font-medium text-danger hover:bg-danger-soft">
               <LogOut size={15} /> Sign out
             </button>
@@ -516,6 +524,8 @@ export default function Chrome() {
       <TopNav />
       {/* Renders nothing outside the "Browse as Guest" tour. */}
       <GuestPreviewBanner />
+      {/* Renders nothing unless a Sub/Super Admin is signed in as this account. */}
+      <ImpersonationBanner />
       <main className="flex-1">
         <Outlet />
       </main>

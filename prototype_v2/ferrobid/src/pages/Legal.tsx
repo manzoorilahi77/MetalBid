@@ -97,8 +97,16 @@ function AuctionTerms() {
 
 type Seg = 'terms' | 'privacy' | 'auction'
 
-export default function Legal() {
-  const [seg, setSeg] = useState<Seg>('terms')
+/**
+ * `tab` lets `/legal/privacy` and `/legal/terms` open on the right panel.
+ *
+ * Deep links rather than three separate pages: the Content Atlas gives Privacy
+ * and Terms their own routes, and this is how they get one without splitting a
+ * page that already works and already reads as one document. `/legal` itself is
+ * unchanged and still opens on Terms of Use.
+ */
+export default function Legal({ tab }: { tab?: Seg } = {}) {
+  const [seg, setSeg] = useState<Seg>(tab ?? 'terms')
   return (
     <Page>
       <PageHeader

@@ -407,7 +407,7 @@ export default function Dashboard() {
                 <div className="num text-xl font-bold text-success">
                   {inr(approvedExemptionRows.reduce((sum, r) => sum + r.summary.shortfall, 0))}
                 </div>
-                <Link to="/buyer/emd-shortlisted-catalogue" className="mt-auto">
+                <Link to="/buyer/shortlist" className="mt-auto">
                   <Button size="sm" variant="success" className="w-full">Pay EMD now</Button>
                 </Link>
               </div>
@@ -424,7 +424,7 @@ export default function Dashboard() {
                   {shortfallRows.length === 1 ? 'catalogue' : 'catalogues'} ({shortfallRows.map((r) => r.cat.code).join(', ')}) are not EMD-funded — you can't bid on them until funded.
                 </p>
                 <div className="num text-xl font-bold text-warning">{inr(totalShortfall)}</div>
-                <Link to="/buyer/emd-shortlisted-catalogue" className="mt-auto">
+                <Link to="/buyer/shortlist" className="mt-auto">
                   <Button size="sm" className="w-full">Fund now</Button>
                 </Link>
               </div>

@@ -19,13 +19,13 @@
    history behind every decision the account was part of — intact and readable.
 --------------------------------------------------------------------------- */
 import { useState } from 'react'
-import { Check, Copy, KeyRound, Power, Search, ShieldCheck } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Check, Copy, KeyRound, LogIn, Power, Search, ShieldCheck } from 'lucide-react'
+import { Link, useNavigate } from 'react-router-dom'
 import { Page } from '../../layout/Chrome'
 import {
   Avatar, Button, Chip, Field, Input, Modal, PageHeader, Segmented, Select, Stat, Textarea, cx,
 } from '../../components/ui'
-import { ROLE_LABEL, useStore } from '../../store/store'
+import { IMPERSONATION_BLOCKED_ROLES, ROLE_HOME, ROLE_LABEL, useStore } from '../../store/store'
 import { fmtDate, inrCompact, relTime } from '../../lib/format'
 import { useNow } from '../../lib/useTick'
 import type { AccountStatus, Standing, User } from '../../types'
@@ -45,7 +45,9 @@ const statusTone: Record<AccountStatus, 'success' | 'warning' | 'danger'> = {
 
 export default function Users() {
   const now = useNow()
+  const nav = useNavigate()
   const users = useStore((s) => s.users)
+  const currentUser = useStore((s) => s.currentUser)
   const wallets = useStore((s) => s.wallets)
   const roles = useStore((s) => s.roleRegistry)
   const passwordResets = useStore((s) => s.passwordResets)
@@ -53,8 +55,27 @@ export default function Users() {
   const setAccountStatus = useStore((s) => s.setAccountStatus)
   const updateUserDetails = useStore((s) => s.updateUserDetails)
   const resetUserPassword = useStore((s) => s.resetUserPassword)
+  const impersonateUser = useStore((s) => s.impersonateUser)
   const decideSellerKyc = useStore((s) => s.decideSellerKyc)
   const pushToast = useStore((s) => s.pushToast)
+
+  const [signingInAs, setSigningInAs] = useState<string | null>(null)
+
+  /** One click: a real session for this account, no password, landing
+   *  straight on their home screen. The server is the one enforcing who may
+   *  be a target — see IMPERSONATION_BLOCKED_ROLES's comment in store.ts —
+   *  this only decides whether to offer the button at all. */
+  const logInAs = async (u: User) => {
+    setSigningInAs(u.id)
+    try {
+      const res = await impersonateUser(u.id)
+      if (!res.ok) { pushToast({ kind: 'danger', title: 'Could not sign in as that account', body: res.error }); return }
+      pushToast({ kind: 'success', title: `Viewing as ${u.name}`, body: 'Use "Back to my account" in the banner when you are done.' })
+      nav(ROLE_HOME[u.role])
+    } finally {
+      setSigningInAs(null)
+    }
+  }
 
   const [q, setQ] = useState('')
   const [role, setRole] = useState('all')
@@ -67,6 +88,7 @@ export default function Users() {
   const [manual, setManual] = useState('')
   const [issued, setIssued] = useState<{ password: string; name: string } | null>(null)
   const [copied, setCopied] = useState(false)
+  const [resetting, setResetting] = useState(false)
   const [edit, setEdit] = useState<ReturnType<typeof startEdit> | null>(null)
 
   const list = users.filter((u) => {
@@ -163,10 +185,18 @@ export default function Users() {
                   <td className="px-4 py-2.5 num text-ink-muted">{fmtDate(u.joinedAt)}</td>
                   <td className="px-4 py-2.5 num text-right font-semibold">{w ? inrCompact(w.balance + w.emdLocked) : '—'}</td>
                   <td className="px-4 py-2.5 text-right">
-                    <Button variant="ghost" size="sm"
-                      onClick={() => { setManaged(u); setEdit(startEdit(u)); setNewStanding(u.standing); setReason(''); setResetMode('auto'); setManual('') }}>
-                      Manage
-                    </Button>
+                    <div className="flex justify-end gap-1.5">
+                      {!IMPERSONATION_BLOCKED_ROLES.includes(u.role) && st === 'active' && u.id !== currentUser?.id && (
+                        <Button variant="ghost" size="sm" disabled={signingInAs === u.id} loading={signingInAs === u.id}
+                          onClick={() => void logInAs(u)} title={`Sign in as ${u.name} — no password needed`}>
+                          <LogIn size={14} /> Log in as
+                        </Button>
+                      )}
+                      <Button variant="ghost" size="sm"
+                        onClick={() => { setManaged(u); setEdit(startEdit(u)); setNewStanding(u.standing); setReason(''); setResetMode('auto'); setManual('') }}>
+                        Manage
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               )
@@ -274,9 +304,11 @@ export default function Users() {
                   Apply standing change
                 </Button>
               )}
-              <Button variant="secondary" size="sm"
-                onClick={() => {
-                  const r = resetUserPassword(managed.id, resetMode, manual)
+              <Button variant="secondary" size="sm" disabled={resetting} loading={resetting}
+                onClick={async () => {
+                  setResetting(true)
+                  const r = await resetUserPassword(managed.id, resetMode, manual)
+                  setResetting(false)
                   if (!r.ok) { pushToast({ kind: 'danger', title: 'Not reset', body: r.error }); return }
                   const name = managed.name
                   setManaged(null); setManual(''); setCopied(false)

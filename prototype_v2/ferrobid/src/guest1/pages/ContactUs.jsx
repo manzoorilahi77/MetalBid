@@ -17,6 +17,7 @@ import {
   ShieldCheck, Send, CheckCircle2, ChevronRight, Wallet,
   Factory, Scale, ClipboardList, Zap, HelpCircle, Users
 } from 'lucide-react';
+import { useCmsPage } from '../../api/useCmsPage';
 import '../styles/enterprise.css';
 import '../styles/resources.css';
 
@@ -76,6 +77,12 @@ const INCLUDE = [
 ];
 
 export const ContactUs = () => {
+  /* The public site is what visitors actually see, so this is where published
+     CMS copy has to land — the Sub Admin's editor writes to these exact section
+     keys under route '/contact'. Every accessor takes the string this page
+     already hardcoded as its fallback, so nothing changes on screen until
+     somebody publishes. See api/useCmsPage.ts. */
+  const cms = useCmsPage('/contact');
   const reduceMotion = useReducedMotion();
   const [sent, setSent] = useState(false);
 
@@ -138,13 +145,15 @@ export const ContactUs = () => {
       </header>
 
       {/* ─── Desks ─── */}
+      {cms.on('routing') && (
       <section className="ent-section">
         <div className="container">
           <motion.div className="sec-head" {...reveal}>
-            <p className="sec-eyebrow">Reach the right desk</p>
-            <h2 className="sec-title">Who handles what.</h2>
+            <p className="sec-eyebrow">{cms.text('routing', 'eyebrow', 'Reach the right desk')}</p>
+            <h2 className="sec-title">{cms.text('routing', 'heading', 'Who handles what.')}</h2>
             <p className="sec-lead">
-              All four are staffed by people who can act, not a shared inbox that routes onwards.
+              {cms.text('routing', 'body',
+                'All four are staffed by people who can act, not a shared inbox that routes onwards.')}
             </p>
           </motion.div>
 
@@ -194,16 +203,19 @@ export const ContactUs = () => {
           </div>
         </div>
       </section>
+      )}
 
       {/* ─── Form + what to include ─── */}
+      {cms.on('form') && (
       <section className="ent-section alt">
         <div className="container">
           <motion.div className="sec-head" {...reveal}>
-            <p className="sec-eyebrow">Send a message</p>
-            <h2 className="sec-title">Or write to us here.</h2>
+            <p className="sec-eyebrow">{cms.text('form', 'eyebrow', 'Send a message')}</p>
+            <h2 className="sec-title">{cms.text('form', 'heading', 'Or write to us here.')}</h2>
             <p className="sec-lead">
-              The lot ID and urgency fields are not decoration — they route the message to the desk
-              that can resolve it and set its place in the queue.
+              {cms.text('form', 'body',
+                'The lot ID and urgency fields are not decoration — they route the message to the desk '
+                + 'that can resolve it and set its place in the queue.')}
             </p>
           </motion.div>
 
@@ -211,7 +223,8 @@ export const ContactUs = () => {
             <div className="ent-card" style={{ padding: '28px' }}>
               {sent ? (
                 <div className="ent-form-success">
-                  <CheckCircle2 size={18} /> Message received. You will get a confirmation by email, and the owning desk will respond within its published target.
+                  <CheckCircle2 size={18} /> {cms.text('form', 'success',
+                    'Message received. You will get a confirmation by email, and the owning desk will respond within its published target.')}
                 </div>
               ) : (
                 <form className="ent-form" onSubmit={e => { e.preventDefault(); setSent(true); }}>
@@ -274,7 +287,7 @@ export const ContactUs = () => {
                   </div>
 
                   <button type="submit" className="btn btn-primary" style={{ justifySelf: 'start' }}>
-                    <Send size={16} style={{ marginRight: '8px' }} /> Send message
+                    <Send size={16} style={{ marginRight: '8px' }} /> {cms.text('form', 'submit_label', 'Send message')}
                   </button>
                 </form>
               )}
@@ -313,6 +326,7 @@ export const ContactUs = () => {
           </div>
         </div>
       </section>
+      )}
 
       {/* ─── What to include ─── */}
       <section className="res-band">
@@ -347,11 +361,12 @@ export const ContactUs = () => {
       <section className="ent-section">
         <div className="container">
           <motion.div className="sec-head" {...reveal}>
-            <p className="sec-eyebrow">Our offices</p>
-            <h2 className="sec-title">Where we actually are.</h2>
+            <p className="sec-eyebrow">{cms.text('offices', 'eyebrow', 'Our offices')}</p>
+            <h2 className="sec-title">{cms.text('offices', 'heading', 'Where we actually are.')}</h2>
             <p className="sec-lead">
-              Visits are by appointment — the operations hub in particular is a working site, not a
-              front office.
+              {cms.text('offices', 'body',
+                'Visits are by appointment — the operations hub in particular is a working site, not a '
+                + 'front office.')}
             </p>
           </motion.div>
 

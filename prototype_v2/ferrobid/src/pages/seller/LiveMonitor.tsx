@@ -6,10 +6,12 @@ import { Chip, Countdown, EmptyState, PageHeader, Segmented, StatusChip, cx } fr
 import { catalogueUiStatus, useStore } from '../../store/store'
 import { inr, num } from '../../lib/format'
 import { useNow } from '../../lib/useTick'
+import { useCmsPage } from '../../api/useCmsPage'
 import type { User } from '../../types'
 
 export default function LiveMonitor() {
   const now = useNow()
+  const cms = useCmsPage('/seller/monitor')
   const me = useStore((s) => s.currentUser)
   const catalogues = useStore((s) => s.catalogues)
   const lots = useStore((s) => s.lots)
@@ -31,8 +33,10 @@ export default function LiveMonitor() {
     return (
       <Page>
         <PageHeader title="Live monitor" />
-        <EmptyState icon={<Eye size={32} strokeWidth={1.5} />} title="No live catalogue right now"
-          body="When your material goes under the hammer you can watch every lot's rate move here in real time." />
+        {cms.on('empty_state') && (
+          <EmptyState icon={<Eye size={32} strokeWidth={1.5} />} title="No live catalogue right now"
+            body="When your material goes under the hammer you can watch every lot's rate move here in real time." />
+        )}
       </Page>
     )
   }

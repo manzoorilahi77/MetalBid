@@ -2,6 +2,13 @@
    Seed loader — reads src/data/mock/*.json (the source of truth) and rebases
    every timestamp so the anchor instant maps to "now". Live catalogues are
    therefore genuinely live on every reload.
+
+   In the browser this returns EMPTY collections: the database is the only
+   source of data, so a page with no server behind it shows nothing rather than
+   fixtures pretending to be live. The full local seed still loads for the Node
+   scripts (dump-store.ts, verify-persistence.ts) — they are what produce the
+   database's contents in the first place — and can be forced in the browser
+   with VITE_LOCAL_SEED=1 for offline UI work.
 --------------------------------------------------------------------------- */
 import anchorJson from '../data/mock/anchor.json'
 import cataloguesJson from '../data/mock/catalogues.json'
@@ -48,6 +55,12 @@ const deepShift = <T>(value: T): T => {
   return value
 }
 
+/* Vite defines import.meta.env; Node (tsx running the dump/verify scripts)
+   does not — which is exactly the split we want. The optional chain mirrors
+   api/client.ts, which runs under both for the same reason. */
+export const SEEDED_LOCALLY: boolean =
+  typeof import.meta.env === 'undefined' || import.meta.env?.VITE_LOCAL_SEED === '1'
+
 export interface SeedData {
   catalogues: Catalogue[]
   lots: Lot[]
@@ -73,6 +86,15 @@ export interface SeedData {
 }
 
 export function loadSeed(): SeedData {
+  if (!SEEDED_LOCALLY) {
+    return {
+      catalogues: [], lots: [], users: [], bids: [], wallets: [],
+      inspectionReports: [], notifications: [], termsSets: [], deliveryOrders: [],
+      demandDrafts: [], announcements: [], disputes: [], auditEvents: [],
+      selections: [], watchlist: [], autoBids: [], inspectionSlots: [],
+      bankAccounts: [], depositClaims: [], withdrawalRequests: [], companyBankAccounts: [],
+    }
+  }
   return {
     // `emdDeadline` was added after the first mock runs — backfill it from
     // startsAt so an older/hand-edited catalogues.json still loads.

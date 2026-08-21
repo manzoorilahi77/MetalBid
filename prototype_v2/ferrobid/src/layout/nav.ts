@@ -76,7 +76,7 @@ export const NAV_BY_ROLE: Record<Role, NavItem[]> = {
   guest_buyer: [
     { to: '/buyermarketplace', label: 'Marketplace', subLabel: 'Browse catalogues', end: true, in: ['top', 'sub'], activeMatch: ['/catalogue'] },
     { to: '/buyer', label: 'Dashboard', locked: true, in: ['sub'] },
-    { to: '/buyer/emd-shortlisted-catalogue', label: 'EMD & payments', locked: true, in: ['sub'] },
+    { to: '/buyer/shortlist', label: 'EMD & payments', locked: true, in: ['sub'] },
     { to: '/buyer/bids', label: 'My bids', locked: true, in: ['sub'] },
     { to: '/buyer/auction-status', label: 'Auction status', locked: true, in: ['sub'] },
     { to: '/buyer/wallet', label: 'Wallet & ledger', locked: true, in: ['sub'] },
@@ -87,7 +87,7 @@ export const NAV_BY_ROLE: Record<Role, NavItem[]> = {
   buyer: [
     { to: '/buyer', label: 'Home', subLabel: 'Dashboard', end: true, in: ['top', 'sub'] },
     { to: '/buyermarketplace', label: 'Browse & Shortlist', in: ['sub'], activeMatch: ['/catalogue'] },
-    { to: '/buyer/emd-shortlisted-catalogue', label: 'EMD & payments', subLabel: 'EMD for shortlisted catalogues', in: ['sub'], activeMatch: ['/buyer/shortlist'] },
+    { to: '/buyer/shortlist', label: 'EMD & payments', subLabel: 'EMD for shortlisted catalogues', in: ['sub'] },
     { to: '/buyer/bids', label: 'My bids', subLabel: 'Bid results', in: ['sub'] },
     { to: '/buyer/auction-status', label: 'Auction status', in: ['sub'] },
     { to: '/noticeboard', label: 'Noticeboard', in: ['top'] },
@@ -123,11 +123,12 @@ export const NAV_BY_ROLE: Record<Role, NavItem[]> = {
     /* — Intake: nothing can be sold until a seller is verified, their lot is
          inspected in the yard and the lot is approved. — */
     { to: '/exec', label: 'Pipeline', subLabel: 'Lot pipeline', end: true, in: ['sub'], category: 'Intake & approval' },
-    // The gate that comes before everything else: no verified seller, no lots.
-    { to: '/sub/seller-verification', label: 'Seller verification', in: ['sub'], category: 'Intake & approval' },
-    // Assigning and re-assigning the yard visit is Operations' own step (spec
-    // Part 13). The same screen the Sub Admin works — one screen, not a copy.
-    { to: '/sub/field-executives', label: 'Field executives', in: ['sub'], category: 'Intake & approval' },
+    /* Seller verification and Field executives are NOT here, though Part 13 of
+       the spec gives Operations both. Both screens are served by /api/sub, and
+       the server grants that to the two admin roles only — an Operation Manager
+       asking for it gets a 403, so the tabs opened a page that could never
+       load. Restoring them is a server change (widen the endpoint, or split the
+       two screens onto a payload Ops may read), not a nav entry. */
     { to: '/exec/approvals', label: 'Lot approval', subLabel: 'Lot approval · bypass', in: ['sub'], category: 'Intake & approval' },
     /* — Sale: approved lots become a catalogue, the catalogue gets a date, and
          buyers are admitted to bid on it. — */
@@ -139,9 +140,10 @@ export const NAV_BY_ROLE: Record<Role, NavItem[]> = {
     { to: '/exec/logistics', label: 'Logistics', in: ['sub'], category: 'Delivery & closure' },
     { to: '/exec/handover', label: 'Handover', subLabel: 'Handover & closure', in: ['sub'], category: 'Delivery & closure' },
     { to: '/exec/settlement', label: 'Post-auction exceptions', subLabel: 'Post-auction exceptions', in: ['sub'], category: 'Delivery & closure' },
-    // Ops resolves what the Sub Admin cannot close (spec Part 8 and Part 13);
-    // it already holds the permission, it simply had no way in.
-    { to: '/sub/disputes', label: 'Disputes', subLabel: 'Disputes & support', in: ['sub'], category: 'Delivery & closure' },
+    /* Disputes is out for the same reason as the two above: the screen reads
+       /api/sub, which Operations is refused. The old comment here claimed Ops
+       "already holds the permission" — it does not, and the tab proved it by
+       opening an empty screen. */
     { to: '/browse', label: 'Browse', in: ['top'] },
   ],
   // Auction Manager — a sale has three states and so does this menu: before it
@@ -211,19 +213,24 @@ export const NAV_BY_ROLE: Record<Role, NavItem[]> = {
     { to: '/admin/finance', label: 'Financial config', locked: true, in: ['sub'], category: 'Books & records' },
     { to: '/browse', label: 'Browse', in: ['top'] },
   ],
-  // Sub Admin — head of operations, and the widest menu on the platform:
-  // eighteen screens, which is far more than a flat strip can show. They divide
-  // cleanly into three headings of six, left to right in the order a day runs:
+  // Sub Admin — head of operations, and the widest menu on the platform: this
+  // is the highest role the company itself knows about (see the roles
+  // decision in the Content Atlas — Super Admin is our own break-glass
+  // account, never issued to the company). Five headings, left to right in
+  // the order a day runs:
   //
-  //   Ops desk          — where they start, and who they let onto the platform
-  //   Auction pipeline  — a lot from arrival to a live sale, in one straight line
-  //   Oversight         — what they watch after the hammer, and the record of it
+  //   Ops desk               — where they start, and who they let onto the platform
+  //   Auction pipeline       — a lot from arrival to a live sale, in one straight line
+  //   CMS                    — the public site's words, and every portal's section switches
+  //   Settings & configuration — rates, reference data, tab labels, who is barred
+  //   Oversight & records    — what they watch after the hammer, and the record of it
   //
-  // Half of these are not copies. Lot pipeline, lot approval, the catalogue
+  // Many of these are not copies. Lot pipeline, lot approval, the catalogue
   // builder, the schedule, EMD eligibility and the live floor are the *same*
-  // screens the Operation Manager and Auction Manager work — one screen, not a
-  // second implementation per role — and whoever acted is named in the audit
-  // entry. Same for user accounts, which is the Super Admin's screen.
+  // screens the Operation Manager and Auction Manager work; the CMS and
+  // Settings screens are the same screens Super Admin's own menu links to —
+  // one implementation per screen, not one per role, and whoever acted is
+  // named in the audit entry or the change log.
   //
   // Every Sub Admin account gets exactly this menu. There are no per-account
   // permission templates: the work is divided by assignment on the work queue,
@@ -253,6 +260,38 @@ export const NAV_BY_ROLE: Record<Role, NavItem[]> = {
     { to: '/sub/payments', label: 'EMD & payments', subLabel: 'EMD & payment activity', in: ['sub'], category: 'Oversight & records' },
     { to: '/sub/disputes', label: 'Disputes', subLabel: 'Disputes & support', in: ['sub'], category: 'Oversight & records' },
     { to: '/sub/content', label: 'Content', subLabel: 'Content management', in: ['sub'], category: 'Oversight & records' },
+    /* — the CMS. A category rather than a tab: eleven pages plus the section
+         switches is more than one strip can hold, and it reads left to right in
+         the order content is made — the site first, then the pages that support
+         it, then what is switched on.
+
+         The Sub Admin's copy is the real one. Nothing in it waits on anybody:
+         they write, they publish, they switch. Only pricing and legal copy
+         leaves this desk, and it leaves for the CEO. — */
+    { to: '/cms', label: 'Overview', end: true, in: ['sub'], category: 'CMS' },
+    { to: '/cms/page/home', label: 'Home page', in: ['sub'], category: 'CMS' },
+    { to: '/cms/page/pricing', label: 'Pricing', in: ['sub'], category: 'CMS' },
+    { to: '/cms/page/about', label: 'About us', in: ['sub'], category: 'CMS' },
+    { to: '/cms/page/contact', label: 'Contact us', in: ['sub'], category: 'CMS' },
+    { to: '/cms/page/terms', label: 'Terms', subLabel: 'Terms & conditions', in: ['sub'], category: 'CMS' },
+    { to: '/cms/page/privacy', label: 'Privacy', subLabel: 'Privacy policy', in: ['sub'], category: 'CMS' },
+    { to: '/cms/page/grievance', label: 'Grievance', subLabel: 'Grievance redressal', in: ['sub'], category: 'CMS' },
+    { to: '/cms/page/help', label: 'Help centre', in: ['sub'], category: 'CMS' },
+    { to: '/cms/page/faqs', label: 'FAQs', subLabel: 'Help & FAQs', in: ['sub'], category: 'CMS' },
+    { to: '/cms/page/knowledge', label: 'Knowledge', subLabel: 'Knowledge centre', in: ['sub'], category: 'CMS' },
+    { to: '/cms/page/blog', label: 'Blog', in: ['sub'], category: 'CMS' },
+    { to: '/cms/sections', label: 'Portal sections', subLabel: 'Section visibility', in: ['sub'], category: 'CMS' },
+    /* — settings & configuration. The company's own business config: what a
+         rate is, what a category is called, what a tab is called, who is
+         barred, and the undo behind the last three. Nothing here waits on
+         anybody — see the roles decision in the Content Atlas: this desk is
+         the highest role the company knows, so it holds this outright rather
+         than reading it locked, the way Finance reads it below. — */
+    { to: '/admin/finance', label: 'Financial config', in: ['sub'], category: 'Settings & configuration' },
+    { to: '/admin/master-data', label: 'Master data', in: ['sub'], category: 'Settings & configuration' },
+    { to: '/admin/pages', label: 'Page manager', in: ['sub'], category: 'Settings & configuration' },
+    { to: '/admin/blacklist', label: 'Blacklist', subLabel: 'Blacklist & defaulters', in: ['sub'], category: 'Settings & configuration' },
+    { to: '/admin/change-history', label: 'Change history', subLabel: 'Change history & rollback', in: ['sub'], category: 'Settings & configuration' },
     { to: '/sub/reports', label: 'Reports', in: ['sub'], category: 'Oversight & records' },
     { to: '/sub/activity', label: 'My activity', in: ['sub'], retained: true, category: 'Oversight & records' },
   ],
@@ -272,28 +311,53 @@ export const NAV_BY_ROLE: Record<Role, NavItem[]> = {
     { to: '/ceo/delegate', label: 'Delegate my approvals', subLabel: 'Delegate approvals', in: ['sub'] },
     { to: '/ceo/reports', label: 'Reports', in: ['sub'] },
   ],
-  // Super Admin — our support role, in the order of the spec, and its four
-  // headings are that order: structure first (a role must exist before anyone
-  // can hold it), then the people who hold it, then the settings they work
-  // inside, then the exceptions only we can clear and the record that proves it.
-  // Each heading depends on the one before it, which is why they read left to
-  // right. `Ops console` sits on the top bar because a Super Admin also sees
-  // everything a Sub Admin sees, and that is the door into it.
+  // Super Admin — our own break-glass role, never issued to the company (see
+  // the roles decision in the Content Atlas: for the company, Sub Admin is the
+  // highest role that exists). Four headings, in the order of the spec:
+  // structure first (a role must exist before anyone can hold it), then the
+  // people who hold it, then the settings they work inside, then the
+  // exceptions only we can clear and the record that proves it. `Ops console`
+  // sits on the top bar because a Super Admin also sees everything a Sub
+  // Admin sees, and that is the door into it.
+  //
+  // Most of what follows is not a wider power — it is the identical screen
+  // the Sub Admin's own menu links to, kept here as the recovery mirror the
+  // CMS entries below already establish the pattern for. Only Roles, Sub
+  // Admin accounts, Emergency override and Audit trail are ground the company
+  // never reaches at all.
   super_admin: [
     /* — what exists before anyone can use it — */
     { to: '/admin', label: 'Dashboard', end: true, in: ['sub'], category: 'Structure' },
     { to: '/admin/roles', label: 'Roles', in: ['sub'], category: 'Structure' },
+    /* Shared with the Sub Admin's menu — same route, same data. */
     { to: '/admin/pages', label: 'Page manager', in: ['sub'], category: 'Structure' },
     /* — who holds those roles, and who is barred from the platform — */
     { to: '/admin/sub-admins', label: 'Sub Admins', subLabel: 'Sub Admin accounts', in: ['sub'], category: 'People & access' },
+    /* Shared with the Sub Admin's menu — same route, same data. */
     { to: '/admin/users', label: 'User accounts', subLabel: 'All user accounts', in: ['sub'], category: 'People & access' },
     { to: '/admin/blacklist', label: 'Blacklist', subLabel: 'Blacklist & defaulters', in: ['sub'], category: 'People & access' },
     /* — the rules and reference data everyone then works inside — */
     { to: '/admin/finance', label: 'Financial config', in: ['sub'], category: 'Settings & content' },
     { to: '/admin/master-data', label: 'Master data', in: ['sub'], category: 'Settings & content' },
     { to: '/admin/content', label: 'Content publishing', in: ['sub'], category: 'Settings & content' },
+    /* The same CMS, over the same data. A mirror we hold for recovery, not a
+       tier above the Sub Admin's: nothing in the CMS routes here for approval. */
+    { to: '/cms', label: 'Overview', end: true, in: ['sub'], category: 'CMS' },
+    { to: '/cms/page/home', label: 'Home page', in: ['sub'], category: 'CMS' },
+    { to: '/cms/page/pricing', label: 'Pricing', in: ['sub'], category: 'CMS' },
+    { to: '/cms/page/about', label: 'About us', in: ['sub'], category: 'CMS' },
+    { to: '/cms/page/contact', label: 'Contact us', in: ['sub'], category: 'CMS' },
+    { to: '/cms/page/terms', label: 'Terms', subLabel: 'Terms & conditions', in: ['sub'], category: 'CMS' },
+    { to: '/cms/page/privacy', label: 'Privacy', subLabel: 'Privacy policy', in: ['sub'], category: 'CMS' },
+    { to: '/cms/page/grievance', label: 'Grievance', subLabel: 'Grievance redressal', in: ['sub'], category: 'CMS' },
+    { to: '/cms/page/help', label: 'Help centre', in: ['sub'], category: 'CMS' },
+    { to: '/cms/page/faqs', label: 'FAQs', subLabel: 'Help & FAQs', in: ['sub'], category: 'CMS' },
+    { to: '/cms/page/knowledge', label: 'Knowledge', subLabel: 'Knowledge centre', in: ['sub'], category: 'CMS' },
+    { to: '/cms/page/blog', label: 'Blog', in: ['sub'], category: 'CMS' },
+    { to: '/cms/sections', label: 'Portal sections', subLabel: 'Section visibility', in: ['sub'], category: 'CMS' },
     /* — what only we can clear, and the record and undo behind it — */
     { to: '/admin/control-tower', label: 'Emergency override', in: ['sub'], category: 'Exceptions & record' },
+    /* Shared with the Sub Admin's menu — same route, same data. */
     { to: '/admin/change-history', label: 'Change history', subLabel: 'Change history & rollback', in: ['sub'], category: 'Exceptions & record' },
     { to: '/admin/audit', label: 'Audit trail', in: ['sub'], retained: true, category: 'Exceptions & record' },
     { to: '/sub', label: 'Ops console', in: ['top'] },

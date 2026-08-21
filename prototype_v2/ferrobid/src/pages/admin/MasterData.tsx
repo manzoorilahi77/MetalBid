@@ -19,7 +19,7 @@ import { Pencil, Plus } from 'lucide-react'
 import { Page } from '../../layout/Chrome'
 import { Button, Chip, Field, Input, Modal, PageHeader, Tabs, Textarea, cx } from '../../components/ui'
 import { categoryImageUrl } from '../../data/categoryImages'
-import { useStore } from '../../store/store'
+import { useStore, SUB_ADMIN_ROLES } from '../../store/store'
 import type { MasterYard, TermsSet } from '../../types'
 
 type TabKey = 'categories' | 'uoms' | 'yards' | 'terms'
@@ -52,7 +52,9 @@ export default function MasterData() {
   const [versioning, setVersioning] = useState<TermsSet | null>(null)
   const [versionNote, setVersionNote] = useState('')
 
-  const canEdit = role === 'super_admin'
+  /* Shared with the Sub Admin's menu — see the roles decision in the Content
+     Atlas. Super Admin's copy is the same route, held as a recovery mirror. */
+  const canEdit = SUB_ADMIN_ROLES.includes(role)
   const th = 'text-left text-[11px] uppercase tracking-wider text-ink-faint border-b border-line'
 
   const say = (r: { ok: boolean; error?: string }, title: string, body?: string) => {

@@ -1,7 +1,7 @@
 /* ---------------------------------------------------------------------------
    Help & FAQ — how ferroBid works, role tracks, FAQ accordion, support band.
 --------------------------------------------------------------------------- */
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   ChevronDown, Gavel, ShieldCheck, ClipboardCheck, Phone, Mail, LifeBuoy,
@@ -10,6 +10,7 @@ import {
 } from 'lucide-react'
 import { Page } from '../layout/Chrome'
 import { Button, Chip, cx } from '../components/ui'
+import { useCmsPage } from '../api/useCmsPage'
 
 interface Step { icon: React.ReactNode; title: string; body: string }
 interface Track { key: string; label: string; icon: React.ReactNode; tone: 'ember' | 'steel' | 'success'; steps: Step[] }
@@ -121,8 +122,16 @@ function TrackCard({ track }: { track: Track }) {
   )
 }
 
-export default function Help() {
+export default function Help({ focus }: { focus?: 'faqs' } = {}) {
+  const cmsHelp = useCmsPage('/help')
   const [openFaq, setOpenFaq] = useState<number | null>(0)
+
+  /* `/help/faqs` is the same page, opened at the FAQ block. The Atlas gives
+     FAQs their own route; this gives them one without duplicating the page. */
+  useEffect(() => {
+    if (focus !== 'faqs') return
+    document.getElementById('faqs')?.scrollIntoView({ behavior: 'auto', block: 'start' })
+  }, [focus])
 
   return (
     <Page>
@@ -137,12 +146,14 @@ export default function Help() {
       </div>
 
       {/* Role tracks */}
-      <div className="grid md:grid-cols-3 gap-4 mb-12">
-        {TRACKS.map((t) => <TrackCard key={t.key} track={t} />)}
-      </div>
+      {cmsHelp.on('getting_started') && (
+        <div className="grid md:grid-cols-3 gap-4 mb-12">
+          {TRACKS.map((t) => <TrackCard key={t.key} track={t} />)}
+        </div>
+      )}
 
       {/* FAQ */}
-      <div className="max-w-3xl mx-auto">
+      <div id="faqs" className="max-w-3xl mx-auto scroll-mt-24">
         <h2 className="font-display text-2xl font-bold mb-4">Frequently asked questions</h2>
         <div className="card divide-y divide-line overflow-hidden">
           {FAQS.map((f, i) => {

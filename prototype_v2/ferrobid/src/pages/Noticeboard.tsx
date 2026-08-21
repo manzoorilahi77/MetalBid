@@ -7,6 +7,7 @@ import { Chip, EmptyState, PageHeader, Segmented, cx } from '../components/ui'
 import { useStore } from '../store/store'
 import { relTime, fmtDateTime } from '../lib/format'
 import { useNow } from '../lib/useTick'
+import { useCmsPage } from '../api/useCmsPage'
 import type { Announcement } from '../types'
 
 type Filter = 'all' | 'platform' | 'catalogue'
@@ -23,6 +24,7 @@ function SeverityChip({ severity }: { severity: Announcement['severity'] }) {
 }
 
 export default function Noticeboard() {
+  const cms = useCmsPage('/noticeboard')
   const now = useNow()
   const announcements = useStore((s) => s.announcements)
   const catalogues = useStore((s) => s.catalogues)
@@ -41,28 +43,32 @@ export default function Noticeboard() {
 
   return (
     <Page className="max-w-4xl">
-      <PageHeader
-        title="Noticeboard"
-        sub="Official announcements from the ferroBid auction desk — corrigenda, schedule changes and platform notices. Catalogue-specific notices are also shown on their catalogue page."
-        actions={
-          <Segmented<Filter>
-            options={[
-              { key: 'all', label: `All (${counts.all})` },
-              { key: 'platform', label: `Platform (${counts.platform})` },
-              { key: 'catalogue', label: `Catalogue (${counts.catalogue})` },
-            ]}
-            value={filter}
-            onChange={setFilter}
-          />
-        }
-      />
+      {cms.on('intro') && (
+        <PageHeader
+          title="Noticeboard"
+          sub="Official announcements from the ferroBid auction desk — corrigenda, schedule changes and platform notices. Catalogue-specific notices are also shown on their catalogue page."
+          actions={
+            <Segmented<Filter>
+              options={[
+                { key: 'all', label: `All (${counts.all})` },
+                { key: 'platform', label: `Platform (${counts.platform})` },
+                { key: 'catalogue', label: `Catalogue (${counts.catalogue})` },
+              ]}
+              value={filter}
+              onChange={setFilter}
+            />
+          }
+        />
+      )}
 
       {visible.length === 0 ? (
-        <EmptyState
-          icon={<Megaphone size={32} strokeWidth={1.5} />}
-          title="No announcements here"
-          body="Nothing published under this filter yet — check back before auction days."
-        />
+        cms.on('intro') && (
+          <EmptyState
+            icon={<Megaphone size={32} strokeWidth={1.5} />}
+            title="No announcements here"
+            body="Nothing published under this filter yet — check back before auction days."
+          />
+        )
       ) : (
         <ol className="space-y-4">
           {visible.map((a, i) => {

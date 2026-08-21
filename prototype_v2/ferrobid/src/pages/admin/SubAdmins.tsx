@@ -64,6 +64,7 @@ export default function SubAdmins() {
   const [resetting, setResetting] = useState<User | null>(null)
   const [mode, setMode] = useState<'auto' | 'manual'>('auto')
   const [manual, setManual] = useState('')
+  const [resetBusy, setResetBusy] = useState(false)
 
   const subAdmins = users.filter((u) => u.role === 'sub_admin')
   const activeCount = subAdmins.filter((u) => (u.accountStatus ?? 'active') === 'active').length
@@ -195,9 +196,11 @@ export default function SubAdmins() {
             <p className="text-[13px] text-ink-muted">
               Recorded at critical severity in the audit trail. At their next sign-in they are asked: keep this password, or set a new one?
             </p>
-            <Button className="w-full"
-              onClick={() => {
-                const r = resetUserPassword(resetting.id, mode, manual)
+            <Button className="w-full" disabled={resetBusy} loading={resetBusy}
+              onClick={async () => {
+                setResetBusy(true)
+                const r = await resetUserPassword(resetting.id, mode, manual)
+                setResetBusy(false)
                 if (!r.ok) { pushToast({ kind: 'danger', title: 'Not reset', body: r.error }); return }
                 const name = resetting.name
                 setResetting(null); setManual('')

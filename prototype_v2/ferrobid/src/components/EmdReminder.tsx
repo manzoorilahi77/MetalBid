@@ -48,7 +48,7 @@ export function EmdReminderBanner({ className }: { className?: string }) {
               <span className="inline-flex items-center gap-1.5 text-xs font-bold text-warning num whitespace-nowrap">
                 <Clock size={13} /> {countdown(emdDeadlineMs(cat) - now)} left to fund
               </span>
-              <Link to="/buyer/emd-shortlisted-catalogue">
+              <Link to="/buyer/shortlist">
                 <Button size="sm">Fund EMD</Button>
               </Link>
             </div>

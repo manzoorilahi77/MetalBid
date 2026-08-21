@@ -7,6 +7,7 @@ import { ChevronRight, Gavel, UserRound } from 'lucide-react'
 import { Page } from '../../layout/Chrome'
 import { Button, Countdown, EmptyState, PageHeader, StatusChip, cx } from '../../components/ui'
 import { useStore, catalogueUiStatus, selectionSummary } from '../../store/store'
+import { useCmsPage } from '../../api/useCmsPage'
 import { inr } from '../../lib/format'
 import { useNow } from '../../lib/useTick'
 
@@ -15,6 +16,7 @@ export default function BidNowAuctions() {
   const lots = useStore((s) => s.lots)
   const catalogues = useStore((s) => s.catalogues)
   const selections = useStore((s) => s.selections)
+  const cms = useCmsPage('/buyer/bid-now')
   const now = useNow()
 
   if (!me) {
@@ -46,12 +48,14 @@ export default function BidNowAuctions() {
       />
 
       {auctions.length === 0 ? (
-        <EmptyState
-          icon={<Gavel size={32} strokeWidth={1.5} />}
-          title="No live auctions on your shortlist"
-          body="Shortlist lots in a catalogue and it shows up here the moment that auction goes live."
-          action={<Link to="/buyer/shortlist"><Button variant="secondary">Go to shortlist</Button></Link>}
-        />
+        cms.on('empty_state') && (
+          <EmptyState
+            icon={<Gavel size={32} strokeWidth={1.5} />}
+            title="No live auctions on your shortlist"
+            body="Shortlist lots in a catalogue and it shows up here the moment that auction goes live."
+            action={<Link to="/buyer/shortlist"><Button variant="secondary">Go to shortlist</Button></Link>}
+          />
+        )
       ) : (
         <div className="space-y-3">
           {auctions.map((c, i) => {

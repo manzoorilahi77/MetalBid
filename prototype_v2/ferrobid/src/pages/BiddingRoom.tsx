@@ -22,6 +22,7 @@ import { fireConfetti } from '../lib/confetti'
 import { emdBlockedMessage, emdWindowClosed } from '../lib/emd'
 import { countdown, inr, inrWords, num, relTime } from '../lib/format'
 import { useNow } from '../lib/useTick'
+import { useLiveStream } from '../api/useLiveStream'
 import type { Lot } from '../types'
 
 type Style = 'classic' | 'normal' | 'quick'
@@ -54,6 +55,10 @@ const QUICK_FILTERS: { key: QuickFilter; label: string; dot?: string }[] = [
 
 export default function BiddingRoom() {
   const { catalogueId } = useParams()
+  /* Rates, bid counts and anti-snipe extensions arrive from the server rather
+     than being worked out from this browser's clock. Scoped to this catalogue
+     so a bidder in one sale is not woken by every bid in every other. */
+  useLiveStream(catalogueId)
   const [params, setParams] = useSearchParams()
   const now = useNow()
 

@@ -18,13 +18,19 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { LegalDoc } from '../components/LegalDoc';
+import { useCmsPage } from '../../api/useCmsPage';
 
-const SECTIONS = [
+const buildSections = cms => {
+  /* The grievance officer is a statutory disclosure, so the name and the
+     address read from the CMS in both places this page states them. */
+  const officerEmail = cms.text('grievance_officer', 'officer_email', 'grievance@ferrobid.in');
+
+  return [
   {
     id: 'scope',
-    title: 'Who we are and what this covers',
+    title: cms.text('clauses', 'scope_title', 'Who we are and what this covers'),
     icon: ShieldCheck,
-    plain: 'This policy covers the FerroBid auction platform. It tells you what we collect, why, who sees it, and what you can ask us to do about it.',
+    plain: cms.text('clauses', 'scope_plain', 'This policy covers the FerroBid auction platform. It tells you what we collect, why, who sees it, and what you can ask us to do about it.'),
     blocks: [
       { type: 'p', text: <>This Privacy Policy explains how FerroBid (“FerroBid”, “we”, “us”) collects, uses, shares and protects personal information when you visit our website, register an account, complete KYC verification, participate in auctions, or contact our support and grievance desks.</> },
       { type: 'p', text: <>It applies to buyers, sellers, and the authorised representatives of both. It does not cover third-party websites we link to, or the internal policies of logistics, inspection and payment partners you may separately engage.</> },
@@ -32,7 +38,7 @@ const SECTIONS = [
         type: 'kv',
         items: [
           { k: 'Data fiduciary', v: 'FerroBid — operator of the FerroBid auction platform.' },
-          { k: 'Grievance Officer', v: <>Ms. A. Iyer, Bengaluru — <a href="mailto:grievance@ferrobid.in">grievance@ferrobid.in</a></> },
+          { k: 'Grievance Officer', v: <>{cms.text('grievance_officer', 'officer_short', 'Ms. A. Iyer, Bengaluru')} — <a href={`mailto:${officerEmail}`}>{officerEmail}</a></> },
           { k: 'Privacy queries', v: <a href="mailto:privacy@ferrobid.in">privacy@ferrobid.in</a> },
           { k: 'Scope', v: 'ferrobid.in, the FerroBid bidding application, and our support channels.' }
         ]
@@ -48,9 +54,9 @@ const SECTIONS = [
 
   {
     id: 'data-we-collect',
-    title: 'The information we collect',
+    title: cms.text('clauses', 'data_we_collect_title', 'The information we collect'),
     icon: Database,
-    plain: 'Mostly what you give us to trade: company identity documents for KYC, contact details, and a record of your bidding and payments. We also log technical data to keep the auction floor secure.',
+    plain: cms.text('clauses', 'data_we_collect_plain', 'Mostly what you give us to trade: company identity documents for KYC, contact details, and a record of your bidding and payments. We also log technical data to keep the auction floor secure.'),
     blocks: [
       { type: 'p', text: <>We collect only what an enterprise auction actually requires. Because both sides of a trade must be verifiable, the identity set is larger than a consumer site would need — and correspondingly, most of it is company information rather than personal.</> },
       {
@@ -76,9 +82,9 @@ const SECTIONS = [
 
   {
     id: 'how-we-use',
-    title: 'How we use your information',
+    title: cms.text('clauses', 'how_we_use_title', 'How we use your information'),
     icon: Target,
-    plain: 'To run the platform, verify who is trading, settle money, meet our legal obligations, and keep the auction fair. Not to build advertising profiles.',
+    plain: cms.text('clauses', 'how_we_use_plain', 'To run the platform, verify who is trading, settle money, meet our legal obligations, and keep the auction fair. Not to build advertising profiles.'),
     blocks: [
       {
         type: 'list',
@@ -103,9 +109,9 @@ const SECTIONS = [
 
   {
     id: 'sms',
-    title: 'SMS and mobile information',
+    title: cms.text('clauses', 'sms_title', 'SMS and mobile information'),
     icon: MessageSquare,
-    plain: 'Your mobile number is used for transactional alerts and login codes only. It is never used for marketing and never shared for marketing.',
+    plain: cms.text('clauses', 'sms_plain', 'Your mobile number is used for transactional alerts and login codes only. It is never used for marketing and never shared for marketing.'),
     blocks: [
       { type: 'p', text: <>If you provide a mobile phone number and consent to receive SMS messages, we use that number solely to send transactional notifications related to your account and activity on the FerroBid platform — including bid alerts, auction lifecycle updates, winning bid confirmations, payment notifications, and one-time verification codes for login and security purposes. We do not use your mobile number for marketing.</> },
       { type: 'p', text: <>Mobile information will not be shared with third parties or affiliates for marketing or promotional purposes. Information shared with subprocessors solely to deliver the SMS messages you have consented to receive is not subject to this restriction.</> },
@@ -121,9 +127,9 @@ const SECTIONS = [
 
   {
     id: 'sharing',
-    title: 'Who we share information with',
+    title: cms.text('clauses', 'sharing_title', 'Who we share information with'),
     icon: Share2,
-    plain: 'Only the parties needed to complete a trade — payment, logistics, inspection and verification partners — plus authorities where the law requires it. Each is bound to use it only for that purpose.',
+    plain: cms.text('clauses', 'sharing_plain', 'Only the parties needed to complete a trade — payment, logistics, inspection and verification partners — plus authorities where the law requires it. Each is bound to use it only for that purpose.'),
     blocks: [
       {
         type: 'table',
@@ -144,9 +150,9 @@ const SECTIONS = [
 
   {
     id: 'retention',
-    title: 'How long we keep it',
+    title: cms.text('clauses', 'retention_title', 'How long we keep it'),
     icon: Archive,
-    plain: 'Financial and KYC records are kept for the statutory period because tax and audit law requires it. Everything else is kept only while it is useful, then deleted.',
+    plain: cms.text('clauses', 'retention_plain', 'Financial and KYC records are kept for the statutory period because tax and audit law requires it. Everything else is kept only while it is useful, then deleted.'),
     blocks: [
       { type: 'p', text: <>Deleting your account does not delete records we are legally obliged to retain. Where a retention period is fixed by law, we keep the record for that period and no longer, and we restrict access to it in the meantime.</> },
       {
@@ -167,9 +173,9 @@ const SECTIONS = [
 
   {
     id: 'security',
-    title: 'How we protect it',
+    title: cms.text('clauses', 'security_title', 'How we protect it'),
     icon: Lock,
-    plain: 'Encryption in transit and at rest, least-privilege access, and separation of duties — no single role can both approve a lot and settle the money for it.',
+    plain: cms.text('clauses', 'security_plain', 'Encryption in transit and at rest, least-privilege access, and separation of duties — no single role can both approve a lot and settle the money for it.'),
     blocks: [
       {
         type: 'list',
@@ -192,9 +198,9 @@ const SECTIONS = [
 
   {
     id: 'your-rights',
-    title: 'Your rights and how to use them',
+    title: cms.text('clauses', 'your_rights_title', 'Your rights and how to use them'),
     icon: UserCheck,
-    plain: 'You can ask what we hold, correct it, have it erased, withdraw consent, nominate someone to act for you, and complain. Write to the privacy desk and we respond within 30 days.',
+    plain: cms.text('clauses', 'your_rights_plain', 'You can ask what we hold, correct it, have it erased, withdraw consent, nominate someone to act for you, and complain. Write to the privacy desk and we respond within 30 days.'),
     blocks: [
       { type: 'p', text: <>These rights reflect India's Digital Personal Data Protection Act, 2023 and the information-security rules made under the Information Technology Act, 2000. Where a right conflicts with a statutory retention duty, we will tell you which record we must keep and why.</> },
       {
@@ -220,9 +226,9 @@ const SECTIONS = [
 
   {
     id: 'cookies',
-    title: 'Cookies and tracking',
+    title: cms.text('clauses', 'cookies_title', 'Cookies and tracking'),
     icon: Cookie,
-    plain: 'We use the cookies needed to keep you logged in and the site working, plus basic analytics. No advertising trackers.',
+    plain: cms.text('clauses', 'cookies_plain', 'We use the cookies needed to keep you logged in and the site working, plus basic analytics. No advertising trackers.'),
     blocks: [
       {
         type: 'table',
@@ -240,61 +246,71 @@ const SECTIONS = [
 
   {
     id: 'transfers-children-changes',
-    title: 'Transfers, eligibility and changes',
+    title: cms.text('clauses', 'transfers_children_changes_title', 'Transfers, eligibility and changes'),
     icon: Globe,
-    plain: 'The platform is for registered businesses in India. Data is processed in India; if a provider processes it elsewhere, it stays under equivalent protection. We tell you before material policy changes take effect.',
+    plain: cms.text('clauses', 'transfers_children_changes_plain', 'The platform is for registered businesses in India. Data is processed in India; if a provider processes it elsewhere, it stays under equivalent protection. We tell you before material policy changes take effect.'),
     blocks: [
       { type: 'p', text: <><strong>Where data is processed.</strong> Personal information is processed and stored in India. Where a subprocessor operates outside India — for example a messaging gateway — we transfer only what that service needs, under contractual terms requiring equivalent protection, and only to jurisdictions not restricted by the Central Government.</> },
       { type: 'p', text: <><strong>Eligibility.</strong> FerroBid is a business-to-business platform. Accounts are held by registered entities and operated by authorised representatives aged 18 or over. We do not knowingly collect information from children. If you believe a child's information has reached us, write to the privacy desk and we will delete it.</> },
       { type: 'p', text: <><strong>Changes to this policy.</strong> We may update this policy. The version number and effective date at the top of this page always reflect the current text. For material changes we give notice by email or in-platform at least <strong>14 days</strong> before they take effect, so you can review them or close your account.</> },
-      {
+      ...(cms.on('archive') ? [{
         type: 'callout',
         tone: 'info',
-        title: 'Version history',
-        text: 'Superseded versions are retained and available on request from the privacy desk — useful if you need to know which terms applied to a trade completed in the past.'
-      }
+        title: cms.text('archive', 'title', 'Version history'),
+        text: cms.text('archive', 'body', 'Superseded versions are retained and available on request from the privacy desk — useful if you need to know which terms applied to a trade completed in the past.')
+      }] : [])
     ]
   },
 
   {
     id: 'contact',
-    title: 'Contact us',
+    title: cms.text('clauses', 'contact_title', 'Contact us'),
     icon: Mail,
-    plain: 'Privacy questions go to the privacy desk. If we do not resolve it, the Grievance Officer is your next step.',
+    plain: cms.text('clauses', 'contact_plain', 'Privacy questions go to the privacy desk. If we do not resolve it, the Grievance Officer is your next step.'),
     blocks: [
       {
         type: 'kv',
         items: [
           { k: 'Privacy queries & rights requests', v: <a href="mailto:privacy@ferrobid.in">privacy@ferrobid.in</a> },
           { k: 'Security incidents', v: <a href="mailto:security@ferrobid.in">security@ferrobid.in</a> },
-          { k: 'Grievance Officer', v: <>Ms. A. Iyer, FerroBid, Bengaluru — <a href="mailto:grievance@ferrobid.in">grievance@ferrobid.in</a></> },
+          { k: 'Grievance Officer', v: <>{cms.text('grievance_officer', 'officer_full', 'Ms. A. Iyer, FerroBid, Bengaluru')} — <a href={`mailto:${officerEmail}`}>{officerEmail}</a></> },
           { k: 'General support', v: <>Mon–Sat, 9 AM–8 PM IST — <a href="mailto:support@ferrobid.in">support@ferrobid.in</a></> }
         ]
       },
       { type: 'p', text: <>Include your registered email and, where relevant, the lot or transaction ID so we can locate the records quickly. If you are dissatisfied with our handling of a privacy matter, you may escalate through <Link to="/grievance">Grievance Redressal</Link> or to the relevant data protection authority.</> }
     ]
   }
-];
+  ];
+};
 
-const PrivacyPolicy = () => (
-  <LegalDoc
-    eyebrow="Privacy Policy"
-    eyebrowIcon={ShieldCheck}
-    title="What we hold, why we hold it, and how to get it back."
-    lead="FerroBid runs on verified identity — which means we hold real documents about real businesses. This policy sets out exactly what those are, who else ever sees them, how long we keep them, and the requests you can make of us."
-    meta={{
-      version: 'v2.0',
-      effective: '1 August 2026',
-      updated: '1 August 2026',
-      readingTime: '9 min'
-    }}
-    sections={SECTIONS}
-    related={[
-      { to: '/terms', label: 'Terms & Conditions' },
-      { to: '/grievance', label: 'Grievance Redressal' },
-      { to: '/faqs', label: 'Help & FAQs' }
-    ]}
-  />
-);
+const PrivacyPolicy = () => {
+  /* The public site is what visitors actually see, so this is where published
+     CMS copy has to land — the Sub Admin's editor writes to these exact section
+     keys under route '/legal/privacy'. Every accessor takes the string this page
+     already hardcoded as its fallback, so nothing changes on screen until
+     somebody publishes. See api/useCmsPage.ts. */
+  const cms = useCmsPage('/legal/privacy');
+
+  return (
+    <LegalDoc
+      eyebrow={cms.text('header', 'eyebrow', 'Privacy Policy')}
+      eyebrowIcon={ShieldCheck}
+      title={cms.text('header', 'title', 'What we hold, why we hold it, and how to get it back.')}
+      lead={cms.text('header', 'lead', 'FerroBid runs on verified identity — which means we hold real documents about real businesses. This policy sets out exactly what those are, who else ever sees them, how long we keep them, and the requests you can make of us.')}
+      meta={{
+        version: cms.text('header', 'version', 'v2.0'),
+        effective: cms.text('header', 'effective', '1 August 2026'),
+        updated: cms.text('header', 'updated', '1 August 2026'),
+        readingTime: cms.text('header', 'reading_time', '9 min')
+      }}
+      sections={buildSections(cms)}
+      related={[
+        { to: '/terms', label: 'Terms & Conditions' },
+        { to: '/grievance', label: 'Grievance Redressal' },
+        { to: '/faqs', label: 'Help & FAQs' }
+      ]}
+    />
+  );
+};
 
 export default PrivacyPolicy;

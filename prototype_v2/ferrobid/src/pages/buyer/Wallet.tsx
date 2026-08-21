@@ -11,6 +11,7 @@ import {
   Button, Chip, EmptyState, Field, Input, MockPayModal, Modal, PageHeader, Select, Stat, Tabs, Segmented, cx,
 } from '../../components/ui'
 import { fmtClock, nextWithdrawalWindowLabel, useStore, WEEKDAY_LABELS, withinWithdrawalWindow } from '../../store/store'
+import { useCmsPage } from '../../api/useCmsPage'
 import { fmtDateTime, inr, relTime } from '../../lib/format'
 import { useNow } from '../../lib/useTick'
 import type { LedgerType, WithdrawalWindowConfig } from '../../types'
@@ -74,6 +75,7 @@ export default function Wallet() {
   const cancelWithdrawal = useStore((s) => s.cancelWithdrawal)
   const createDispute = useStore((s) => s.createDispute)
   const pushToast = useStore((s) => s.pushToast)
+  const cms = useCmsPage('/buyer/wallet')
   const now = useNow()
 
   const [tab, setTab] = useState<TabKey>('deposits')
@@ -186,21 +188,23 @@ export default function Wallet() {
       {/* ------------------------------- Deposits ------------------------------- */}
       {tab === 'deposits' && (
         <div className="space-y-6">
-          <div className="card p-5">
-            <h2 className="font-bold mb-3">Company bank accounts</h2>
-            <p className="text-xs text-ink-muted mb-3">Transfer funds via NEFT/RTGS/UPI to any account below, then submit a claim with your reference number.</p>
-            <div className="space-y-2.5">
-              {companyBankAccounts.map((a) => (
-                <div key={a.id} className="card bg-surface-2 border-0 p-3.5 text-sm flex items-center justify-between">
-                  <div>
-                    <div className="font-semibold">{a.bank}</div>
-                    <div className="num text-xs text-ink-muted mt-0.5">{a.accountNumberMasked} · {a.ifsc}</div>
+          {cms.on('deposit_help') && (
+            <div className="card p-5">
+              <h2 className="font-bold mb-3">Company bank accounts</h2>
+              <p className="text-xs text-ink-muted mb-3">Transfer funds via NEFT/RTGS/UPI to any account below, then submit a claim with your reference number.</p>
+              <div className="space-y-2.5">
+                {companyBankAccounts.map((a) => (
+                  <div key={a.id} className="card bg-surface-2 border-0 p-3.5 text-sm flex items-center justify-between">
+                    <div>
+                      <div className="font-semibold">{a.bank}</div>
+                      <div className="num text-xs text-ink-muted mt-0.5">{a.accountNumberMasked} · {a.ifsc}</div>
+                    </div>
+                    <Chip tone="steel">{a.purpose}</Chip>
                   </div>
-                  <Chip tone="steel">{a.purpose}</Chip>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="card p-5">
             <h2 className="font-bold mb-3">Submit a deposit claim</h2>
@@ -267,12 +271,14 @@ export default function Wallet() {
       {/* ------------------------------ Withdrawals ----------------------------- */}
       {tab === 'withdrawals' && (
         <div className="space-y-6">
-          <div className={cx('rounded-xl border px-4 py-3 text-sm', inWindow ? 'bg-success-soft border-success/25 text-success' : 'bg-warning-soft border-warning/25 text-warning')}>
-            <div className="font-semibold">
-              Withdrawals are processed {windowDaysLabel(withdrawalWindow)}, {fmtClock(withdrawalWindow.startHour, withdrawalWindow.startMinute)}–{fmtClock(withdrawalWindow.endHour, withdrawalWindow.endMinute)} IST.
+          {cms.on('refund_policy') && (
+            <div className={cx('rounded-xl border px-4 py-3 text-sm', inWindow ? 'bg-success-soft border-success/25 text-success' : 'bg-warning-soft border-warning/25 text-warning')}>
+              <div className="font-semibold">
+                Withdrawals are processed {windowDaysLabel(withdrawalWindow)}, {fmtClock(withdrawalWindow.startHour, withdrawalWindow.startMinute)}–{fmtClock(withdrawalWindow.endHour, withdrawalWindow.endMinute)} IST.
+              </div>
+              <div className="text-xs mt-0.5 opacity-90">{inWindow ? 'The window is open right now.' : windowLabel}</div>
             </div>
-            <div className="text-xs mt-0.5 opacity-90">{inWindow ? 'The window is open right now.' : windowLabel}</div>
-          </div>
+          )}
 
           {verifiedAccounts.length === 0 ? (
             <div className="card p-5 text-center">

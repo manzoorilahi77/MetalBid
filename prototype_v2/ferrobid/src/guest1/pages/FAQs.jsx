@@ -18,6 +18,7 @@ import {
   Factory, KeyRound, LayoutGrid, ThumbsUp, ThumbsDown,
   Headset, MessageSquare, BookOpen
 } from 'lucide-react';
+import { useCmsPage } from '../../api/useCmsPage';
 import '../styles/enterprise.css';
 import '../styles/support.css';
 
@@ -296,7 +297,7 @@ const Highlight = ({ text, query }) => {
 };
 
 /* ─── One question ──────────────────────────────────────────────────────── */
-const FaqItem = ({ item, query, isOpen, onToggle, reduceMotion }) => {
+const FaqItem = ({ item, query, isOpen, onToggle, reduceMotion, cms }) => {
   const [vote, setVote] = useState(null);
   const category = CATEGORIES.find(c => c.id === item.cat);
 
@@ -333,14 +334,17 @@ const FaqItem = ({ item, query, isOpen, onToggle, reduceMotion }) => {
 
                 {/* The only signal a support desk gets that an answer is
                     actually wrong. Cheap to offer, expensive to lack. */}
+                {cms.on('feedback') && (
                 <span className="faq-vote">
                   {vote ? (
                     <span className="faq-vote-done">
-                      {vote === 'up' ? 'Thanks for the feedback.' : 'Thanks — we\'ll rewrite this one.'}
+                      {vote === 'up'
+                        ? cms.text('feedback', 'thanks_up', 'Thanks for the feedback.')
+                        : cms.text('feedback', 'thanks_down', 'Thanks — we\'ll rewrite this one.')}
                     </span>
                   ) : (
                     <>
-                      Helpful?
+                      {cms.text('feedback', 'prompt', 'Helpful?')}
                       <button type="button" onClick={() => setVote('up')} aria-label="This answer was helpful">
                         <ThumbsUp size={13} strokeWidth={2} />
                       </button>
@@ -350,6 +354,7 @@ const FaqItem = ({ item, query, isOpen, onToggle, reduceMotion }) => {
                     </>
                   )}
                 </span>
+                )}
               </div>
             </div>
           </motion.div>
@@ -361,6 +366,12 @@ const FaqItem = ({ item, query, isOpen, onToggle, reduceMotion }) => {
 
 /* ─── Page ──────────────────────────────────────────────────────────────── */
 export const FAQs = () => {
+  /* The public site is what visitors actually see, so this is where published
+     CMS copy has to land — the Sub Admin's editor writes to these exact section
+     keys under route '/help/faqs'. Every accessor takes the string this page
+     already hardcoded as its fallback, so nothing changes on screen until
+     somebody publishes. See api/useCmsPage.ts. */
+  const cms = useCmsPage('/help/faqs');
   const reduceMotion = useReducedMotion();
   const [query, setQuery] = useState('');
   const [cat, setCat] = useState('all');
@@ -411,10 +422,13 @@ export const FAQs = () => {
 
           <div className="faq-hero-inner">
             <p className="ent-hero-eyebrow"><HelpCircle size={13} aria-hidden="true" /> Help &amp; FAQs</p>
-            <h1 className="doc-hero-title">{FAQS.length} answers, before you put money on a lot.</h1>
+            <h1 className="doc-hero-title">
+              {FAQS.length}{cms.text('entries', 'headline_suffix', ' answers, before you put money on a lot.')}
+            </h1>
             <p className="doc-hero-lead">
-              Everything from what an EMD actually is to who files the e-way bill. Search the
-              whole set, or work through a category.
+              {cms.text('entries', 'lead',
+                'Everything from what an EMD actually is to who files the e-way bill. Search the '
+                + 'whole set, or work through a category.')}
             </p>
 
             <div className="faq-search">
@@ -424,7 +438,7 @@ export const FAQs = () => {
                 type="search"
                 value={query}
                 onChange={e => setQuery(e.target.value)}
-                placeholder="Search — try “EMD”, “lifting window”, “GST”…"
+                placeholder={cms.text('entries', 'search_placeholder', 'Search — try “EMD”, “lifting window”, “GST”…')}
                 aria-label="Search frequently asked questions"
               />
               {query && (
@@ -449,8 +463,9 @@ export const FAQs = () => {
       {/* ─── Categories + results ─── */}
       <div className="container">
         <div className="faq-layout">
+          {cms.on('audience') && (
           <nav className="faq-cats" aria-label="Question categories">
-            <p className="faq-cats-title">Categories</p>
+            <p className="faq-cats-title">{cms.text('audience', 'title', 'Categories')}</p>
             {CATEGORIES.map(category => {
               const Icon = category.icon;
               const count = counts[category.id] || 0;
@@ -478,6 +493,7 @@ export const FAQs = () => {
               );
             })}
           </nav>
+          )}
 
           <main className="faq-main">
             <div className="faq-resultline">
@@ -499,6 +515,7 @@ export const FAQs = () => {
                     item={item}
                     query={query}
                     reduceMotion={reduceMotion}
+                    cms={cms}
                     isOpen={openKey === item.q}
                     onToggle={() => setOpenKey(openKey === item.q ? null : item.q)}
                   />

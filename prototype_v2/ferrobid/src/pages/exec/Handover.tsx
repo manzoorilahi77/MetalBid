@@ -17,10 +17,12 @@ import { PageHeader, Button, Chip, Avatar, EmptyState, Modal, Field, Textarea } 
 import { useStore } from '../../store/store'
 import { inr, num, fmtDate, relTime } from '../../lib/format'
 import { useNow } from '../../lib/useTick'
+import { useCmsPage } from '../../api/useCmsPage'
 import type { DeliveryOrder } from '../../types'
 
 export default function Handover() {
   const now = useNow()
+  const cms = useCmsPage('/exec/handover')
   const deliveryOrders = useStore((s) => s.deliveryOrders)
   const lots = useStore((s) => s.lots)
   const users = useStore((s) => s.users)
@@ -116,10 +118,12 @@ export default function Handover() {
                 </div>
                 <div className="ml-auto flex flex-wrap items-center gap-2">
                   {d.handoverConfirmedAt ? (
-                    <Button size="sm" variant="ghost"
-                      onClick={() => pushToast({ kind: 'info', title: 'Closure certificate ready', body: `${d.id.toUpperCase()} — certificate PDF downloaded (demo).` })}>
-                      <FileCheck2 size={14} /> Download closure certificate
-                    </Button>
+                    cms.on('certificate') && (
+                      <Button size="sm" variant="ghost"
+                        onClick={() => pushToast({ kind: 'info', title: 'Closure certificate ready', body: `${d.id.toUpperCase()} — certificate PDF downloaded (demo).` })}>
+                        <FileCheck2 size={14} /> Download closure certificate
+                      </Button>
+                    )
                   ) : (
                     <Button size="sm" variant="success" onClick={() => { setClosing(d); setNote('') }}>
                       <PackageCheck size={14} /> Confirm handover

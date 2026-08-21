@@ -128,7 +128,7 @@ export default function Bids() {
             icon={<Gavel size={32} strokeWidth={1.5} />}
             title="No active bids"
             body="Fund EMD on shortlisted lots and place a bid — your live positions will track here."
-            action={<Link to="/buyer/emd-shortlisted-catalogue"><Button variant="secondary">Go to shortlist</Button></Link>}
+            action={<Link to="/buyer/shortlist"><Button variant="secondary">Go to shortlist</Button></Link>}
           />
         ) : (() => {
           const openActiveGroup = activeCatalogues.find((g) => g.cat.id === openActiveCatId)

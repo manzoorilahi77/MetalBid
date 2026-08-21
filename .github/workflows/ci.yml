@@ -1,0 +1,167 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Frontend: the same two checks a developer runs by hand before pushing —
+  # `tsc -b` (part of the build script) and the Vite production build.
+  # ---------------------------------------------------------------------------
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: prototype_v2/ferrobid
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: prototype_v2/ferrobid/package-lock.json
+
+      - run: npm ci
+      - run: npm run build
+
+  # ---------------------------------------------------------------------------
+  # Backend: syntax-check every server module. Cheap and catches the class of
+  # mistake — a stray import, a typo'd identifier — that would otherwise only
+  # surface when that one code path actually runs in production.
+  # ---------------------------------------------------------------------------
+  backend-syntax:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+
+      - run: npm ci
+      - name: node --check every .mjs file
+        run: find src scripts -name '*.mjs' -print0 | xargs -0 -n1 node --check
+
+  # ---------------------------------------------------------------------------
+  # Backend + database: the real deploy gate. Seeds a throwaway MySQL instance
+  # from the committed fixtures, runs the migrations and the CMS seeder against
+  # it exactly as a deploy would, then runs the same smoke-auth.mjs suite the
+  # README asks a human to run against production — 39 checks covering
+  # authentication, authorization, the CMS, and rate limiting, in under a
+  # minute. Nothing here touches a real database; the service container is
+  # created fresh for this job and discarded when it ends.
+  # ---------------------------------------------------------------------------
+  smoke:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: ci_root_password
+          MYSQL_DATABASE: ferrobid_ci
+          MYSQL_USER: ferrobid_ci
+          MYSQL_PASSWORD: ci_password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install frontend deps
+        working-directory: prototype_v2/ferrobid
+        run: npm ci
+
+      - name: Dump the prototype's seeded state
+        working-directory: prototype_v2/ferrobid
+        # Writes directly to server/seed-data/store-dump.json (gitignored —
+        # it is derived data, regenerated here rather than committed). This is
+        # the same command a developer runs locally before `npm run db:seed`;
+        # see server/scripts/seed.mjs's header for why the store, not the raw
+        # fixture JSON, is the source of truth.
+        run: npx tsx scripts/dump-store.ts
+
+      - name: Install backend deps
+        working-directory: server
+        run: npm ci
+
+      - name: Write a CI-only .env
+        working-directory: server
+        # A throwaway secret and a throwaway database that exist for the
+        # lifetime of this job only. Never reused, never shared with any real
+        # environment — see AUTH_SECRET's own warning in .env.example.
+        run: |
+          cat > .env <<'EOF'
+          DB_HOST=127.0.0.1
+          DB_PORT=3306
+          DB_NAME=ferrobid_ci
+          DB_USER=ferrobid_ci
+          DB_PASSWORD=ci_password
+          NODE_ENV=test
+          PORT=4000
+          ALLOWED_ORIGINS=http://localhost:5173
+          AUTH_SECRET=ci-only-secret-do-not-reuse-anywhere-else-0123456789
+          DEV_PASSWORD=FerroBid@Dev2026
+          EOF
+
+      - name: Wait for MySQL
+        run: |
+          for i in $(seq 1 30); do
+            mysqladmin ping -h 127.0.0.1 -u ferrobid_ci -pci_password --silent && break
+            sleep 2
+          done
+
+      - name: Migrate
+        working-directory: server
+        run: npm run db:migrate
+
+      - name: Seed demo data
+        working-directory: server
+        run: npm run db:seed
+
+      - name: Seed the CMS
+        working-directory: server
+        run: npm run db:seed-cms
+
+      - name: Set demo passwords
+        working-directory: server
+        run: npm run db:seed-auth
+
+      - name: Start the API
+        working-directory: server
+        run: |
+          nohup npm start > server.log 2>&1 &
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:4000/api/health && exit 0
+            sleep 1
+          done
+          echo "server did not become healthy" && cat server.log && exit 1
+
+      - name: Smoke test
+        working-directory: server
+        run: node scripts/smoke-auth.mjs --url http://localhost:4000
+
+      - name: Server log (on failure)
+        if: failure()
+        working-directory: server
+        run: cat server.log || true

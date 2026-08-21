@@ -35,7 +35,11 @@ export const pool = mysql.createPool({
   timezone: 'Z',            // driver reads/writes DATETIME as UTC. See src/time.mjs.
   charset: 'utf8mb4_general_ci',
   supportBigNumbers: true,
-  bigNumberStrings: true,   // BIGINT ids survive as strings, not lossy floats
+  /* BIGINT ids survive as strings rather than lossy doubles. The catch: this
+   * also applies to COUNT(*) and to integer literals like SELECT 1 -- both come
+   * back as strings, and '0' is truthy. Always Number() a numeric scalar read
+   * back from a query before testing or comparing it. */
+  bigNumberStrings: true,
   dateStrings: false,
   multipleStatements: false, // one statement per call — narrows injection blast radius
 })

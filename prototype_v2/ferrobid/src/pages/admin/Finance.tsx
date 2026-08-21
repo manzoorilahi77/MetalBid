@@ -16,7 +16,7 @@ import { Link } from 'react-router-dom'
 import { ArrowRight, Signature } from 'lucide-react'
 import { Page } from '../../layout/Chrome'
 import { Button, Chip, Input, LockChip, PageHeader, Toggle, cx } from '../../components/ui'
-import { useStore, WEEKDAY_LABELS } from '../../store/store'
+import { useStore, WEEKDAY_LABELS, SUB_ADMIN_ROLES } from '../../store/store'
 import { inr, relTime, uid } from '../../lib/format'
 import type { CompanyBankAccount, FinanceConfig } from '../../types'
 
@@ -89,7 +89,10 @@ export default function Finance() {
   const set = (k: keyof typeof cfg) => (v: string) => setCfg({ ...cfg, [k]: v })
   const dirty = JSON.stringify(cfg) !== JSON.stringify(saved)
   const accountsDirty = JSON.stringify(accounts) !== JSON.stringify(companyBankAccounts)
-  const canEdit = role === 'super_admin'
+  /* This screen runs on the Sub Admin's own menu now — see the roles decision
+     in the Content Atlas — with Super Admin holding the identical route as a
+     recovery mirror. Both edit; there is no third role that merely reads it. */
+  const canEdit = SUB_ADMIN_ROLES.includes(role)
 
   const groupCls = 'card p-5 divide-y divide-line'
   const h = 'font-bold pb-2'

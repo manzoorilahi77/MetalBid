@@ -9,6 +9,7 @@ import {
 import {
   PLAN_PRICE, REFERRAL_COUPON, FREE_AT, REFERRAL_CODE, inr,
 } from '../checkout/plan';
+import { useCmsPage } from '../../api/useCmsPage';
 import '../styles/Pricing.css';
 
 /* ---------------------------------------------------------------------------
@@ -109,6 +110,12 @@ const rise = {
 };
 
 const Pricing = () => {
+  /* The public site is what visitors actually see, so this is where published
+     CMS copy has to land — the Sub Admin's editor writes to these exact section
+     keys under route '/pricing'. Every accessor takes the string this page
+     already hardcoded as its fallback, so nothing changes on screen until
+     somebody publishes. See api/useCmsPage.ts. */
+  const cms = useCmsPage('/pricing');
   const reduce = useReducedMotion();
   const price = useCountUp(PLAN_PRICE, 1100);
   const tilt = useTilt();
@@ -160,18 +167,21 @@ const Pricing = () => {
             <motion.div variants={rise} className="pr-badge">
               <span className="pr-badge-dot" />
               <MapPin size={13} />
-              Now live across Karnataka
+              {cms.text('intro', 'badge', 'Now live across Karnataka')}
             </motion.div>
 
             <motion.h1 variants={rise} className="pr-h1">
               One plan.<br />
               One year.<br />
-              <span className="pr-h1-accent">Every yard in Karnataka.</span>
+              <span className="pr-h1-accent">
+                {cms.text('intro', 'headline_accent', 'Every yard in Karnataka.')}
+              </span>
             </motion.h1>
 
             <motion.p variants={rise} className="pr-lead">
-              No tiers to decode, no per-auction fees, no transaction cut on your subscription.
-              A single yearly membership opens every verified auction in the state.
+              {cms.text('intro', 'subcopy',
+                'No tiers to decode, no per-auction fees, no transaction cut on your subscription. '
+                + 'A single yearly membership opens every verified auction in the state.')}
             </motion.p>
 
             <motion.ul variants={rise} className="pr-hero-points">
@@ -401,6 +411,7 @@ const Pricing = () => {
       </section>
 
       {/* ── What the plan includes ─────────────────────────────────────────── */}
+      {cms.on('comparison') && (
       <section className="pr-included">
         <div className="container">
           <motion.div
@@ -434,6 +445,7 @@ const Pricing = () => {
           </div>
         </div>
       </section>
+      )}
 
       {/* ── Karnataka coverage ─────────────────────────────────────────────── */}
       <section className="pr-state">
@@ -474,6 +486,7 @@ const Pricing = () => {
       </section>
 
       {/* ── FAQ ────────────────────────────────────────────────────────────── */}
+      {cms.on('faq') && (
       <section className="pr-faq">
         <div className="container pr-faq-inner">
           <div className="sec-head is-center">
@@ -506,6 +519,7 @@ const Pricing = () => {
           </div>
         </div>
       </section>
+      )}
 
       {/* ── Closing CTA ────────────────────────────────────────────────────── */}
       <section className="pr-close">

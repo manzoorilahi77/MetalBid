@@ -51,7 +51,11 @@ function normalizeRootToHome() {
 normalizeRootToHome()
 
 function isGuest1Hash() {
-  const path = currentPath()
+  /* Leading slash optional. `#home` is a URL a person types, and react-router
+     normalizes a slashless pathname to `/home` anyway — so without this the
+     gate sent it to the manager app, which then 404'd on a path its own router
+     considered `/home`. */
+  const path = currentPath().replace(/^(?!\/)/, '/')
   return path === '/home' || path.startsWith('/home/')
 }
 
@@ -96,8 +100,16 @@ function subscribe(onChange: () => void) {
   // normalizes a bare root path back to "/home" before notifying React, so
   // Guest1 stays the landing page no matter how "/" was reached.
   const handleChange = () => {
+    /* Synchronous: the URL must be correct before anything reads it. */
     normalizeRootToHome()
-    onChange()
+    /* Deferred: HashRouter calls replaceState during its OWN render (to stamp a
+       history index), which reaches the patch below and would otherwise call
+       this subscription's setState mid-render — React's "Cannot update
+       Guest1Gate while rendering HashRouter" warning. Worse than the noise: if
+       the path were ever bare at that moment, the snapshot would flip during
+       the render and throw the tree away. A microtask puts the notify after the
+       render, which is where a store update belongs. */
+    queueMicrotask(onChange)
   }
   window.addEventListener('hashchange', handleChange)
   window.addEventListener('popstate', handleChange)

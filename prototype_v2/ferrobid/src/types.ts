@@ -446,6 +446,24 @@ export interface Announcement {
   severity: 'info' | 'warning' | 'critical'
 }
 
+/** A buyer or seller's own account of the platform — the Home page's fourth
+ *  "from the portals" section. Written from the submitter's own workspace,
+ *  never public until a Sub/Super Admin moderates it: `status` starts
+ *  `pending` and only an admin may move it, which is why it is not in
+ *  `writableBy` reach of the customer who wrote it (see policy.mjs). */
+export interface Testimonial {
+  id: string
+  userId: string
+  role: 'buyer' | 'seller'
+  quote: string
+  rating?: number
+  status: 'pending' | 'approved' | 'rejected'
+  submittedAt: string
+  moderatedBy?: string
+  moderatedAt?: string
+  moderationNote?: string
+}
+
 /** How a dispute ended. `refund_due` is the one outcome that does not close it
  *  on its own — the money side belongs to Finance, and the ticket stays visible
  *  to the customer until Finance has actually paid it. */

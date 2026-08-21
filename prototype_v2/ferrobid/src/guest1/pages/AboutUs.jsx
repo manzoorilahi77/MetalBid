@@ -14,6 +14,7 @@ import {
 } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { asset } from '../utils/asset';
+import { useCmsPage } from '../../api/useCmsPage';
 import '../styles/about.css';
 
 /* This page has exactly one authored moment: switching roles in the governance
@@ -243,6 +244,9 @@ const panelItem = {
 };
 
 const GovernanceMap = ({ activeId, onSelect }) => {
+  /* Same route as the page that renders this section — the hook caches per
+     route, so the two calls share one request. See api/useCmsPage.ts. */
+  const cms = useCmsPage('/about');
   const active = ALL_ROLES.find(role => role.id === activeId) ?? ALL_ROLES[0];
   const ActiveIcon = active.icon;
   const isCustomer = active.audience === 'you';
@@ -252,11 +256,12 @@ const GovernanceMap = ({ activeId, onSelect }) => {
     <section className="ecosystem-section" id="ecosystem">
       <div className="ecosystem-container">
         <header className="sec-head gov-head">
-          <p className="sec-eyebrow">Access &amp; authority</p>
-          <h2 className="sec-title">Eight roles. One chain of authority.</h2>
+          <p className="sec-eyebrow">{cms.text('leadership', 'eyebrow', 'Access & authority')}</p>
+          <h2 className="sec-title">{cms.text('leadership', 'heading', 'Eight roles. One chain of authority.')}</h2>
           <p className="sec-lead">
-            No single person moves a lot from a seller's yard to a settled invoice. Start with
-            your own role, then see who stands behind it.
+            {cms.text('leadership', 'body',
+              "No single person moves a lot from a seller's yard to a settled invoice. Start with "
+              + 'your own role, then see who stands behind it.')}
           </p>
         </header>
 
@@ -739,6 +744,13 @@ const StagesSection = ({ onSignature }) => {
 };
 
 export const AboutUs = () => {
+  /* The public site is what visitors actually see, so this is where published
+     CMS copy has to land — the Sub Admin's editor writes to these exact section
+     keys under route '/about'. Every accessor takes the string this page
+     already hardcoded as its fallback, so nothing changes on screen until
+     somebody publishes. See api/useCmsPage.ts. */
+  const cms = useCmsPage('/about');
+
   /* The pipeline and the governance map describe the same chain, so the role
      selection lives above both: clicking a signature in the pipeline opens
      that role in the map rather than leaving the reader to go find it. */
@@ -762,23 +774,28 @@ export const AboutUs = () => {
         <div className="ab-hero-body">
           <div className="ab-hero-copy">
             <h1 className="ab-hero-title">
-              India's auction floor for <span className="accent">industrial metal</span>.
+              {cms.text('story', 'headline_lead', "India's auction floor for ")}
+              <span className="accent">{cms.text('story', 'headline_accent', 'industrial metal')}</span>.
             </h1>
             <p className="ab-hero-lead">
-              Every lot is physically inspected before it lists. Every bidder clears enterprise
-              KYC before they bid. High-value settlement runs through escrow, with a complete
-              audit trail on both sides of the trade.
+              {cms.text('story', 'intro',
+                'Every lot is physically inspected before it lists. Every bidder clears enterprise '
+                + 'KYC before they bid. High-value settlement runs through escrow, with a complete '
+                + 'audit trail on both sides of the trade.')}
             </p>
             <div className="ab-hero-actions">
               <Link to="/marketplace" className="ab-hero-btn primary">
-                Browse live lots <ArrowRight size={17} strokeWidth={2} />
+                {cms.text('story', 'cta_primary', 'Browse live lots')} <ArrowRight size={17} strokeWidth={2} />
               </Link>
-              <Link to="/auth?tab=register" className="ab-hero-btn ghost">Create an account</Link>
+              <Link to="/auth?tab=register" className="ab-hero-btn ghost">
+                {cms.text('story', 'cta_secondary', 'Create an account')}
+              </Link>
             </div>
           </div>
         </div>
 
         {/* Figures match the homepage ribbon — one set of numbers across the site. */}
+        {cms.on('milestones') && (
         <dl className="ab-hero-stats">
           {[
             { value: '2,400+', label: 'Lots auctioned' },
@@ -792,6 +809,7 @@ export const AboutUs = () => {
             </div>
           ))}
         </dl>
+        )}
       </section>
 
       {/* ─── What trades here ─── */}
@@ -848,7 +866,9 @@ export const AboutUs = () => {
       {/* ─── The five stages ─── */}
       <StagesSection onSignature={goToRole} />
 
-      <GovernanceMap activeId={activeRole} onSelect={setActiveRole} />
+      {cms.on('leadership') && (
+        <GovernanceMap activeId={activeRole} onSelect={setActiveRole} />
+      )}
 
       {/* ─── Risk ledger: the page's dark band ─── */}
       <section className="risk-section">

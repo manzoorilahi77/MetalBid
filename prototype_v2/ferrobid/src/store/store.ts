@@ -4,18 +4,35 @@
    countdowns, competing-bidder bots, anti-snipe extensions and lot closing.
 --------------------------------------------------------------------------- */
 import { create } from 'zustand'
-import { loadSeed } from './seed'
+import { loadSeed, SEEDED_LOCALLY } from './seed'
 import { uid, inr, num, genBidderId, genSellerId } from '../lib/format'
 import { defaultEmdDeadline, emdWindowClosed, emdWindowNotOpen } from '../lib/emd'
 import { NAV_BY_ROLE } from '../layout/nav'
 import { CATEGORY_META } from '../data/categoryMeta'
+/* The real sign-in path. Imported here rather than called from the page so the
+   store stays the single place that decides who is signed in. */
+import {
+  signIn as remoteSignIn, signOut as remoteSignOut, fetchMe,
+  impersonate as remoteImpersonate, endImpersonation as remoteEndImpersonation,
+} from '../api/auth'
+import type { MeResponse } from '../api/auth'
+import { readImpersonatorSnapshot, apiPost, ApiError } from '../api/client'
+/* Adopting a session echoes the server's OWN answer (the account behind the
+   token) back into `users` — not a change to persist, the same reasoning
+   `hydrateStore` documents for every use<Role>Data hook. Without this guard,
+   `adoptSession` looks to the persistence layer exactly like a customer
+   editing the `users` table, which no buyer or seller may ever do — so every
+   sign-in queued a write that could only fail, and (see persist.ts's flush)
+   a failed write requeues itself and reschedules immediately: an endless,
+   self-perpetuating retry storm from the moment of sign-in onward. */
+import { withoutPersisting } from '../api/persist'
 import type {
   AccountStatus, ActionReview, ActionVerdict, Announcement, AppNotification, AuditEvent, AutoBidSetting, BankAccount, BankStatementLine, Bid, BidType, BidVoidRequest, BuyerLotSelection,
   CancellationRequest, Catalogue, CeoApprovalKind, CeoApprovalRequest, CeoDelegation, CommissionSettlement, CompanyBankAccount, ContentDraft, DemandDraft, DeliveryOrder, DepositClaim, Dispute, DisputeOutcome,
   EmdExemptionRequest, EmdForfeiture, FinanceConfig, HandoverNote, RefundSource, InspectionReport, Invoice, LiftingChecklistItem, Lot, LotOverride, LotStatus,
   MasterCategory, MasterUom, MasterYard, NotificationKind, PageDef, PasswordReset, RefundRequest,
   StructureSnapshot,
-  ResultConfirmation, Role, RoleDef, StaReferral, StructuralChange, StructuralChangeKind, User, WatchlistEntry, WithdrawalRequest, WithdrawalWindowConfig,
+  ResultConfirmation, Role, RoleDef, StaReferral, StructuralChange, StructuralChangeKind, Testimonial, User, WatchlistEntry, WithdrawalRequest, WithdrawalWindowConfig,
 } from '../types'
 
 const seed = loadSeed()
@@ -109,7 +126,13 @@ const WEIGHMENT_WITNESS_ROLES: Role[] = ['exec_manager', 'field_exec', 'sub_admi
 /** The head of operations. Every Sub Admin account is identical — the same full
  *  menu and the same powers — so this is the whole of the access question for
  *  the supervisory screens; there is deliberately no per-account template. */
-const SUB_ADMIN_ROLES: Role[] = ['sub_admin', 'super_admin']
+export const SUB_ADMIN_ROLES: Role[] = ['sub_admin', 'super_admin']
+
+/** Mirrors IMPERSONATION_BLOCKED_ROLES in server/src/api/auth.mjs — the
+ *  server is the one that actually enforces this; this copy is only for
+ *  deciding whether to show the "Log in as" button at all. See that file's
+ *  comment for why these three specifically. */
+export const IMPERSONATION_BLOCKED_ROLES: Role[] = ['super_admin', 'sub_admin', 'ceo']
 /** Answering and closing a customer's ticket. */
 const SUPPORT_ROLES: Role[] = ['sub_admin', 'exec_manager', 'super_admin']
 /** Findings a Sub Admin cannot act on themselves, whatever they conclude: a
@@ -168,7 +191,7 @@ export const DEMO_LOGINS: Record<string, Exclude<Role, AnonymousRole>> = {
   'sub@gmail.com': 'sub_admin',
   'ceo@gmail.com': 'ceo',
 }
-export const DEMO_PASSWORD = 'Admin@123'
+export const DEMO_PASSWORD = 'FerroBid@Dev2026'
 
 /** Break-glass developer account. Deliberately absent from DEMO_LOGINS, from the
  *  quick-access grid on the sign-in page and from every public page: nobody at
@@ -180,10 +203,13 @@ export const DEMO_PASSWORD = 'Admin@123'
 const BREAK_GLASS_ID = 'super@gmail.com'
 const BREAK_GLASS_PASSWORD = 'FamySys@123'
 
-/** Password enforcement on the Login page. OFF for now — any password (or none)
- *  signs in as long as the user ID is known. Flip to true to require
- *  DEMO_PASSWORD again. */
-export const ENFORCE_LOGIN_PASSWORD = false
+/** Password enforcement in the OFFLINE `signIn` action below.
+ *
+ *  The Login page no longer uses that action — it calls `signInRemote`, which
+ *  posts to /api/auth/login where the password is always checked against a
+ *  scrypt hash and cannot be disabled from here. This flag now governs only the
+ *  local demo path, which nothing user-facing reaches. */
+export const ENFORCE_LOGIN_PASSWORD = true
 
 const BOT_IDS = ['u-buyer-2', 'u-buyer-3', 'u-buyer-5', 'u-buyer-6', 'u-buyer-7']
 
@@ -825,6 +851,22 @@ interface State {
   role: Role
   currentUser: User | null
   paused: Record<string, boolean> // catalogueId → paused
+  /** Whether the API has answered this session. The store starts empty and only
+   *  the server fills it, so screens read this to say "not connected" rather
+   *  than passing an empty database off as a quiet marketplace. */
+  serverStatus: 'checking' | 'connected' | 'offline'
+  /** Whether the boot-time session restore has finished.
+   *
+   *  Separate from `serverStatus`, which is about data: this is about identity.
+   *  At boot we hold a refresh token but not yet an answer, so `currentUser` is
+   *  legitimately null for one round trip. A route guard that read that as
+   *  "signed out" would bounce a returning user to the login page every reload,
+   *  so guards wait for 'ready' before deciding anything. */
+  sessionStatus: 'restoring' | 'ready'
+  /** Set while a Sub/Super Admin is signed in as somebody else. Who they were
+   *  before, so Chrome can show "Viewing as X — back to your own account" and
+   *  the exit action knows there is a real admin session parked to return to. */
+  impersonatedBy: { id: string; name: string; role: Role } | null
 
   catalogues: Catalogue[]
   lots: Lot[]
@@ -838,6 +880,7 @@ interface State {
   demandDrafts: DemandDraft[]
   announcements: typeof seed.announcements
   disputes: Dispute[]
+  testimonials: Testimonial[]
   auditEvents: typeof seed.auditEvents
   selections: BuyerLotSelection[]
   /** Catalogue-level "interested" marker — separate from `selections` (interest vs. committed-to-bid). */
@@ -912,6 +955,25 @@ interface State {
   toggleTheme: () => void
   switchRole: (role: Role) => void
   signIn: (username: string, password: string) => { ok: boolean; role?: Role; error?: string }
+  /** Sign in against the server. This is the real one — scrypt, throttling,
+   *  lockout and a token, all on the API. `signIn` above stays as the offline
+   *  demo path and is NOT a fallback for this: signing somebody in without a
+   *  password because the server is unreachable would be a hole dressed as
+   *  resilience. */
+  signInRemote: (identifier: string, password: string) =>
+    Promise<{ ok: boolean; role?: Role; error?: string; mustChangePassword?: boolean }>
+  /** Adopt a session the API confirmed — used at boot, from a stored refresh
+   *  token, so a reload does not sign everybody out. */
+  adoptSession: (user: User) => void
+  /** Called once the boot-time restore has settled, whichever way it went, so
+   *  route guards stop waiting and start deciding. */
+  sessionResolved: () => void
+  /** Sub/Super Admin only — a real server session for `userId`, no password.
+   *  See server/src/api/auth.mjs's `impersonate` for which roles may be a
+   *  target; refused there reads back here as `error`. */
+  impersonateUser: (userId: string) => Promise<{ ok: boolean; error?: string }>
+  /** Hand the tab back to whoever was signed in before `impersonateUser`. */
+  endImpersonation: () => Promise<{ ok: boolean }>
   login: (phone: string) => void
   logout: () => void
   /** Creates a brand-new account and signs it in — the only place a `bidderId`
@@ -1076,7 +1138,7 @@ interface State {
   /** Auto-generate a strong password, or set one manually. Shown once; the user
    *  is prompted to keep it or set their own at next sign-in. */
   resetUserPassword: (userId: string, mode: 'auto' | 'manual', manualPassword?: string) =>
-    { ok: boolean; error?: string; password?: string }
+    Promise<{ ok: boolean; error?: string; password?: string }>
 
   /* --- Super Admin: content, drafted by a Sub Admin --- */
   publishContent: (id: string) => { ok: boolean; error?: string }
@@ -1099,6 +1161,11 @@ interface State {
   markNotificationsRead: () => void
   createDispute: (subject: string, category: Dispute['category'], body: string, lotId?: string) => void
   clearWinFlag: () => void
+  /** A buyer or seller's own account of the platform. Starts `pending` — see
+   *  `moderateTestimonial` for the only way it becomes public. */
+  submitTestimonial: (quote: string, rating?: number) => { ok: boolean; error?: string }
+  /** A Sub/Super Admin's verdict on a submitted testimonial. */
+  moderateTestimonial: (id: string, approve: boolean, note?: string) => { ok: boolean; error?: string }
 
   /* --- Sub Admin: supervision, support and the shift ---
      The Sub Admin is the head of operations, not a narrower version of one.
@@ -1314,9 +1381,18 @@ const storedTheme = typeof window !== 'undefined' ? localStorage.getItem('theme'
 
 const ROLE_KEY = 'fb.demo.role'
 
-/** The demo role has to survive a refresh. HashRouter keeps the URL, so a role
- *  that resets to 'buyer' on load leaves the switcher chip contradicting the
- *  page you're actually looking at (refresh on /seller → chip reads "Buyer"). */
+/** Which nav strip to draw before the real session (see `bootstrapSession` in
+ *  main.tsx) has had a chance to answer. Remembered across a refresh so a
+ *  signed-in seller reloading `/seller` sees their own nav immediately rather
+ *  than a flash of the wrong one.
+ *
+ *  The fallback used to be `'buyer'`, from before real authentication
+ *  existed: this whole file's `currentUser` started as a demo identity, no
+ *  sign-in required, because there was no account behind any of it to be
+ *  wrong about. That is exactly backwards now — a fresh browser (or one with
+ *  storage cleared, or a first-ever visit) would show "Namaste, Arvind" with
+ *  no session behind it at all, and every real request would then correctly
+ *  401. `'guest'` is the honest default: nobody, until sign-in says otherwise. */
 const storedRole: Role = (() => {
   try {
     const r = localStorage.getItem(ROLE_KEY) as Role | null
@@ -1324,7 +1400,7 @@ const storedRole: Role = (() => {
   } catch {
     /* private mode — fall through to the default */
   }
-  return 'buyer'
+  return 'guest'
 })()
 
 function rememberRole(role: Role) {
@@ -1334,10 +1410,6 @@ function rememberRole(role: Role) {
     /* private mode — role just won't survive the refresh */
   }
 }
-
-/** Demo user backing a role; the anonymous public shells have none. */
-const demoUserFor = (role: Role) =>
-  isAnonymousRole(role) ? null : seed.users.find((u) => u.id === ROLE_DEMO_USER[role]) ?? null
 
 /* Computed once at module load: the withdrawal rows reference the account rows,
    and the statement references both, so all three have to agree. */
@@ -1373,6 +1445,31 @@ const seededRefunds = [...seedRefunds(), ...(seededCeoRefund ? [seededCeoRefund]
 const seededCeoApprovals = seedCeoApprovals(seededForfeitures, seededCeoRefund)
 /* The seeded change history points at real page rows, so both are built together. */
 const seededPages = seedPageRegistry()
+
+/** The server's account shape, projected onto the store's `User`. Shared by
+ *  every path that adopts a real session — signing in, restoring one at boot,
+ *  and impersonating — so the mapping can't drift between them. */
+function userFromMe(me: MeResponse): User {
+  return {
+    id: me.user.id,
+    name: me.user.name,
+    firm: me.user.firm ?? '',
+    phone: me.user.phone ?? '',
+    email: me.user.email ?? '',
+    role: me.user.role as Role,
+    kycStatus: (me.user.kycStatus ?? 'none') as User['kycStatus'],
+    sellerVerified: !!me.user.sellerVerified,
+    standing: (me.user.standing ?? 'good') as User['standing'],
+    city: me.user.city ?? '',
+    gstin: me.user.gstin ?? '',
+    avatarHue: me.user.avatarHue ?? 0,
+    joinedAt: me.user.joinedAt ?? new Date().toISOString(),
+    bidderId: me.user.bidderId ?? null,
+    sellerId: null,
+    accountStatus: (me.user.status ?? 'active') as User['accountStatus'],
+    lastActiveAt: me.user.lastLoginAt ?? undefined,
+  }
+}
 
 export const useStore = create<State>((set, get) => {
   /* ---------- internal helpers (operate via set/get) ---------- */
@@ -1838,8 +1935,13 @@ export const useStore = create<State>((set, get) => {
     now: Date.now(),
     theme: storedTheme === 'dark' ? 'dark' : 'light',
     role: storedRole,
-    currentUser: demoUserFor(storedRole),
+    /* Never a fabricated identity — only useRestoredSession (a real refresh
+       token) or a real sign-in ever sets this. See the note on storedRole. */
+    currentUser: null,
     paused: {},
+    serverStatus: 'checking',
+    sessionStatus: 'restoring',
+    impersonatedBy: null,
 
     ...seed,
     lots: seededLots,
@@ -1854,10 +1956,15 @@ export const useStore = create<State>((set, get) => {
 
     /* Sub Admin — the supervisory layer. Reviews and claims start empty; the
        shift starts on a note from the shift before it, because an ops console
-       that opens on "nothing here yet" reads as broken rather than as quiet. */
+       that opens on "nothing here yet" reads as broken rather than as quiet.
+       The hand-written rows below (notes, drafts, change history, the orphan
+       statement lines and the CEO fee requests) are gated on SEEDED_LOCALLY:
+       they do not derive from the seed arrays, so without the gate a browser
+       with no server behind it would still show them — and they live in the
+       database now, so the server brings them back when it is reachable. */
     actionReviews: [],
     workClaims: {},
-    handoverNotes: seedHandoverNotes(),
+    handoverNotes: SEEDED_LOCALLY ? seedHandoverNotes() : [],
     termsAccepted: {},
     commissionSettlements: seededCommissionSettlements,
 
@@ -1866,22 +1973,25 @@ export const useStore = create<State>((set, get) => {
     bankAccounts: seededBankAccounts,
     depositClaims: seededDepositClaims,
     withdrawalRequests: seededWithdrawals,
-    bankStatementLines: seedBankStatement(seededDepositClaims, seededWithdrawals),
+    bankStatementLines: SEEDED_LOCALLY ? seedBankStatement(seededDepositClaims, seededWithdrawals) : [],
     refundRequests: seededRefunds,
     emdForfeitures: seededForfeitures,
     invoices: seedInvoices(),
-    ceoApprovals: seededCeoApprovals,
+    ceoApprovals: SEEDED_LOCALLY ? seededCeoApprovals : [],
     ceoDelegation: null,
 
-    /* Super Admin — the shape of the platform, seeded from what ships. */
+    /* Super Admin — the shape of the platform, seeded from what ships. The role
+       and page registries stay seeded in every mode: navigation is built from
+       them, so an empty registry is not an empty screen but no app at all. */
     roleRegistry: seedRoleRegistry(),
     pageRegistry: seededPages,
-    structuralChanges: seedStructuralChanges(seededPages),
+    structuralChanges: SEEDED_LOCALLY ? seedStructuralChanges(seededPages) : [],
     passwordResets: [],
-    contentDrafts: seedContentDrafts(),
+    contentDrafts: SEEDED_LOCALLY ? seedContentDrafts() : [],
     masterCategories: CATEGORY_META.map((c) => ({ ...c, builtIn: true, active: true })),
     masterUoms: SEED_UOMS,
     masterYards: seedMasterYards(),
+    testimonials: [],
 
     toasts: [],
     lastWonLotId: null,
@@ -1919,8 +2029,14 @@ export const useStore = create<State>((set, get) => {
         set({ role, currentUser: null })
         return
       }
-      const user = get().users.find((u) => u.id === ROLE_DEMO_USER[role]) ?? null
-      set({ role, currentUser: user })
+      /* Changing which workspace is on screen must never change WHO you are.
+         This used to look up ROLE_DEMO_USER[role] and adopt that person —
+         which handed the caller a real account's name and id with no session
+         behind it, so every request made as them came back 401 while the
+         header cheerfully greeted them by the borrowed name. Whoever is
+         actually signed in stays signed in; if that is nobody, it stays
+         nobody, and the screen honestly says so. */
+      withoutPersisting(() => set({ role }))
     },
     signIn: (username, password) => {
       const id = username.trim().toLowerCase()
@@ -1929,16 +2045,19 @@ export const useStore = create<State>((set, get) => {
          exactly like an email nobody has ever registered. */
       if (id === BREAK_GLASS_ID) {
         if (password !== BREAK_GLASS_PASSWORD) return { ok: false, error: 'Unknown user ID' }
-        get().switchRole('super_admin')
+        rememberRole('super_admin')
+        set({ role: 'super_admin', currentUser: get().users.find((u) => u.id === ROLE_DEMO_USER['super_admin']) ?? null })
         return { ok: true, role: 'super_admin' }
       }
       const demoRole = DEMO_LOGINS[id]
       /* Accounts a Super Admin created sign in by their own ID, not by the demo
          map — otherwise "create a Sub Admin" would create somebody who cannot
          get in. */
+      /* `?? ''`: rows hydrated from the API carry only the public columns, so a
+         rival buyer's email is genuinely absent — never crash the lookup on it. */
       const account = demoRole
         ? get().users.find((u) => u.id === ROLE_DEMO_USER[demoRole]) ?? null
-        : get().users.find((u) => u.username === id || u.email.toLowerCase() === id) ?? null
+        : get().users.find((u) => u.username === id || (u.email ?? '').toLowerCase() === id) ?? null
       const role = demoRole ?? account?.role
       if (!role || (!demoRole && !account)) return { ok: false, error: 'Unknown user ID' }
       /* The only door into Super Admin is the break-glass pair above. Signing in
@@ -1961,8 +2080,15 @@ export const useStore = create<State>((set, get) => {
             : `This account is ${status}. Ask a Super Admin to reinstate it.`,
         }
       }
-      if (demoRole) get().switchRole(demoRole)
-      else if (account) { rememberRole(account.role); set({ role: account.role, currentUser: account }) }
+      /* Adopting the demo user is spelled out here rather than left to
+         switchRole, which deliberately no longer changes identity — see its
+         comment. This action is the offline demo path and is the one place
+         that borrowing is intended. */
+      if (demoRole) {
+        rememberRole(demoRole)
+        const demoUser = get().users.find((u) => u.id === ROLE_DEMO_USER[demoRole]) ?? null
+        set({ role: demoRole, currentUser: demoUser })
+      } else if (account) { rememberRole(account.role); set({ role: account.role, currentUser: account }) }
 
       /* A password issued by support is spent the moment it is used. Whether
          they keep it or set their own is their choice, on the next screen. */
@@ -1981,13 +2107,93 @@ export const useStore = create<State>((set, get) => {
       }
       return { ok: true, role }
     },
+    signInRemote: async (identifier, password) => {
+      const result = await remoteSignIn(identifier, password)
+      if (!result.ok || !result.role) return { ok: false, error: result.error }
+
+      /* The server is the authority on who this is. Ask it, rather than
+         trusting the role that came back with the token — the token says what
+         the account was when it was minted, `me` says what it is now. */
+      const me = await fetchMe().catch(() => null)
+      if (!me) return { ok: false, error: 'Signed in, but your profile could not be loaded' }
+
+      const user = userFromMe(me)
+      get().adoptSession(user)
+      return { ok: true, role: user.role, mustChangePassword: !!me.user.mustChangePassword }
+    },
+    impersonateUser: async (userId) => {
+      if (!get().currentUser) return { ok: false, error: 'Sign in first' }
+
+      /* remoteImpersonate stashes the admin's own session to sessionStorage
+         before swapping — see stashCurrentAsImpersonator in client.ts — so by
+         the time adoptSession runs below, readImpersonatorSnapshot() already
+         finds it and sets `impersonatedBy` on its own. */
+      const result = await remoteImpersonate(userId)
+      if (!result.ok || !result.role) return { ok: false, error: result.error }
+
+      const me = await fetchMe().catch(() => null)
+      if (!me) return { ok: false, error: 'Signed in as that account, but its profile could not be loaded' }
+
+      get().adoptSession(userFromMe(me))
+      return { ok: true }
+    },
+    endImpersonation: async () => {
+      /* remoteEndImpersonation removes the sessionStorage stash before handing
+         back the restored admin session, so adoptSession below finds nothing
+         parked and clears `impersonatedBy` on its own. */
+      const admin = await remoteEndImpersonation()
+      if (!admin) return { ok: false }
+
+      const me = await fetchMe().catch(() => null)
+      if (!me) {
+        /* The token already switched back inside remoteEndImpersonation even
+           though this couldn't confirm the profile — don't leave the banner
+           pointing at a session that no longer exists. A reload finishes the
+           job via the normal boot restore. */
+        withoutPersisting(() => set({ impersonatedBy: null }))
+        return { ok: false }
+      }
+
+      get().adoptSession(userFromMe(me))
+      return { ok: true }
+    },
+    sessionResolved: () => withoutPersisting(() => set({ sessionStatus: 'ready' })),
+    adoptSession: (user) => {
+      rememberRole(user.role)
+      /* Sourced from sessionStorage, not tracked separately: whether this
+         session is a borrowed one is exactly whether an admin session is
+         parked to return to, and that is true after impersonateUser, after a
+         reload mid-impersonation, and false right after endImpersonation —
+         which is also exactly when this needs to be true, true and false. */
+      const parked = readImpersonatorSnapshot()
+      withoutPersisting(() => set((st) => ({
+        role: user.role,
+        currentUser: user,
+        sessionStatus: 'ready' as const,
+        impersonatedBy: parked ? { id: parked.user.id, name: parked.user.name, role: parked.user.role as Role } : null,
+        /* Merge rather than append: the workspace fetch will have loaded this
+           account already on a reload, and two rows for one person would show
+           up as a duplicate everywhere a user list is rendered. */
+        users: st.users.some((u) => u.id === user.id)
+          ? st.users.map((u) => (u.id === user.id ? { ...u, ...user } : u))
+          : [...st.users, user],
+      })))
+    },
     login: (phone) => {
-      const existing = get().users.find((u) => u.phone.replace(/\D/g, '').endsWith(phone.replace(/\D/g, '').slice(-10)))
-      const user = existing ?? get().users.find((u) => u.id === 'u-buyer-1')!
+      const existing = get().users.find((u) => (u.phone ?? '').replace(/\D/g, '').endsWith(phone.replace(/\D/g, '').slice(-10)))
+      const user = existing ?? get().users.find((u) => u.id === 'u-buyer-1')
+      /* An empty store means the server never answered — there is nobody to
+         sign in as, and crashing on it would turn "offline" into "broken". */
+      if (!user) return
       rememberRole(user.role)
       set({ role: user.role, currentUser: user })
     },
     logout: () => {
+      /* Fire and forget: the local state must clear whether or not the server
+         acknowledges, so that "sign out" always signs the person out of the
+         screen in front of them. The server call revokes the refresh token so
+         the session cannot be resumed from storage. */
+      void remoteSignOut()
       rememberRole('guest')
       set({ role: 'guest', currentUser: null })
     },
@@ -2013,22 +2219,29 @@ export const useStore = create<State>((set, get) => {
         bidderId: role === 'buyer' ? genBidderId(existingBidderIds) : null,
         sellerId: role === 'seller' ? genSellerId(existingSellerIds) : null,
       }
-      set((st) => ({ users: [...st.users, user], wallets: [...st.wallets, { userId: user.id, balance: 0, emdLocked: 0, ledger: [] }] }))
-      rememberRole(role)
-      set({ role, currentUser: user })
-      get().audit('account.register', firm, `New ${ROLE_LABEL[role].toLowerCase()} account — ${name}, ${city || 'city not given'}`)
-      if (role === 'seller') {
-        notifyRole(['exec_manager', 'sub_admin'], {
-          kind: 'system', title: `New seller to verify — ${firm}`,
-          body: `${name} registered as a seller${gstin ? ` with GSTIN ${gstin}` : ''}. They cannot submit lots until you verify them.`,
-          href: '/sub/seller-verification',
-        })
-        get().notify({
-          userId: user.id, kind: 'system', title: 'Your seller account is with our team',
-          body: 'We verify your firm details before you can submit lots. You will hear from us within one business day.',
-          href: '/seller',
-        })
-      }
+      /* This account has no server-side row — there is no real registration
+         endpoint yet (see server/README's "not yet built" list) — so nothing
+         here has a legitimate write to send. Without this guard every field
+         above queues a save no role is allowed to make, and it retries
+         forever exactly like the adoptSession bug this mirrors. */
+      withoutPersisting(() => {
+        set((st) => ({ users: [...st.users, user], wallets: [...st.wallets, { userId: user.id, balance: 0, emdLocked: 0, ledger: [] }] }))
+        rememberRole(role)
+        set({ role, currentUser: user })
+        get().audit('account.register', firm, `New ${ROLE_LABEL[role].toLowerCase()} account — ${name}, ${city || 'city not given'}`)
+        if (role === 'seller') {
+          notifyRole(['exec_manager', 'sub_admin'], {
+            kind: 'system', title: `New seller to verify — ${firm}`,
+            body: `${name} registered as a seller${gstin ? ` with GSTIN ${gstin}` : ''}. They cannot submit lots until you verify them.`,
+            href: '/sub/seller-verification',
+          })
+          get().notify({
+            userId: user.id, kind: 'system', title: 'Your seller account is with our team',
+            body: 'We verify your firm details before you can submit lots. You will hear from us within one business day.',
+            href: '/seller',
+          })
+        }
+      })
       return user
     },
 
@@ -2130,7 +2343,7 @@ export const useStore = create<State>((set, get) => {
       }))
       get().notify({
         userId: me.id, kind: 'wallet', title: `EMD locked for ${lots.length} lot${lots.length > 1 ? 's' : ''}`,
-        body: `${inr(total)} locked against ${cat.code} via ${method}.`, href: '/buyer/emd-shortlisted-catalogue',
+        body: `${inr(total)} locked against ${cat.code} via ${method}.`, href: '/buyer/shortlist',
       })
       return true
     },
@@ -2448,7 +2661,7 @@ export const useStore = create<State>((set, get) => {
       get().notify({
         userId: me.id, kind: 'system', title: 'EMD exemption requested',
         body: `Your request for ${cat.code} is with the auction desk. You will be told either way before bidding opens.`,
-        href: '/buyer/emd-shortlisted-catalogue',
+        href: '/buyer/shortlist',
       })
       /* This expires with the auction, so the three roles that can decide it are
          told rather than left to find it on a queue. */
@@ -3526,7 +3739,7 @@ export const useStore = create<State>((set, get) => {
       get().audit('emd_exemption.approve', cat?.code ?? req.catalogueId, 'EMD deadline exemption approved for buyer', 'warning')
       get().notify({
         userId: req.buyerId, kind: 'system', title: 'EMD exemption approved',
-        body: `You can now fund EMD for ${cat?.code ?? 'this catalogue'} and join the auction.`, href: '/buyer/emd-shortlisted-catalogue',
+        body: `You can now fund EMD for ${cat?.code ?? 'this catalogue'} and join the auction.`, href: '/buyer/shortlist',
       })
     },
 
@@ -3544,7 +3757,7 @@ export const useStore = create<State>((set, get) => {
       get().audit('emd_exemption.reject', cat?.code ?? req.catalogueId, `EMD deadline exemption rejected${reason ? ` — ${reason}` : ''}`, 'warning')
       get().notify({
         userId: req.buyerId, kind: 'system', title: 'EMD exemption rejected',
-        body: reason || `Your request for ${cat?.code ?? 'this catalogue'} was not approved.`, href: '/buyer/emd-shortlisted-catalogue',
+        body: reason || `Your request for ${cat?.code ?? 'this catalogue'} was not approved.`, href: '/buyer/shortlist',
       })
     },
 
@@ -4473,7 +4686,7 @@ export const useStore = create<State>((set, get) => {
       return { ok: true }
     },
 
-    resetUserPassword: (userId, mode, manualPassword) => {
+    resetUserPassword: async (userId, mode, manualPassword) => {
       const s = get()
       if (s.role !== 'super_admin' && s.role !== 'sub_admin') return { ok: false, error: 'Passwords are reset by a Sub Admin or a Super Admin' }
       const user = s.users.find((u) => u.id === userId)
@@ -4482,11 +4695,25 @@ export const useStore = create<State>((set, get) => {
       if (user.role === 'super_admin' && s.role !== 'super_admin') {
         return { ok: false, error: 'A Super Admin password can only be reset by another Super Admin' }
       }
-      const password = mode === 'auto' ? generatePassword() : (manualPassword ?? '').trim()
+      const manual = (manualPassword ?? '').trim()
       if (mode === 'manual') {
-        if (password.length < 8) return { ok: false, error: 'A password set by hand needs at least 8 characters' }
-        if (!/[A-Z]/.test(password) || !/[0-9]/.test(password)) return { ok: false, error: 'Include at least one capital letter and one digit' }
+        if (manual.length < 8) return { ok: false, error: 'A password set by hand needs at least 8 characters' }
+        if (!/[A-Z]/.test(manual) || !/[0-9]/.test(manual)) return { ok: false, error: 'Include at least one capital letter and one digit' }
       }
+
+      /* The server sets the real scrypt hash — see issueTemporaryPassword in
+         auth.mjs. This used to stop at the local row below and never call it,
+         so the password shown here looked issued but could never sign in. */
+      let password: string
+      try {
+        const res = await apiPost<{ temporaryPassword: string }>('/api/auth/reset', {
+          userId, password: mode === 'manual' ? manual : undefined,
+        })
+        password = res.temporaryPassword
+      } catch (err) {
+        return { ok: false, error: err instanceof ApiError ? err.message : 'Could not reset the password' }
+      }
+
       const at = new Date(s.now).toISOString()
       set((st) => ({
         passwordResets: [{ id: uid('pwr'), userId, mode, password, at, byId: st.currentUser?.id ?? 'system', consumed: false }, ...st.passwordResets],
@@ -4755,6 +4982,50 @@ export const useStore = create<State>((set, get) => {
         body: 'Someone on the support desk will pick it up and reply here.',
         href: '/disputes',
       })
+    },
+
+    submitTestimonial: (quote, rating) => {
+      const me = get().currentUser
+      if (!me) return { ok: false, error: 'Sign in to continue' }
+      if (me.role !== 'buyer' && me.role !== 'seller') {
+        return { ok: false, error: 'Only a buyer or seller account can submit a testimonial' }
+      }
+      const text = quote.trim()
+      if (text.length < 20) return { ok: false, error: 'A few more words would help — at least 20 characters' }
+      const id = uid('tst')
+      set((st) => ({
+        testimonials: [{
+          id, userId: me.id, role: me.role as 'buyer' | 'seller', quote: text, rating,
+          status: 'pending' as const, submittedAt: new Date(st.now).toISOString(),
+        }, ...st.testimonials],
+      }))
+      notifyRole(['sub_admin'], {
+        kind: 'system', title: 'A testimonial is waiting to be moderated',
+        body: `${me.firm} — "${text.slice(0, 100)}"`,
+        href: '/cms/sections',
+      })
+      return { ok: true }
+    },
+
+    /** Approve publishes it to the public Home page; reject keeps it off
+     *  without deleting it, the same "record stays, visibility changes"
+     *  shape the CMS section switches use. */
+    moderateTestimonial: (id, approve, note) => {
+      const me = get().currentUser
+      if (!me || !SUB_ADMIN_ROLES.includes(me.role)) {
+        return { ok: false, error: 'Only a Sub Admin moderates testimonials' }
+      }
+      const row = get().testimonials.find((t) => t.id === id)
+      if (!row) return { ok: false, error: 'That testimonial no longer exists' }
+      set((st) => ({
+        testimonials: st.testimonials.map((t) => (t.id === id ? {
+          ...t, status: approve ? 'approved' as const : 'rejected' as const,
+          moderatedBy: me.id, moderatedAt: new Date(st.now).toISOString(), moderationNote: note,
+        } : t)),
+      }))
+      get().audit(approve ? 'testimonial.approved' : 'testimonial.rejected', id.toUpperCase(),
+        `${me.name} ${approve ? 'approved' : 'declined'} a testimonial from ${row.userId}`, 'info')
+      return { ok: true }
     },
 
     /* ================= Sub Admin — supervision, support, shift =============

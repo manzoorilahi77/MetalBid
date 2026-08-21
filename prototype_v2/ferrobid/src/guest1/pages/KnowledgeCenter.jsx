@@ -20,6 +20,7 @@ import {
   Gavel, ScrollText, FileCheck, Truck, BadgeCheck, ShieldAlert,
   Scale, FlaskConical, Ruler, HelpCircle
 } from 'lucide-react';
+import { useCmsPage } from '../../api/useCmsPage';
 import '../styles/enterprise.css';
 import '../styles/resources.css';
 
@@ -175,9 +176,20 @@ const GLOSSARY = [
 ];
 
 export const KnowledgeCenter = () => {
+  /* The public site is what visitors actually see, so this is where published
+     CMS copy has to land — the Sub Admin's editor writes to these exact section
+     keys under route '/knowledge'. Every accessor takes the string this page
+     already hardcoded as its fallback, so nothing changes on screen until
+     somebody publishes. See api/useCmsPage.ts. */
+  const cms = useCmsPage('/knowledge');
   const reduceMotion = useReducedMotion();
   const [query, setQuery] = useState('');
   const [cat, setCat] = useState('all');
+
+  /* The grade categories are this page's topic tree: the labels are editorial,
+     but the ids are load-bearing — they have to match a grade's `cat` for the
+     filter and the counts to line up — so an editor replaces labels, not ids. */
+  const gradeCats = cms.value('tree', 'grade_categories', GRADE_CATS);
 
   const needle = query.trim().toLowerCase();
 
@@ -235,13 +247,14 @@ export const KnowledgeCenter = () => {
               to check at inspection, and which documents you need at each stage.
             </p>
 
+            {cms.on('search') && (
             <div className="res-search">
               <Search size={18} aria-hidden="true" />
               <input
                 type="search"
                 value={query}
                 onChange={e => setQuery(e.target.value)}
-                placeholder="Search grades and terms — try “copper”, “dross”, “e-way”…"
+                placeholder={cms.text('search', 'placeholder', 'Search grades and terms — try “copper”, “dross”, “e-way”…')}
                 aria-label="Search the knowledge center"
               />
               {query && (
@@ -250,6 +263,7 @@ export const KnowledgeCenter = () => {
                 </button>
               )}
             </div>
+            )}
 
             <ul className="res-facts">
               <li>
@@ -277,16 +291,17 @@ export const KnowledgeCenter = () => {
       <section className="ent-section">
         <div className="container">
           <motion.div className="sec-head" {...reveal}>
-            <p className="sec-eyebrow">Grade reference</p>
-            <h2 className="sec-title">What the grade names on a lot actually mean.</h2>
+            <p className="sec-eyebrow">{cms.text('articles', 'grades_eyebrow', 'Grade reference')}</p>
+            <h2 className="sec-title">{cms.text('articles', 'grades_heading', 'What the grade names on a lot actually mean.')}</h2>
             <p className="sec-lead">
-              These are the streams live on the platform right now. The last column is the one that
-              matters at inspection — what separates a good lot in this grade from a poor one.
+              {cms.text('articles', 'grades_lead',
+                'These are the streams live on the platform right now. The last column is the one that '
+                + 'matters at inspection — what separates a good lot in this grade from a poor one.')}
             </p>
           </motion.div>
 
           <div className="res-pills">
-            {GRADE_CATS.map(c => (
+            {gradeCats.map(c => (
               <button
                 key={c.id}
                 type="button"
@@ -322,7 +337,7 @@ export const KnowledgeCenter = () => {
                       </th>
                       <td>
                         <span className={`res-chip is-${g.cat === 'nonferrous' ? 'nonferrous' : g.cat}`}>
-                          {GRADE_CATS.find(c => c.id === g.cat)?.label}
+                          {gradeCats.find(c => c.id === g.cat)?.label}
                         </span>
                       </td>
                       <td>{g.what}</td>
@@ -343,9 +358,11 @@ export const KnowledgeCenter = () => {
           <div className="res-note">
             <span className="res-note-icon"><FlaskConical size={15} strokeWidth={2} aria-hidden="true" /></span>
             <p>
-              <strong>Descriptions are guidance, not specification.</strong> The operative description
-              of any lot is its own inspection report and listing. Where composition determines value —
-              stainless grades above all — insist on a spectro reading rather than a visual call.
+              <strong>{cms.text('articles', 'grades_note_title', 'Descriptions are guidance, not specification.')}</strong>{' '}
+              {cms.text('articles', 'grades_note',
+                'The operative description of any lot is its own inspection report and listing. '
+                + 'Where composition determines value — stainless grades above all — insist on a spectro '
+                + 'reading rather than a visual call.')}
             </p>
           </div>
         </div>
@@ -355,11 +372,12 @@ export const KnowledgeCenter = () => {
       <section className="ent-section alt">
         <div className="container">
           <motion.div className="sec-head" {...reveal}>
-            <p className="sec-eyebrow">Documentation</p>
-            <h2 className="sec-title">What to have ready, and when.</h2>
+            <p className="sec-eyebrow">{cms.text('articles', 'checklists_eyebrow', 'Documentation')}</p>
+            <h2 className="sec-title">{cms.text('articles', 'checklists_heading', 'What to have ready, and when.')}</h2>
             <p className="sec-lead">
-              Onboarding stalls on missing paperwork more than anything else. These are the three
-              points where documents are actually required.
+              {cms.text('articles', 'checklists_lead',
+                'Onboarding stalls on missing paperwork more than anything else. These are the three '
+                + 'points where documents are actually required.')}
             </p>
           </motion.div>
 
@@ -392,11 +410,12 @@ export const KnowledgeCenter = () => {
       <section className="ent-section">
         <div className="container">
           <motion.div className="sec-head" {...reveal}>
-            <p className="sec-eyebrow">Auction formats</p>
-            <h2 className="sec-title">Three ways a lot can be sold.</h2>
+            <p className="sec-eyebrow">{cms.text('articles', 'formats_eyebrow', 'Auction formats')}</p>
+            <h2 className="sec-title">{cms.text('articles', 'formats_heading', 'Three ways a lot can be sold.')}</h2>
             <p className="sec-lead">
-              The format is stated on every lot. It changes what your bid means, so it is worth
-              knowing which one you are in before you place it.
+              {cms.text('articles', 'formats_lead',
+                'The format is stated on every lot. It changes what your bid means, so it is worth '
+                + 'knowing which one you are in before you place it.')}
             </p>
           </motion.div>
 
@@ -420,14 +439,16 @@ export const KnowledgeCenter = () => {
       </section>
 
       {/* ─── Glossary ─── */}
+      {cms.on('reference') && (
       <section className="ent-section alt">
         <div className="container">
           <motion.div className="sec-head" {...reveal}>
-            <p className="sec-eyebrow">Glossary</p>
-            <h2 className="sec-title">The vocabulary, in one place.</h2>
+            <p className="sec-eyebrow">{cms.text('reference', 'eyebrow', 'Glossary')}</p>
+            <h2 className="sec-title">{cms.text('reference', 'heading', 'The vocabulary, in one place.')}</h2>
             <p className="sec-lead">
-              Terms that appear on lots, invoices and sale confirmation letters — the ones that are
-              assumed knowledge everywhere else.
+              {cms.text('reference', 'lead',
+                'Terms that appear on lots, invoices and sale confirmation letters — the ones that are '
+                + 'assumed knowledge everywhere else.')}
             </p>
           </motion.div>
 
@@ -452,6 +473,7 @@ export const KnowledgeCenter = () => {
           )}
         </div>
       </section>
+      )}
 
       {/* ─── Disputes band ─── */}
       <section className="res-band">

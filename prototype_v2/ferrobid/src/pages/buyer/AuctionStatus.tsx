@@ -7,6 +7,7 @@ import { ArrowLeft, ArrowRight, Check, FileDown, Landmark, MapPin, Scale, Truck,
 import { Page } from '../../layout/Chrome'
 import { Button, Chip, EmptyState, Input, PageHeader, PhotoThumb, cx } from '../../components/ui'
 import { useStore } from '../../store/store'
+import { useCmsPage } from '../../api/useCmsPage'
 import { inr, inrCompact, num, relTime } from '../../lib/format'
 import { useNow } from '../../lib/useTick'
 import type { Catalogue, DeliveryOrder, AuctionStatusStage } from '../../types'
@@ -255,6 +256,7 @@ function AuctionCard({ cat, dos }: { cat: Catalogue; dos: DeliveryOrder[] }) {
 function DeliveryOrderCard({ d }: { d: DeliveryOrder }) {
   const lots = useStore((s) => s.lots)
   const catalogues = useStore((s) => s.catalogues)
+  const cms = useCmsPage('/buyer/auction-status')
   const advanceDeliveryOrder = useStore((s) => s.advanceDeliveryOrder)
   const toggleLiftingChecklistItem = useStore((s) => s.toggleLiftingChecklistItem)
   const recordWeighment = useStore((s) => s.recordWeighment)
@@ -425,35 +427,37 @@ function DeliveryOrderCard({ d }: { d: DeliveryOrder }) {
         </div>
 
         {/* -------------------------- value breakdown ----------------------- */}
-        <div className="border-t lg:border-t-0 lg:border-l border-line bg-surface-2 p-5">
-          <div className="text-xs font-semibold uppercase tracking-wider text-ink-faint mb-3">Value breakdown</div>
-          <dl className="space-y-1.5 text-sm">
-            <div className="flex justify-between gap-3">
-              <dt className="text-ink-muted">Material value</dt>
-              <dd className="num font-semibold text-right">{inr(d.materialValue)}</dd>
-            </div>
-            <div className="flex justify-between gap-3">
-              <dt className="text-ink-muted">GST @ 18%</dt>
-              <dd className="num font-semibold text-right">{inr(d.gstAmount)}</dd>
-            </div>
-            <div className="flex justify-between gap-3">
-              <dt className="text-ink-muted">TCS @ 1%</dt>
-              <dd className="num font-semibold text-right">{inr(d.tcsAmount)}</dd>
-            </div>
-            <div className="flex justify-between gap-3 pt-2 border-t border-line-strong">
-              <dt className="font-bold">Total</dt>
-              <dd className="num font-bold text-right">{inr(total)}</dd>
-            </div>
-            <div className="flex justify-between gap-3">
-              <dt className="text-ink-muted">Paid</dt>
-              <dd className="num font-semibold text-right text-success">{inr(d.paidAmount)}</dd>
-            </div>
-            <div className="flex justify-between gap-3">
-              <dt className="text-ink-muted">Balance</dt>
-              <dd className={cx('num font-bold text-right', balance > 0 ? 'text-warning' : 'text-ink-faint')}>{inr(balance)}</dd>
-            </div>
-          </dl>
-        </div>
+        {cms.on('tax_legend') && (
+          <div className="border-t lg:border-t-0 lg:border-l border-line bg-surface-2 p-5">
+            <div className="text-xs font-semibold uppercase tracking-wider text-ink-faint mb-3">Value breakdown</div>
+            <dl className="space-y-1.5 text-sm">
+              <div className="flex justify-between gap-3">
+                <dt className="text-ink-muted">Material value</dt>
+                <dd className="num font-semibold text-right">{inr(d.materialValue)}</dd>
+              </div>
+              <div className="flex justify-between gap-3">
+                <dt className="text-ink-muted">GST @ 18%</dt>
+                <dd className="num font-semibold text-right">{inr(d.gstAmount)}</dd>
+              </div>
+              <div className="flex justify-between gap-3">
+                <dt className="text-ink-muted">TCS @ 1%</dt>
+                <dd className="num font-semibold text-right">{inr(d.tcsAmount)}</dd>
+              </div>
+              <div className="flex justify-between gap-3 pt-2 border-t border-line-strong">
+                <dt className="font-bold">Total</dt>
+                <dd className="num font-bold text-right">{inr(total)}</dd>
+              </div>
+              <div className="flex justify-between gap-3">
+                <dt className="text-ink-muted">Paid</dt>
+                <dd className="num font-semibold text-right text-success">{inr(d.paidAmount)}</dd>
+              </div>
+              <div className="flex justify-between gap-3">
+                <dt className="text-ink-muted">Balance</dt>
+                <dd className={cx('num font-bold text-right', balance > 0 ? 'text-warning' : 'text-ink-faint')}>{inr(balance)}</dd>
+              </div>
+            </dl>
+          </div>
+        )}
       </div>
     </section>
   )

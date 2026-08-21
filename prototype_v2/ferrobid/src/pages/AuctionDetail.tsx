@@ -15,7 +15,8 @@ import {
   StatusChip, Tabs, Toggle, cx,
 } from '../components/ui'
 import { useGuestGate } from '../components/GuestGate'
-import { catalogueUiStatus, isCatalogueEmdLocked, selectionSummary, useStore } from '../store/store'
+import { useCmsPage } from '../api/useCmsPage'
+import { ROLE_HOME, catalogueUiStatus, isCatalogueEmdLocked, selectionSummary, useStore } from '../store/store'
 import { emdDeadlineMs, emdOpensAtMs, emdWindowClosed, emdWindowNotOpen } from '../lib/emd'
 import { fmtDate, fmtDateTime, inr, inrCompact, num, relTime } from '../lib/format'
 import { useNow } from '../lib/useTick'
@@ -28,6 +29,7 @@ type Filters = typeof DEFAULT_FILTERS
 export default function AuctionDetail() {
   const { id } = useParams()
   const now = useNow()
+  const cms = useCmsPage('/catalogue')
   const me = useStore((s) => s.currentUser)
   const role = useStore((s) => s.role)
   const catalogues = useStore((s) => s.catalogues)
@@ -108,7 +110,10 @@ export default function AuctionDetail() {
           <Button variant="secondary" size="sm"><ArrowLeft size={15} /> Back to {browseLabel}</Button>
         </Link>
         <nav className="text-xs text-ink-faint mb-2 flex items-center gap-1.5">
-          <Link to="/" className="hover:text-ink">Home</Link><span>/</span>
+          {/* The viewer's OWN home, not "/". `/` is rewritten to the public
+              marketing site by Guest1Gate, so this breadcrumb used to drop a
+              signed-in buyer out of the app onto a page with no way back. */}
+          <Link to={ROLE_HOME[role]} className="hover:text-ink">Home</Link><span>/</span>
           <Link to={browseHref} className="hover:text-ink">{browseLabel}</Link><span>/</span>
           <span className="text-ink-muted num">{cat.code}</span>
         </nav>
@@ -369,9 +374,11 @@ export default function AuctionDetail() {
                 <h3 className="font-bold flex items-center gap-2"><CalendarDays size={17} className="text-ember" /> Inspection window</h3>
                 <div className="num text-lg font-bold mt-2">{fmtDate(cat.inspectionFrom)} → {fmtDate(cat.inspectionTo)}</div>
                 <div className="text-sm text-ink-muted num">{cat.inspectionHours}, working days</div>
-                <div className="card bg-surface-2 px-3.5 py-2.5 text-[13px] text-ink-muted mt-3 border-0">
-                  Maximum <b className="text-ink">2 persons per firm</b>. Carry photo ID matching the gate-pass booking. Safety shoes and helmet mandatory inside the yard.
-                </div>
+                {cms.on('inspection_help') && (
+                  <div className="card bg-surface-2 px-3.5 py-2.5 text-[13px] text-ink-muted mt-3 border-0">
+                    Maximum <b className="text-ink">2 persons per firm</b>. Carry photo ID matching the gate-pass booking. Safety shoes and helmet mandatory inside the yard.
+                  </div>
+                )}
                 {mySlot || slotBooked ? (
                   <div className="mt-4 card border-success/40 bg-success-soft/50 p-4 flex items-center gap-4">
                     <QrCode size={44} className="text-success shrink-0" />

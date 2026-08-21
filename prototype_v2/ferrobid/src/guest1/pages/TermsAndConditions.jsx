@@ -19,13 +19,14 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { LegalDoc } from '../components/LegalDoc';
+import { useCmsPage } from '../../api/useCmsPage';
 
-const SECTIONS = [
+const buildSections = cms => [
   {
     id: 'agreement',
-    title: 'The agreement and key terms',
+    title: cms.text('clauses', 'agreement_title', 'The agreement and key terms'),
     icon: ScrollText,
-    plain: 'By using FerroBid you accept these terms. This section defines the words the rest of the document leans on — lot, EMD, reserve, auto-extension, lifting.',
+    plain: cms.text('clauses', 'agreement_plain', 'By using FerroBid you accept these terms. This section defines the words the rest of the document leans on — lot, EMD, reserve, auto-extension, lifting.'),
     blocks: [
       { type: 'p', text: <>These Terms &amp; Conditions govern your use of the FerroBid platform and related services provided by FerroBid LLC (“FerroBid”, “we”, “us”). By creating an account or using our services you agree to these terms.</> },
       { type: 'p', text: <>FerroBid provides software that powers online auction platforms operated by our customers. Specific features, fees, and policies for any individual auction site are governed by that site's own terms of service.</> },
@@ -48,9 +49,9 @@ const SECTIONS = [
 
   {
     id: 'eligibility',
-    title: 'Eligibility, accounts and verification',
+    title: cms.text('clauses', 'eligibility_title', 'Eligibility, accounts and verification'),
     icon: UserCheck,
-    plain: 'Accounts are for registered businesses, not individuals. You must clear KYC before you can bid, and you are responsible for everything done under your login.',
+    plain: cms.text('clauses', 'eligibility_plain', 'Accounts are for registered businesses, not individuals. You must clear KYC before you can bid, and you are responsible for everything done under your login.'),
     blocks: [
       { type: 'p', text: <>You are responsible for maintaining the confidentiality of your account credentials and for all activity that occurs under your account. Notify us immediately of any unauthorized use.</> },
       {
@@ -74,9 +75,9 @@ const SECTIONS = [
 
   {
     id: 'auctions',
-    title: 'How auctions run and when a bid becomes binding',
+    title: cms.text('auction_terms_template', 'auctions_title', 'How auctions run and when a bid becomes binding'),
     icon: Gavel,
-    plain: 'A bid is an irrevocable offer. You cannot retract it. If you are the winning bidder above reserve, you have bought the lot.',
+    plain: cms.text('auction_terms_template', 'auctions_plain', 'A bid is an irrevocable offer. You cannot retract it. If you are the winning bidder above reserve, you have bought the lot.'),
     blocks: [
       {
         type: 'steps',
@@ -110,9 +111,9 @@ const SECTIONS = [
 
   {
     id: 'payment',
-    title: 'EMD, payment and settlement',
+    title: cms.text('clauses', 'payment_title', 'EMD, payment and settlement'),
     icon: Wallet,
-    plain: 'EMD comes back if you lose and is adjusted against the price if you win. Miss the payment deadline and you can lose the EMD and the lot.',
+    plain: cms.text('clauses', 'payment_plain', 'EMD comes back if you lose and is adjusted against the price if you win. Miss the payment deadline and you can lose the EMD and the lot.'),
     blocks: [
       {
         type: 'table',
@@ -141,9 +142,9 @@ const SECTIONS = [
 
   {
     id: 'obligations',
-    title: 'Seller and buyer obligations',
+    title: cms.text('clauses', 'obligations_title', 'Seller and buyer obligations'),
     icon: Truck,
-    plain: 'Sellers must own what they list and describe it honestly. Buyers must lift on time. Risk passes at lifting.',
+    plain: cms.text('clauses', 'obligations_plain', 'Sellers must own what they list and describe it honestly. Buyers must lift on time. Risk passes at lifting.'),
     blocks: [
       { type: 'p', text: <><strong>If you are selling,</strong> you warrant that you hold clear title to the material, that it is free of encumbrances, that it is lawfully saleable, and that the description, quantity and grade you submit are accurate to the best of your knowledge. You must grant our site officers reasonable access for inspection, keep the lot available and unaltered once published, and hand over on production of a valid delivery order.</> },
       { type: 'p', text: <><strong>If you are buying,</strong> you must complete payment within the stated window, arrange lifting within the stated lifting window, and comply with the seller's site safety, gate and weighbridge procedures. You are responsible for your own transporters, labour and equipment unless you have engaged FerroBid-arranged logistics.</> },
@@ -161,9 +162,9 @@ const SECTIONS = [
 
   {
     id: 'fees',
-    title: 'Fees, commission and subscriptions',
+    title: cms.text('clauses', 'fees_title', 'Fees, commission and subscriptions'),
     icon: Receipt,
-    plain: 'Platform fees are published before you commit. Nothing is deducted that was not shown to you first.',
+    plain: cms.text('clauses', 'fees_plain', 'Platform fees are published before you commit. Nothing is deducted that was not shown to you first.'),
     blocks: [
       { type: 'p', text: <>Subscription plans, platform fees and add-ons are published on the <Link to="/pricing">Pricing</Link> page. Commission and any lot-specific charges are stated on the lot and repeated in your sale confirmation letter before payment falls due.</> },
       {
@@ -180,9 +181,9 @@ const SECTIONS = [
 
   {
     id: 'sms',
-    title: 'SMS / Text Message Program',
+    title: cms.text('clauses', 'sms_title', 'SMS / Text Message Program'),
     icon: MessageSquare,
-    plain: 'Transactional messages only — bid alerts, auction events, payment notices and login codes. Reply STOP to end them at any time.',
+    plain: cms.text('clauses', 'sms_plain', 'Transactional messages only — bid alerts, auction events, payment notices and login codes. Reply STOP to end them at any time.'),
     blocks: [
       { type: 'p', text: <><strong>Program name:</strong> FerroBid Transactional SMS Notifications.</> },
       { type: 'p', text: <><strong>Description:</strong> Transactional text messages related to your FerroBid account and auction activity, including bid alerts (outbid, new high bid, reserve met), auction lifecycle events (auctions starting, ending soon, sold), winning bid confirmations, payment and invoice notifications, and one-time verification codes used for account login and security.</> },
@@ -204,9 +205,9 @@ const SECTIONS = [
 
   {
     id: 'acceptable-use',
-    title: 'Acceptable use and prohibited conduct',
+    title: cms.text('clauses', 'acceptable_use_title', 'Acceptable use and prohibited conduct'),
     icon: Ban,
-    plain: 'Do not rig the bidding, scrape the site, or misuse other users’ information. Bid manipulation is the fastest way to lose your account and your EMD.',
+    plain: cms.text('clauses', 'acceptable_use_plain', 'Do not rig the bidding, scrape the site, or misuse other users’ information. Bid manipulation is the fastest way to lose your account and your EMD.'),
     blocks: [
       { type: 'p', text: <>You agree not to use FerroBid in any way that violates applicable laws, infringes the rights of others, or interferes with the operation of the platform or other users' use of it.</> },
       { type: 'p', text: <>In particular, the following are prohibited:</> },
@@ -233,9 +234,9 @@ const SECTIONS = [
 
   {
     id: 'suspension',
-    title: 'Suspension, termination and closing your account',
+    title: cms.text('clauses', 'suspension_title', 'Suspension, termination and closing your account'),
     icon: ShieldAlert,
-    plain: 'You can close your account once your open obligations are settled. We can suspend one immediately if there is fraud or risk to others.',
+    plain: cms.text('clauses', 'suspension_plain', 'You can close your account once your open obligations are settled. We can suspend one immediately if there is fraud or risk to others.'),
     blocks: [
       {
         type: 'list',
@@ -252,9 +253,9 @@ const SECTIONS = [
 
   {
     id: 'liability',
-    title: 'Disclaimers and limitation of liability',
+    title: cms.text('clauses', 'liability_title', 'Disclaimers and limitation of liability'),
     icon: Scale,
-    plain: 'FerroBid runs the auction; it does not guarantee the material. Our financial liability is capped, and we are not liable for indirect losses.',
+    plain: cms.text('clauses', 'liability_plain', 'FerroBid runs the auction; it does not guarantee the material. Our financial liability is capped, and we are not liable for indirect losses.'),
     blocks: [
       { type: 'p', text: <>The platform is provided on an "as is" and "as available" basis. To the fullest extent permitted by law, FerroBid disclaims all warranties, express or implied, including warranties of merchantability, fitness for a particular purpose, and non-infringement.</> },
       { type: 'p', text: <>To the fullest extent permitted by law, FerroBid shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising out of or relating to your use of the platform.</> },
@@ -273,9 +274,9 @@ const SECTIONS = [
 
   {
     id: 'disputes',
-    title: 'Disputes and governing law',
+    title: cms.text('clauses', 'disputes_title', 'Disputes and governing law'),
     icon: Gavel,
-    plain: 'Raise it with the grievance desk first — most issues end there. If it cannot be settled, Indian law and the courts at Bengaluru apply.',
+    plain: cms.text('clauses', 'disputes_plain', 'Raise it with the grievance desk first — most issues end there. If it cannot be settled, Indian law and the courts at Bengaluru apply.'),
     blocks: [
       {
         type: 'steps',
@@ -298,11 +299,11 @@ const SECTIONS = [
 
   {
     id: 'changes',
-    title: 'Changes to these terms and how to reach us',
+    title: cms.text('clauses', 'changes_title', 'Changes to these terms and how to reach us'),
     icon: Mail,
-    plain: 'We publish the current version here with its date. Material changes get 30 days’ notice, and they never apply retrospectively to a lot you have already won.',
+    plain: cms.text('clauses', 'changes_plain', 'We publish the current version here with its date. Material changes get 30 days’ notice, and they never apply retrospectively to a lot you have already won.'),
     blocks: [
-      { type: 'p', text: <>We may update these terms from time to time. The current version will always be posted on this page along with the effective date. Continued use of the platform after changes are posted constitutes acceptance of the revised terms.</> },
+      { type: 'p', text: cms.text('acceptance_notice', 'continued_use', 'We may update these terms from time to time. The current version will always be posted on this page along with the effective date. Continued use of the platform after changes are posted constitutes acceptance of the revised terms.') },
       {
         type: 'list',
         items: [
@@ -324,26 +325,35 @@ const SECTIONS = [
   }
 ];
 
-const TermsAndConditions = () => (
-  <LegalDoc
-    eyebrow="Terms & Conditions"
-    eyebrowIcon={ScrollText}
-    title="What you are agreeing to when you place a bid."
-    lead="A bid on FerroBid is a binding offer, and an EMD is real money at risk. These terms set out how an auction runs, when payment falls due, who lifts the material, what the fees are, and what happens when something goes wrong."
-    meta={{
-      version: 'v2.0',
-      effective: '1 August 2026',
-      updated: '1 August 2026',
-      readingTime: '12 min'
-    }}
-    sections={SECTIONS}
-    related={[
-      { to: '/privacy', label: 'Privacy Policy' },
-      { to: '/grievance', label: 'Grievance Redressal' },
-      { to: '/pricing', label: 'Pricing & fees' },
-      { to: '/faqs', label: 'Help & FAQs' }
-    ]}
-  />
-);
+const TermsAndConditions = () => {
+  /* The public site is what visitors actually see, so this is where published
+     CMS copy has to land — the Sub Admin's editor writes to these exact section
+     keys under route '/legal/terms'. Every accessor takes the string this page
+     already hardcoded as its fallback, so nothing changes on screen until
+     somebody publishes. See api/useCmsPage.ts. */
+  const cms = useCmsPage('/legal/terms');
+
+  return (
+    <LegalDoc
+      eyebrow={cms.text('clauses', 'doc_eyebrow', 'Terms & Conditions')}
+      eyebrowIcon={ScrollText}
+      title={cms.text('clauses', 'doc_title', 'What you are agreeing to when you place a bid.')}
+      lead={cms.text('clauses', 'doc_lead', 'A bid on FerroBid is a binding offer, and an EMD is real money at risk. These terms set out how an auction runs, when payment falls due, who lifts the material, what the fees are, and what happens when something goes wrong.')}
+      meta={{
+        version: cms.text('clauses', 'version', 'v2.0'),
+        effective: cms.text('clauses', 'effective', '1 August 2026'),
+        updated: cms.text('clauses', 'updated', '1 August 2026'),
+        readingTime: cms.text('clauses', 'reading_time', '12 min')
+      }}
+      sections={buildSections(cms)}
+      related={[
+        { to: '/privacy', label: 'Privacy Policy' },
+        { to: '/grievance', label: 'Grievance Redressal' },
+        { to: '/pricing', label: 'Pricing & fees' },
+        { to: '/faqs', label: 'Help & FAQs' }
+      ]}
+    />
+  );
+};
 
 export default TermsAndConditions;

@@ -17,6 +17,7 @@ import {
   TrendingUp, Mail, CheckCircle2, PenLine, Layers, Users
 } from 'lucide-react';
 import { POSTS, CATEGORIES, AUTHORS, POPULAR_SLUGS, getFeatured, getPost } from '../data/blogPosts';
+import { useCmsPage } from '../../api/useCmsPage';
 import '../styles/enterprise.css';
 /* The result-count line and reset button are shared with the FAQ page. */
 import '../styles/support.css';
@@ -37,6 +38,12 @@ const Author = ({ authorKey }) => {
 };
 
 export const Blog = () => {
+  /* The public site is what visitors actually see, so this is where published
+     CMS copy has to land — the Sub Admin's editor writes to these exact section
+     keys under route '/blog'. Every accessor takes the string this page already
+     hardcoded as its fallback, so nothing changes on screen until somebody
+     publishes. See api/useCmsPage.ts. */
+  const cms = useCmsPage('/blog');
   const reduceMotion = useReducedMotion();
   const [query, setQuery] = useState('');
   const [cat, setCat] = useState('All');
@@ -143,14 +150,18 @@ export const Blog = () => {
       </header>
 
       {/* ─── Featured + most read ─── */}
+      {/* Two CMS sections share this band — the featured article and the most-read
+         list — so the wrapper stays only while at least one of them is on. */}
+      {(cms.on('featured') || cms.on('related')) && (
       <section className="ent-section">
         <div className="container">
           <div className="ent-split">
+            {cms.on('featured') && (
             <motion.div {...reveal}>
               <Link to={`/blog/${featured.slug}`} className="blg-featured">
                 <div className="blg-featured-media">
                   <img src={featured.img} alt="" loading="lazy" decoding="async" />
-                  <span className="blg-badge">Featured · {featured.cat}</span>
+                  <span className="blg-badge">{cms.text('featured', 'badge_label', 'Featured')} · {featured.cat}</span>
                 </div>
                 <div className="blg-featured-body">
                   <div className="blg-meta">
@@ -167,11 +178,13 @@ export const Blog = () => {
                 </div>
               </Link>
             </motion.div>
+            )}
 
+            {cms.on('related') && (
             <aside className="ent-aside-sticky">
               <div className="res-card" style={{ cursor: 'default' }}>
                 <span className="res-card-icon"><TrendingUp size={17} strokeWidth={1.9} /></span>
-                <h3>Most read this month</h3>
+                <h3>{cms.text('related', 'heading', 'Most read this month')}</h3>
                 <div className="blg-popular" style={{ marginTop: '10px' }}>
                   {popular.map((p, i) => (
                     <Link key={p.slug} to={`/blog/${p.slug}`} className="blg-popular-item">
@@ -185,18 +198,21 @@ export const Blog = () => {
                 </div>
               </div>
             </aside>
+            )}
           </div>
         </div>
       </section>
+      )}
 
       {/* ─── Article grid ─── */}
       <section className="ent-section alt">
         <div className="container">
           <motion.div className="sec-head" {...reveal}>
-            <p className="sec-eyebrow">Latest articles</p>
-            <h2 className="sec-title">From the newsroom.</h2>
+            <p className="sec-eyebrow">{cms.text('posts', 'eyebrow', 'Latest articles')}</p>
+            <h2 className="sec-title">{cms.text('posts', 'heading', 'From the newsroom.')}</h2>
           </motion.div>
 
+          {cms.on('categories') && (
           <div className="res-pills">
             {CATEGORIES.map(c => (
               <button
@@ -211,6 +227,7 @@ export const Blog = () => {
               </button>
             ))}
           </div>
+          )}
 
           <div className="faq-resultline">
             <span>

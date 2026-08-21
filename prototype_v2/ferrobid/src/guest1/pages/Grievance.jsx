@@ -20,6 +20,7 @@ import {
   FileSearch, Gavel, Landmark, ClipboardList
 } from 'lucide-react';
 import { Accordion } from '../components/PageShell';
+import { useCmsPage } from '../../api/useCmsPage';
 import '../styles/enterprise.css';
 import '../styles/support.css';
 
@@ -119,10 +120,24 @@ const FAQ = [
 ];
 
 export const Grievance = () => {
+  /* The public site is what visitors actually see, so this is where published
+     CMS copy has to land — the Sub Admin's editor writes to these exact section
+     keys under route '/grievance'. Every accessor takes the string this page
+     already hardcoded as its fallback, so nothing changes on screen until
+     somebody publishes. All three sections here are locked on — a complainant
+     must always be able to reach the ladder, the officer and the form — so
+     there are no cms.on() gates on this page. See api/useCmsPage.ts. */
+  const cms = useCmsPage('/grievance');
   const reduceMotion = useReducedMotion();
   const [sent, setSent] = useState(false);
   const [ticket, setTicket] = useState('');
   const [lookup, setLookup] = useState(null);
+
+  /* The escalation levels are the published redressal ladder — named owners,
+     SLAs and contact addresses that compliance has to be able to correct
+     without a deploy. */
+  const levels = cms.value('ladder', 'levels', LEVELS);
+  const officerEmail = cms.text('officer', 'email', 'grievance@ferrobid.in');
 
   /* Transform-only reveals: if a viewport callback never fires, a section is
      still fully readable — just a few pixels low. */
@@ -262,11 +277,12 @@ export const Grievance = () => {
       <section className="ent-section alt">
         <div className="container">
           <motion.div className="sec-head" {...reveal}>
-            <p className="sec-eyebrow">Submit a complaint</p>
-            <h2 className="sec-title">Raise it here, or write to the officer directly.</h2>
+            <p className="sec-eyebrow">{cms.text('form', 'eyebrow', 'Submit a complaint')}</p>
+            <h2 className="sec-title">{cms.text('form', 'heading', 'Raise it here, or write to the officer directly.')}</h2>
             <p className="sec-lead">
-              Either route creates the same ticket and starts the same 24-hour acknowledgement
-              clock. Use whichever is faster for you.
+              {cms.text('form', 'lead',
+                'Either route creates the same ticket and starts the same 24-hour acknowledgement '
+                + 'clock. Use whichever is faster for you.')}
             </p>
           </motion.div>
 
@@ -274,7 +290,9 @@ export const Grievance = () => {
             <div className="ent-card" style={{ padding: '28px' }}>
               {sent ? (
                 <div className="ent-form-success">
-                  <CheckCircle2 size={18} /> Complaint received. Your ticket number has been sent to your email. We'll acknowledge within 24 hours.
+                  <CheckCircle2 size={18} />{' '}
+                  {cms.text('form', 'success_message',
+                    "Complaint received. Your ticket number has been sent to your email. We'll acknowledge within 24 hours.")}
                 </div>
               ) : (
                 <form className="ent-form" onSubmit={e => { e.preventDefault(); setSent(true); }}>
@@ -326,10 +344,17 @@ export const Grievance = () => {
                   </div>
                   <div className="ent-field">
                     <label htmlFor="g-desc">Describe your grievance <span className="req">*</span></label>
-                    <textarea id="g-desc" className="ent-textarea" required placeholder="What you expected, what you received, and any dates, weights and amounts involved." />
+                    <textarea
+                      id="g-desc"
+                      className="ent-textarea"
+                      required
+                      placeholder={cms.text('form', 'description_placeholder',
+                        'What you expected, what you received, and any dates, weights and amounts involved.')}
+                    />
                   </div>
                   <button type="submit" className="btn btn-primary" style={{ justifySelf: 'start' }}>
-                    <Send size={16} style={{ marginRight: '8px' }} /> Submit complaint
+                    <Send size={16} style={{ marginRight: '8px' }} />{' '}
+                    {cms.text('form', 'submit_label', 'Submit complaint')}
                   </button>
                 </form>
               )}
@@ -339,29 +364,38 @@ export const Grievance = () => {
               <div className="ent-contact-card">
                 <div className="ci"><UserCheck size={20} /></div>
                 <div>
-                  <h4>Nodal Grievance Officer</h4>
-                  <p>Ms. A. Iyer, Grievance Officer<br />FerroBid, Bengaluru</p>
+                  <h4>{cms.text('officer', 'role_label', 'Nodal Grievance Officer')}</h4>
+                  <p>
+                    {cms.text('officer', 'name', 'Ms. A. Iyer, Grievance Officer')}<br />
+                    {cms.text('officer', 'address', 'FerroBid, Bengaluru')}
+                  </p>
                 </div>
               </div>
               <div className="ent-contact-card">
                 <div className="ci"><Mail size={20} /></div>
                 <div>
-                  <h4>Email</h4>
-                  <a href="mailto:grievance@ferrobid.in">grievance@ferrobid.in</a>
+                  <h4>{cms.text('officer', 'email_label', 'Email')}</h4>
+                  <a href={`mailto:${officerEmail}`}>{officerEmail}</a>
                 </div>
               </div>
               <div className="ent-contact-card">
                 <div className="ci"><Timer size={20} /></div>
                 <div>
-                  <h4>Resolution SLA</h4>
-                  <p>Acknowledgement: 24 hours<br />Resolution: up to 7 working days</p>
+                  <h4>{cms.text('officer', 'sla_label', 'Resolution SLA')}</h4>
+                  <p>
+                    {cms.text('officer', 'sla_acknowledgement', 'Acknowledgement: 24 hours')}<br />
+                    {cms.text('officer', 'sla_resolution', 'Resolution: up to 7 working days')}
+                  </p>
                 </div>
               </div>
               <div className="ent-contact-card">
                 <div className="ci"><ClipboardList size={20} /></div>
                 <div>
-                  <h4>Office hours</h4>
-                  <p>Mon–Sat, 9 AM–8 PM IST<br />Complaints are logged around the clock</p>
+                  <h4>{cms.text('officer', 'hours_label', 'Office hours')}</h4>
+                  <p>
+                    {cms.text('officer', 'hours', 'Mon–Sat, 9 AM–8 PM IST')}<br />
+                    {cms.text('officer', 'hours_note', 'Complaints are logged around the clock')}
+                  </p>
                 </div>
               </div>
             </aside>
@@ -373,16 +407,17 @@ export const Grievance = () => {
       <section className="ent-section">
         <div className="container">
           <motion.div className="sec-head" {...reveal}>
-            <p className="sec-eyebrow">Escalation matrix</p>
-            <h2 className="sec-title">If the answer does not settle it.</h2>
+            <p className="sec-eyebrow">{cms.text('ladder', 'eyebrow', 'Escalation matrix')}</p>
+            <h2 className="sec-title">{cms.text('ladder', 'heading', 'If the answer does not settle it.')}</h2>
             <p className="sec-lead">
-              A complaint that misses its SLA becomes eligible for the next level automatically.
-              You do not re-file — quote the same ticket number and it moves up with its history.
+              {cms.text('ladder', 'lead',
+                'A complaint that misses its SLA becomes eligible for the next level automatically. '
+                + 'You do not re-file — quote the same ticket number and it moves up with its history.')}
             </p>
           </motion.div>
 
           <div className="gr-ladder">
-            {LEVELS.map((level, i) => (
+            {levels.map((level, i) => (
               <motion.div className="gr-level" key={level.badge} {...stagger(i)}>
                 <span className="gr-level-badge">{level.badge}</span>
                 <div>

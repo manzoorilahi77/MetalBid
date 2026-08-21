@@ -1,77 +1,43 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
-  Sparkles,
-  Gift,
-  Wrench,
-  Award,
-  FileText,
+  Info,
+  AlertTriangle,
+  ShieldAlert,
   ArrowRight,
   ChevronLeft,
   ChevronRight,
   BellRing,
 } from 'lucide-react';
+import { useStore } from '../../store/store';
 
-/* Each category's colour is a token pair, not a literal: the light values are
-   mid-tone inks that read on a white card, and on a dark one the same hues have
-   to come *up* rather than down. Both halves are declared together in
-   styles/index.css so a category cannot gain one without the other. */
-const CATEGORY_META = {
-  feature: { label: 'New Feature', icon: Sparkles, color: 'var(--anc-feature)', bg: 'var(--anc-feature-bg)' },
-  promo: { label: 'Promotion', icon: Gift, color: 'var(--anc-promo)', bg: 'var(--anc-promo-bg)' },
-  maintenance: { label: 'Maintenance', icon: Wrench, color: 'var(--anc-maintenance)', bg: 'var(--anc-maintenance-bg)' },
-  milestone: { label: 'Milestone', icon: Award, color: 'var(--anc-milestone)', bg: 'var(--anc-milestone-bg)' },
-  policy: { label: 'Policy Update', icon: FileText, color: 'var(--anc-policy)', bg: 'var(--anc-policy-bg)' },
+/* The rows behind this carousel are real `Announcement` records (see
+   src/types.ts) — the same ones the manager app's noticeboard reads. An
+   Announcement carries a `severity`, not an editorial category, so severity is
+   what drives the icon and the colour here. The token pairs are unchanged: the
+   light values are mid-tone inks that read on a white card, and on a dark one
+   the same hues come *up* rather than down. Both halves are declared together
+   in styles/index.css. */
+const SEVERITY_META = {
+  info: { label: 'Notice', icon: Info, color: 'var(--anc-feature)', bg: 'var(--anc-feature-bg)' },
+  warning: { label: 'Advisory', icon: AlertTriangle, color: 'var(--anc-maintenance)', bg: 'var(--anc-maintenance-bg)' },
+  critical: { label: 'Critical', icon: ShieldAlert, color: 'var(--anc-promo)', bg: 'var(--anc-promo-bg)' },
 };
 
-// Newest first — this is the correct order for an announcements feed.
-const announcements = [
-  {
-    category: 'feature',
-    title: 'AI Fraud Detection is now live',
-    desc: 'Every transaction is scanned in real time for suspicious bidding patterns, keeping every auction fair.',
-    date: 'Jul 18, 2026',
-    unread: true,
-  },
-  {
-    category: 'promo',
-    title: 'Zero-commission week',
-    desc: 'List your scrap and metal lots commission-free from July 21 to July 27.',
-    date: 'Jul 16, 2026',
-    unread: true,
-  },
-  {
-    category: 'feature',
-    title: 'Equipment resale marketplace launched',
-    desc: 'Buy and sell used industrial equipment like excavators, forklifts, and cranes right alongside metal scrap.',
-    date: 'Jul 12, 2026',
-    unread: false,
-  },
-  {
-    category: 'maintenance',
-    title: 'Scheduled maintenance, July 25',
-    desc: 'The platform will be briefly unavailable between 2 AM and 4 AM IST for infrastructure upgrades.',
-    date: 'Jul 9, 2026',
-    unread: false,
-  },
-  {
-    category: 'milestone',
-    title: 'Now tracking 46 countries',
-    desc: "FerroBid's Market Intelligence dashboard now covers real-time industrial demand across 46 countries.",
-    date: 'Jul 3, 2026',
-    unread: false,
-  },
-  {
-    category: 'policy',
-    title: 'Updated KYC verification policy',
-    desc: 'All sellers must complete enhanced KYC verification by August 1 to continue listing lots.',
-    date: 'Jun 28, 2026',
-    unread: false,
-  },
-];
+/* The carousel was laid out for six cards, and six is what its dot maths and
+   breakpoints were tuned against. */
+const MAX_CARDS = 6;
 
-const unreadCount = announcements.filter((a) => a.unread).length;
+/* There is no per-visitor read state on a public page, so "New" is answered by
+   the only honest thing the record knows: how recently it was posted. */
+const NEW_WINDOW_MS = 14 * 24 * 60 * 60 * 1000;
+
+const formatDate = (iso) => {
+  const t = Date.parse(iso);
+  if (Number.isNaN(t)) return '';
+  return new Date(t).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+};
 
 /* One dot per *reachable* scroll position, not one per card.
 
@@ -101,6 +67,35 @@ const measureDotOffsets = (el) => {
 };
 
 export const AnnouncementsSection = () => {
+  /* Platform notices only — a catalogue-scoped announcement belongs on that
+     catalogue's page, not the marketplace front door. Same filter and same
+     newest-first ordering the manager app's Home used. */
+  const rows = useStore((s) => s.announcements);
+  /* Bucketed to the day on purpose. The store's clock ticks every second, and
+     the only thing this section asks it is "was this posted in the last two
+     weeks" — reading the raw value would rebuild the card list, and re-render
+     every motion card in it, once a second forever. */
+  const day = useStore((s) => Math.floor(s.now / 86400000));
+  const now = day * 86400000;
+  const announcements = useMemo(
+    () => rows
+      .filter((a) => a.scope === 'platform')
+      .sort((a, b) => Date.parse(b.at) - Date.parse(a.at))
+      .slice(0, MAX_CARDS)
+      .map((a) => ({
+        id: a.id,
+        severity: a.severity,
+        title: a.title,
+        desc: a.body,
+        date: formatDate(a.at),
+        unread: now - Date.parse(a.at) < NEW_WINDOW_MS,
+      })),
+    // `now` is derived from `day` — listing the bucket is listing the value.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [rows, day],
+  );
+  const unreadCount = announcements.filter((a) => a.unread).length;
+
   const carouselRef = useRef(null);
   const [dotOffsets, setDotOffsets] = useState([0]);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -152,6 +147,14 @@ export const AnnouncementsSection = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  /* The rows arrive from the API after first paint, and adding cards changes
+     the track's scrollWidth without changing the row's own box — so the
+     ResizeObserver above never fires for it. Re-measure when the count moves. */
+  useEffect(() => {
+    updateScrollState();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [announcements.length]);
+
   const scrollByCard = (dir) => {
     const el = carouselRef.current;
     const card = el.children[0];
@@ -166,6 +169,10 @@ export const AnnouncementsSection = () => {
     if (!el || dotOffsets[i] === undefined) return;
     el.scrollTo({ left: dotOffsets[i], behavior: 'smooth' });
   };
+
+  /* Nothing published (or the server is unreachable) — no heading over an
+     empty rail, and certainly no invented rows. */
+  if (announcements.length === 0) return null;
 
   return (
     <section id="announcements" className="announcements-section">
@@ -224,12 +231,12 @@ export const AnnouncementsSection = () => {
           variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.08 } } }}
         >
           {announcements.map((a) => {
-            const meta = CATEGORY_META[a.category];
+            const meta = SEVERITY_META[a.severity] ?? SEVERITY_META.info;
             const Icon = meta.icon;
             return (
               <motion.div
                 className="announcement-card"
-                key={a.title}
+                key={a.id}
                 style={{ '--accent': meta.color, '--accent-bg': meta.bg }}
                 variants={{
                   hidden: { opacity: 0, y: 20 },

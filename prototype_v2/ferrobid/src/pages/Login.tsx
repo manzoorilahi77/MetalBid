@@ -1,7 +1,11 @@
-/* User ID + password sign-in (demo). Validates against DEMO_LOGINS and drops
-   the user into the matching role portal. */
+/* User ID + password sign-in.
+   Posts to /api/auth/login — scrypt on the server, account and address
+   throttling, a real lockout — and drops the user into the portal for whatever
+   role the server says they hold. There is no offline fallback: signing
+   somebody in without a password because the API is unreachable would be a
+   hole dressed up as resilience. */
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { ShieldCheck, User as UserIcon, Lock, ArrowRight } from 'lucide-react'
 import { Page } from '../layout/Chrome'
 import { Button, Field, Input } from '../components/ui'
@@ -9,7 +13,13 @@ import { DEMO_LOGINS, DEMO_PASSWORD, ROLE_HOME, ROLE_LABEL, useStore } from '../
 
 export default function Login() {
   const nav = useNavigate()
-  const signIn = useStore((s) => s.signIn)
+  /* Where they were going when the guard stopped them. Sending them on rather
+     than to their dashboard is the difference between signing in and losing
+     your place. A stale or wrong-role `from` is safe: the same guard that set
+     it will bounce them home, so this never opens a door on its own. */
+  const [params] = useSearchParams()
+  const from = params.get('from')
+  const signIn = useStore((s) => s.signInRemote)
   const switchRole = useStore((s) => s.switchRole)
   const pushToast = useStore((s) => s.pushToast)
 
@@ -18,17 +28,41 @@ export default function Login() {
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
 
+  /* Shared by the form and the demo-account buttons below — a demo account is
+     a real account, signed into the same way, not a shortcut around signing
+     in. Filling the fields without this second step used to be all the demo
+     buttons did, which read as "click Buyer, land in Arvind's portal" but
+     actually needed a second click on Sign in that nothing on the button
+     itself said was still required. */
+  const doSignIn = async (id: string, pass: string) => {
+    setError('')
+    setBusy(true)
+    try {
+      const res = await signIn(id, pass)
+      if (!res.ok || !res.role) {
+        setError(res.error ?? 'Invalid credentials')
+        return
+      }
+      pushToast({ kind: 'success', title: 'Signed in', body: `Welcome — ${ROLE_LABEL[res.role]} portal.` })
+      /* A password support issued is spent on first use, and the account cannot
+         do anything else until it is replaced. */
+      if (res.mustChangePassword) {
+        pushToast({
+          kind: 'info', title: 'Set your own password',
+          body: 'You signed in with a password support issued. Choose your own now.',
+        })
+        nav('/profile?password=1')
+        return
+      }
+      nav(from || ROLE_HOME[res.role])
+    } finally {
+      setBusy(false)
+    }
+  }
+
   const submit = (e: React.FormEvent) => {
     e.preventDefault()
-    setError('')
-    const res = signIn(username, password)
-    if (!res.ok || !res.role) {
-      setError(res.error ?? 'Invalid credentials')
-      return
-    }
-    setBusy(true)
-    pushToast({ kind: 'success', title: 'Signed in', body: `Welcome — ${ROLE_LABEL[res.role]} portal.` })
-    nav(ROLE_HOME[res.role])
+    void doSignIn(username, password)
   }
 
   const asGuest = () => {
@@ -68,7 +102,7 @@ export default function Login() {
                   autoFocus autoComplete="username"
                   value={username}
                   onChange={(e) => { setUsername(e.target.value); setError('') }}
-                  placeholder="e.g. buy"
+                  placeholder="you@company.com"
                 />
               </div>
             </Field>
@@ -82,7 +116,7 @@ export default function Login() {
                   type="password" autoComplete="current-password"
                   value={password}
                   onChange={(e) => { setPassword(e.target.value); setError('') }}
-                  placeholder="••••"
+                  placeholder="••••••••••••"
                 />
               </div>
             </Field>
@@ -93,12 +127,12 @@ export default function Login() {
               </div>
             )}
 
-            <Button type="submit" size="lg" className="w-full" disabled={!username} loading={busy}>
+            <Button type="submit" size="lg" className="w-full" disabled={!username || !password || busy} loading={busy}>
               Sign in <ArrowRight size={16} />
             </Button>
           </form>
 
-          {/* demo credential reference */}
+          {/* demo accounts — one click signs in for real, same as the form above */}
           <div className="mt-6 pt-5 border-t border-line">
             <div className="text-[11px] font-bold uppercase tracking-wider text-ink-faint mb-2">Demo accounts</div>
             <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-[13px]">
@@ -106,9 +140,10 @@ export default function Login() {
                 <button
                   key={id}
                   type="button"
-                  onClick={() => { setUsername(id); setPassword(DEMO_PASSWORD); setError('') }}
-                  className="flex items-center justify-between gap-2 text-left rounded-lg px-2 py-1 hover:bg-surface-2"
-                  title={`Fill ${ROLE_LABEL[role]} credentials`}
+                  disabled={busy}
+                  onClick={() => { setUsername(id); setPassword(DEMO_PASSWORD); void doSignIn(id, DEMO_PASSWORD) }}
+                  className="flex items-center justify-between gap-2 text-left rounded-lg px-2 py-1 hover:bg-surface-2 disabled:opacity-50"
+                  title={`Sign in as this ${ROLE_LABEL[role]} demo account`}
                 >
                   <span className="text-ink-muted">{ROLE_LABEL[role]}</span>
                   <span className="num font-semibold text-ink">{id}</span>
@@ -126,7 +161,7 @@ export default function Login() {
         </div>
 
         <p className="flex items-center justify-center gap-1.5 text-xs text-ink-faint mt-4 text-center">
-          <ShieldCheck size={13} /> Demo sign-in — no real authentication is performed.
+          <ShieldCheck size={13} /> Your password is hashed with scrypt and never stored in the clear.
         </p>
       </div>
     </Page>

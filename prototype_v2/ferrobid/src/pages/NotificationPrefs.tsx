@@ -7,6 +7,7 @@ import { Gavel, CalendarClock, Wallet, Send } from 'lucide-react'
 import { Page } from '../layout/Chrome'
 import { PageHeader, Button, Toggle, Select, Field } from '../components/ui'
 import { useStore } from '../store/store'
+import { useCmsPage } from '../api/useCmsPage'
 
 type PrefKey =
   | 'outbid' | 'results' | 'autobidExhausted'
@@ -48,6 +49,7 @@ function SectionCard({ icon, title, children }: { icon: React.ReactNode; title: 
 }
 
 export default function NotificationPrefs() {
+  const cms = useCmsPage('/settings/notifications')
   const pushToast = useStore((s) => s.pushToast)
   const [prefs, setPrefs] = useState<Record<PrefKey, boolean>>(DEFAULTS)
   const [leadTime, setLeadTime] = useState('30')
@@ -131,28 +133,30 @@ export default function NotificationPrefs() {
           />
         </SectionCard>
 
-        <SectionCard icon={<Send size={16} />} title="Channels">
-          <PrefRow
-            label="In-app"
-            desc="Notification bell inside ferroBid — recommended to keep on."
-            checked={prefs.chInApp} onChange={setPref('chInApp')}
-          />
-          <PrefRow
-            label="Email"
-            desc="Detailed summaries, invoices and delivery-order documents."
-            checked={prefs.chEmail} onChange={setPref('chEmail')}
-          />
-          <PrefRow
-            label="SMS"
-            desc="Short text alerts for outbids and closing reminders."
-            checked={prefs.chSms} onChange={setPref('chSms')}
-          />
-          <PrefRow
-            label="WhatsApp"
-            desc="Rich alerts with lot photos and one-tap links to the bidding console."
-            checked={prefs.chWhatsapp} onChange={setPref('chWhatsapp')}
-          />
-        </SectionCard>
+        {cms.on('channels') && (
+          <SectionCard icon={<Send size={16} />} title="Channels">
+            <PrefRow
+              label="In-app"
+              desc="Notification bell inside ferroBid — recommended to keep on."
+              checked={prefs.chInApp} onChange={setPref('chInApp')}
+            />
+            <PrefRow
+              label="Email"
+              desc="Detailed summaries, invoices and delivery-order documents."
+              checked={prefs.chEmail} onChange={setPref('chEmail')}
+            />
+            <PrefRow
+              label="SMS"
+              desc="Short text alerts for outbids and closing reminders."
+              checked={prefs.chSms} onChange={setPref('chSms')}
+            />
+            <PrefRow
+              label="WhatsApp"
+              desc="Rich alerts with lot photos and one-tap links to the bidding console."
+              checked={prefs.chWhatsapp} onChange={setPref('chWhatsapp')}
+            />
+          </SectionCard>
+        )}
       </div>
 
       <p className="text-xs text-ink-faint mt-6 max-w-5xl">

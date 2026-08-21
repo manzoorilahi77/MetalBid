@@ -163,7 +163,7 @@ const PasswordStrengthBar = ({ password }) => {
 export const Auth = () => {
   const [searchParams] = useSearchParams();
   const initialTab = searchParams.get('tab') === 'register' ? 'register' : 'login';
-  const signIn = useStore((s) => s.signIn);
+  const signInRemote = useStore((s) => s.signInRemote);
   const registerAccount = useStore((s) => s.registerAccount);
 
   const [tab, setTab] = useState(initialTab);
@@ -239,36 +239,35 @@ export const Auth = () => {
     }
   };
 
-  const handleLoginSubmit = (e) => {
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
     const errors = { email: validate.email(loginForm.email), password: validate.password(loginForm.password) };
     setLoginErrors(errors);
     setLoginTouched({ email: true, password: true });
     if (errors.email || errors.password) return;
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      // Authenticate against the demo role logins and open that role's portal.
-      const res = signIn(loginForm.email, loginForm.password);
-      if (!res.ok || !res.role) {
-        if (res.error === 'Incorrect password') {
-          setLoginErrors((p) => ({ ...p, password: 'Incorrect password' }));
-          setLoginTouched((p) => ({ ...p, password: true }));
-        } else {
-          setLoginErrors((p) => ({ ...p, email: 'No account found for this email' }));
-          setLoginTouched((p) => ({ ...p, email: true }));
-        }
-        return;
-      }
-      setSuccess('Login successful! Redirecting to your portal...');
-      // Leave the /home router and open the manager portal for this role.
-      setTimeout(() => { window.location.hash = ROLE_HOME[res.role]; }, 600);
-    }, 1200);
+    // The server is the only authority on who this is — see signInRemote in
+    // store.ts. It hashes with scrypt, throttles by account and by address,
+    // and hands back a real, working session; the offline `signIn` this used
+    // to call never talked to it at all, so nothing after it ever had a
+    // token to send.
+    const res = await signInRemote(loginForm.email, loginForm.password);
+    setLoading(false);
+    if (!res.ok || !res.role) {
+      /* One message for every way a sign-in can fail — see auth.ts. There is
+         no "wrong email" vs "wrong password" to distinguish any more. */
+      setLoginErrors((p) => ({ ...p, password: res.error ?? 'Invalid credentials' }));
+      setLoginTouched((p) => ({ ...p, password: true }));
+      return;
+    }
+    setSuccess('Login successful! Redirecting to your portal...');
+    // Leave the /home router and open the manager portal for this role.
+    setTimeout(() => { window.location.hash = ROLE_HOME[res.role]; }, 600);
   };
 
   /* One-click demo sign-in for a given role: fills the login form with that
-     role's demo account, submits it, then hands off to the portal. */
-  const quickLogin = (role) => {
+     role's demo account, submits it for real, then hands off to the portal. */
+  const quickLogin = async (role) => {
     const email = DEMO_EMAIL_BY_ROLE[role];
     if (!email) return;
     setTab('login');
@@ -276,13 +275,15 @@ export const Auth = () => {
     setLoginErrors({ email: '', password: '' });
     setLoginTouched({ email: true, password: true });
     setQuickRole(role);
-    setTimeout(() => {
-      const res = signIn(email, DEMO_PASSWORD);
-      setQuickRole(null);
-      if (!res.ok || !res.role) return;
-      setSuccess(`Signed in as ${ROLE_LABEL[res.role]}! Redirecting to your portal...`);
-      setTimeout(() => { window.location.hash = ROLE_HOME[res.role]; }, 600);
-    }, 700);
+    const res = await signInRemote(email, DEMO_PASSWORD);
+    setQuickRole(null);
+    if (!res.ok || !res.role) {
+      setLoginErrors((p) => ({ ...p, password: res.error ?? 'Could not sign in to the demo account' }));
+      setLoginTouched((p) => ({ ...p, password: true }));
+      return;
+    }
+    setSuccess(`Signed in as ${ROLE_LABEL[res.role]}! Redirecting to your portal...`);
+    setTimeout(() => { window.location.hash = ROLE_HOME[res.role]; }, 600);
   };
 
   const handleRegSubmit = (e) => {

@@ -6,9 +6,18 @@
   "scripts": {
     "db:test": "node scripts/test-connection.mjs",
     "db:migrate": "node scripts/migrate.mjs",
-    "db:pool-check": "node scripts/pool-check.mjs"
+    "db:pool-check": "node scripts/pool-check.mjs",
+    "db:seed": "node scripts/seed.mjs",
+    "dev": "node --watch src/server.mjs",
+    "start": "node src/server.mjs",
+    "db:passwords": "node scripts/set-password.mjs",
+    "db:seed-auth": "node scripts/set-password.mjs --seed-dev",
+    "jobs:tick": "node -e \"import('./src/jobs/scheduler.mjs').then(m=>m.tick()).then(r=>{console.log(r);process.exit(0)})\"",
+    "db:seed-cms": "node scripts/seed-cms.mjs"
   },
   "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
     "mysql2": "^3.11.5"
   }
 }

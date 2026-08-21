@@ -22,12 +22,14 @@ import {
 import { useStore } from '../../store/store'
 import { fmtDateTime, fmtTime, inr, inrCompact, num, relTime } from '../../lib/format'
 import { useNow } from '../../lib/useTick'
+import { useCmsPage } from '../../api/useCmsPage'
 import { AuctionIdentity, PausedOverlay, ReasonModal, ScopeNote, useAuctionRows, type AuctionRow } from './shared'
 
 const EXTEND_OPTIONS = [5, 15, 30, 60]
 
 export default function LiveAuctions() {
   const now = useNow()
+  const cms = useCmsPage('/auction/live')
   const rows = useAuctionRows()
   const users = useStore((s) => s.users)
   const lots = useStore((s) => s.lots)
@@ -69,7 +71,9 @@ export default function LiveAuctions() {
     <Page>
       <PageHeader
         title="Live auctions"
-        sub="Watch every sale on the floor and step in when one goes wrong. Pause, resume and extend take effect immediately; cancelling does not — it goes to the Super Admin."
+        sub={cms.on('explainers') && (
+          "Watch every sale on the floor and step in when one goes wrong. Pause, resume and extend take effect immediately; cancelling does not — it goes to the Super Admin."
+        )}
         actions={
           <div className="flex items-center gap-2">
             <Chip tone={running.length ? 'ember' : 'neutral'} pulse={running.length > 0}>

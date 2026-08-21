@@ -509,7 +509,8 @@ export default function Profile() {
         title="Profile & settings"
         sub={me ? `Your ${ROLE_LABEL[role]} credential — what it says about you, and what it lets you do.` : undefined}
         actions={me && (
-          <Button variant="ghost" onClick={() => { logout(); nav('/') }}>
+          // Same destination as the header's Sign out — see Chrome.tsx.
+          <Button variant="ghost" onClick={() => { logout(); nav('/home/auth') }}>
             <LogOut size={15} /> Sign out
           </Button>
         )}

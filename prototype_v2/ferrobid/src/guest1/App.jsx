@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import indiaMapData from '@svg-maps/india';
 import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
+import { useCmsPage } from '../api/useCmsPage';
 import Roles from './pages/Roles';
 import Pricing from './pages/Pricing';
 import AuctionCalendar from './pages/AuctionCalendar';
@@ -374,7 +375,34 @@ export const Footer = () => {
   );
 };
 
+/* The homepage's 404. Kept in this file next to the route table rather than in
+   pages/, because it is part of the router's shape, not a page anyone links to.
+   Styling stays inside guest1's own stylesheets — the manager app's Tailwind is
+   disabled while this world is on screen. */
+function NotFound() {
+  return (
+    <section className="g1-notfound">
+      <p className="g1-notfound-code">404</p>
+      <h1 className="g1-notfound-title">We can't find that page</h1>
+      <p className="g1-notfound-body">
+        The link may be out of date, or the address may have a typo in it.
+      </p>
+      <div className="g1-notfound-actions">
+        <Link to="/" className="g1-notfound-btn g1-notfound-btn--primary">Back to home</Link>
+        <Link to="/marketplace" className="g1-notfound-btn">Browse auctions</Link>
+      </div>
+    </section>
+  );
+}
+
 function Home() {
+  /* The homepage visitors actually land on. The manager app had a second,
+     CMS-wired homepage at `/` (pages/Home.tsx) that Guest1Gate made
+     unreachable — so every headline an editor published went nowhere. The
+     '/' section registry is seeded with real content blocks; this is where
+     they now render. Fallbacks are the strings already on the page, so
+     nothing moves until somebody publishes. */
+  const cms = useCmsPage('/');
   const navigate = useNavigate();
   const carouselRef = useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -439,11 +467,12 @@ function Home() {
             className="hero-content"
           >
             <h1 className="hero-title">
-              <span className="hero-lead">India Trades Smarter.</span><br/>
-              <span>Digital. Trusted.</span>
+              <span className="hero-lead">{cms.text('hero', 'headline_lead', 'India Trades Smarter.')}</span><br/>
+              <span>{cms.text('hero', 'headline_accent', 'Digital. Trusted.')}</span>
             </h1>
             <p className="hero-subtitle">
-              The most advanced digital auction platform for scrap, metals, and industrial materials.
+              {cms.text('hero', 'subcopy',
+                'The most advanced digital auction platform for scrap, metals, and industrial materials.')}
             </p>
             <p className="hero-desc">
               <span>Verified sellers</span>
@@ -457,7 +486,7 @@ function Home() {
 
             <form className="search-bar-wrapper" onSubmit={(e) => { e.preventDefault(); navigate('/marketplace'); }}>
               <div className="search-icon-wrapper"><Search size={18} /></div>
-              <input type="text" placeholder="Search metal, lot no, seller..." aria-label="Search by metal, lot number, or seller" className="search-input" />
+              <input type="text" placeholder={cms.text('hero', 'search_placeholder', 'Search metal, lot no, seller...')} aria-label="Search by metal, lot number, or seller" className="search-input" />
               <button type="submit" className="search-btn">Search Auctions</button>
             </form>
 
@@ -595,7 +624,9 @@ function Home() {
       </section>
 
       {/* Announcements */}
-      <AnnouncementsSection />
+      {/* The Sub Admin's Portal-sections switch reaches the public site now.
+          Before, these toggles governed a homepage nobody could open. */}
+      {cms.on('announcements') && <AnnouncementsSection />}
 
       {/* Forthcoming Auctions — hidden outright when nothing is scheduled,
           rather than a heading over an empty rail. */}
@@ -782,7 +813,7 @@ function Home() {
       <IndustryInsightsSection />
 
       {/* Testimonials */}
-      <TestimonialsSection />
+      {cms.on('testimonials') && <TestimonialsSection />}
 
       {/* CTA Footer Banner */}
       <div className="container">
@@ -858,6 +889,11 @@ const App = () => {
         <Route path="/blog/:slug" element={<BlogPost />} />
         <Route path="/knowledge-center" element={<KnowledgeCenter />} />
         <Route path="/market-reports" element={<MarketReports />} />
+        {/* Without this, an unknown /home/* path rendered the navbar and footer
+            around an empty <main> — a blank page that looks broken rather than
+            a page that says it isn't there. The manager app has had its own
+            catch-all all along. */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
       </Suspense>
       </main>

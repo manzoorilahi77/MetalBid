@@ -7,6 +7,7 @@ import {
 import { Page } from '../../layout/Chrome'
 import { Button, Chip, EmptyState, Field, Input, PageHeader, Textarea, Toggle, cx } from '../../components/ui'
 import { useStore } from '../../store/store'
+import { useCmsPage } from '../../api/useCmsPage'
 
 const DOCS = [
   { key: 'gst', label: 'GST registration certificate', hint: 'PDF or JPG, up to 5 MB' },
@@ -21,6 +22,7 @@ export default function BecomeSeller() {
   const switchRole = useStore((s) => s.switchRole)
   const submitKyc = useStore((s) => s.submitKyc)
   const pushToast = useStore((s) => s.pushToast)
+  const cms = useCmsPage('/buyer/kyc')
   const navigate = useNavigate()
 
   const [step, setStep] = useState(0)
@@ -63,29 +65,31 @@ export default function BecomeSeller() {
       />
 
       {/* -------------------------- value props band -------------------------- */}
-      <div className="grid sm:grid-cols-3 gap-3 mb-8">
-        <div className="card p-4 flex items-start gap-3">
-          <span className="size-9 rounded-xl bg-ember-soft text-ember-strong flex items-center justify-center shrink-0"><Percent size={17} /></span>
-          <div>
-            <div className="font-semibold text-sm">0% listing fee</div>
-            <div className="text-xs text-ink-muted mt-0.5">Pay only a success commission when your lot sells.</div>
+      {cms.on('value_props') && (
+        <div className="grid sm:grid-cols-3 gap-3 mb-8">
+          <div className="card p-4 flex items-start gap-3">
+            <span className="size-9 rounded-xl bg-ember-soft text-ember-strong flex items-center justify-center shrink-0"><Percent size={17} /></span>
+            <div>
+              <div className="font-semibold text-sm">0% listing fee</div>
+              <div className="text-xs text-ink-muted mt-0.5">Pay only a success commission when your lot sells.</div>
+            </div>
+          </div>
+          <div className="card p-4 flex items-start gap-3">
+            <span className="size-9 rounded-xl bg-success-soft text-success flex items-center justify-center shrink-0"><Clock3 size={17} /></span>
+            <div>
+              <div className="font-semibold text-sm">Payment within T+2</div>
+              <div className="text-xs text-ink-muted mt-0.5">Settled to your bank within 2 days of buyer payment.</div>
+            </div>
+          </div>
+          <div className="card p-4 flex items-start gap-3">
+            <span className="size-9 rounded-xl bg-steel-soft text-steel-strong flex items-center justify-center shrink-0"><ClipboardCheck size={17} /></span>
+            <div>
+              <div className="font-semibold text-sm">We inspect & catalogue for you</div>
+              <div className="text-xs text-ink-muted mt-0.5">Field executives measure, photograph and list every lot.</div>
+            </div>
           </div>
         </div>
-        <div className="card p-4 flex items-start gap-3">
-          <span className="size-9 rounded-xl bg-success-soft text-success flex items-center justify-center shrink-0"><Clock3 size={17} /></span>
-          <div>
-            <div className="font-semibold text-sm">Payment within T+2</div>
-            <div className="text-xs text-ink-muted mt-0.5">Settled to your bank within 2 days of buyer payment.</div>
-          </div>
-        </div>
-        <div className="card p-4 flex items-start gap-3">
-          <span className="size-9 rounded-xl bg-steel-soft text-steel-strong flex items-center justify-center shrink-0"><ClipboardCheck size={17} /></span>
-          <div>
-            <div className="font-semibold text-sm">We inspect & catalogue for you</div>
-            <div className="text-xs text-ink-muted mt-0.5">Field executives measure, photograph and list every lot.</div>
-          </div>
-        </div>
-      </div>
+      )}
 
       {/* ----------------------------- states ---------------------------------- */}
       {me.sellerVerified ? (
