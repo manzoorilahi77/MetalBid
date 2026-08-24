@@ -14,6 +14,7 @@
 --------------------------------------------------------------------------- */
 import { inr } from '../lib/format'
 import { CEO_REQUEST_HREF, isAnonymousRole } from '../store/constants'
+import { checkAuth } from './authorization'
 import type { CeoApprovalKind, CeoApprovalRequest, CeoDelegation, EmdForfeiture, FinanceConfig, RefundRequest, Role, User } from '../types'
 import type { NotificationPlan } from './opsInspection'
 
@@ -86,7 +87,8 @@ export function planDelegateCeoApprovals(
   note: string | undefined,
   ctx: DelegateCeoApprovalsContext,
 ): DelegateCeoApprovalsResult {
-  if (ctx.role !== 'ceo') return { ok: false, error: 'Only the CEO can hand this queue to someone else.' }
+  const roleError = checkAuth('ceoOnly', ctx.role)
+  if (roleError) return { ok: false, error: roleError }
   const to = ctx.to
   if (!to) return { ok: false, error: 'That account no longer exists.' }
   if (to.id === ctx.actorId) return { ok: false, error: 'The queue is already yours.' }
@@ -121,7 +123,7 @@ export interface ClearCeoDelegationPlan {
 }
 
 export function planClearCeoDelegation(ctx: ClearCeoDelegationContext): ClearCeoDelegationPlan | null {
-  if (ctx.role !== 'ceo') return null
+  if (checkAuth('ceoOnly', ctx.role)) return null
   const current = ctx.current
   if (!current) return null
   return {

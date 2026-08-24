@@ -3,6 +3,7 @@
    account details. Moved verbatim from superAdminSlice.ts's
    updateUserDetails; no rule, threshold, or wording changed.
 --------------------------------------------------------------------------- */
+import { checkAuth } from './authorization'
 import type { Role, User } from '../types'
 import type { NotificationPlan } from './opsInspection'
 
@@ -35,7 +36,8 @@ export type UpdateUserDetailsResult =
   | { ok: false; error: string }
 
 export function planUpdateUserDetails(userId: string, patch: UpdateUserDetailsPatch, ctx: UpdateUserDetailsContext): UpdateUserDetailsResult {
-  if (ctx.role !== 'super_admin' && ctx.role !== 'sub_admin') return { ok: false, error: 'Accounts are administered by a Sub Admin or a Super Admin' }
+  const roleError = checkAuth('administerAccounts', ctx.role)
+  if (roleError) return { ok: false, error: roleError }
   const user = ctx.user
   if (!user) return { ok: false, error: 'No such account' }
   if (user.role === 'super_admin' && ctx.role !== 'super_admin') return { ok: false, error: 'Only another Super Admin can edit a Super Admin account' }

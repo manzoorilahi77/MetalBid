@@ -9,6 +9,7 @@
 import { uid, inr } from '../lib/format'
 import { emdForfeitureAmount } from '../lib/emd'
 import { FINANCE_ROLES } from '../store/constants'
+import { checkAuth } from './authorization'
 import type { EmdForfeiture, Lot, Role } from '../types'
 import type { NotificationPlan } from './opsInspection'
 
@@ -42,7 +43,8 @@ export function planRaiseEmdForfeiture(
   reason: string,
   ctx: RaiseEmdForfeitureContext,
 ): RaiseEmdForfeitureResult {
-  if (!FINANCE_ROLES.includes(ctx.role)) return { ok: false, error: 'Only Finance can forfeit an EMD' }
+  const roleError = checkAuth('forfeitEmd', ctx.role)
+  if (roleError) return { ok: false, error: roleError }
   const lot = ctx.lot
   if (!lot) return { ok: false, error: 'Lot not found' }
   if (ctx.hasActiveForfeitureOnLot) return { ok: false, error: 'A forfeiture already exists on this lot for this buyer' }

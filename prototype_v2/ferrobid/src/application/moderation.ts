@@ -5,7 +5,7 @@
    opsInspection.ts for the pattern.
 --------------------------------------------------------------------------- */
 import { uid } from '../lib/format'
-import { SUB_ADMIN_ROLES } from '../store/constants'
+import { checkAuth } from './authorization'
 import type { Testimonial, User } from '../types'
 import type { NotificationPlan } from './opsInspection'
 
@@ -28,13 +28,14 @@ export type SubmitTestimonialResult =
 export function planSubmitTestimonial(quote: string, rating: number | undefined, ctx: SubmitTestimonialContext): SubmitTestimonialResult {
   const me = ctx.actor
   if (!me) return { ok: false, error: 'Sign in to continue' }
-  if (me.role !== 'buyer' && me.role !== 'seller') {
-    return { ok: false, error: 'Only a buyer or seller account can submit a testimonial' }
+  const submitRoleError = checkAuth('submitTestimonial', me.role)
+  if (submitRoleError) {
+    return { ok: false, error: submitRoleError }
   }
   const text = quote.trim()
   if (text.length < 20) return { ok: false, error: 'A few more words would help — at least 20 characters' }
   const record: Testimonial = {
-    id: uid('tst'), userId: me.id, role: me.role, quote: text, rating,
+    id: uid('tst'), userId: me.id, role: me.role as 'buyer' | 'seller', quote: text, rating,
     status: 'pending', submittedAt: new Date(ctx.now).toISOString(),
   }
   return {
@@ -72,7 +73,9 @@ export type ModerateTestimonialResult =
  *  section switches use. */
 export function planModerateTestimonial(id: string, approve: boolean, ctx: ModerateTestimonialContext): ModerateTestimonialResult {
   const me = ctx.actor
-  if (!me || !SUB_ADMIN_ROLES.includes(me.role)) return { ok: false, error: 'Only a Sub Admin moderates testimonials' }
+  if (!me) return { ok: false, error: 'Only a Sub Admin moderates testimonials' }
+  const modRoleError = checkAuth('moderateTestimonial', me.role)
+  if (modRoleError) return { ok: false, error: modRoleError }
   const row = ctx.row
   if (!row) return { ok: false, error: 'That testimonial no longer exists' }
   return {

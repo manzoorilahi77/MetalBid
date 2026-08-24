@@ -15,7 +15,8 @@
 --------------------------------------------------------------------------- */
 import { uid, inr } from '../lib/format'
 import { doDue } from '../lib/money'
-import { FINANCE_ROLES, PUBLISH_ROLES } from '../store/constants'
+import { FINANCE_ROLES } from '../store/constants'
+import { checkAuth } from './authorization'
 import type {
   BankAccount, CompanyBankAccount, Catalogue, DemandDraft, DeliveryOrder, DepositClaim,
   EmdExemptionRequest, Lot, Role,
@@ -49,7 +50,7 @@ export interface IssueDemandDraftPlan {
 
 export function planIssueDemandDraft(input: IssueDemandDraftInput, ctx: IssueDemandDraftContext): IssueDemandDraftPlan | null {
   const { role } = ctx
-  if (!FINANCE_ROLES.includes(role) && role !== 'sub_admin' && role !== 'exec_manager') return null
+  if (checkAuth('issueDemandDraft', role)) return null
   const d = ctx.d
   if (!d || d.stage !== 'payment_pending') return null
 
@@ -92,7 +93,7 @@ export interface VerifyBankAccountPlan {
 }
 
 export function planVerifyBankAccount(id: string, ctx: BankAccountContext): VerifyBankAccountPlan | null {
-  if (!FINANCE_ROLES.includes(ctx.role)) return null
+  if (checkAuth('verifyBankAccount', ctx.role)) return null
   const a = ctx.a
   if (!a || a.status !== 'pending') return null
   return {
@@ -107,7 +108,7 @@ export interface RejectBankAccountPlan {
 }
 
 export function planRejectBankAccount(id: string, reason: string | undefined, ctx: BankAccountContext): RejectBankAccountPlan | null {
-  if (!FINANCE_ROLES.includes(ctx.role)) return null
+  if (checkAuth('rejectBankAccount', ctx.role)) return null
   const a = ctx.a
   if (!a || a.status !== 'pending') return null
   return {
@@ -133,7 +134,7 @@ export interface ApproveDepositClaimPlan {
 }
 
 export function planApproveDepositClaim(id: string, ctx: DepositClaimContext): ApproveDepositClaimPlan | null {
-  if (!FINANCE_ROLES.includes(ctx.role)) return null
+  if (checkAuth('approveDepositClaim', ctx.role)) return null
   const claim = ctx.claim
   if (!claim || claim.status !== 'submitted') return null
   const decidedAt = new Date(ctx.now).toISOString()
@@ -152,7 +153,7 @@ export interface RejectDepositClaimPlan {
 }
 
 export function planRejectDepositClaim(id: string, reason: string | undefined, ctx: DepositClaimContext): RejectDepositClaimPlan | null {
-  if (!FINANCE_ROLES.includes(ctx.role)) return null
+  if (checkAuth('rejectDepositClaim', ctx.role)) return null
   const claim = ctx.claim
   if (!claim || claim.status !== 'submitted') return null
   return {
@@ -180,7 +181,7 @@ export interface ApproveEmdExemptionPlan {
 
 export function planApproveEmdExemption(ctx: EmdExemptionContext): ApproveEmdExemptionPlan | null {
   // An eligibility call, not a payment one — Finance sees it, never decides it.
-  if (!PUBLISH_ROLES.includes(ctx.role)) return null
+  if (checkAuth('approveEmdExemption', ctx.role)) return null
   const req = ctx.req
   if (!req || req.status !== 'pending') return null
   const catCode = ctx.cat?.code ?? req.catalogueId
@@ -198,7 +199,7 @@ export interface RejectEmdExemptionPlan {
 }
 
 export function planRejectEmdExemption(reason: string | undefined, ctx: EmdExemptionContext): RejectEmdExemptionPlan | null {
-  if (!PUBLISH_ROLES.includes(ctx.role)) return null
+  if (checkAuth('rejectEmdExemption', ctx.role)) return null
   const req = ctx.req
   if (!req || req.status !== 'pending') return null
   const catCode = ctx.cat?.code ?? req.catalogueId
@@ -216,6 +217,6 @@ export interface SetCompanyBankAccountsPlan {
 }
 
 export function planSetCompanyBankAccounts(accounts: CompanyBankAccount[], role: Role): SetCompanyBankAccountsPlan | null {
-  if (role !== 'super_admin') return null
+  if (checkAuth('setCompanyBankAccounts', role)) return null
   return { audit: { action: 'companybank.update', target: 'company_bank_accounts', detail: `Company bank account list updated — ${accounts.length} account(s)` } }
 }

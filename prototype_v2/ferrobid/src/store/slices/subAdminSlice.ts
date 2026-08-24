@@ -3,7 +3,7 @@ import { planReplyToDispute } from '../../application/disputeReply'
 import { planResolveDisputeGuards, planResolveDisputeOutcome } from '../../application/disputeLifecycle'
 import { planSubmitContentDraft } from '../../application/contentPublishing'
 import { planReviewAction, planSaveHandoverNote } from '../../application/subAdminWorkflow'
-import { SUB_ADMIN_ROLES } from '../constants'
+import { checkAuth } from '../../application/authorization'
 import type { StoreGet, StoreSet, InternalHelpers } from '../internal'
 import type { State } from '../types'
 
@@ -21,7 +21,8 @@ export const createSubAdminSlice = (
 
   claimWorkItem: (itemId) => {
     const s = get()
-    if (!SUB_ADMIN_ROLES.includes(s.role)) return { ok: false, error: 'Only a Sub Admin claims from this board' }
+    const roleError = checkAuth('claimWorkItem', s.role)
+    if (roleError) return { ok: false, error: roleError }
     const me = s.currentUser
     if (!me) return { ok: false, error: 'Sign in first' }
     const held = s.workClaims[itemId]

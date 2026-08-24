@@ -13,6 +13,7 @@
    opsInspection.ts for the general pattern.
 --------------------------------------------------------------------------- */
 import { uid, inr } from '../lib/format'
+import { checkAuth } from './authorization'
 import type { Catalogue, CommissionSettlement, Lot, Role, User } from '../types'
 import type { NotificationPlan } from './opsInspection'
 
@@ -44,7 +45,8 @@ export function planSetSellerLotDecision(
   decision: SellerLotDecision,
   ctx: SetSellerLotDecisionContext,
 ): SetSellerLotDecisionResult {
-  if (ctx.role !== 'seller') return { ok: false, error: 'Only a seller decides on their own cleared price' }
+  const roleError = checkAuth('setSellerLotDecision', ctx.role)
+  if (roleError) return { ok: false, error: roleError }
   const lot = ctx.lot
   const cat = ctx.catalogue
   const seller = ctx.seller
@@ -111,7 +113,8 @@ export function planRecordCommissionSettlement(
   reference: string | undefined,
   ctx: RecordCommissionSettlementContext,
 ): RecordCommissionSettlementResult {
-  if (ctx.role !== 'seller') return { ok: false, error: 'Only a seller records their own commission settlement' }
+  const roleError = checkAuth('recordCommissionSettlement', ctx.role)
+  if (roleError) return { ok: false, error: roleError }
   const at = new Date(ctx.now).toISOString()
   const record: CommissionSettlement = {
     id: uid('settle'), catalogueId, sellerId: ctx.actorId ?? '', amount, mode, at,

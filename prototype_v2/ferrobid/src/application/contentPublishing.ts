@@ -6,7 +6,7 @@
    See opsInspection.ts for the pattern.
 --------------------------------------------------------------------------- */
 import { uid } from '../lib/format'
-import { SUB_ADMIN_ROLES } from '../store/constants'
+import { checkAuth } from './authorization'
 import type { ContentDraft, Role, StructuralChangeKind } from '../types'
 import type { NotificationPlan } from './opsInspection'
 
@@ -39,7 +39,8 @@ export type SubmitContentDraftResult =
   | { ok: false; error: string }
 
 export function planSubmitContentDraft(input: SubmitContentDraftInput, ctx: SubmitContentDraftContext): SubmitContentDraftResult {
-  if (!SUB_ADMIN_ROLES.includes(ctx.role)) return { ok: false, error: 'Only a Sub Admin drafts platform copy' }
+  const draftRoleError = checkAuth('submitContentDraft', ctx.role)
+  if (draftRoleError) return { ok: false, error: draftRoleError }
   if (!input.page.trim() || !input.section.trim()) return { ok: false, error: 'Say which page and which section' }
   if (!input.after.trim()) return { ok: false, error: 'Write the new copy' }
   if (input.after.trim() === input.before.trim()) return { ok: false, error: 'The new copy is the same as what is live' }
@@ -93,7 +94,8 @@ export type PublishContentResult =
   | { ok: false; error: string }
 
 export function planPublishContent(ctx: PublishContentContext): PublishContentResult {
-  if (ctx.role !== 'super_admin') return { ok: false, error: 'Only a Super Admin can change the shape of the platform' }
+  const platformRoleError = checkAuth('changePlatformShape', ctx.role)
+  if (platformRoleError) return { ok: false, error: platformRoleError }
   const draft = ctx.draft
   if (!draft) return { ok: false, error: 'No such draft' }
   if (draft.status === 'published') return { ok: false, error: 'Already published' }
@@ -129,7 +131,8 @@ export type ReturnContentResult =
   | { ok: false; error: string }
 
 export function planReturnContent(note: string, ctx: ReturnContentContext): ReturnContentResult {
-  if (ctx.role !== 'super_admin') return { ok: false, error: 'Only a Super Admin can change the shape of the platform' }
+  const platformRoleError = checkAuth('changePlatformShape', ctx.role)
+  if (platformRoleError) return { ok: false, error: platformRoleError }
   const draft = ctx.draft
   if (!draft) return { ok: false, error: 'No such draft' }
   if (!note.trim()) return { ok: false, error: 'Say what needs changing — a return without a comment is a dead end' }

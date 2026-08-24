@@ -4,7 +4,7 @@
    rule, threshold, or wording changed. See opsInspection.ts for the pattern.
 --------------------------------------------------------------------------- */
 import { uid, inr } from '../lib/format'
-import { FINANCE_ROLES } from '../store/constants'
+import { checkAuth } from './authorization'
 import type { Invoice, Role, User } from '../types'
 import type { NotificationPlan } from './opsInspection'
 
@@ -37,7 +37,7 @@ export interface IssueInvoicePlan {
 }
 
 export function planIssueInvoice(input: IssueInvoiceInput, ctx: IssueInvoiceContext): IssueInvoicePlan | null {
-  if (!FINANCE_ROLES.includes(ctx.role)) return null
+  if (checkAuth('issueInvoice', ctx.role)) return null
   const seq = 1001 + ctx.invoiceCount
   const record: Invoice = {
     id: uid('inv'),
@@ -77,7 +77,7 @@ export interface ReissueInvoicePlan {
 }
 
 export function planReissueInvoice(note: string, ctx: ReissueInvoiceContext): ReissueInvoicePlan | null {
-  if (!FINANCE_ROLES.includes(ctx.role)) return null
+  if (checkAuth('reissueInvoice', ctx.role)) return null
   const original = ctx.original
   if (!original || original.status !== 'issued') return null
   const replacement: Invoice = {
@@ -111,7 +111,7 @@ export interface CancelInvoicePlan {
 }
 
 export function planCancelInvoice(note: string, ctx: CancelInvoiceContext): CancelInvoicePlan | null {
-  if (!FINANCE_ROLES.includes(ctx.role)) return null
+  if (checkAuth('cancelInvoice', ctx.role)) return null
   const original = ctx.original
   if (!original || original.status === 'cancelled') return null
   return {

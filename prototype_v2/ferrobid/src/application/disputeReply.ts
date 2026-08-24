@@ -3,7 +3,7 @@
    verbatim from subAdminSlice.ts's replyToDispute; no rule or wording
    changed. See opsInspection.ts for the pattern.
 --------------------------------------------------------------------------- */
-import { SUPPORT_ROLES } from '../store/constants'
+import { checkAuth } from './authorization'
 import type { Dispute, Role } from '../types'
 import type { NotificationPlan } from './opsInspection'
 
@@ -31,7 +31,8 @@ export function planReplyToDispute(
   body: string,
   ctx: ReplyToDisputeContext,
 ): ReplyToDisputeResult {
-  if (!SUPPORT_ROLES.includes(ctx.role)) return { ok: false, error: 'Only the support desk replies on a ticket' }
+  const roleError = checkAuth('replyToDispute', ctx.role)
+  if (roleError) return { ok: false, error: roleError }
   if (!body.trim()) return { ok: false, error: 'Write the reply first' }
   const d = ctx.dispute
   if (!d) return { ok: false, error: 'Ticket not found' }

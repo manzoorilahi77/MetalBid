@@ -2,6 +2,7 @@ import { uid } from '../../lib/format'
 import { apiPost, ApiError } from '../../api/client'
 import { planCreateSubAdmin, planSetAccountStatus } from '../../application/accountLifecycle'
 import { planUpdateUserDetails } from '../../application/accountDetails'
+import { checkAuth } from '../../application/authorization'
 import type { StoreGet, StoreSet, InternalHelpers } from '../internal'
 import type { State } from '../types'
 
@@ -47,7 +48,8 @@ export const createAccountLifecycleSlice = (
 
   resetUserPassword: async (userId, mode, manualPassword) => {
     const s = get()
-    if (s.role !== 'super_admin' && s.role !== 'sub_admin') return { ok: false, error: 'Passwords are reset by a Sub Admin or a Super Admin' }
+    const roleError = checkAuth('resetUserPassword', s.role)
+    if (roleError) return { ok: false, error: roleError }
     const user = s.users.find((u) => u.id === userId)
     if (!user) return { ok: false, error: 'No such account' }
     // A Super Admin's password is only ever reset by another Super Admin.

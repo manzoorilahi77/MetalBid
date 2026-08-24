@@ -29,6 +29,7 @@
    status-restrictive here would misrepresent what the writer actually checks.
 --------------------------------------------------------------------------- */
 import { FIELD_INSPECTION_ROLES, LOT_GATE_ROLES, PUBLISH_ROLES } from '../store/constants'
+import { checkRole } from './authorization'
 import type { LotStatus, Role } from '../types'
 
 export type LotWriterKey =
@@ -109,10 +110,14 @@ export const LOT_WRITER_RULES: Record<LotWriterKey, LotWriterRule> = {
   },
 }
 
-/** Returns the role error for this writer, or null if the role is allowed. */
+/** Returns the role error for this writer, or null if the role is allowed.
+ *  Delegates to the same shared primitive every other role check in the
+ *  codebase now uses (application/authorization.ts) — this table adds the
+ *  status dimension lot-status writers need on top of it, not a second,
+ *  parallel way of comparing a role against a list. */
 export function checkLotWriterRole(key: LotWriterKey, role: Role): string | null {
   const rule = LOT_WRITER_RULES[key]
-  return rule.roles.includes(role) ? null : rule.roleError
+  return checkRole(rule.roles, role, rule.roleError)
 }
 
 /** Returns the status error for this writer, or null if the status is a

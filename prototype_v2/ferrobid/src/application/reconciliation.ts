@@ -4,7 +4,7 @@
    rule, threshold, or wording changed. See opsInspection.ts for the pattern.
 --------------------------------------------------------------------------- */
 import { inr } from '../lib/format'
-import { FINANCE_ROLES } from '../store/constants'
+import { checkAuth } from './authorization'
 import type { BankStatementLine, Role } from '../types'
 import type { NotificationPlan } from './opsInspection'
 
@@ -24,7 +24,7 @@ export function planMatchBankLine(
   matchedTo: string,
   ctx: BankLineContext & { now: number },
 ): MatchBankLinePlan | null {
-  if (!FINANCE_ROLES.includes(ctx.role)) return null
+  if (checkAuth('matchBankLine', ctx.role)) return null
   const line = ctx.line
   if (!line) return null
   return {
@@ -40,7 +40,7 @@ export interface UnmatchBankLinePlan {
 }
 
 export function planUnmatchBankLine(ctx: BankLineContext): UnmatchBankLinePlan | null {
-  if (!FINANCE_ROLES.includes(ctx.role)) return null
+  if (checkAuth('unmatchBankLine', ctx.role)) return null
   const line = ctx.line
   if (!line) return null
   return { audit: { action: 'recon.unmatch', target: line.ref, detail: `Match reversed on ${inr(line.amount)}`, severity: 'warning' } }
@@ -53,7 +53,7 @@ export interface FlagBankBreakPlan {
 }
 
 export function planFlagBankBreak(note: string, ctx: BankLineContext): FlagBankBreakPlan | null {
-  if (!FINANCE_ROLES.includes(ctx.role)) return null
+  if (checkAuth('flagBankBreak', ctx.role)) return null
   const line = ctx.line
   if (!line) return null
   return { audit: { action: 'recon.break', target: line.ref, detail: `Break flagged on ${inr(line.amount)} — ${note}`, severity: 'warning' } }
@@ -67,7 +67,7 @@ export interface EscalateBankBreakPlan {
 }
 
 export function planEscalateBankBreak(ctx: BankLineContext): EscalateBankBreakPlan | null {
-  if (!FINANCE_ROLES.includes(ctx.role)) return null
+  if (checkAuth('escalateBankBreak', ctx.role)) return null
   const line = ctx.line
   if (!line) return null
   return {

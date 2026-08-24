@@ -5,7 +5,7 @@
    threshold, or wording changed. See opsInspection.ts for the pattern.
 --------------------------------------------------------------------------- */
 import { inr } from '../lib/format'
-import { FINANCE_ROLES } from '../store/constants'
+import { checkAuth } from './authorization'
 import type { Catalogue, CommissionSettlement, DeliveryOrder, Lot, Role } from '../types'
 import type { NotificationPlan } from './opsInspection'
 
@@ -32,7 +32,8 @@ export function planConfirmCommissionSettlement(
   bankLineId: string | undefined,
   ctx: ConfirmCommissionSettlementContext,
 ): ConfirmCommissionSettlementResult {
-  if (!FINANCE_ROLES.includes(ctx.role)) return { ok: false, error: 'Only Finance can confirm a settlement' }
+  const roleError = checkAuth('confirmCommissionSettlement', ctx.role)
+  if (roleError) return { ok: false, error: roleError }
   const record = ctx.record
   if (!record) return { ok: false, error: 'Settlement not found' }
   if (record.status === 'confirmed') return { ok: false, error: 'This settlement is already confirmed' }
@@ -73,7 +74,7 @@ export function planQueryCommissionSettlement(
   note: string,
   ctx: QueryCommissionSettlementContext,
 ): QueryCommissionSettlementPlan | null {
-  if (!FINANCE_ROLES.includes(ctx.role)) return null
+  if (checkAuth('queryCommissionSettlement', ctx.role)) return null
   const record = ctx.record
   if (!record || record.status === 'confirmed') return null
   const cat = ctx.catalogue
@@ -101,7 +102,7 @@ export function planFlagOverduePayment(
   note: string,
   ctx: FlagOverduePaymentContext,
 ): FlagOverduePaymentPlan | null {
-  if (!FINANCE_ROLES.includes(ctx.role)) return null
+  if (checkAuth('flagOverduePayment', ctx.role)) return null
   const d = ctx.order
   if (!d) return null
   return {

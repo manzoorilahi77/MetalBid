@@ -11,7 +11,8 @@
 import { uid, num } from '../lib/format'
 import { inspectionOutcomeToLotStatus, type InspectionOutcome } from '../lib/lotStatus'
 import { checkLotWriterRole } from './lotTransitions'
-import { LOT_GATE_ROLES, WEIGHMENT_WITNESS_ROLES } from '../store/constants'
+import { checkAuth } from './authorization'
+import { WEIGHMENT_WITNESS_ROLES } from '../store/constants'
 import type { Catalogue, DeliveryOrder, InspectionReport, Lot, LotStatus, NotificationKind, Role, User } from '../types'
 
 /* ------------------------------ submitInspection ------------------------------ */
@@ -235,7 +236,8 @@ export function planDecideSellerKyc(
   reason: string | undefined,
   ctx: DecideSellerKycContext,
 ): DecideSellerKycResult {
-  if (!LOT_GATE_ROLES.includes(ctx.role)) return { ok: false, error: 'Only Operations or a Sub Admin verifies a seller' }
+  const kycRoleError = checkAuth('decideSellerKyc', ctx.role)
+  if (kycRoleError) return { ok: false, error: kycRoleError }
   const user = ctx.user
   if (!user) return { ok: false, error: 'Account not found' }
   if (!approve && !reason?.trim()) return { ok: false, error: 'Say what has to be resubmitted' }
@@ -288,7 +290,8 @@ export function planConfirmHandover(
   note: string | undefined,
   ctx: ConfirmHandoverContext,
 ): ConfirmHandoverResult {
-  if (!LOT_GATE_ROLES.includes(ctx.role)) return { ok: false, error: 'Only Operations or a Sub Admin closes a handover' }
+  const handoverRoleError = checkAuth('confirmHandover', ctx.role)
+  if (handoverRoleError) return { ok: false, error: handoverRoleError }
   const order = ctx.order
   if (!order) return { ok: false, error: 'Delivery order not found' }
   if (order.stage !== 'completed') return { ok: false, error: 'The material has not been lifted yet' }

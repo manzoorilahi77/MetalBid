@@ -5,6 +5,7 @@
    opsInspection.ts for the pattern.
 --------------------------------------------------------------------------- */
 import { FINANCE_FIELD_LABEL } from '../store/constants'
+import { checkAuth } from './authorization'
 import type { FinanceConfig, Role, StructuralChangeKind } from '../types'
 
 export interface SetFinanceConfigContext {
@@ -22,7 +23,7 @@ export function planSetFinanceConfig(
   patch: Partial<FinanceConfig>,
   ctx: SetFinanceConfigContext,
 ): SetFinanceConfigPlan | null {
-  if (ctx.role !== 'super_admin') return null
+  if (checkAuth('setFinanceConfig', ctx.role)) return null
   const before = ctx.before
   const next = { ...before, ...patch }
   const moved = (Object.keys(patch) as (keyof FinanceConfig)[]).filter((k) => before[k] !== next[k])

@@ -10,7 +10,7 @@
    (sub_admin/super_admin — the same set the pages already call ADMIN_ROLES)
    at the plan-function level too.
 --------------------------------------------------------------------------- */
-import { SUB_ADMIN_ROLES } from '../store/constants'
+import { checkAuth } from './authorization'
 import type { Role, Standing, User } from '../types'
 import type { NotificationPlan } from './opsInspection'
 
@@ -31,7 +31,8 @@ export type SetUserStandingResult =
   | { ok: false; error: string }
 
 export function planSetUserStanding(userId: string, standing: Standing, reason: string | undefined, ctx: SetUserStandingContext): SetUserStandingResult {
-  if (!SUB_ADMIN_ROLES.includes(ctx.role)) return { ok: false, error: 'Only a Sub Admin or Super Admin changes account standing' }
+  const roleError = checkAuth('setUserStanding', ctx.role)
+  if (roleError) return { ok: false, error: roleError }
   const u = ctx.u
   return {
     ok: true,

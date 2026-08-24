@@ -12,6 +12,7 @@
 import type { StateCreator } from 'zustand'
 import { uid, inr } from '../lib/format'
 import { catalogueReserveValue } from '../lib/money'
+import { checkAuth } from '../application/authorization'
 import { BOT_IDS, ROLE_DEMO_USER, PUBLISH_ROLES, delegationActive, emptyLiftingChecklist } from './constants'
 import type { State } from './types'
 import type {
@@ -115,8 +116,10 @@ export function createInternalHelpers(set: StoreSet, get: StoreGet) {
 
   /** Only our role changes the shape of the platform. Returned rather than
    *  thrown so the calling screen can say so in words. */
-  const requireSuperAdmin = (): { ok: false; error: string } | null =>
-    get().role === 'super_admin' ? null : { ok: false, error: 'Only a Super Admin can change the shape of the platform' }
+  const requireSuperAdmin = (): { ok: false; error: string } | null => {
+    const error = checkAuth('changePlatformShape', get().role)
+    return error ? { ok: false, error } : null
+  }
 
   /** The platform's shape right now — captured *before* a change so undoing it
    *  is exact. Roles, menus, the vocabularies and the public copy: everything

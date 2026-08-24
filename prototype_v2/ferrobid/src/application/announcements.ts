@@ -4,7 +4,7 @@
    changed.
 --------------------------------------------------------------------------- */
 import { uid } from '../lib/format'
-import { ANNOUNCE_ROLES } from '../store/constants'
+import { checkAuth } from './authorization'
 import type { Announcement, Catalogue, Role } from '../types'
 import type { NotificationPlan } from './opsInspection'
 
@@ -35,7 +35,8 @@ export type SendAnnouncementResult =
   | { ok: false; error: string }
 
 export function planSendAnnouncement(input: SendAnnouncementInput, ctx: SendAnnouncementContext): SendAnnouncementResult {
-  if (!ANNOUNCE_ROLES.includes(ctx.role)) return { ok: false, error: 'Not permitted for this role' }
+  const roleError = checkAuth('sendAnnouncement', ctx.role)
+  if (roleError) return { ok: false, error: roleError }
   if (!input.title.trim() || !input.body.trim()) return { ok: false, error: 'A title and a message are both required' }
   if (input.scope === 'catalogue' && !input.catalogueId) return { ok: false, error: 'Pick the auction this notice belongs to' }
 

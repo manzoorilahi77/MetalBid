@@ -4,7 +4,8 @@
    reviewAction/saveHandoverNote; no rule, threshold, or wording changed.
 --------------------------------------------------------------------------- */
 import { uid } from '../lib/format'
-import { REVERSAL_NEEDS_SUPER, SUB_ADMIN_ROLES } from '../store/constants'
+import { REVERSAL_NEEDS_SUPER } from '../store/constants'
+import { checkAuth } from './authorization'
 import type { ActionReview, AuditEvent, HandoverNote, Role } from '../types'
 
 /* ------------------------------ reviewAction ------------------------------ */
@@ -30,7 +31,8 @@ export type ReviewActionResult =
   | { ok: false; error: string }
 
 export function planReviewAction(eventId: string, verdict: ActionReview['verdict'], note: string, ctx: ReviewActionContext): ReviewActionResult {
-  if (!SUB_ADMIN_ROLES.includes(ctx.role)) return { ok: false, error: 'Only a Sub Admin reviews another role\'s work' }
+  const roleError = checkAuth('reviewAction', ctx.role)
+  if (roleError) return { ok: false, error: roleError }
   const ev = ctx.ev
   if (!ev) return { ok: false, error: 'That entry is no longer on the record' }
   if (ctx.alreadyReviewed) return { ok: false, error: 'You have already reviewed this one' }

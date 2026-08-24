@@ -17,6 +17,7 @@
 --------------------------------------------------------------------------- */
 import { uid, inr } from '../lib/format'
 import { FINANCE_ROLES } from '../store/constants'
+import { checkAuth } from './authorization'
 import type { Dispute, RefundRequest, RefundSource, Role, User } from '../types'
 import type { NotificationPlan } from './opsInspection'
 
@@ -122,7 +123,7 @@ export function planDecideRefund(
   note: string | undefined,
   ctx: DecideRefundContext,
 ): DecideRefundPlan | null {
-  if (!FINANCE_ROLES.includes(ctx.role)) return null
+  if (checkAuth('decideRefund', ctx.role)) return null
   const record = ctx.record
   if (!record || (record.status !== 'pending' && record.status !== 'awaiting_ceo')) return null
   const party = ctx.party
@@ -171,7 +172,8 @@ export type ProcessRefundResult =
   | { ok: false; error: string }
 
 export function planProcessRefund(ctx: ProcessRefundContext): ProcessRefundResult {
-  if (!FINANCE_ROLES.includes(ctx.role)) return { ok: false, error: 'Only Finance can process a refund' }
+  const roleError = checkAuth('processRefund', ctx.role)
+  if (roleError) return { ok: false, error: roleError }
   const record = ctx.record
   if (!record) return { ok: false, error: 'Refund not found' }
   if (record.status !== 'approved') return { ok: false, error: 'Approve the refund before processing it' }

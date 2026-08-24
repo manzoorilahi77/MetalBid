@@ -11,7 +11,7 @@
    exactly as distinct as they were inline.
 --------------------------------------------------------------------------- */
 import { inr } from '../lib/format'
-import { FINANCE_ROLES } from '../store/constants'
+import { checkAuth } from './authorization'
 import type { Role, WithdrawalRequest, WithdrawalWindowConfig } from '../types'
 import type { NotificationPlan } from './opsInspection'
 
@@ -35,7 +35,7 @@ export interface ApproveWithdrawalPlan {
 }
 
 export function planApproveWithdrawal(id: string, ctx: ApproveWithdrawalContext): ApproveWithdrawalPlan | null {
-  if (!FINANCE_ROLES.includes(ctx.role)) return null
+  if (checkAuth('approveWithdrawal', ctx.role)) return null
   const req = ctx.req
   if (!req || req.status !== 'requested') return null
   const reviewedAt = new Date(ctx.now).toISOString()
@@ -85,7 +85,7 @@ export type ProcessWithdrawalPlan =
   }
 
 export function planProcessWithdrawal(id: string, ctx: ProcessWithdrawalContext): ProcessWithdrawalPlan | null {
-  if (!FINANCE_ROLES.includes(ctx.role)) return null
+  if (checkAuth('processWithdrawal', ctx.role)) return null
   const req = ctx.req
   if (!req || req.status !== 'under_review') return null
 
@@ -124,7 +124,7 @@ export interface FailWithdrawalPlan {
 }
 
 export function planFailWithdrawal(id: string, reason: string | undefined, ctx: FailWithdrawalContext): FailWithdrawalPlan | null {
-  if (!FINANCE_ROLES.includes(ctx.role)) return null
+  if (checkAuth('failWithdrawal', ctx.role)) return null
   const req = ctx.req
   if (!req || req.status !== 'under_review') return null
   return {
@@ -142,7 +142,7 @@ export interface SetWithdrawalWindowPlan {
 }
 
 export function planSetWithdrawalWindow(config: WithdrawalWindowConfig, role: Role): SetWithdrawalWindowPlan | null {
-  if (role !== 'super_admin') return null
+  if (checkAuth('setWithdrawalWindow', role)) return null
   return {
     audit: {
       action: 'withdrawal.window_config', target: 'withdrawal_window',

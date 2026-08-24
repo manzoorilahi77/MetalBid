@@ -5,6 +5,7 @@
 --------------------------------------------------------------------------- */
 import { inr } from '../lib/format'
 import { doDue } from '../lib/money'
+import { checkAuth } from './authorization'
 import type { DeliveryOrder, Lot, Role } from '../types'
 import type { NotificationPlan } from './opsInspection'
 
@@ -27,15 +28,14 @@ export type ConfirmBuyerPaymentResult =
   | { ok: true; plan: ConfirmBuyerPaymentPlan }
   | { ok: false; error: string }
 
-const FINANCE_ROLES: Role[] = ['finance_admin', 'super_admin']
-
 export function planConfirmBuyerPayment(
   doId: string,
   method: string,
   ref: string,
   ctx: ConfirmBuyerPaymentContext,
 ): ConfirmBuyerPaymentResult {
-  if (!FINANCE_ROLES.includes(ctx.role)) return { ok: false, error: 'Only Finance can confirm a receipt' }
+  const roleError = checkAuth('confirmBuyerPayment', ctx.role)
+  if (roleError) return { ok: false, error: roleError }
   const d = ctx.deliveryOrder
   if (!d) return { ok: false, error: 'Delivery order not found' }
   const due = doDue(d)

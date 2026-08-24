@@ -20,7 +20,7 @@
    See opsInspection.ts for the general pattern.
 --------------------------------------------------------------------------- */
 import { uid, inr } from '../lib/format'
-import { SUPPORT_ROLES } from '../store/constants'
+import { checkAuth } from './authorization'
 import type { Dispute, DisputeOutcome, Role, User } from '../types'
 import type { NotificationPlan } from './opsInspection'
 
@@ -101,7 +101,8 @@ export function planResolveDisputeGuards(
   amount: number | undefined,
   ctx: ResolveDisputeGuardContext,
 ): ResolveDisputeGuardResult {
-  if (!SUPPORT_ROLES.includes(ctx.role)) return { ok: false, error: 'Only the support desk closes a ticket' }
+  const roleError = checkAuth('closeDispute', ctx.role)
+  if (roleError) return { ok: false, error: roleError }
   const d = ctx.dispute
   if (!d) return { ok: false, error: 'Ticket not found' }
   if (d.status === 'resolved') return { ok: false, error: 'Already closed' }

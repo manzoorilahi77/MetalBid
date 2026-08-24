@@ -1,6 +1,6 @@
 import { uid, inr } from '../../lib/format'
 import { planSendAnnouncement } from '../../application/announcements'
-import { AUCTION_FLOOR_ROLES, PUBLISH_ROLES, RESULT_ROLES, SURVEILLANCE_ROLES } from '../constants'
+import { checkAuth } from '../../application/authorization'
 import type { StoreGet, StoreSet, InternalHelpers } from '../internal'
 import type { State } from '../types'
 import type { BidVoidRequest, CancellationRequest, ResultConfirmation, StaReferral } from '../../types'
@@ -19,7 +19,8 @@ export const createAuctionFloorSlice = (
      Admin, which is why they are modelled as records with evidence. */
 
   rescheduleCatalogue: (catalogueId, { emdOpensAt, emdDeadline, startsAt, endsAt, antiSnipeMinutes }) => {
-    if (!PUBLISH_ROLES.includes(get().role)) return { ok: false, error: 'Not permitted for this role' }
+    const rescheduleRoleError = checkAuth('rescheduleCatalogue', get().role)
+    if (rescheduleRoleError) return { ok: false, error: rescheduleRoleError }
     const cat = get().catalogues.find((c) => c.id === catalogueId)
     if (!cat) return { ok: false, error: 'Auction not found' }
     if (cat.status === 'live' || cat.status === 'closed') {
@@ -66,7 +67,7 @@ export const createAuctionFloorSlice = (
   },
 
   returnCatalogueToOps: (catalogueId, comments) => {
-    if (!PUBLISH_ROLES.includes(get().role)) return
+    if (checkAuth('returnCatalogueToOps', get().role)) return
     const cat = get().catalogues.find((c) => c.id === catalogueId)
     if (!cat || cat.status === 'live' || cat.status === 'closed') return
     set((st) => ({
@@ -80,7 +81,8 @@ export const createAuctionFloorSlice = (
   },
 
   requestCancellation: (catalogueId, reason) => {
-    if (!AUCTION_FLOOR_ROLES.includes(get().role)) return { ok: false, error: 'Not permitted for this role' }
+    const cancelRoleError = checkAuth('requestCancellation', get().role)
+    if (cancelRoleError) return { ok: false, error: cancelRoleError }
     const s = get()
     const cat = s.catalogues.find((c) => c.id === catalogueId)
     if (!cat) return { ok: false, error: 'Auction not found' }
@@ -103,7 +105,7 @@ export const createAuctionFloorSlice = (
   },
 
   decideCancellationRequest: (id, approve, note) => {
-    if (get().role !== 'super_admin') return
+    if (checkAuth('decideCancellationRequest', get().role)) return
     const s = get()
     const req = s.cancellationRequests.find((r) => r.id === id)
     if (!req || req.status !== 'pending') return
@@ -131,7 +133,7 @@ export const createAuctionFloorSlice = (
   },
 
   flagBid: (bidId, reason, notes) => {
-    if (!SURVEILLANCE_ROLES.includes(get().role)) return
+    if (checkAuth('flagBid', get().role)) return
     const s = get()
     const bid = s.bids.find((b) => b.id === bidId)
     if (!bid || s.bidVoidRequests.some((r) => r.bidId === bidId && r.status === 'pending')) return
@@ -156,7 +158,7 @@ export const createAuctionFloorSlice = (
   },
 
   requestBidVoid: (requestId, note) => {
-    if (!SURVEILLANCE_ROLES.includes(get().role)) return
+    if (checkAuth('requestBidVoid', get().role)) return
     const s = get()
     const req = s.bidVoidRequests.find((r) => r.id === requestId)
     if (!req || req.status !== 'pending' || req.stage !== 'flagged') return
@@ -176,7 +178,7 @@ export const createAuctionFloorSlice = (
   },
 
   dismissBidFlag: (requestId, note) => {
-    if (!SURVEILLANCE_ROLES.includes(get().role)) return
+    if (checkAuth('dismissBidFlag', get().role)) return
     const s = get()
     const req = s.bidVoidRequests.find((r) => r.id === requestId)
     if (!req || req.status !== 'pending') return
@@ -202,7 +204,7 @@ export const createAuctionFloorSlice = (
   },
 
   decideBidVoidRequest: (id, approve, note) => {
-    if (get().role !== 'super_admin') return
+    if (checkAuth('decideBidVoidRequest', get().role)) return
     const s = get()
     const req = s.bidVoidRequests.find((r) => r.id === id)
     if (!req || req.status !== 'pending') return
@@ -246,7 +248,8 @@ export const createAuctionFloorSlice = (
   },
 
   confirmAuctionResults: (catalogueId) => {
-    if (!RESULT_ROLES.includes(get().role)) return { ok: false, error: 'Not permitted for this role' }
+    const resultsRoleError = checkAuth('confirmAuctionResults', get().role)
+    if (resultsRoleError) return { ok: false, error: resultsRoleError }
     const s = get()
     const cat = s.catalogues.find((c) => c.id === catalogueId)
     if (!cat) return { ok: false, error: 'Auction not found' }
@@ -281,7 +284,7 @@ export const createAuctionFloorSlice = (
   },
 
   referStaLot: (lotId, note) => {
-    if (!RESULT_ROLES.includes(get().role)) return
+    if (checkAuth('referStaLot', get().role)) return
     const s = get()
     const lot = s.lots.find((l) => l.id === lotId)
     if (!lot || lot.status !== 'sta' || s.staReferrals.some((r) => r.lotId === lotId)) return
