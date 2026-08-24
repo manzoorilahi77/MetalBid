@@ -39,3 +39,9 @@ updated in the same commit (as in Phase 18) — justify explicitly if it happens
 END OF PHASE: report what was migrated, what was skipped and why, test counts
 before/after, build status, and any risks/findings discovered but not fixed. Then stop
 and wait, unless the phase says otherwise.
+
+## Git hygiene
+
+At the end of every phase, `git add` and commit that phase's changes before reporting
+it done — don't let work sit untracked across sessions. Use the established commit
+message pattern: `refactor(<area>): phase <n> — <one-line summary>`.
