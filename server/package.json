@@ -13,7 +13,8 @@
     "db:passwords": "node scripts/set-password.mjs",
     "db:seed-auth": "node scripts/set-password.mjs --seed-dev",
     "jobs:tick": "node -e \"import('./src/jobs/scheduler.mjs').then(m=>m.tick()).then(r=>{console.log(r);process.exit(0)})\"",
-    "db:seed-cms": "node scripts/seed-cms.mjs"
+    "db:seed-cms": "node scripts/seed-cms.mjs",
+    "test:integration": "node --import ./tests/integration/setup.env.mjs --test --test-concurrency=1 tests/integration/*.test.mjs"
   },
   "dependencies": {
     "cors": "^2.8.6",
