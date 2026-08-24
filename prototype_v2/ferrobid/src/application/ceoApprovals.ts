@@ -14,7 +14,7 @@
 --------------------------------------------------------------------------- */
 import { inr } from '../lib/format'
 import { CEO_REQUEST_HREF, isAnonymousRole } from '../store/constants'
-import type { CeoApprovalRequest, CeoDelegation, EmdForfeiture, FinanceConfig, RefundRequest, Role, User } from '../types'
+import type { CeoApprovalKind, CeoApprovalRequest, CeoDelegation, EmdForfeiture, FinanceConfig, RefundRequest, Role, User } from '../types'
 import type { NotificationPlan } from './opsInspection'
 
 /* ------------------------------ requestCeoSignoff ------------------------------ */
@@ -163,6 +163,70 @@ export interface DecideCeoApprovalPlan {
   finalNotification: NotificationPlan & { userId: string }
 }
 
+/** What a signature actually moves, kept per-kind so adding a 6th kind means
+ *  adding one policy + one map entry — never editing the branches above it. */
+interface KindEffects {
+  applyForfeitureRecord: EmdForfeiture | null
+  waiveForfeiture: { forfeitureId: string; reason: string } | null
+  refundOutcome: { refundId: string; status: 'approved' | 'rejected' } | null
+  feeChange: { payload: Partial<FinanceConfig>; audit: { action: string; target: string; detail: string; severity: 'critical' } } | null
+  banUserId: string | null
+}
+
+const NO_EFFECTS: KindEffects = {
+  applyForfeitureRecord: null, waiveForfeiture: null, refundOutcome: null, feeChange: null, banUserId: null,
+}
+
+type KindPolicy = (approve: boolean, note: string | undefined, req: CeoApprovalRequest, ctx: DecideCeoApprovalContext) => KindEffects
+
+// A signature completes the movement it was holding, or releases it.
+const emdForfeiturePolicy: KindPolicy = (approve, note, _req, ctx) => {
+  const record = ctx.emdForfeiture
+  if (!record || record.status !== 'awaiting_ceo') return NO_EFFECTS
+  if (approve) return { ...NO_EFFECTS, applyForfeitureRecord: record }
+  return { ...NO_EFFECTS, waiveForfeiture: { forfeitureId: record.id, reason: note || 'Refused at CEO sign-off — EMD released back to the buyer' } }
+}
+
+const refundPolicy: KindPolicy = (approve, _note, _req, ctx) => {
+  const record = ctx.refund
+  if (!record || record.status !== 'awaiting_ceo') return NO_EFFECTS
+  return { ...NO_EFFECTS, refundOutcome: { refundId: record.id, status: approve ? 'approved' : 'rejected' } }
+}
+
+// A fee change is the one kind where the signature *is* the change: the
+// proposed rates are held on the request and never touch the config until
+// they are signed, so no sale is ever priced by an unapproved rate.
+const feeChangePolicy: KindPolicy = (approve, _note, req, ctx) => {
+  if (!approve || !req.payload) return NO_EFFECTS
+  const before = ctx.financeConfigBefore
+  const payload = req.payload as Partial<FinanceConfig>
+  const changed = (Object.keys(payload) as (keyof FinanceConfig)[])
+    .map((k) => `${k} ${String(before[k])} → ${String(payload[k])}`)
+    .join(', ')
+  return { ...NO_EFFECTS, feeChange: { payload, audit: { action: 'config.fee_change', target: 'Financial configuration', detail: `Signed by the CEO — ${changed}`, severity: 'critical' } } }
+}
+
+// A ban closes the account's standing; it is never deleted, so the
+// history behind the decision stays readable.
+const permanentBanPolicy: KindPolicy = (approve, _note, req) => {
+  if (!approve) return NO_EFFECTS
+  return { ...NO_EFFECTS, banUserId: req.refId }
+}
+
+// 'auction_publish' applies nothing here by design — the catalogue is still
+// Operations' to publish. The signature only removes the block. Any kind
+// without a dedicated policy below (including 'super_admin_account' and any
+// future addition) falls back to this — no side effect beyond the shared
+// status/audit/notification handled in planDecideCeoApproval itself.
+const noEffectPolicy: KindPolicy = () => NO_EFFECTS
+
+const KIND_POLICIES: Partial<Record<CeoApprovalKind, KindPolicy>> = {
+  emd_forfeiture: emdForfeiturePolicy,
+  refund: refundPolicy,
+  fee_change: feeChangePolicy,
+  permanent_ban: permanentBanPolicy,
+}
+
 export function planDecideCeoApproval(
   approve: boolean,
   note: string | undefined,
@@ -173,54 +237,19 @@ export function planDecideCeoApproval(
   if (!req || (req.status !== 'pending' && req.status !== 'info_requested')) return null
   const at = new Date(ctx.now).toISOString()
 
-  // A signature completes the movement it was holding, or releases it.
-  let applyForfeitureRecord: EmdForfeiture | null = null
-  let waiveForfeiture: { forfeitureId: string; reason: string } | null = null
-  if (req.kind === 'emd_forfeiture') {
-    const record = ctx.emdForfeiture
-    if (record && record.status === 'awaiting_ceo') {
-      if (approve) applyForfeitureRecord = record
-      else waiveForfeiture = { forfeitureId: record.id, reason: note || 'Refused at CEO sign-off — EMD released back to the buyer' }
-    }
-  }
-
-  let refundOutcome: DecideCeoApprovalPlan['refundOutcome'] = null
-  if (req.kind === 'refund') {
-    const record = ctx.refund
-    if (record && record.status === 'awaiting_ceo') {
-      refundOutcome = { refundId: record.id, status: approve ? 'approved' : 'rejected' }
-    }
-  }
-
-  // A fee change is the one kind where the signature *is* the change: the
-  // proposed rates are held on the request and never touch the config until
-  // they are signed, so no sale is ever priced by an unapproved rate.
-  let feeChange: DecideCeoApprovalPlan['feeChange'] = null
-  if (req.kind === 'fee_change' && approve && req.payload) {
-    const before = ctx.financeConfigBefore
-    const payload = req.payload as Partial<FinanceConfig>
-    const changed = (Object.keys(payload) as (keyof FinanceConfig)[])
-      .map((k) => `${k} ${String(before[k])} → ${String(payload[k])}`)
-      .join(', ')
-    feeChange = { payload, audit: { action: 'config.fee_change', target: 'Financial configuration', detail: `Signed by the CEO — ${changed}`, severity: 'critical' } }
-  }
-
-  // A ban closes the account's standing; it is never deleted, so the
-  // history behind the decision stays readable.
-  const banUserId = req.kind === 'permanent_ban' && approve ? req.refId : null
+  const policy = KIND_POLICIES[req.kind] ?? noEffectPolicy
+  const effects = policy(approve, note, req, ctx)
 
   return {
     decidedAt: at,
     mainStatus: approve ? 'approved' : 'refused',
     mainAudit: { action: approve ? 'ceo.approve' : 'ceo.refuse', target: req.summary, detail: `${inr(req.amount)}${note ? ` — ${note}` : ''}`, severity: 'critical' },
-    applyForfeitureRecord,
-    waiveForfeiture,
-    refundOutcome,
-    feeChange,
-    banUserId,
+    applyForfeitureRecord: effects.applyForfeitureRecord,
+    waiveForfeiture: effects.waiveForfeiture,
+    refundOutcome: effects.refundOutcome,
+    feeChange: effects.feeChange,
+    banUserId: effects.banUserId,
     blacklistReason: note || req.reason,
-    // 'auction_publish' applies nothing here by design — the catalogue is
-    // still Operations' to publish. The signature only removes the block.
     finalNotification: { userId: req.requestedBy, kind: 'system', title: approve ? 'Signed off' : 'Refused', body: `${req.summary}${note ? ` — ${note}` : ''}`, href: CEO_REQUEST_HREF[req.kind] },
   }
 }

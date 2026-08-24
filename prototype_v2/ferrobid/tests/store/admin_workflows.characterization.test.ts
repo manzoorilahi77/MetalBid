@@ -229,6 +229,27 @@ describe('admin workflows — phase 14', () => {
       expect(useStore.getState().ceoApprovals.find((a) => a.id === req.id)!.status).toBe('refused')
     })
 
+    it('decideCeoApproval approving an auction_publish request (no dedicated branch) applies no side effect beyond status/audit/notification', async () => {
+      const useStore = await freshStore()
+      useStore.getState().signIn('executive@gmail.com', 'FerroBid@Dev2026')
+      const catBefore = useStore.getState().catalogues[0]
+      const req = useStore.getState().requestCeoSignoff({ kind: 'auction_publish', refId: catBefore.id, amount: 0, summary: 'Publish catalogue', reason: 'Above threshold' })!
+      useStore.getState().signIn('ceo@gmail.com', 'FerroBid@Dev2026')
+      const usersBefore = useStore.getState().users
+      const forfeituresBefore = useStore.getState().emdForfeitures
+      const refundsBefore = useStore.getState().refundRequests
+      const financeConfigBefore = useStore.getState().financeConfig
+
+      useStore.getState().decideCeoApproval(req.id, true, 'Go ahead')
+
+      expect(useStore.getState().ceoApprovals.find((a) => a.id === req.id)!.status).toBe('approved')
+      expect(useStore.getState().catalogues.find((c) => c.id === catBefore.id)).toEqual(catBefore)
+      expect(useStore.getState().users).toEqual(usersBefore)
+      expect(useStore.getState().emdForfeitures).toEqual(forfeituresBefore)
+      expect(useStore.getState().refundRequests).toEqual(refundsBefore)
+      expect(useStore.getState().financeConfig).toEqual(financeConfigBefore)
+    })
+
     it('decideCeoApproval approving an over-threshold EMD forfeiture applies it and locks the wallet delta', async () => {
       const useStore = await freshStore()
       useStore.getState().signIn('finance@gmail.com', 'FerroBid@Dev2026')
