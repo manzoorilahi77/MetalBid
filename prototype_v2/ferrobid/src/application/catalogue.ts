@@ -6,7 +6,7 @@
 import { defaultEmdDeadline } from '../lib/emd'
 import { catalogueReserveValue } from '../lib/money'
 import { inr } from '../lib/format'
-import { LOT_GATE_ROLES, PUBLISH_ROLES } from '../store/constants'
+import { checkLotWriterRole } from './lotTransitions'
 import type { Catalogue, CeoApprovalRequest, Lot, LotOverride, LotStatus, Role, User } from '../types'
 import type { NotificationPlan } from './opsInspection'
 
@@ -46,7 +46,8 @@ export function planPublishDraftCatalogue(
 ): PublishDraftCatalogueResult {
   // The publish gate is a state boundary, not a role boundary: four roles
   // may press it, and whoever does is named in the audit entry.
-  if (!PUBLISH_ROLES.includes(ctx.role)) return { ok: false, error: 'Not permitted for this role' }
+  const roleError = checkLotWriterRole('publishDraftCatalogue', ctx.role)
+  if (roleError) return { ok: false, error: roleError }
   const cat = ctx.catalogue
   if (!cat) return { ok: false, error: 'Catalogue not found' }
   const catLots = ctx.catalogueLots
@@ -208,7 +209,8 @@ export function planPublishCatalogue(
   overrides: Record<string, Partial<Lot>>,
   ctx: PublishCatalogueContext,
 ): PublishCatalogueResult {
-  if (!LOT_GATE_ROLES.includes(ctx.role)) return { ok: false, error: 'Only Operations or a Sub Admin builds or publishes a catalogue' }
+  const publishRoleError = checkLotWriterRole('publishCatalogue', ctx.role)
+  if (publishRoleError) return { ok: false, error: publishRoleError }
   const isDraft = cat.status === 'draft'
   const at = new Date(ctx.now).toISOString()
   const by = ctx.actorId ?? 'u-exec-1'

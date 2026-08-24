@@ -7,7 +7,7 @@
    the guards below encode exactly what each page already checked before
    rendering its button — no new rule, no new audit entry, no new threshold.
 --------------------------------------------------------------------------- */
-import { LOT_GATE_ROLES } from '../store/constants'
+import { checkLotWriterRole, checkLotWriterSourceStatus, type LotWriterKey } from './lotTransitions'
 import type { Catalogue, Lot, Role } from '../types'
 
 /* --------------------------- resolveFlaggedLot --------------------------- */
@@ -25,10 +25,12 @@ export type ResolveFlaggedLotResult =
   | { ok: false; error: string }
 
 export function planResolveFlaggedLot(lotId: string, ctx: ResolveFlaggedLotContext): ResolveFlaggedLotResult {
-  if (!LOT_GATE_ROLES.includes(ctx.role)) return { ok: false, error: 'Only Operations or a Sub Admin resolves a flagged lot' }
+  const roleError = checkLotWriterRole('resolveFlaggedLot', ctx.role)
+  if (roleError) return { ok: false, error: roleError }
   const lot = ctx.lot
   if (!lot) return { ok: false, error: 'Lot not found' }
-  if (lot.status !== 'flagged') return { ok: false, error: 'Only a flagged lot can be returned to the inspected queue' }
+  const statusError = checkLotWriterSourceStatus('resolveFlaggedLot', lot.status)
+  if (statusError) return { ok: false, error: statusError }
   return { ok: true, plan: { lotId } }
 }
 
@@ -36,10 +38,12 @@ export function planResolveFlaggedLot(lotId: string, ctx: ResolveFlaggedLotConte
 /* exec/Settlement.tsx's staLots list, which both approveSale and markUnsold
    read their ids from: status === 'sta' AND the lot's catalogue is closed. */
 
-function checkStaLot(role: Role, lot: Lot | undefined, catalogue: Catalogue | undefined): string | null {
-  if (!LOT_GATE_ROLES.includes(role)) return 'Only Operations or a Sub Admin decides an STA lot'
+function checkStaLot(key: LotWriterKey, role: Role, lot: Lot | undefined, catalogue: Catalogue | undefined): string | null {
+  const roleError = checkLotWriterRole(key, role)
+  if (roleError) return roleError
   if (!lot) return 'Lot not found'
-  if (lot.status !== 'sta') return 'Only a lot cleared below reserve (STA) can be decided here'
+  const statusError = checkLotWriterSourceStatus(key, lot.status)
+  if (statusError) return statusError
   if (catalogue?.status !== 'closed') return 'The auction has not closed yet'
   return null
 }
@@ -56,14 +60,14 @@ export type DecideStaLotResult =
 
 /* exec/Settlement.tsx approveSale: sta -> sold */
 export function planApproveStaSale(lotId: string, ctx: DecideStaLotContext): DecideStaLotResult {
-  const error = checkStaLot(ctx.role, ctx.lot, ctx.catalogue)
+  const error = checkStaLot('approveStaSale', ctx.role, ctx.lot, ctx.catalogue)
   if (error) return { ok: false, error }
   return { ok: true, plan: { lotId } }
 }
 
 /* exec/Settlement.tsx markUnsold: sta -> unsold */
 export function planMarkStaUnsold(lotId: string, ctx: DecideStaLotContext): DecideStaLotResult {
-  const error = checkStaLot(ctx.role, ctx.lot, ctx.catalogue)
+  const error = checkStaLot('markStaUnsold', ctx.role, ctx.lot, ctx.catalogue)
   if (error) return { ok: false, error }
   return { ok: true, plan: { lotId } }
 }
@@ -86,7 +90,8 @@ export type ReturnRefusedLotResult =
   | { ok: false; error: string }
 
 export function planReturnRefusedLotToPipeline(lotId: string, ctx: ReturnRefusedLotContext): ReturnRefusedLotResult {
-  if (!LOT_GATE_ROLES.includes(ctx.role)) return { ok: false, error: 'Only Operations or a Sub Admin returns a lot to the pipeline' }
+  const roleError = checkLotWriterRole('returnRefusedLotToPipeline', ctx.role)
+  if (roleError) return { ok: false, error: roleError }
   const lot = ctx.lot
   if (!lot) return { ok: false, error: 'Lot not found' }
   if (lot.sellerDecision !== 'rejected') return { ok: false, error: 'The seller has not refused a price on this lot' }

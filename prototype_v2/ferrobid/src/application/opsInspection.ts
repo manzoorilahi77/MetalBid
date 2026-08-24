@@ -10,7 +10,8 @@
 --------------------------------------------------------------------------- */
 import { uid, num } from '../lib/format'
 import { inspectionOutcomeToLotStatus, type InspectionOutcome } from '../lib/lotStatus'
-import { FIELD_INSPECTION_ROLES, LOT_GATE_ROLES, WEIGHMENT_WITNESS_ROLES } from '../store/constants'
+import { checkLotWriterRole } from './lotTransitions'
+import { LOT_GATE_ROLES, WEIGHMENT_WITNESS_ROLES } from '../store/constants'
 import type { Catalogue, DeliveryOrder, InspectionReport, Lot, LotStatus, NotificationKind, Role, User } from '../types'
 
 /* ------------------------------ submitInspection ------------------------------ */
@@ -50,7 +51,8 @@ export function planSubmitInspection(
   outcome: InspectionOutcome,
   ctx: SubmitInspectionContext,
 ): SubmitInspectionResult {
-  if (!FIELD_INSPECTION_ROLES.includes(ctx.role)) return { ok: false, error: 'Only a Field Executive, Operations or a Sub Admin files an inspection' }
+  const roleError = checkLotWriterRole('submitInspection', ctx.role)
+  if (roleError) return { ok: false, error: roleError }
   const version = ctx.priorReportCount + 1
   const rep: InspectionReport = {
     ...report, id: uid('ir'), lotId, date: new Date(ctx.now).toISOString(),
@@ -111,7 +113,8 @@ export function planDecideLot(
   reason: string | undefined,
   ctx: DecideLotContext,
 ): DecideLotResult {
-  if (!LOT_GATE_ROLES.includes(ctx.role)) return { ok: false, error: 'Only Operations or a Sub Admin decides a lot' }
+  const roleError = checkLotWriterRole('decideLot', ctx.role)
+  if (roleError) return { ok: false, error: roleError }
   if (!ctx.lot) return { ok: false, error: 'Lot not found' }
   if (outcome !== 'approved' && !reason?.trim()) {
     return { ok: false, error: 'A reason is required — the seller is shown it word for word' }
@@ -179,7 +182,8 @@ export function planWaiveInspection(
   reason: string,
   ctx: WaiveInspectionContext,
 ): WaiveInspectionResult {
-  if (!LOT_GATE_ROLES.includes(ctx.role)) return { ok: false, error: 'Only Operations or a Sub Admin may bypass an inspection' }
+  const roleError = checkLotWriterRole('waiveInspection', ctx.role)
+  if (roleError) return { ok: false, error: roleError }
   const lot = ctx.lot
   if (!lot) return { ok: false, error: 'Lot not found' }
   // The typed reason *is* the control. Bypass is deliberately not gated
