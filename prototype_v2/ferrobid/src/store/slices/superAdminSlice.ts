@@ -10,10 +10,11 @@ import {
   planRenamePage, planSetPageHidden, planMovePage, planAttachPage, planDetachPage, planAddSubPage,
 } from '../../application/pageRegistry'
 import { planUndoStructuralChange, planRestoreStructureTo } from '../../application/structuralRollback'
-import { fmtStamp, generatePassword, hash } from '../constants'
+import { planCreateSubAdmin, planSetAccountStatus } from '../../application/accountLifecycle'
+import { fmtStamp } from '../constants'
 import type { StoreGet, StoreSet, InternalHelpers } from '../internal'
 import type { State } from '../types'
-import type { AccountStatus, User } from '../../types'
+import type { AccountStatus } from '../../types'
 
 export const createSuperAdminSlice = (
   set: StoreSet, get: StoreGet, helpers: InternalHelpers,
@@ -239,64 +240,37 @@ export const createSuperAdminSlice = (
   /* ------------------- Super Admin — people --------------------------- */
 
   createSubAdmin: (input) => {
-    const err = helpers.requireSuperAdmin()
-    if (err) return err
     const s = get()
-    const name = input.name.trim()
-    const username = input.username.trim().toLowerCase()
-    if (!name || !username) return { ok: false, error: 'Both a name and a sign-in ID are needed' }
-    if (s.users.some((u) => u.username === username || u.email === input.email.trim())) {
-      return { ok: false, error: 'Those sign-in details are already in use' }
-    }
-    const password = generatePassword()
-    const id = uid('u-sub')
-    const at = new Date(s.now).toISOString()
-    const user: User = {
-      id, name, firm: 'ferroBid Technologies', phone: input.phone.trim(), email: input.email.trim(),
-      role: 'sub_admin', kycStatus: 'verified', sellerVerified: false, standing: 'good',
-      city: input.city.trim() || 'Mumbai', gstin: '—', avatarHue: (hash(id) % 360),
-      joinedAt: at, bidderId: null, sellerId: null,
-      accountStatus: 'active', username, lastActiveAt: at,
-    }
+    const result = planCreateSubAdmin(input, {
+      permissionError: helpers.requireSuperAdmin(), users: s.users, actorId: s.currentUser?.id,
+      ceo: s.users.find((u) => u.role === 'ceo'), now: s.now,
+    })
+    if (!result.ok) return result
+    const { plan } = result
     set((st) => ({
-      users: [...st.users, user],
-      passwordResets: [{ id: uid('pwr'), userId: id, mode: 'auto', password, at, byId: st.currentUser?.id ?? 'system', consumed: false }, ...st.passwordResets],
+      users: [...st.users, plan.user],
+      passwordResets: [plan.passwordReset, ...st.passwordResets],
     }))
-    helpers.recordStructural('account.create', name, `Sub Admin account created — ${username}. Every Sub Admin account is identical; work is divided by assignment, not by capability.`, null, username)
-    get().audit('account.create', username, `Sub Admin account created for ${name}`, 'critical')
-    // The CEO is told, and does not approve it — Part 8.
-    const ceo = s.users.find((u) => u.role === 'ceo')
-    if (ceo) {
-      get().notify({
-        userId: ceo.id, kind: 'system', title: 'New Sub Admin account',
-        body: `${name} (${username}) now has full operational access.`, href: '/admin/sub-admins',
-      })
-    }
-    return { ok: true, password, userId: id }
+    helpers.recordStructural(plan.structural.kind, plan.structural.target, plan.structural.summary, plan.structural.before, plan.structural.after)
+    get().audit(plan.audit.action, plan.audit.target, plan.audit.detail, plan.audit.severity)
+    if (plan.ceoNotification) get().notify(plan.ceoNotification)
+    return { ok: true, password: plan.password, userId: plan.user.id }
   },
 
   setAccountStatus: (userId, status, reason) => {
     const s = get()
-    if (s.role !== 'super_admin' && s.role !== 'sub_admin') return { ok: false, error: 'Accounts are administered by a Sub Admin or a Super Admin' }
     const user = s.users.find((u) => u.id === userId)
-    if (!user) return { ok: false, error: 'No such account' }
-    if (user.role === 'super_admin' && s.role !== 'super_admin') return { ok: false, error: 'Only another Super Admin can change a Super Admin account' }
-    if (status === 'banned') {
-      // Part 8 — a permanent ban is executed here but signed by the CEO.
-      const signed = s.ceoApprovals.some((a) => a.kind === 'permanent_ban' && a.refId === userId && a.status === 'approved')
-      if (!signed) return { ok: false, error: 'A permanent ban needs the CEO\'s signature first — raise it from Blacklist & defaulters' }
-    }
-    const before = user.accountStatus ?? 'active'
-    if (before === status) return { ok: true }
-    set((st) => ({ users: st.users.map((u) => (u.id === userId ? { ...u, accountStatus: status } : u)) }))
-    helpers.recordStructural('account.status', `${user.name} · ${user.firm}`,
-      reason?.trim() || `Account ${status}`, before, status)
-    get().audit('account.status', user.name, `${before} → ${status}${reason ? ` — ${reason}` : ''}`, 'critical')
-    get().notify({
-      userId, kind: 'system',
-      title: status === 'active' ? 'Your account is active again' : `Your account has been ${status}`,
-      body: reason?.trim() || 'Contact support if you believe this is a mistake.',
+    const result = planSetAccountStatus(status, reason, {
+      role: s.role, user,
+      banApproved: s.ceoApprovals.some((a) => a.kind === 'permanent_ban' && a.refId === userId && a.status === 'approved'),
     })
+    if (!result.ok) return result
+    const { plan } = result
+    if (plan.noop) return { ok: true }
+    set((st) => ({ users: st.users.map((u) => (u.id === userId ? { ...u, accountStatus: status } : u)) }))
+    helpers.recordStructural(plan.structural!.kind, plan.structural!.target, plan.structural!.summary, plan.structural!.before, plan.structural!.after)
+    get().audit(plan.audit!.action, plan.audit!.target, plan.audit!.detail, plan.audit!.severity)
+    get().notify(plan.notification!)
     return { ok: true }
   },
 
