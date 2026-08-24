@@ -38,6 +38,12 @@ export const commissionFor = (l: Lot, cfg: FinanceConfig): number | null => {
   return upside == null ? null : Math.max(0, upside) * (cfg.sellerCommissionPct / 100)
 }
 
+/** Reserve value of a whole catalogue's lots — what the Publish gate checks
+ *  against the CEO sign-off threshold. Same `rate × qty` sum wherever a
+ *  catalogue's reserve total is needed. */
+export const catalogueReserveValue = (lots: Lot[]) =>
+  lots.reduce((sum, l) => sum + reserveValue(l), 0)
+
 /** The lots a commission is actually charged on: sold or below-reserve lots the
  *  seller has *accepted*. A rejected price attracts nothing. */
 export const billableLots = (lots: Lot[]) =>

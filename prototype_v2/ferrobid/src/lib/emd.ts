@@ -88,3 +88,15 @@ export function emdBlockedMessage(cat: Pick<Catalogue, 'code' | 'emdDeadline' | 
   const when = d.toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', hour12: true })
   return `EMD for ${cat.code} closed on ${when} IST. Pre-bid EMD has to be funded before the deadline — this auction can no longer be joined.`
 }
+
+/** Total pre-bid EMD a buyer has to put up to fund this set of lots. */
+export function totalEmdRequired(lots: { preBidEmd: number }[]): number {
+  return lots.reduce((sum, l) => sum + l.preBidEmd, 0)
+}
+
+/** What can actually be forfeited off a lot: never more than what is still
+ *  locked in the buyer's wallet against it, even if `preBidEmd` is larger
+ *  (part of it may have already been released or forfeited elsewhere). */
+export function emdForfeitureAmount(lotPreBidEmd: number, walletEmdLocked: number): number {
+  return Math.min(lotPreBidEmd, walletEmdLocked)
+}
