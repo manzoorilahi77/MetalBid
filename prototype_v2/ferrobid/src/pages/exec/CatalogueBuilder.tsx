@@ -326,7 +326,11 @@ export default function CatalogueBuilder() {
       termsSetId,
       description: `${selected.length} lot${selected.length > 1 ? 's' : ''} of ${[...new Set(selected.map((l) => l.metal))].join(', ')} offered as-is-where-is from ${yard}. E-auction on ferroBid; quantity indicative — final on weighment.`,
     }
-    publishCatalogue(cat, selectedIds, overrides)
+    const res = publishCatalogue(cat, selectedIds, overrides)
+    if (!res.ok) {
+      pushToast({ kind: 'danger', title: 'Could not assign this catalogue', body: res.error })
+      return
+    }
     const exec = users.find((u) => u.id === fieldExecId)
     pushToast({
       kind: 'success',

@@ -183,7 +183,7 @@ export interface State {
   createLot: (lot: Partial<Lot>) => { ok: boolean; error?: string; lotId?: string }
 
   /* --- ops / admin --- */
-  submitInspection: (lotId: string, report: Omit<InspectionReport, 'id' | 'lotId' | 'date'>, outcome: 'verified' | 'flagged' | 'rejected') => void
+  submitInspection: (lotId: string, report: Omit<InspectionReport, 'id' | 'lotId' | 'date'>, outcome: 'verified' | 'flagged' | 'rejected') => { ok: boolean; error?: string }
   /** flagged -> inspected. Phase 28b: exec/Pipeline's "Resolve" button used to
    *  write this with no role or source-status check at all. */
   resolveFlaggedLot: (lotId: string) => { ok: boolean; error?: string }
@@ -209,7 +209,7 @@ export interface State {
   confirmHandover: (doId: string, note?: string) => { ok: boolean; error?: string }
   setSellerLotDecision: (lotId: string, decision: 'accepted' | 'rejected' | null) => { ok: boolean; error?: string }
   recordCommissionSettlement: (catalogueId: string, amount: number, mode: 'transfer' | 'emd', reference?: string) => { ok: boolean; error?: string }
-  publishCatalogue: (cat: Catalogue, lotIds: string[], overrides: Record<string, Partial<Lot>>) => void
+  publishCatalogue: (cat: Catalogue, lotIds: string[], overrides: Record<string, Partial<Lot>>) => { ok: boolean; error?: string }
   assignCatalogue: (catalogueId: string, fieldExecId: string) => void
   /** **Bypass** — accept a trusted seller's lot without a yard visit. Not gated
    *  behind a second approval by design; controlled instead by a typed reason,

@@ -81,6 +81,8 @@ export const RESULT_ROLES: Role[] = ['auction_manager', 'sub_admin', 'super_admi
  *  and the Sub Admin does the same job when covering; both act directly, and
  *  every action is audited by name. */
 export const LOT_GATE_ROLES: Role[] = ['exec_manager', 'sub_admin', 'super_admin']
+/** Filing a field inspection report — matches /field/inspect's RequireRole. */
+export const FIELD_INSPECTION_ROLES: Role[] = ['field_exec', 'exec_manager', 'sub_admin', 'super_admin']
 /** Broadcasting to a catalogue's participants. */
 export const ANNOUNCE_ROLES: Role[] = ['auction_manager', 'exec_manager', 'sub_admin', 'super_admin']
 /** Putting a bid on the record, and escalating it as a void request. */

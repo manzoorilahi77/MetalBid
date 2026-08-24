@@ -6,7 +6,7 @@
 import { defaultEmdDeadline } from '../lib/emd'
 import { catalogueReserveValue } from '../lib/money'
 import { inr } from '../lib/format'
-import { PUBLISH_ROLES } from '../store/constants'
+import { LOT_GATE_ROLES, PUBLISH_ROLES } from '../store/constants'
 import type { Catalogue, CeoApprovalRequest, Lot, LotOverride, LotStatus, Role, User } from '../types'
 import type { NotificationPlan } from './opsInspection'
 
@@ -166,9 +166,11 @@ export function planAssignCatalogue(
 /* This is the direct catalogue-assembly/publish action (draft assembly for field
    inspection, or a direct live publish) — distinct from publishDraftCatalogue
    above, which is the CEO-gated "go live" step run from an already-assembled
-   draft. Neither original action carries a role/permission guard in its body,
-   so this plan function has no failure branch either — that is existing
-   behavior, preserved exactly. */
+   draft. Phase 28c: added the role guard its one caller (exec/CatalogueBuilder,
+   route-gated to LOT_GATE_ROLES) always implied but the action itself never
+   checked. The target-status branching below (live/approved/pending_inspection
+   depending on catalogue state) is real business logic, not a single fixed
+   transition, and stays untouched — no status precondition added. */
 
 export interface PublishCatalogueLotResult {
   lotId: string
@@ -190,17 +192,23 @@ export interface PublishCataloguePlan {
 }
 
 export interface PublishCatalogueContext {
+  role: Role
   now: number
   actorId: string | undefined
   lots: Lot[]
 }
+
+export type PublishCatalogueResult =
+  | { ok: true; plan: PublishCataloguePlan }
+  | { ok: false; error: string }
 
 export function planPublishCatalogue(
   cat: Catalogue,
   lotIds: string[],
   overrides: Record<string, Partial<Lot>>,
   ctx: PublishCatalogueContext,
-): PublishCataloguePlan {
+): PublishCatalogueResult {
+  if (!LOT_GATE_ROLES.includes(ctx.role)) return { ok: false, error: 'Only Operations or a Sub Admin builds or publishes a catalogue' }
   const isDraft = cat.status === 'draft'
   const at = new Date(ctx.now).toISOString()
   const by = ctx.actorId ?? 'u-exec-1'
@@ -238,39 +246,42 @@ export function planPublishCatalogue(
   })
 
   return {
-    isDraft,
-    lotResults,
-    changed,
-    mainAudit: {
-      action: isDraft ? 'catalogue.assign' : 'catalogue.publish', target: cat.code,
-      detail: isDraft ? `Assembled "${cat.title}" with ${lotIds.length} lots — assigned for field inspection` : `Published "${cat.title}" with ${lotIds.length} lots`,
-      severity: 'info',
+    ok: true,
+    plan: {
+      isDraft,
+      lotResults,
+      changed,
+      mainAudit: {
+        action: isDraft ? 'catalogue.assign' : 'catalogue.publish', target: cat.code,
+        detail: isDraft ? `Assembled "${cat.title}" with ${lotIds.length} lots — assigned for field inspection` : `Published "${cat.title}" with ${lotIds.length} lots`,
+        severity: 'info',
+      },
+      overrideAudit: changed.length > 0
+        ? {
+          action: 'catalogue.override', target: cat.code,
+          detail: `${changed.length} seller term${changed.length === 1 ? '' : 's'} overridden — ${changed.map((c) => `${c.label} ${c.from} → ${c.to}`).join('; ')}`,
+          severity: 'warning',
+        }
+        : null,
+      sellerOverrideNotification: changed.length > 0 && cat.sellerId
+        ? {
+          userId: cat.sellerId, kind: 'system', title: `Terms adjusted on ${cat.code}`,
+          body: `${changed.map((c) => `${c.label}: ${c.from} → ${c.to}`).join(' · ')}. Your original values are kept on the lot record.`,
+          href: '/seller/lots',
+        }
+        : null,
+      broadcastNotification: !isDraft
+        ? { userId: null, kind: 'lifecycle', title: `New catalogue ${cat.code}`, body: cat.title, href: `/catalogue/${cat.id}` }
+        : null,
+      // Assembled as a draft and routed for inspection — the field executive is
+      // told, rather than left to discover it on their queue.
+      fieldExecNotification: isDraft && cat.assignedFieldExecId
+        ? {
+          userId: cat.assignedFieldExecId, kind: 'system', title: `${cat.code} assigned to you`,
+          body: `${lotIds.length} lot${lotIds.length === 1 ? '' : 's'} at ${cat.yardName} — ${cat.title}.`,
+          href: `/field/catalogue/${cat.id}`,
+        }
+        : null,
     },
-    overrideAudit: changed.length > 0
-      ? {
-        action: 'catalogue.override', target: cat.code,
-        detail: `${changed.length} seller term${changed.length === 1 ? '' : 's'} overridden — ${changed.map((c) => `${c.label} ${c.from} → ${c.to}`).join('; ')}`,
-        severity: 'warning',
-      }
-      : null,
-    sellerOverrideNotification: changed.length > 0 && cat.sellerId
-      ? {
-        userId: cat.sellerId, kind: 'system', title: `Terms adjusted on ${cat.code}`,
-        body: `${changed.map((c) => `${c.label}: ${c.from} → ${c.to}`).join(' · ')}. Your original values are kept on the lot record.`,
-        href: '/seller/lots',
-      }
-      : null,
-    broadcastNotification: !isDraft
-      ? { userId: null, kind: 'lifecycle', title: `New catalogue ${cat.code}`, body: cat.title, href: `/catalogue/${cat.id}` }
-      : null,
-    // Assembled as a draft and routed for inspection — the field executive is
-    // told, rather than left to discover it on their queue.
-    fieldExecNotification: isDraft && cat.assignedFieldExecId
-      ? {
-        userId: cat.assignedFieldExecId, kind: 'system', title: `${cat.code} assigned to you`,
-        body: `${lotIds.length} lot${lotIds.length === 1 ? '' : 's'} at ${cat.yardName} — ${cat.title}.`,
-        href: `/field/catalogue/${cat.id}`,
-      }
-      : null,
   }
 }

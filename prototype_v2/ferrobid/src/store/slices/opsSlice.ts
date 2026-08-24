@@ -24,7 +24,8 @@ export const createOpsSlice = (
     const s = get()
     const me = s.currentUser
     const lot = s.lots.find((l) => l.id === lotId)
-    const plan = planSubmitInspection(lotId, report, outcome, {
+    const result = planSubmitInspection(lotId, report, outcome, {
+      role: s.role,
       now: s.now,
       lot,
       priorReportCount: s.inspectionReports.filter((r) => r.lotId === lotId).length,
@@ -32,6 +33,8 @@ export const createOpsSlice = (
       inspectorName: me?.name ?? 'Field executive',
       sellerId: helpers.sellerOfLot(lot),
     })
+    if (!result.ok) return result
+    const { plan } = result
     set((st) => ({
       inspectionReports: [...st.inspectionReports, plan.report],
       lots: st.lots.map((l) => (l.id === lotId ? { ...l, status: plan.lotStatus, inspectionReportId: plan.report.id } : l)),
@@ -43,6 +46,7 @@ export const createOpsSlice = (
     // hold the lot gate, so both are told a report has landed.
     helpers.notifyRole(['exec_manager', 'sub_admin'], plan.opsNotification)
     if (plan.sellerNotification) get().notify(plan.sellerNotification)
+    return { ok: true }
   },
 
   resolveFlaggedLot: (lotId) => {
@@ -182,7 +186,9 @@ export const createOpsSlice = (
   },
 
   publishCatalogue: (cat, lotIds, overrides) => {
-    const plan = planPublishCatalogue(cat, lotIds, overrides, { now: get().now, actorId: get().currentUser?.id, lots: get().lots })
+    const result = planPublishCatalogue(cat, lotIds, overrides, { role: get().role, now: get().now, actorId: get().currentUser?.id, lots: get().lots })
+    if (!result.ok) return result
+    const { plan } = result
     const lotResultById = new Map(plan.lotResults.map((r) => [r.lotId, r]))
     set((st) => ({
       catalogues: [...st.catalogues, { ...cat, lotIds }],
@@ -205,6 +211,7 @@ export const createOpsSlice = (
     }
     if (plan.broadcastNotification) get().notify(plan.broadcastNotification)
     if (plan.fieldExecNotification) get().notify(plan.fieldExecNotification)
+    return { ok: true }
   },
 
   assignCatalogue: (catalogueId, fieldExecId) => {

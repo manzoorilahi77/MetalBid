@@ -256,5 +256,35 @@ describe('ops workflows — phase 12', () => {
       expect(useStore.getState().notifications.length).toBeGreaterThan(startNotif)
       expect(useStore.getState().notifications.some((n) => n.title === 'AUC-P12-L assigned to you')).toBe(false)
     })
+
+    it.skip('BEFORE Phase 28c: publishCatalogue accepted a call from a buyer, with no role check at all', async () => {
+      const useStore = await freshStore()
+      useStore.getState().signIn('buy@gmail.com', 'FerroBid@Dev2026')
+      const baseLot = useStore.getState().lots[0]
+      const baseCat = useStore.getState().catalogues[0]
+      const lotA = cloneLot(baseLot, { id: 'lot-p12-e', catalogueId: null as unknown as string, status: 'pending_inspection', inspectionWaived: false, overrides: undefined })
+      useStore.setState((s) => ({ lots: [...s.lots, lotA] }))
+      const draftCat: Catalogue = { ...baseCat, id: 'cat-p12-nogate', code: 'AUC-P12-NG', status: 'draft', lotIds: [], assignedFieldExecId: 'u-field-1' }
+
+      useStore.getState().publishCatalogue(draftCat, ['lot-p12-e'], {})
+
+      expect(useStore.getState().lots.find((l) => l.id === 'lot-p12-e')!.catalogueId).toBe('cat-p12-nogate')
+    })
+
+    it('AFTER Phase 28c: publishCatalogue refuses a caller who is not Operations or a Sub Admin', async () => {
+      const useStore = await freshStore()
+      useStore.getState().signIn('buy@gmail.com', 'FerroBid@Dev2026')
+      const baseLot = useStore.getState().lots[0]
+      const baseCat = useStore.getState().catalogues[0]
+      const lotA = cloneLot(baseLot, { id: 'lot-p12-e', catalogueId: null as unknown as string, status: 'pending_inspection', inspectionWaived: false, overrides: undefined })
+      useStore.setState((s) => ({ lots: [...s.lots, lotA] }))
+      const draftCat: Catalogue = { ...baseCat, id: 'cat-p12-nogate', code: 'AUC-P12-NG', status: 'draft', lotIds: [], assignedFieldExecId: 'u-field-1' }
+
+      const result = useStore.getState().publishCatalogue(draftCat, ['lot-p12-e'], {})
+
+      expect(result).toEqual({ ok: false, error: 'Only Operations or a Sub Admin builds or publishes a catalogue' })
+      expect(useStore.getState().lots.find((l) => l.id === 'lot-p12-e')!.catalogueId).toBe(null)
+      expect(useStore.getState().catalogues.some((c) => c.id === 'cat-p12-nogate')).toBe(false)
+    })
   })
 })

@@ -77,7 +77,11 @@ export default function InspectLot() {
       photoCount,
       status: outcome,
     }
-    submitInspection(lot.id, report, outcome)
+    const res = submitInspection(lot.id, report, outcome)
+    if (!res.ok) {
+      pushToast({ kind: 'danger', title: 'Could not file this inspection', body: res.error })
+      return
+    }
     pushToast({
       kind: outcome === 'verified' ? 'success' : outcome === 'flagged' ? 'warning' : 'danger',
       title: `${lot.lotNo} ${outcome}${version > 1 ? ` · report v${version}` : ''}`,

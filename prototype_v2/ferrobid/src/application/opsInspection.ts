@@ -10,12 +10,13 @@
 --------------------------------------------------------------------------- */
 import { uid, num } from '../lib/format'
 import { inspectionOutcomeToLotStatus, type InspectionOutcome } from '../lib/lotStatus'
-import { LOT_GATE_ROLES, WEIGHMENT_WITNESS_ROLES } from '../store/constants'
+import { FIELD_INSPECTION_ROLES, LOT_GATE_ROLES, WEIGHMENT_WITNESS_ROLES } from '../store/constants'
 import type { Catalogue, DeliveryOrder, InspectionReport, Lot, LotStatus, NotificationKind, Role, User } from '../types'
 
 /* ------------------------------ submitInspection ------------------------------ */
 
 export interface SubmitInspectionContext {
+  role: Role
   now: number
   lot: Lot | undefined
   priorReportCount: number
@@ -39,12 +40,17 @@ export interface SubmitInspectionPlan {
   sellerNotification: (NotificationPlan & { userId: string }) | null
 }
 
+export type SubmitInspectionResult =
+  | { ok: true; plan: SubmitInspectionPlan }
+  | { ok: false; error: string }
+
 export function planSubmitInspection(
   lotId: string,
   report: Omit<InspectionReport, 'id' | 'lotId' | 'date'>,
   outcome: InspectionOutcome,
   ctx: SubmitInspectionContext,
-): SubmitInspectionPlan {
+): SubmitInspectionResult {
+  if (!FIELD_INSPECTION_ROLES.includes(ctx.role)) return { ok: false, error: 'Only a Field Executive, Operations or a Sub Admin files an inspection' }
   const version = ctx.priorReportCount + 1
   const rep: InspectionReport = {
     ...report, id: uid('ir'), lotId, date: new Date(ctx.now).toISOString(),
@@ -54,21 +60,24 @@ export function planSubmitInspection(
   const title = `${ctx.lot?.lotNo ?? 'Lot'} inspection ${outcome}`
   const measured = `${report.measuredQty} ${report.uom} measured against ${ctx.lot?.indicativeQty ?? '—'} ${report.uom} declared`
   return {
-    report: rep,
-    lotStatus,
-    audit: {
-      action: 'inspection.submit',
-      target: ctx.lot?.lotNo ?? lotId,
-      detail: `Inspection ${outcome} — measured ${report.measuredQty} ${report.uom}${version > 1 ? ` (version ${version})` : ''}`,
+    ok: true,
+    plan: {
+      report: rep,
+      lotStatus,
+      audit: {
+        action: 'inspection.submit',
+        target: ctx.lot?.lotNo ?? lotId,
+        detail: `Inspection ${outcome} — measured ${report.measuredQty} ${report.uom}${version > 1 ? ` (version ${version})` : ''}`,
+      },
+      opsNotification: {
+        kind: 'system', title,
+        body: `${ctx.inspectorName} filed report ${version > 1 ? `v${version} ` : ''}— ${measured}. Awaiting your decision.`,
+        href: '/exec/approvals',
+      },
+      sellerNotification: ctx.sellerId
+        ? { userId: ctx.sellerId, kind: 'system', title, body: `${measured}. Operations decides the lot next.`, href: '/seller/lots' }
+        : null,
     },
-    opsNotification: {
-      kind: 'system', title,
-      body: `${ctx.inspectorName} filed report ${version > 1 ? `v${version} ` : ''}— ${measured}. Awaiting your decision.`,
-      href: '/exec/approvals',
-    },
-    sellerNotification: ctx.sellerId
-      ? { userId: ctx.sellerId, kind: 'system', title, body: `${measured}. Operations decides the lot next.`, href: '/seller/lots' }
-      : null,
   }
 }
 

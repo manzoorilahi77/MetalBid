@@ -27,6 +27,50 @@ describe('ops / inspection pipeline', () => {
     expect(updated.inspectionReportId).toBeTruthy()
   })
 
+  it('submitInspection succeeds for a Field Executive, the real caller of /field/inspect', async () => {
+    const useStore = await freshStore()
+    useStore.getState().signIn('field@gmail.com', 'FerroBid@Dev2026')
+    const lot = useStore.getState().lots.find((l) => l.status === 'pending_inspection')!
+
+    const result = useStore.getState().submitInspection(
+      lot.id,
+      { measuredQty: lot.indicativeQty, uom: lot.uom, condition: 'good', notes: 'ok', checklist: [], photoCount: 0, inspectorId: '', status: 'verified' },
+      'verified',
+    )
+
+    expect(result).toEqual({ ok: true })
+    expect(useStore.getState().lots.find((l) => l.id === lot.id)!.status).toBe('inspected')
+  })
+
+  it.skip('BEFORE Phase 28c: submitInspection accepted a report from a buyer, with no role check at all', async () => {
+    const useStore = await freshStore()
+    useStore.getState().signIn('buy@gmail.com', 'FerroBid@Dev2026')
+    const lot = useStore.getState().lots.find((l) => l.status === 'pending_inspection')!
+
+    useStore.getState().submitInspection(
+      lot.id,
+      { measuredQty: lot.indicativeQty, uom: lot.uom, condition: 'good', notes: 'ok', checklist: [], photoCount: 0, inspectorId: '', status: 'verified' },
+      'verified',
+    )
+
+    expect(useStore.getState().lots.find((l) => l.id === lot.id)!.status).toBe('inspected')
+  })
+
+  it('AFTER Phase 28c: submitInspection refuses a caller who is not a Field Executive, Operations or a Sub Admin', async () => {
+    const useStore = await freshStore()
+    useStore.getState().signIn('buy@gmail.com', 'FerroBid@Dev2026')
+    const lot = useStore.getState().lots.find((l) => l.status === 'pending_inspection')!
+
+    const result = useStore.getState().submitInspection(
+      lot.id,
+      { measuredQty: lot.indicativeQty, uom: lot.uom, condition: 'good', notes: 'ok', checklist: [], photoCount: 0, inspectorId: '', status: 'verified' },
+      'verified',
+    )
+
+    expect(result).toEqual({ ok: false, error: 'Only a Field Executive, Operations or a Sub Admin files an inspection' })
+    expect(useStore.getState().lots.find((l) => l.id === lot.id)!.status).toBe('pending_inspection')
+  })
+
   it('decideLot refuses a caller who is not Operations or a Sub Admin', async () => {
     const useStore = await freshStore()
     useStore.getState().signIn('buy@gmail.com', 'FerroBid@Dev2026')
