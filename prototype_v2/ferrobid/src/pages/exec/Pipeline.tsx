@@ -34,7 +34,7 @@ export default function Pipeline() {
   const catalogues = useStore((s) => s.catalogues)
   const users = useStore((s) => s.users)
   const reports = useStore((s) => s.inspectionReports)
-  const setLotStatus = useStore((s) => s.setLotStatus)
+  const resolveFlaggedLot = useStore((s) => s.resolveFlaggedLot)
   const decideLot = useStore((s) => s.decideLot)
   const pushToast = useStore((s) => s.pushToast)
 
@@ -116,7 +116,12 @@ export default function Pipeline() {
       case 'attention':
         return l.status === 'rejected' ? null : (
           <Button size="sm" variant="secondary" className="w-full"
-            onClick={() => { setLotStatus(l.id, 'inspected'); pushToast({ kind: 'success', title: `${l.lotNo} resolved`, body: 'Returned to the inspected queue for approval.' }) }}>
+            onClick={() => {
+              const res = resolveFlaggedLot(l.id)
+              pushToast(res.ok
+                ? { kind: 'success', title: `${l.lotNo} resolved`, body: 'Returned to the inspected queue for approval.' }
+                : { kind: 'danger', title: 'Could not resolve this lot', body: res.error })
+            }}>
             Resolve
           </Button>
         )

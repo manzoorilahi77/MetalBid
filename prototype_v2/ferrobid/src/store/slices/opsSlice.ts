@@ -2,6 +2,7 @@ import { inr } from '../../lib/format'
 import { planSubmitInspection, planDecideLot, planWaiveInspection, planDecideSellerKyc, planConfirmHandover } from '../../application/opsInspection'
 import { planPublishDraftCatalogue, planAssignCatalogue, planPublishCatalogue } from '../../application/catalogue'
 import { planSetSellerLotDecision, planRecordCommissionSettlement } from '../../application/sellerWorkflow'
+import { planResolveFlaggedLot, planApproveStaSale, planMarkStaUnsold, planReturnRefusedLotToPipeline } from '../../application/lotResolution'
 import { AUCTION_FLOOR_ROLES } from '../constants'
 import type { StoreGet, StoreSet, InternalHelpers } from '../internal'
 import type { State } from '../types'
@@ -10,7 +11,8 @@ import type { LotStatus } from '../../types'
 export const createOpsSlice = (
   set: StoreSet, get: StoreGet, helpers: InternalHelpers,
 ): Pick<State,
-  'submitInspection' | 'setLotStatus' | 'decideLot' | 'decideSellerKyc' | 'confirmHandover' | 'setSellerLotDecision'
+  'submitInspection' | 'setLotStatus' | 'resolveFlaggedLot' | 'approveStaSale' | 'markStaUnsold' | 'returnRefusedLotToPipeline'
+  | 'decideLot' | 'decideSellerKyc' | 'confirmHandover' | 'setSellerLotDecision'
   | 'recordCommissionSettlement' | 'publishCatalogue' | 'assignCatalogue' | 'waiveInspection' | 'publishDraftCatalogue'
   | 'pauseCatalogue' | 'resumeCatalogue' | 'extendCatalogue' | 'cancelCatalogue' | 'voidBid'
 > => ({
@@ -45,6 +47,41 @@ export const createOpsSlice = (
 
   setLotStatus: (lotId, status) => {
     set((st) => ({ lots: st.lots.map((l) => (l.id === lotId ? { ...l, status } : l)) }))
+  },
+
+  resolveFlaggedLot: (lotId) => {
+    const s = get()
+    const result = planResolveFlaggedLot(lotId, { role: s.role, lot: s.lots.find((l) => l.id === lotId) })
+    if (!result.ok) return result
+    set((st) => ({ lots: st.lots.map((l) => (l.id === lotId ? { ...l, status: 'inspected' as LotStatus } : l)) }))
+    return { ok: true }
+  },
+
+  approveStaSale: (lotId) => {
+    const s = get()
+    const lot = s.lots.find((l) => l.id === lotId)
+    const result = planApproveStaSale(lotId, { role: s.role, lot, catalogue: lot ? s.catalogues.find((c) => c.id === lot.catalogueId) : undefined })
+    if (!result.ok) return result
+    set((st) => ({ lots: st.lots.map((l) => (l.id === lotId ? { ...l, status: 'sold' as LotStatus } : l)) }))
+    return { ok: true }
+  },
+
+  markStaUnsold: (lotId) => {
+    const s = get()
+    const lot = s.lots.find((l) => l.id === lotId)
+    const result = planMarkStaUnsold(lotId, { role: s.role, lot, catalogue: lot ? s.catalogues.find((c) => c.id === lot.catalogueId) : undefined })
+    if (!result.ok) return result
+    set((st) => ({ lots: st.lots.map((l) => (l.id === lotId ? { ...l, status: 'unsold' as LotStatus } : l)) }))
+    return { ok: true }
+  },
+
+  returnRefusedLotToPipeline: (lotId) => {
+    const s = get()
+    const lot = s.lots.find((l) => l.id === lotId)
+    const result = planReturnRefusedLotToPipeline(lotId, { role: s.role, lot, catalogue: lot ? s.catalogues.find((c) => c.id === lot.catalogueId) : undefined })
+    if (!result.ok) return result
+    set((st) => ({ lots: st.lots.map((l) => (l.id === lotId ? { ...l, status: 'unsold' as LotStatus } : l)) }))
+    return { ok: true }
   },
 
   decideLot: (lotId, outcome, reason) => {

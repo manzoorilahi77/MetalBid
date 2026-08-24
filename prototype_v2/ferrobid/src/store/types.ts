@@ -185,6 +185,20 @@ export interface State {
   /* --- ops / admin --- */
   submitInspection: (lotId: string, report: Omit<InspectionReport, 'id' | 'lotId' | 'date'>, outcome: 'verified' | 'flagged' | 'rejected') => void
   setLotStatus: (lotId: string, status: LotStatus) => void
+  /** flagged -> inspected. Phase 28b: guarded replacement for the exec/Pipeline
+   *  "Resolve" button, which used to call setLotStatus with no role or
+   *  source-status check at all. */
+  resolveFlaggedLot: (lotId: string) => { ok: boolean; error?: string }
+  /** sta -> sold. Phase 28b: guarded replacement for exec/Settlement's
+   *  approveSale, previously a bare setLotStatus call. */
+  approveStaSale: (lotId: string) => { ok: boolean; error?: string }
+  /** sta -> unsold. Phase 28b: guarded replacement for exec/Settlement's
+   *  markUnsold, previously a bare setLotStatus call. */
+  markStaUnsold: (lotId: string) => { ok: boolean; error?: string }
+  /** sold|sta -> unsold, on a lot whose seller refused the cleared price.
+   *  Phase 28b: guarded replacement for exec/Settlement's returnToPipeline,
+   *  previously a bare setLotStatus call. */
+  returnRefusedLotToPipeline: (lotId: string) => { ok: boolean; error?: string }
   /** The quality gate: approve, send back for re-inspection, or reject a lot.
    *  Every outcome is audited by name and the seller is told — this is the one
    *  decision that puts material in front of buyers, and it used to write

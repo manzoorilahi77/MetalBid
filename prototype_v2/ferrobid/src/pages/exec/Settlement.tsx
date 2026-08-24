@@ -30,7 +30,9 @@ export default function Settlement() {
   const users = useStore((s) => s.users)
   const catalogues = useStore((s) => s.catalogues)
   const deliveryOrders = useStore((s) => s.deliveryOrders)
-  const setLotStatus = useStore((s) => s.setLotStatus)
+  const returnRefusedLotToPipeline = useStore((s) => s.returnRefusedLotToPipeline)
+  const approveStaSale = useStore((s) => s.approveStaSale)
+  const markStaUnsold = useStore((s) => s.markStaUnsold)
   const advanceDeliveryOrder = useStore((s) => s.advanceDeliveryOrder)
   const issueDemandDraft = useStore((s) => s.issueDemandDraft)
   const audit = useStore((s) => s.audit)
@@ -56,7 +58,8 @@ export default function Settlement() {
   const returnToPipeline = (id: string) => {
     const l = lots.find((x) => x.id === id)
     if (!l) return
-    setLotStatus(id, 'unsold')
+    const res = returnRefusedLotToPipeline(id)
+    if (!res.ok) { pushToast({ kind: 'danger', title: 'Could not return this lot', body: res.error }); return }
     audit('settlement.refused_price', l.lotNo,
       `Seller refused ${inr(l.resultH1Rate ?? 0)}/${l.uom} — lot returned to the pipeline for re-auction (${catCode(l.catalogueId)})`, 'warning')
     pushToast({
@@ -68,13 +71,15 @@ export default function Settlement() {
 
   const approveSale = (id: string) => {
     const l = lots.find((x) => x.id === id)!
-    setLotStatus(id, 'sold')
+    const res = approveStaSale(id)
+    if (!res.ok) { pushToast({ kind: 'danger', title: 'Could not approve this sale', body: res.error }); return }
     audit('settlement.sta_approve', l.lotNo, `H1 of ${inr(l.resultH1Rate ?? l.currentRate ?? 0)}/${l.uom} accepted below reserve (${catCode(l.catalogueId)})`, 'warning')
     pushToast({ kind: 'success', title: `${l.lotNo} sale approved`, body: 'H1 accepted — delivery order will be issued after payment.' })
   }
   const markUnsold = (id: string) => {
     const l = lots.find((x) => x.id === id)!
-    setLotStatus(id, 'unsold')
+    const res = markStaUnsold(id)
+    if (!res.ok) { pushToast({ kind: 'danger', title: 'Could not mark this lot unsold', body: res.error }); return }
     audit('settlement.sta_reject', l.lotNo, `H1 rejected below reserve — lot marked unsold (${catCode(l.catalogueId)})`, 'warning')
     pushToast({ kind: 'info', title: `${l.lotNo} marked unsold`, body: 'EMD will be auto-released; lot returns to the pipeline for re-auction.' })
   }
