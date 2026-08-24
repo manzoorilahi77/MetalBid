@@ -173,26 +173,27 @@ export async function rollbackBlock({ auth, blockId, version }) {
   return { id: blockId, status: 'published', version: next, restoredFrom: version }
 }
 
-/** The CEO's signature queue for content. */
-export async function signBlock({ auth, blockId, approve, note = null }) {
+/** The CEO's signature queue for content.
+ *
+ *  Split across two functions rather than one, so cms.mjs's signBlock handler
+ *  can own the branch that matters: on approval it re-enters the real
+ *  publishBlock HANDLER (not this service directly), the same way the
+ *  original single-file version did — including that handler's own
+ *  requireEditor recheck. That recheck is always-true once the role is forced
+ *  to 'ceo', but it is a defense-in-depth check on a CEO-authorization path,
+ *  and trimming it was never something this extraction needed to do. */
+export async function checkSignable(blockId) {
   const block = await repo.findBlockById(blockId)
   if (!block) throw Object.assign(new Error('No such block'), { status: 404, expected: true })
   if (block.status !== 'ceo_pending') throw invalid('That page is not waiting for a signature')
+  return block
+}
 
-  if (!approve) {
-    await repo.markBlockReturned({ id: blockId, note, now: toDbDateTime(new Date()) })
-    await log({ target: 'cms_block', targetId: blockId, action: 'publish',
-      before: { status: 'ceo_pending' }, after: { status: 'returned' }, auth, reason: note })
-    return { id: blockId, status: 'returned' }
-  }
-
-  /* Original behavior: signing re-enters publishBlock with the role forced to
-     'ceo'. That role always satisfies publishBlock's own checks (it is in
-     CEO_ROLES, and "auth.role !== 'super_admin'" is true for it), so calling
-     the service function directly here — instead of round-tripping back
-     through the handler's requireEditor, which this forced role would also
-     always pass — is observably identical. */
-  return publishBlock({ auth: { ...auth, role: 'ceo' }, blockId, note })
+export async function returnBlock({ auth, blockId, note }) {
+  await repo.markBlockReturned({ id: blockId, note, now: toDbDateTime(new Date()) })
+  await log({ target: 'cms_block', targetId: blockId, action: 'publish',
+    before: { status: 'ceo_pending' }, after: { status: 'returned' }, auth, reason: note })
+  return { id: blockId, status: 'returned' }
 }
 
 /* ============================ section switches ============================ */

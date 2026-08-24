@@ -96,7 +96,14 @@ export async function signBlock({ auth, blockId, approve, note = null }) {
   if (!hasRole(auth.role, CEO_ROLES)) throw service.deny('Only the CEO can sign this')
   const id = idField(blockId, 'blockId')
   const ok = bool(approve, 'approve')
-  return service.signBlock({ auth, blockId: id, approve: ok, note })
+
+  await service.checkSignable(id)
+  if (!ok) return service.returnBlock({ auth, blockId: id, note })
+
+  /* Approving re-enters this file's own publishBlock, role forced to 'ceo' —
+     the original single-file version's exact structure, requireEditor
+     recheck included. */
+  return publishBlock({ auth: { ...auth, role: 'ceo' }, blockId: id, note })
 }
 
 /* ============================ section switches ============================ */
