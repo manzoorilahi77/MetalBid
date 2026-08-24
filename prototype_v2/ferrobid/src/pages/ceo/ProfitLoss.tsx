@@ -23,7 +23,7 @@ import { Chip, EmptyState, PageHeader } from '../../components/ui'
 import { useStore } from '../../store/store'
 import { inr, inrCompact, num } from '../../lib/format'
 import { delta } from '../../lib/money'
-import { LedgerRow, ShareBar, commissionBreakdown } from '../finance/shared'
+import { LedgerRow, ShareBar, commissionBreakdown } from '../shared/finance'
 import { Headline, NotMyDecision, PlainStat, Question, Ranked, TrendBars, incomeByMonth, useBooks, useGrowth, useSignatureQueue } from './shared'
 
 export default function CeoProfitLoss() {

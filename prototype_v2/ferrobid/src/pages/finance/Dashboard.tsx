@@ -21,7 +21,7 @@ import { Chip, EmptyState, PageHeader, cx } from '../../components/ui'
 import { useStore } from '../../store/store'
 import { inr, inrCompact, num, relTime } from '../../lib/format'
 import { delta } from '../../lib/money'
-import { Ageing, MoneyStat, SectionTitle, ScopeNote, useBooks, useFinanceQueues } from './shared'
+import { Ageing, MoneyStat, SectionTitle, ScopeNote, useBooks, useFinanceQueues } from '../shared/finance'
 
 /* ------------------------------- work rows --------------------------------- */
 function WorkRow({ icon, tone, title, body, meta, amount, to, cta }: {

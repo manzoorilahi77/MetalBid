@@ -28,7 +28,7 @@ import { useStore } from '../../store/store'
 import { inr, num, fmtDate, fmtDateTime } from '../../lib/format'
 import { useNow } from '../../lib/useTick'
 import { doDue } from '../../lib/money'
-import { MoneyStat, QueueStrip, ScopeNote, SectionTitle } from './shared'
+import { MoneyStat, QueueStrip, ScopeNote, SectionTitle } from '../shared/finance'
 import type { Invoice } from '../../types'
 
 type Tab = 'buyer' | 'commission' | 'missing'

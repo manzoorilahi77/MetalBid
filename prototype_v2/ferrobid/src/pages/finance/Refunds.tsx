@@ -25,7 +25,7 @@ import { useStore } from '../../store/store'
 import { inr, num, fmtDateTime, relTime } from '../../lib/format'
 import { useNow } from '../../lib/useTick'
 import { doDue } from '../../lib/money'
-import { Ageing, MoneyReasonModal, MoneyStat, QueueStrip, ScopeNote, SectionTitle, ThresholdNote } from './shared'
+import { Ageing, MoneyReasonModal, MoneyStat, QueueStrip, ScopeNote, SectionTitle, ThresholdNote } from '../shared/finance'
 import type { RefundRequest, RefundSource } from '../../types'
 
 type Tab = 'decide' | 'process' | 'signature' | 'done'

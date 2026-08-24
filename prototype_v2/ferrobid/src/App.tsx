@@ -82,7 +82,7 @@ import AuctionHistory from './pages/auction/History'
 import AuctionReports from './pages/auction/Reports'
 
 /* finance administrator */
-import { ReadOnlyBanner } from './pages/finance/shared'
+import { ReadOnlyBanner } from './pages/shared/finance'
 import FinanceDashboard from './pages/finance/Dashboard'
 import ProfitLoss from './pages/finance/ProfitLoss'
 import FinanceDeposits from './pages/finance/Deposits'

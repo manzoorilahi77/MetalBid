@@ -18,7 +18,7 @@ import { Avatar, Button, Chip, EmptyState, Field, Input, Modal, PageHeader, Text
 import { useStore } from '../../store/store'
 import { inr, num, fmtDate, relTime } from '../../lib/format'
 import { useNow } from '../../lib/useTick'
-import { Ageing, MoneyStat, QueueStrip, ScopeNote, SectionTitle, useFinanceScope } from './shared'
+import { Ageing, MoneyStat, QueueStrip, ScopeNote, SectionTitle, useFinanceScope } from '../shared/finance'
 import type { BankAccount } from '../../types'
 
 type Tab = 'pending' | 'verified' | 'rejected'

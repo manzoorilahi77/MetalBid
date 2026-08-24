@@ -31,7 +31,7 @@ import { useNow } from '../../lib/useTick'
 import { clearedValue, commissionFor, reserveValue } from '../../lib/money'
 import {
   Ageing, MoneyStat, QueueStrip, ScopeNote, SectionTitle, useBooks, useStatementCandidates, type CommissionRow,
-} from './shared'
+} from '../shared/finance'
 
 type Tab = 'confirm' | 'outstanding' | 'undecided' | 'confirmed'
 

@@ -25,7 +25,7 @@ import { Button, Chip, EmptyState, Field, Input, Modal, PageHeader, Textarea, cx
 import { useStore } from '../../store/store'
 import { inr, inrCompact, num, fmtDateTime, relTime } from '../../lib/format'
 import { useNow } from '../../lib/useTick'
-import { Ageing, MoneyStat, QueueStrip, ScopeNote, SectionTitle } from './shared'
+import { Ageing, MoneyStat, QueueStrip, ScopeNote, SectionTitle } from '../shared/finance'
 import type { BankStatementLine } from '../../types'
 
 type Tab = 'unmatched' | 'breaks' | 'matched'

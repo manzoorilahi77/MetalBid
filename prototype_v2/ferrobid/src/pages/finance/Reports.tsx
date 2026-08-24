@@ -19,7 +19,7 @@ import { useStore } from '../../store/store'
 import { inr, num, fmtDate, fmtDateTime } from '../../lib/format'
 import { useNow } from '../../lib/useTick'
 import { PERIOD_LABEL, periodBounds, within, type PeriodKey } from '../../lib/money'
-import { LedgerRow, MoneyStat, ScopeNote, SectionTitle, useBooks } from './shared'
+import { LedgerRow, MoneyStat, ScopeNote, SectionTitle, useBooks } from '../shared/finance'
 
 type Row = [string, string | number]
 

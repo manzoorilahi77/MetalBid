@@ -20,7 +20,7 @@ import { Button, Chip, EmptyState, PageHeader, Segmented, cx } from '../../compo
 import { useStore } from '../../store/store'
 import { inr, inrCompact, num } from '../../lib/format'
 import { PERIOD_LABEL, delta, type PeriodKey } from '../../lib/money'
-import { LedgerRow, MoneyStat, ShareBar, ScopeNote, commissionBreakdown, useBooks } from './shared'
+import { LedgerRow, MoneyStat, ShareBar, ScopeNote, commissionBreakdown, useBooks } from '../shared/finance'
 
 /* --------------------------- twelve-month trend ---------------------------- */
 /** Confirmed commission by calendar month. Deliberately a plain SVG rather than

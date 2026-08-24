@@ -23,7 +23,7 @@ import { Avatar, Button, Chip, EmptyState, Field, Input, Modal, PageHeader, Text
 import { useStore, WEEKDAY_LABELS } from '../../store/store'
 import { inr, num, fmtDateTime, relTime } from '../../lib/format'
 import { useNow } from '../../lib/useTick'
-import { Ageing, MoneyStat, QueueStrip, ScopeNote, SectionTitle, useFinanceScope } from './shared'
+import { Ageing, MoneyStat, QueueStrip, ScopeNote, SectionTitle, useFinanceScope } from '../shared/finance'
 import type { WithdrawalRequest } from '../../types'
 
 type Tab = 'review' | 'process' | 'done'

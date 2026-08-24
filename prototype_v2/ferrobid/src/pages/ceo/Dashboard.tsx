@@ -37,7 +37,7 @@ import { Chip, EmptyState, PageHeader, Segmented, cx } from '../../components/ui
 import { useStore } from '../../store/store'
 import { inr, inrCompact, num, relTime } from '../../lib/format'
 import { PERIOD_LABEL, delta, type PeriodKey } from '../../lib/money'
-import { LedgerRow, ShareBar, commissionBreakdown } from '../finance/shared'
+import { LedgerRow, ShareBar, commissionBreakdown } from '../shared/finance'
 import {
   NotMyDecision, Question, Ranked, TrendBars, Trend, incomeByMonth,
   useAuctionPerformance, useBooks, useGrowth, useIncidents, useRisk, useSignatureQueue,

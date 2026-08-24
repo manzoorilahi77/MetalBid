@@ -31,7 +31,7 @@ import {
   ageBucket, clearedValue, commissionFor, delta, doDue, doOutstanding, periodBounds, reserveValue, within,
   AGE_BUCKETS, type AgeBucket, type PeriodKey,
 } from '../../lib/money'
-import { useBooks, type Books, type CommissionRow } from '../finance/shared'
+import { useBooks, type Books, type CommissionRow } from '../shared/finance'
 import type { Bid, Catalogue, CeoApprovalRequest, Dispute, Lot, User } from '../../types'
 
 export { useBooks }

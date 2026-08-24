@@ -28,7 +28,7 @@ import { useStore } from '../../store/store'
 import { inr, inrCompact, num, fmtDateTime, relTime } from '../../lib/format'
 import { useNow } from '../../lib/useTick'
 import { daysOverdue, doOutstanding } from '../../lib/money'
-import { MoneyReasonModal, MoneyStat, QueueStrip, ScopeNote, SectionTitle, ThresholdNote } from './shared'
+import { MoneyReasonModal, MoneyStat, QueueStrip, ScopeNote, SectionTitle, ThresholdNote } from '../shared/finance'
 
 type Tab = 'held' | 'forfeitable' | 'decided'
 

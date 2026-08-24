@@ -22,7 +22,7 @@ import { useStore } from '../../store/store'
 import { inr, inrCompact, num, fmtDate } from '../../lib/format'
 import { useNow } from '../../lib/useTick'
 import { AGE_BUCKETS, ageBucket, daysOverdue, doDue, doOutstanding } from '../../lib/money'
-import { MoneyStat, QueueStrip, ScopeNote, SectionTitle } from './shared'
+import { MoneyStat, QueueStrip, ScopeNote, SectionTitle } from '../shared/finance'
 import type { DeliveryOrder } from '../../types'
 
 type Tab = 'overdue' | 'due' | 'paid' | 'all'

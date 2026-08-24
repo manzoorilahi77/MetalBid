@@ -25,7 +25,7 @@ import {
 import { useStore } from '../../store/store'
 import { inr, fmtDate, fmtDateTime, num, relTime } from '../../lib/format'
 import { useNow } from '../../lib/useTick'
-import { Ageing, MoneyStat, QueueStrip, ScopeNote, SectionTitle, useFinanceScope, useStatementCandidates } from './shared'
+import { Ageing, MoneyStat, QueueStrip, ScopeNote, SectionTitle, useFinanceScope, useStatementCandidates } from '../shared/finance'
 import type { BankStatementLine, DepositClaim } from '../../types'
 
 type Tab = 'submitted' | 'approved' | 'rejected'
