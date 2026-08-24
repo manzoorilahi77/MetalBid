@@ -310,7 +310,9 @@ export const createAuctionFloorSlice = (
   },
   setUserStanding: (userId, standing, reason) => {
     const s = get()
-    const plan = planSetUserStanding(userId, standing, reason, { u: s.users.find((x) => x.id === userId), now: s.now })
+    const result = planSetUserStanding(userId, standing, reason, { role: s.role, u: s.users.find((x) => x.id === userId), now: s.now })
+    if (!result.ok) return result
+    const { plan } = result
     set((st) => ({
       users: st.users.map((u) => (u.id === userId ? { ...u, standing, blacklistReason: reason ?? u.blacklistReason } : u)),
     }))
@@ -322,6 +324,7 @@ export const createAuctionFloorSlice = (
     if (plan.financeNotification) {
       helpers.notifyRole('finance_admin', plan.financeNotification)
     }
+    return { ok: true }
   },
   // Recording a Demand Draft received from the buyer offline — Finance's
   // collection step, which replaces the generic advance for

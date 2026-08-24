@@ -63,8 +63,9 @@ export const createCeoSlice = (
   decideCeoApproval: (id, approve, note) => {
     const s = get()
     const req = s.ceoApprovals.find((a) => a.id === id)
+    const canSign = canSignForCeo(s.role, s.currentUser?.id, s.ceoDelegation, s.now)
     const plan = planDecideCeoApproval(approve, note, {
-      canSign: canSignForCeo(s.role, s.currentUser?.id, s.ceoDelegation, s.now),
+      canSign,
       req,
       emdForfeiture: req?.kind === 'emd_forfeiture' ? s.emdForfeitures.find((f) => f.id === req.refId) : undefined,
       refund: req?.kind === 'refund' ? s.refundRequests.find((r) => r.id === req.refId) : undefined,
@@ -72,6 +73,19 @@ export const createCeoSlice = (
       now: s.now,
     })
     if (!plan) return
+
+    /* Phase 22: waiveEmdForfeiture is the real, independently-validated
+       action — its result used to be called and thrown away, so a CEO (or a
+       non-Finance delegate) refusing a forfeiture looked like it succeeded:
+       the approval flipped to "refused" and the requester was told so,
+       while the forfeiture record itself silently stayed untouched and the
+       buyer's EMD was never released. Checked for real now, and run before
+       anything else is written, so a failure here leaves nothing changed. */
+    if (plan.waiveForfeiture) {
+      const res = get().waiveEmdForfeiture(plan.waiveForfeiture.forfeitureId, plan.waiveForfeiture.reason, canSign)
+      if (!res.ok) return { ok: false, error: 'Could not waive the forfeiture — nothing was changed' }
+    }
+
     set((st) => ({
       ceoApprovals: st.ceoApprovals.map((a) =>
         a.id === id ? { ...a, status: plan.mainStatus, decidedBy: st.currentUser?.id, decidedAt: plan.decidedAt, decisionNote: note } : a,
@@ -85,9 +99,6 @@ export const createCeoSlice = (
         emdForfeitures: st.emdForfeitures.map((f) => (f.id === record.id ? { ...f, status: 'applied' as const, decidedBy: st.currentUser?.id, decidedAt: plan.decidedAt, decisionNote: note } : f)),
       }))
       helpers.applyForfeiture(record)
-    }
-    if (plan.waiveForfeiture) {
-      get().waiveEmdForfeiture(plan.waiveForfeiture.forfeitureId, plan.waiveForfeiture.reason)
     }
     if (plan.refundOutcome) {
       const ro = plan.refundOutcome

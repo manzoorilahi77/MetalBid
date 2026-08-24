@@ -91,6 +91,13 @@ export interface WaiveEmdForfeitureContext {
   record: EmdForfeiture | undefined
   lot: Lot | undefined
   now: number
+  /** Phase 22: set only when this call comes from decideCeoApproval's
+   *  refuse+emd_forfeiture branch and the caller already passed
+   *  canSignForCeo — the CEO (or an authorized delegate) refusing a
+   *  forfeiture on their own sign-off queue is not a Finance desk action,
+   *  and FINANCE_ROLES was never meant to gate it. This does not widen who
+   *  may use the Finance desk's own direct waive button. */
+  ceoQueueAuthorized?: boolean
 }
 
 export interface WaiveEmdForfeiturePlan {
@@ -110,7 +117,7 @@ export function planWaiveEmdForfeiture(
   reason: string,
   ctx: WaiveEmdForfeitureContext,
 ): WaiveEmdForfeitureResult {
-  if (!FINANCE_ROLES.includes(ctx.role)) return { ok: false }
+  if (!FINANCE_ROLES.includes(ctx.role) && !ctx.ceoQueueAuthorized) return { ok: false }
   const record = ctx.record
   if (!record || record.status === 'applied') return { ok: false }
 

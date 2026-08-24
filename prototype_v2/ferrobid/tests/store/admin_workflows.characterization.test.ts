@@ -268,10 +268,12 @@ describe('admin workflows — phase 14', () => {
       useStore.getState().raiseEmdForfeiture(lot.id, buyer.id, 'Buyer defaulted on payment')
       const forfeiture = useStore.getState().emdForfeitures[0]
       const ceoReq = useStore.getState().ceoApprovals.find((a) => a.kind === 'emd_forfeiture' && a.refId === forfeiture.id)!
-      // canSignForCeo admits 'ceo' and 'super_admin'; waiveEmdForfeiture's own
-      // guard admits only FINANCE_ROLES ('finance_admin', 'super_admin'). The
-      // only role in both sets is super_admin — sign in as that to exercise
-      // the cascade actually applying.
+      // Before Phase 22, canSignForCeo admitted 'ceo' and 'super_admin' while
+      // waiveEmdForfeiture's own guard admitted only FINANCE_ROLES
+      // ('finance_admin', 'super_admin') — the only role in both sets was
+      // super_admin, so that's what this test exercises. Since Phase 22,
+      // 'ceo' works too (see the AFTER test below) — this one is left as-is
+      // to keep covering the super_admin path specifically.
       useStore.getState().signIn('super@gmail.com', 'FamySys@123')
 
       useStore.getState().decideCeoApproval(ceoReq.id, false)
@@ -282,16 +284,20 @@ describe('admin workflows — phase 14', () => {
       expect(useStore.getState().auditEvents.some((e) => e.action === 'emd.forfeit_waive')).toBe(true)
     })
 
-    /* Pre-existing cross-role gap, found while characterizing this action (not
-       fixed, per the phase's "document, don't fix" rule): waiveEmdForfeiture's
-       own guard only admits FINANCE_ROLES ('finance_admin', 'super_admin').
-       'ceo' is not in that set, so when the actual CEO — not a super_admin,
-       not a delegate holding a finance role — refuses an EMD-forfeiture
-       sign-off, the ceoApprovals record correctly flips to 'refused', but the
-       cascaded waiveEmdForfeiture call silently no-ops: the underlying
-       forfeiture stays stuck at 'awaiting_ceo' until a Finance/Super Admin
-       manually waives it. */
-    it('decideCeoApproval refusing an EMD forfeiture as the literal CEO leaves the forfeiture stuck at awaiting_ceo (pre-existing cross-role gap)', async () => {
+    /* This is finding #2 from the Phase 21 decision table, approved for a fix
+       in Phase 22. BEFORE Phase 22 (kept for the record, not deleted):
+       waiveEmdForfeiture's own guard only admitted FINANCE_ROLES
+       ('finance_admin', 'super_admin'). 'ceo' is not in that set, so when
+       the actual CEO — not a super_admin, not a delegate holding a finance
+       role — refused an EMD-forfeiture sign-off, the ceoApprovals record
+       correctly flipped to 'refused', but the cascaded waiveEmdForfeiture
+       call was called and its result discarded: the underlying forfeiture
+       silently stayed stuck at 'awaiting_ceo' and the buyer's EMD was never
+       released, while the CEO saw what looked like a normal refusal.
+       Skipped because it no longer reflects current behavior — it would
+       fail against the fixed code, which is the point: the suite documents
+       what changed. See the AFTER test right below for current behavior. */
+    it.skip('BEFORE Phase 22: decideCeoApproval refusing an EMD forfeiture as the literal CEO left the forfeiture stuck at awaiting_ceo', async () => {
       const useStore = await freshStore()
       useStore.getState().signIn('finance@gmail.com', 'FerroBid@Dev2026')
       const lot = useStore.getState().lots[0]
@@ -310,6 +316,55 @@ describe('admin workflows — phase 14', () => {
       useStore.getState().decideCeoApproval(ceoReq.id, false)
 
       expect(useStore.getState().ceoApprovals.find((a) => a.id === ceoReq.id)!.status).toBe('refused')
+      expect(useStore.getState().emdForfeitures.find((f) => f.id === forfeiture.id)!.status).toBe('awaiting_ceo')
+    })
+
+    it('AFTER Phase 22: decideCeoApproval refusing an EMD forfeiture as the literal CEO actually waives it — no more silent stuck state', async () => {
+      const useStore = await freshStore()
+      useStore.getState().signIn('finance@gmail.com', 'FerroBid@Dev2026')
+      const lot = useStore.getState().lots[0]
+      const buyer = useStore.getState().users.find((u) => u.role === 'buyer')!
+      const ceoFrom = useStore.getState().financeConfig.ceoForfeitureFrom
+      useStore.setState((s) => ({
+        lots: s.lots.map((l) => (l.id === lot.id ? { ...l, preBidEmd: ceoFrom } : l)),
+        wallets: s.wallets.map((w) => (w.userId === buyer.id ? { ...w, emdLocked: ceoFrom } : w)),
+        emdForfeitures: [],
+      }))
+      useStore.getState().raiseEmdForfeiture(lot.id, buyer.id, 'Buyer defaulted on payment')
+      const forfeiture = useStore.getState().emdForfeitures[0]
+      const ceoReq = useStore.getState().ceoApprovals.find((a) => a.kind === 'emd_forfeiture' && a.refId === forfeiture.id)!
+      useStore.getState().signIn('ceo@gmail.com', 'FerroBid@Dev2026')
+
+      const result = useStore.getState().decideCeoApproval(ceoReq.id, false)
+
+      expect(result).toBeUndefined()
+      expect(useStore.getState().ceoApprovals.find((a) => a.id === ceoReq.id)!.status).toBe('refused')
+      const updated = useStore.getState().emdForfeitures.find((f) => f.id === forfeiture.id)!
+      expect(updated.status).toBe('waived')
+      expect(updated.decisionNote).toBe('Refused at CEO sign-off — EMD released back to the buyer')
+      expect(useStore.getState().auditEvents.some((e) => e.action === 'emd.forfeit_waive')).toBe(true)
+    })
+
+    it('AFTER Phase 22: a non-Finance, non-CEO delegate cannot waive via the Finance desk button — the widened guard is scoped to the CEO-queue call path only', async () => {
+      const useStore = await freshStore()
+      useStore.getState().signIn('finance@gmail.com', 'FerroBid@Dev2026')
+      const lot = useStore.getState().lots[0]
+      const buyer = useStore.getState().users.find((u) => u.role === 'buyer')!
+      const ceoFrom = useStore.getState().financeConfig.ceoForfeitureFrom
+      useStore.setState((s) => ({
+        lots: s.lots.map((l) => (l.id === lot.id ? { ...l, preBidEmd: ceoFrom } : l)),
+        wallets: s.wallets.map((w) => (w.userId === buyer.id ? { ...w, emdLocked: ceoFrom } : w)),
+        emdForfeitures: [],
+      }))
+      useStore.getState().raiseEmdForfeiture(lot.id, buyer.id, 'Buyer defaulted on payment')
+      const forfeiture = useStore.getState().emdForfeitures[0]
+      // exec_manager calling the Finance desk's own waive button directly —
+      // not via decideCeoApproval, so no ceoQueueAuthorized is passed.
+      useStore.getState().switchRole('exec_manager')
+
+      const result = useStore.getState().waiveEmdForfeiture(forfeiture.id, 'Trying the direct button')
+
+      expect(result).toEqual({ ok: false })
       expect(useStore.getState().emdForfeitures.find((f) => f.id === forfeiture.id)!.status).toBe('awaiting_ceo')
     })
 

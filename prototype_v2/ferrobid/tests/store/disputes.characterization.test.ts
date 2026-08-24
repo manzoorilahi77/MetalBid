@@ -243,14 +243,20 @@ describe('disputes', () => {
     expect(notif.body).toBe(`Shortfall confirmed at the weighbridge. A refund of ${inr(5_000)} is with Finance; the ticket stays open until it has been paid.`)
   })
 
-  it('resolveDispute with refund_due propagates raiseRefund\'s own refusal (caller not Finance or Sub Admin) and leaves the ticket untouched', async () => {
+  // BEFORE Phase 22 (kept for the record, not deleted): exec_manager is on
+  // SUPPORT_ROLES (can resolve tickets) but raiseRefund's carve-out named
+  // only sub_admin, not exec_manager — so an exec_manager closing a ticket
+  // with a refund_due outcome always failed here, one level deeper than the
+  // SUPPORT_ROLES check that let them start the resolution in the first
+  // place. This is finding #1 from the Phase 21 decision table, approved
+  // for a fix in Phase 22 (see the passing test right below). Skipped
+  // because it no longer reflects current behavior — it would fail against
+  // the fixed code, which is the point: the suite documents what changed.
+  it.skip('BEFORE Phase 22: resolveDispute with refund_due propagated raiseRefund\'s refusal for exec_manager and left the ticket untouched', async () => {
     const useStore = await freshStore()
     useStore.getState().signIn('buy@gmail.com', 'FerroBid@Dev2026')
     useStore.getState().createDispute('Test', 'other', 'body')
     const id = useStore.getState().disputes[0].id
-    // exec_manager is on SUPPORT_ROLES (can resolve tickets) but NOT on
-    // FINANCE_ROLES and is not sub_admin, so raiseRefund's own role check
-    // refuses it — resolveDispute must surface that refusal untouched.
     useStore.getState().switchRole('exec_manager')
     const startRefunds = useStore.getState().refundRequests.length
 
@@ -259,5 +265,22 @@ describe('disputes', () => {
     expect(result).toEqual({ ok: false, error: 'Only Finance can raise a refund' })
     expect(useStore.getState().disputes.find((d) => d.id === id)!.status).toBe('open')
     expect(useStore.getState().refundRequests.length).toBe(startRefunds)
+  })
+
+  it('AFTER Phase 22: resolveDispute with refund_due succeeds for exec_manager — raiseRefund\'s carve-out now includes them, matching SUPPORT_ROLES\' existing intent', async () => {
+    const useStore = await freshStore()
+    useStore.getState().signIn('buy@gmail.com', 'FerroBid@Dev2026')
+    useStore.getState().createDispute('Test', 'other', 'body')
+    const id = useStore.getState().disputes[0].id
+    useStore.getState().switchRole('exec_manager')
+    const startRefunds = useStore.getState().refundRequests.length
+
+    const result = useStore.getState().resolveDispute(id, 'refund_due', 'agreed', 5_000)
+
+    expect(result).toEqual({ ok: true, refundRaised: true })
+    // refund_due never closes the ticket outright — it stays open until Finance pays.
+    expect(useStore.getState().disputes.find((d) => d.id === id)!.status).toBe('in_review')
+    expect(useStore.getState().refundRequests.length).toBe(startRefunds + 1)
+    expect(useStore.getState().refundRequests[0]).toMatchObject({ disputeId: id, amount: 5_000, status: 'pending' })
   })
 })

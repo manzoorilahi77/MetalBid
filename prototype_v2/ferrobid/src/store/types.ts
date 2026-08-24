@@ -195,8 +195,8 @@ export interface State {
   decideSellerKyc: (userId: string, approve: boolean, reason?: string) => { ok: boolean; error?: string }
   /** Operations closes the delivery against the weighment-final quantity. */
   confirmHandover: (doId: string, note?: string) => { ok: boolean; error?: string }
-  setSellerLotDecision: (lotId: string, decision: 'accepted' | 'rejected' | null) => void
-  recordCommissionSettlement: (catalogueId: string, amount: number, mode: 'transfer' | 'emd', reference?: string) => void
+  setSellerLotDecision: (lotId: string, decision: 'accepted' | 'rejected' | null) => { ok: boolean; error?: string }
+  recordCommissionSettlement: (catalogueId: string, amount: number, mode: 'transfer' | 'emd', reference?: string) => { ok: boolean; error?: string }
   publishCatalogue: (cat: Catalogue, lotIds: string[], overrides: Record<string, Partial<Lot>>) => void
   assignCatalogue: (catalogueId: string, fieldExecId: string) => void
   /** **Bypass** — accept a trusted seller's lot without a yard visit. Not gated
@@ -227,7 +227,7 @@ export interface State {
   sendAnnouncement: (input: { scope: 'platform' | 'catalogue'; catalogueId?: string; title: string; body: string; severity: Announcement['severity'] }) => { ok: boolean; error?: string }
   confirmAuctionResults: (catalogueId: string) => { ok: boolean; error?: string }
   referStaLot: (lotId: string, note: string) => void
-  setUserStanding: (userId: string, standing: User['standing'], reason?: string) => void
+  setUserStanding: (userId: string, standing: User['standing'], reason?: string) => { ok: boolean; error?: string }
   issueDemandDraft: (doId: string, dd: { ddNumber: string; issuingBank: string; amount: number }) => void
   verifyBankAccount: (id: string) => void
   rejectBankAccount: (id: string, reason?: string) => void
@@ -252,7 +252,7 @@ export interface State {
   /** EMD taken from a buyer who breached the payment window. Above the CEO
    *  threshold this parks as a request rather than applying. */
   raiseEmdForfeiture: (lotId: string, buyerId: string, reason: string) => { ok: boolean; error?: string; awaitingCeo?: boolean }
-  waiveEmdForfeiture: (id: string, reason: string) => void
+  waiveEmdForfeiture: (id: string, reason: string, ceoQueueAuthorized?: boolean) => { ok: boolean }
   raiseRefund: (input: { userId: string; amount: number; source: RefundSource; reason: string; lotId?: string; catalogueId?: string; disputeId?: string }) => { ok: boolean; error?: string; awaitingCeo?: boolean }
   decideRefund: (id: string, approve: boolean, note?: string) => void
   processRefund: (id: string) => { ok: boolean; error?: string }
@@ -272,7 +272,7 @@ export interface State {
   /** Signed by the CEO, by a named delegate while a delegation is running, or
    *  by a Super Admin for support and recovery. Approving completes the
    *  movement it was holding; refusing releases it with the reason attached. */
-  decideCeoApproval: (id: string, approve: boolean, note?: string) => void
+  decideCeoApproval: (id: string, approve: boolean, note?: string) => { ok: false; error: string } | void
   /** Neither a yes nor a no: the item stays in the queue and the requester is
    *  asked a question. A refusal is never the way to ask for more detail. */
   requestCeoInfo: (id: string, note: string) => void

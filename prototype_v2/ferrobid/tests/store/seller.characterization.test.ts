@@ -167,4 +167,52 @@ describe('seller workflows', () => {
       expect(useStore.getState().auditEvents[0].detail).toBe(`Commission netted from EMD — ${inr(30_000)}`)
     })
   })
+
+  // Findings #3 from the Phase 21 decision table, approved for a fix in
+  // Phase 22. Neither action ever had its own tests for a non-seller
+  // caller — this is new coverage, not a converted pre-existing test.
+  describe('Phase 22 — role guard added to setSellerLotDecision / recordCommissionSettlement', () => {
+    // BEFORE Phase 22 (kept for the record, not deleted): neither action had
+    // any role check at all — a buyer calling either directly (e.g. via the
+    // browser console) went through unchecked; only the seller-only page
+    // gated who saw the button. Skipped because it no longer reflects
+    // current behavior — it would fail against the fixed code, which is the
+    // point: the suite documents what changed.
+    it.skip('BEFORE Phase 22: a buyer could call setSellerLotDecision and recordCommissionSettlement directly', async () => {
+      const useStore = await freshStore()
+      useStore.getState().signIn('buy@gmail.com', 'FerroBid@Dev2026')
+      const lot = useStore.getState().lots[0]
+      const cat = useStore.getState().catalogues.find((c) => c.id === lot.catalogueId)!
+
+      useStore.getState().setSellerLotDecision(lot.id, 'accepted')
+      expect(useStore.getState().lots.find((l) => l.id === lot.id)!.sellerDecision).toBe('accepted')
+
+      useStore.getState().recordCommissionSettlement(cat.id, 10_000, 'transfer', 'UTR-BEFORE')
+      expect(useStore.getState().commissionSettlements.some((s) => s.reference === 'UTR-BEFORE')).toBe(true)
+    })
+
+    it('AFTER Phase 22: setSellerLotDecision refuses a buyer, and leaves the lot untouched', async () => {
+      const useStore = await freshStore()
+      useStore.getState().signIn('buy@gmail.com', 'FerroBid@Dev2026')
+      const lot = useStore.getState().lots[0]
+      const before = lot.sellerDecision
+
+      const result = useStore.getState().setSellerLotDecision(lot.id, 'accepted')
+
+      expect(result).toEqual({ ok: false, error: 'Only a seller decides on their own cleared price' })
+      expect(useStore.getState().lots.find((l) => l.id === lot.id)!.sellerDecision).toBe(before)
+    })
+
+    it('AFTER Phase 22: recordCommissionSettlement refuses a buyer, and records nothing', async () => {
+      const useStore = await freshStore()
+      useStore.getState().signIn('buy@gmail.com', 'FerroBid@Dev2026')
+      const cat = useStore.getState().catalogues[0]
+      const startSettlements = useStore.getState().commissionSettlements.length
+
+      const result = useStore.getState().recordCommissionSettlement(cat.id, 10_000, 'transfer', 'UTR-AFTER')
+
+      expect(result).toEqual({ ok: false, error: 'Only a seller records their own commission settlement' })
+      expect(useStore.getState().commissionSettlements.length).toBe(startSettlements)
+    })
+  })
 })

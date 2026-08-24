@@ -13,17 +13,26 @@
    plan function needs to reconstruct.
 
    Pre-existing behavior worth flagging, found while characterizing this
-   pair (documented, not fixed): `undoStructuralChange` marks ONLY the one
-   target change as undone. If a later structural change has already been
-   applied on top of it, undoing the earlier one silently reverts the
-   platform to a state that predates the later change too — but the later
-   change's own record is left showing as NOT undone, because nothing here
-   walks forward from the target. `restoreStructureTo` does not have this
-   gap: it explicitly finds and marks every snapshot-carrying change at or
-   after the target's timestamp as undone in the same operation. The two
-   actions are not equivalent restore mechanisms, and the UI that exposes
-   `undoStructuralChange` on an individual change should be read with that
-   in mind.
+   pair (Phase 21/22, documented not fixed — the one-step, non-cascading
+   shape of `undoStructuralChange` was reviewed and deliberately left as-is):
+   `undoStructuralChange` marks ONLY the one target change as undone. If a
+   later structural change has already been applied on top of it, undoing
+   the earlier one silently reverts the platform to a state that predates
+   the later change too — but the later change's own record is left showing
+   as NOT undone, because nothing here walks forward from the target.
+   `restoreStructureTo` does not have this gap: it explicitly finds and
+   marks every snapshot-carrying change at or after the target's timestamp
+   as undone in the same operation. The two actions are not equivalent
+   restore mechanisms, and the UI that exposes `undoStructuralChange` on an
+   individual change should be read with that in mind.
+
+   Phase 22 (approved, behavior-changing): `restoreStructureTo`'s own
+   later-change filter used to count a `structure.rollback` record — the
+   meta-record `undoStructuralChange` itself creates — as one of the "N
+   changes undone." That inflated the reported count by one for every prior
+   individual undo folded into a broader restore. Meta-rollback records are
+   now excluded from that filter; the count reflects only real business
+   actions.
 --------------------------------------------------------------------------- */
 import type { StructuralChange, StructureSnapshot } from '../types'
 
@@ -88,7 +97,7 @@ export function planRestoreStructureTo(_id: string, ctx: {
   if (ctx.permissionError) return ctx.permissionError
   const change = ctx.change
   if (!change?.snapshot) return { ok: false, error: 'There is no structure snapshot at that point' }
-  const later = ctx.allChanges.filter((c) => Date.parse(c.at) >= Date.parse(change.at) && !c.undoneAt && c.snapshot)
+  const later = ctx.allChanges.filter((c) => Date.parse(c.at) >= Date.parse(change.at) && !c.undoneAt && c.snapshot && c.kind !== 'structure.rollback')
   const undoneAt = new Date(ctx.now).toISOString()
   return {
     ok: true,

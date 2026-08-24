@@ -1,7 +1,8 @@
 /* ---------------------------------------------------------------------------
    Application layer — Super Admin/Sub Admin account lifecycle: creating a
    Sub Admin account, and setting an account's status. Moved verbatim from
-   superAdminSlice.ts; no rule, threshold, or wording changed.
+   superAdminSlice.ts; no rule, threshold, or wording changed beyond Phase 22
+   (see planCreateSubAdmin's duplicate-email check below).
 
    resetUserPassword is deliberately NOT here — see Phase 20's report. Its
    live call to /api/auth/reset is not a side effect a plan step can safely
@@ -52,7 +53,13 @@ export function planCreateSubAdmin(input: CreateSubAdminInput, ctx: CreateSubAdm
   const name = input.name.trim()
   const username = input.username.trim().toLowerCase()
   if (!name || !username) return { ok: false, error: 'Both a name and a sign-in ID are needed' }
-  if (ctx.users.some((u) => u.username === username || u.email === input.email.trim())) {
+  // Phase 22: email used to compare exact/case-sensitive while username
+  // was already trim+lowercase — so 'User@x.com' and 'user@x.com' could
+  // both be created as distinct accounts even though sign-in itself
+  // matches email case-insensitively. Both sides now normalize the same
+  // way the username check already does.
+  const email = input.email.trim().toLowerCase()
+  if (ctx.users.some((u) => u.username === username || u.email.trim().toLowerCase() === email)) {
     return { ok: false, error: 'Those sign-in details are already in use' }
   }
   const password = generatePassword()

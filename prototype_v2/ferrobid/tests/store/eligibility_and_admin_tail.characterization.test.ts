@@ -315,20 +315,61 @@ describe('phase 16b — withdrawal maker-checker desk', () => {
   })
 })
 
-describe('phase 16b — setUserStanding (pre-existing finding: no role guard)', () => {
-  it('good standing restores access, no Finance notification', async () => {
+describe('phase 16b / Phase 22 — setUserStanding', () => {
+  // This is finding #4 from the Phase 21 decision table, approved for a fix
+  // in Phase 22. BEFORE Phase 22 (kept for the record, not deleted): the
+  // action carried no role guard at all — any signed-in role, even 'buyer',
+  // could flip another account's standing; only the page (`/admin/users`,
+  // `/admin/blacklist`) gated who saw the control. Explicitly signed in as
+  // buyer here (rather than relying on freshStore's unauthenticated
+  // default) so the test deterministically demonstrates "any caller", not
+  // an accident of which role happened to be left in localStorage by an
+  // earlier test in this file. Skipped because it no longer reflects
+  // current behavior — it would fail against the fixed code, which is the
+  // point: the suite documents what changed.
+  it.skip('BEFORE Phase 22: any signed-in role, including buyer, could set another account\'s standing', async () => {
     const useStore = await freshStore()
+    useStore.getState().signIn(BUYER_EMAIL, PASSWORD)
+    const target = useStore.getState().users.find((u) => u.role === 'buyer' && u.email !== useStore.getState().currentUser?.email)!
+    useStore.getState().setUserStanding(target.id, 'good', undefined)
+    expect(useStore.getState().users.find((u) => u.id === target.id)!.standing).toBe('good')
+    const notif = useStore.getState().notifications.find((n) => n.userId === target.id && n.title === 'Your account standing has been restored')
+    expect(notif?.body).toBe('Full access is back. Nothing further is needed from you.')
+  })
+
+  it('AFTER Phase 22: refuses a caller who is not sub_admin/super_admin', async () => {
+    const useStore = await freshStore()
+    useStore.getState().signIn(BUYER_EMAIL, PASSWORD)
     const buyer = useStore.getState().users.find((u) => u.role === 'buyer')!
-    useStore.getState().setUserStanding(buyer.id, 'good', undefined)
+    const before = buyer.standing
+
+    const result = useStore.getState().setUserStanding(buyer.id, 'good', undefined)
+
+    expect(result).toEqual({ ok: false, error: 'Only a Sub Admin or Super Admin changes account standing' })
+    expect(useStore.getState().users.find((u) => u.id === buyer.id)!.standing).toBe(before)
+  })
+
+  it('AFTER Phase 22: good standing restores access for a sub_admin caller, no Finance notification', async () => {
+    const useStore = await freshStore()
+    useStore.getState().signIn(SUB_EMAIL, PASSWORD)
+    const buyer = useStore.getState().users.find((u) => u.role === 'buyer')!
+
+    const result = useStore.getState().setUserStanding(buyer.id, 'good', undefined)
+
+    expect(result).toEqual({ ok: true })
     expect(useStore.getState().users.find((u) => u.id === buyer.id)!.standing).toBe('good')
     const notif = useStore.getState().notifications.find((n) => n.userId === buyer.id && n.title === 'Your account standing has been restored')
     expect(notif?.body).toBe('Full access is back. Nothing further is needed from you.')
   })
 
-  it('defaulter standing is audited critical and notifies finance_admin', async () => {
+  it('AFTER Phase 22: defaulter standing is audited critical and notifies finance_admin, for a super_admin caller', async () => {
     const useStore = await freshStore()
+    useStore.getState().signIn(SUPER_EMAIL, SUPER_PASSWORD)
     const buyer = useStore.getState().users.find((u) => u.role === 'buyer')!
-    useStore.getState().setUserStanding(buyer.id, 'defaulter', 'Repeated non-payment')
+
+    const result = useStore.getState().setUserStanding(buyer.id, 'defaulter', 'Repeated non-payment')
+
+    expect(result).toEqual({ ok: true })
     expect(useStore.getState().auditEvents[0]).toMatchObject({ action: 'user.standing', severity: 'critical', detail: 'Standing set to defaulter — Repeated non-payment' })
     const finNotif = useStore.getState().notifications.find((n) => n.title.startsWith('Account restricted'))
     expect(finNotif?.body).toBe('Repeated non-payment Check any EMD held and open delivery orders against this account.')

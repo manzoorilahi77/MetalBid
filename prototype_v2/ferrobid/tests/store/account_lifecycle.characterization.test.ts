@@ -33,12 +33,45 @@ describe('account/security cluster — phase 20', () => {
       expect(result).toEqual({ ok: false, error: 'Those sign-in details are already in use' })
     })
 
-    it('refuses an email already in use (exact, case-sensitive match against the stored email)', async () => {
+    it('refuses an email already in use (exact match against the stored email)', async () => {
       const useStore = await freshStore()
       useStore.getState().signIn(...SUPER)
       const existing = useStore.getState().users.find((u) => u.role === 'buyer')!
       const result = useStore.getState().createSubAdmin({ name: 'New Person', username: 'brandnewid', email: existing.email, phone: '', city: '' })
       expect(result).toEqual({ ok: false, error: 'Those sign-in details are already in use' })
+    })
+
+    // This is finding #7 from the Phase 21 decision table, approved for a
+    // fix in Phase 22.
+    describe('Phase 22 — email duplicate check case-sensitivity', () => {
+      // BEFORE Phase 22 (kept for the record, not deleted): the email side
+      // of the duplicate check compared exact/case-sensitive while the
+      // username side was already trim+lowercase — so two accounts could be
+      // created with the same email differing only in case, even though
+      // signIn itself matches email case-insensitively. Skipped because it
+      // no longer reflects current behavior — it would fail against the
+      // fixed code, which is the point: the suite documents what changed.
+      it.skip('BEFORE Phase 22: differently-cased emails were treated as distinct, letting a duplicate account through', async () => {
+        const useStore = await freshStore()
+        useStore.getState().signIn(...SUPER)
+        useStore.getState().createSubAdmin({ name: 'Case First', username: 'casefirst', email: 'Duplicate@Ferrobid.in', phone: '', city: '' })
+
+        const result = useStore.getState().createSubAdmin({ name: 'Case Second', username: 'casesecond', email: 'duplicate@ferrobid.in', phone: '', city: '' })
+
+        expect(result.ok).toBe(true)
+        expect(useStore.getState().users.filter((u) => u.email.toLowerCase() === 'duplicate@ferrobid.in')).toHaveLength(2)
+      })
+
+      it('AFTER Phase 22: differently-cased emails are recognized as the same address and refused', async () => {
+        const useStore = await freshStore()
+        useStore.getState().signIn(...SUPER)
+        useStore.getState().createSubAdmin({ name: 'Case First', username: 'casefirst', email: 'Duplicate@Ferrobid.in', phone: '', city: '' })
+
+        const result = useStore.getState().createSubAdmin({ name: 'Case Second', username: 'casesecond', email: 'duplicate@ferrobid.in', phone: '', city: '' })
+
+        expect(result).toEqual({ ok: false, error: 'Those sign-in details are already in use' })
+        expect(useStore.getState().users.filter((u) => u.email.toLowerCase() === 'duplicate@ferrobid.in')).toHaveLength(1)
+      })
     })
 
     it('creates an active Sub Admin, issues an auto password reset row, records a structural change with no snapshot, and tells the CEO', async () => {

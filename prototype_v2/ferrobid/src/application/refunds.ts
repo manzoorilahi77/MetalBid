@@ -53,11 +53,14 @@ export type RaiseRefundResult =
   | { ok: false; error: string }
 
 export function planRaiseRefund(input: RaiseRefundInput, ctx: RaiseRefundContext): RaiseRefundResult {
-  // Raising is a request, not a movement — which is why a Sub Admin closing
-  // a dispute in the customer's favour may raise the refund it owes. It
+  // Raising is a request, not a movement — which is why a Sub Admin or Exec
+  // Manager closing a dispute in the customer's favour may raise the refund
+  // it owes (Phase 22: exec_manager already closes tickets under
+  // SUPPORT_ROLES but was left out of this carve-out, so resolving a ticket
+  // with a refund_due outcome failed here with no way to complete it). It
   // still lands in Finance's queue at `pending` and Finance both approves
   // and pays it; nothing here touches a wallet.
-  const mayRaise = FINANCE_ROLES.includes(ctx.role) || (ctx.role === 'sub_admin' && !!input.disputeId)
+  const mayRaise = FINANCE_ROLES.includes(ctx.role) || ((ctx.role === 'sub_admin' || ctx.role === 'exec_manager') && !!input.disputeId)
   if (!mayRaise) return { ok: false, error: 'Only Finance can raise a refund' }
   if (!(input.amount > 0)) return { ok: false, error: 'Enter the amount to return' }
 

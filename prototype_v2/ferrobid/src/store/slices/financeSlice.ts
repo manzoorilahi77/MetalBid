@@ -128,7 +128,7 @@ export const createFinanceSlice = (
     return { ok: true }
   },
 
-  waiveEmdForfeiture: (id, reason) => {
+  waiveEmdForfeiture: (id, reason, ceoQueueAuthorized) => {
     const s = get()
     const record = s.emdForfeitures.find((f) => f.id === id)
     const result = planWaiveEmdForfeiture(id, reason, {
@@ -137,8 +137,9 @@ export const createFinanceSlice = (
       record,
       lot: record ? s.lots.find((l) => l.id === record.lotId) : undefined,
       now: s.now,
+      ceoQueueAuthorized,
     })
-    if (!result.ok) return
+    if (!result.ok) return { ok: false }
     const { plan } = result
 
     set((st) => ({
@@ -153,6 +154,7 @@ export const createFinanceSlice = (
     }))
     get().audit(plan.audit.action, plan.audit.target, plan.audit.detail, plan.audit.severity)
     get().notify(plan.notification)
+    return { ok: true }
   },
 
   /* -------------------------------- refunds --------------------------- */

@@ -114,9 +114,11 @@ export const createOpsSlice = (
     const s = get()
     const lot = s.lots.find((l) => l.id === lotId)
     const cat = s.catalogues.find((c) => c.id === lot?.catalogueId)
-    const plan = planSetSellerLotDecision(lotId, decision, {
-      lot, catalogue: cat, seller: s.users.find((u) => u.id === cat?.sellerId),
+    const result = planSetSellerLotDecision(lotId, decision, {
+      role: s.role, lot, catalogue: cat, seller: s.users.find((u) => u.id === cat?.sellerId),
     })
+    if (!result.ok) return result
+    const { plan } = result
 
     set((st) => ({ lots: st.lots.map((l) => (l.id === lotId ? { ...l, sellerDecision: decision } : l)) }))
     get().audit(plan.audit.action, plan.audit.target, plan.audit.detail, plan.audit.severity)
@@ -127,19 +129,23 @@ export const createOpsSlice = (
     /* Accepting is what makes commission owed, so Finance is told a receipt is
        coming rather than discovering it when the seller records payment. */
     if (plan.acceptedNotification) helpers.notifyRole('finance_admin', plan.acceptedNotification)
+    return { ok: true }
   },
 
   recordCommissionSettlement: (catalogueId, amount, mode, reference) => {
     const s = get()
-    const plan = planRecordCommissionSettlement(catalogueId, amount, mode, reference, {
-      actorId: s.currentUser?.id, actorFirm: s.currentUser?.firm,
+    const result = planRecordCommissionSettlement(catalogueId, amount, mode, reference, {
+      role: s.role, actorId: s.currentUser?.id, actorFirm: s.currentUser?.firm,
       catalogue: s.catalogues.find((c) => c.id === catalogueId), now: s.now,
     })
+    if (!result.ok) return result
+    const { plan } = result
 
     set((st) => ({ commissionSettlements: [...st.commissionSettlements, plan.record] }))
     get().audit(plan.audit.action, plan.audit.target, plan.audit.detail)
     // Hands the record straight to the Finance desk that has to confirm it.
     helpers.notifyRole('finance_admin', plan.notification)
+    return { ok: true }
   },
 
   publishCatalogue: (cat, lotIds, overrides) => {

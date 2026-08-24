@@ -446,7 +446,46 @@ describe('RBAC / page-structure cluster — phase 19', () => {
       expect(rollbackRecord.summary).toContain('3 changes undone')
     })
 
-    it('restoring after one step was already undone individually only marks the still-active ones, and counts correctly', async () => {
+    // This is finding #6 from the Phase 21 decision table, approved for a
+    // fix in Phase 22. BEFORE Phase 22 (kept for the record, not deleted):
+    // restoreStructureTo's "later" filter counted every snapshot-carrying,
+    // not-yet-undone record at/after the target's timestamp — including a
+    // 'structure.rollback' meta-record created by a prior individual undo.
+    // So the summary read one higher than the real business-action count a
+    // human skimming the sequence would expect. Skipped because it no
+    // longer reflects current behavior — it would fail against the fixed
+    // code, which is the point: the suite documents what changed. See the
+    // AFTER test right below for current behavior.
+    it.skip('BEFORE Phase 22: restoring after one step was already undone individually overcounted by folding the meta-rollback record in', async () => {
+      const useStore = await freshStore()
+      useStore.getState().signIn(...SUPER)
+
+      useStore.getState().addRole({ label: 'Temp role' })
+      const changeA = useStore.getState().structuralChanges[0]
+      const newPage = useStore.getState().pageRegistry.find((p) => p.roleKey === 'temp_role' && p.to === '/temp_role')!
+
+      useStore.getState().renamePage(newPage.id, 'Renamed dashboard')
+      const changeB = useStore.getState().structuralChanges[0]
+
+      useStore.getState().addSubPage('temp_role', 'Extra tab', '/temp_role/extra')
+      const changeC = useStore.getState().structuralChanges[0]
+
+      const preUndo = useStore.getState().undoStructuralChange(changeB.id)
+      expect(preUndo).toEqual({ ok: true })
+      const rollbackOfB = useStore.getState().structuralChanges[0]
+      expect(rollbackOfB.kind).toBe('structure.rollback')
+
+      const result = useStore.getState().restoreStructureTo(changeA.id)
+      expect(result).toEqual({ ok: true })
+
+      const rollbackRecord = useStore.getState().structuralChanges[0]
+      expect(rollbackRecord.summary).toContain('3 changes undone')
+      expect(useStore.getState().structuralChanges.find((c) => c.id === rollbackOfB.id)?.undoneAt).toBeDefined()
+      expect(useStore.getState().structuralChanges.find((c) => c.id === changeA.id)?.undoneAt).toBeDefined()
+      expect(useStore.getState().structuralChanges.find((c) => c.id === changeC.id)?.undoneAt).toBeDefined()
+    })
+
+    it('AFTER Phase 22: restoring after one step was already undone individually counts only the real business changes, and leaves the meta-rollback record alone', async () => {
       const useStore = await freshStore()
       useStore.getState().signIn(...SUPER)
 
@@ -466,26 +505,24 @@ describe('RBAC / page-structure cluster — phase 19', () => {
       expect(preUndo).toEqual({ ok: true })
       expect(useStore.getState().structuralChanges.find((c) => c.id === changeB.id)?.undoneAt).toBeDefined()
       const changeBUndoneAtBeforeRestore = useStore.getState().structuralChanges.find((c) => c.id === changeB.id)!.undoneAt
-      // undoStructuralChange(B) does not just mark B undone — it also PREPENDS
-      // its own new 'structure.rollback' record (with its own fresh snapshot),
-      // and that new record is itself snapshot-carrying and not yet undone.
+      // undoStructuralChange(B) still prepends its own new 'structure.rollback'
+      // record (with its own fresh snapshot) — that part is unchanged.
       const rollbackOfB = useStore.getState().structuralChanges[0]
       expect(rollbackOfB.kind).toBe('structure.rollback')
 
       const result = useStore.getState().restoreStructureTo(changeA.id)
       expect(result).toEqual({ ok: true })
 
-      // Real finding, documented not fixed: "later" counts every snapshot-
-      // carrying, not-yet-undone record at/after A's timestamp — which now
-      // includes the rollback-of-B record created a moment ago, on top of A
-      // and C. So the summary reads 3, not the "2 real steps" (A, C) a human
-      // skimming the sequence might expect — the meta-rollback record counts
-      // as a step in its own right. The end state is still fully correct
-      // (applying A's snapshot reverts everything regardless), only the
-      // wording of "N changes undone" is more aggressive than it looks.
+      // Fixed: 'structure.rollback' records are now excluded from the
+      // "later" filter, so the count reflects only the real business
+      // changes at/after A's timestamp — A and C (B is excluded because it
+      // was already undone). The meta-rollback record from undoing B is
+      // left exactly as it was: not counted, and not marked undone by this
+      // restore either — the state it revert-to already predates it via A's
+      // own snapshot, so nothing is lost by leaving its own record alone.
       const rollbackRecord = useStore.getState().structuralChanges[0]
-      expect(rollbackRecord.summary).toContain('3 changes undone')
-      expect(useStore.getState().structuralChanges.find((c) => c.id === rollbackOfB.id)?.undoneAt).toBeDefined()
+      expect(rollbackRecord.summary).toContain('2 changes undone')
+      expect(useStore.getState().structuralChanges.find((c) => c.id === rollbackOfB.id)?.undoneAt).toBeUndefined()
 
       // B's undoneAt is untouched by the restore — it was already set, and the
       // restore never re-marks an already-undone row.
