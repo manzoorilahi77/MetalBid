@@ -31,9 +31,17 @@ import { createBuyerSlice } from './slices/buyerSlice'
 import { createSellerSlice } from './slices/sellerSlice'
 import { createOpsSlice } from './slices/opsSlice'
 import { createAuctionFloorSlice } from './slices/auctionFloorSlice'
+import { createAccountStandingSlice } from './slices/accountStandingSlice'
+import { createFinanceEligibilityDeskSlice } from './slices/financeEligibilityDeskSlice'
+import { createWithdrawalDeskSlice } from './slices/withdrawalDeskSlice'
 import { createFinanceSlice } from './slices/financeSlice'
 import { createCeoSlice } from './slices/ceoSlice'
-import { createSuperAdminSlice } from './slices/superAdminSlice'
+import { createRoleRegistrySlice } from './slices/roleRegistrySlice'
+import { createPageRegistrySlice } from './slices/pageRegistrySlice'
+import { createStructuralRollbackSlice } from './slices/structuralRollbackSlice'
+import { createAccountLifecycleSlice } from './slices/accountLifecycleSlice'
+import { createContentPublishingSlice } from './slices/contentPublishingSlice'
+import { createMasterDataSlice } from './slices/masterDataSlice'
 import { createMiscSlice } from './slices/miscSlice'
 import { createSubAdminSlice } from './slices/subAdminSlice'
 import type {
@@ -901,9 +909,17 @@ export const useStore = create<State>((set, get) => {
     ...createSellerSlice(set, get, helpers),
     ...createOpsSlice(set, get, helpers),
     ...createAuctionFloorSlice(set, get, helpers),
+    ...createAccountStandingSlice(set, get, helpers),
+    ...createFinanceEligibilityDeskSlice(set, get, helpers),
+    ...createWithdrawalDeskSlice(set, get, helpers),
     ...createFinanceSlice(set, get, helpers),
     ...createCeoSlice(set, get, helpers),
-    ...createSuperAdminSlice(set, get, helpers),
+    ...createRoleRegistrySlice(set, get, helpers),
+    ...createPageRegistrySlice(set, get, helpers),
+    ...createStructuralRollbackSlice(set, get, helpers),
+    ...createAccountLifecycleSlice(set, get, helpers),
+    ...createContentPublishingSlice(set, get, helpers),
+    ...createMasterDataSlice(set, get, helpers),
     ...createMiscSlice(set, get, helpers),
     ...createSubAdminSlice(set, get, helpers),
   }
