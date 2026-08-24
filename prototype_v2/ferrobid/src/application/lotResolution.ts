@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
    Application layer — the four lot-status transitions that, before Phase 28b,
-   went through the raw `setLotStatus` setter with no guard of any kind. Each
+   went through a raw setter with no guard of any kind. Each
    page already implied a role and a source-status precondition through route
    gating and array filtering alone; these plan functions make that precondition
    real, enforced regardless of caller. Phase 28's audit (Step 1) found this gap;

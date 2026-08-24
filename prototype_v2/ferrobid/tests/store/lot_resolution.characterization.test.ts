@@ -1,27 +1,17 @@
 import { describe, expect, it } from 'vitest'
 import { freshStore } from '../helpers/freshStore'
 
-/** Phase 28b — the four real lot-status transitions that used to go through the
- *  raw, unguarded `setLotStatus` setter (Phase 28's Step 1 audit finding).
- *  BEFORE tests (skipped, same convention as Phase 22) document that the raw
- *  setter itself is still exactly as unguarded as it always was — the fix is
- *  that the UI no longer calls it for these four cases, routing instead
- *  through a named, guarded application-layer action per transition. */
-describe('lot resolution — Phase 28b guarded replacements for setLotStatus', () => {
+/** Phase 28b — the four real lot-status transitions that used to go through a
+ *  raw, unguarded setter with no role or source-status check at all (Phase
+ *  28's Step 1 audit finding), each now routed through a named, guarded
+ *  application-layer action instead. */
+describe('lot resolution — Phase 28b guarded lot-status transitions', () => {
   const signInOps = (useStore: Awaited<ReturnType<typeof freshStore>>) =>
     useStore.getState().signIn('executive@gmail.com', 'FerroBid@Dev2026')
   const signInWrongDesk = (useStore: Awaited<ReturnType<typeof freshStore>>) =>
     useStore.getState().signIn('auction@gmail.com', 'FerroBid@Dev2026')
 
   describe('resolveFlaggedLot (flagged -> inspected) — exec/Pipeline "Resolve"', () => {
-    it.skip('BEFORE Phase 28b: the raw setLotStatus setter accepted this from any signed-in role, regardless of the lot\'s status', async () => {
-      const useStore = await freshStore()
-      signInWrongDesk(useStore)
-      const lot = useStore.getState().lots.find((l) => l.status === 'pending_inspection')!
-      useStore.getState().setLotStatus(lot.id, 'inspected')
-      expect(useStore.getState().lots.find((l) => l.id === lot.id)!.status).toBe('inspected')
-    })
-
     it('AFTER Phase 28b: refuses a caller who is not Operations or a Sub Admin', async () => {
       const useStore = await freshStore()
       const target = useStore.getState().lots[0]
@@ -64,14 +54,6 @@ describe('lot resolution — Phase 28b guarded replacements for setLotStatus', (
       }))
       return lot.id
     }
-
-    it.skip('BEFORE Phase 28b: the raw setLotStatus setter accepted this from any signed-in role, regardless of the lot\'s status or the catalogue\'s', async () => {
-      const useStore = await freshStore()
-      const lotId = setSta(useStore, false)
-      signInWrongDesk(useStore)
-      useStore.getState().setLotStatus(lotId, 'sold')
-      expect(useStore.getState().lots.find((l) => l.id === lotId)!.status).toBe('sold')
-    })
 
     it('AFTER Phase 28b: approveStaSale refuses a caller who is not Operations or a Sub Admin', async () => {
       const useStore = await freshStore()
@@ -145,14 +127,6 @@ describe('lot resolution — Phase 28b guarded replacements for setLotStatus', (
       }))
       return lot.id
     }
-
-    it.skip('BEFORE Phase 28b: the raw setLotStatus setter accepted this from any signed-in role, regardless of the seller\'s decision or the catalogue\'s status', async () => {
-      const useStore = await freshStore()
-      const lotId = setRefused(useStore, { rejected: false, closed: false })
-      signInWrongDesk(useStore)
-      useStore.getState().setLotStatus(lotId, 'unsold')
-      expect(useStore.getState().lots.find((l) => l.id === lotId)!.status).toBe('unsold')
-    })
 
     it('AFTER Phase 28b: refuses a caller who is not Operations or a Sub Admin', async () => {
       const useStore = await freshStore()

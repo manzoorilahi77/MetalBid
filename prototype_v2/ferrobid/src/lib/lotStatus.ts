@@ -1,7 +1,7 @@
 /* ---------------------------------------------------------------------------
    Lot status is not a generic state machine in this codebase — every action
    that changes a lot's status decides the new value itself, inline, gated by
-   its own role/business checks (`decideLot`, `setLotStatus`, `waiveInspection`,
+   its own role/business checks (`decideLot`, `waiveInspection`,
    `publishDraftCatalogue`, the auction-close resolution in the engine). There
    is no single "allowed transitions" table to extract without inventing one.
 

@@ -11,7 +11,7 @@ import type { LotStatus } from '../../types'
 export const createOpsSlice = (
   set: StoreSet, get: StoreGet, helpers: InternalHelpers,
 ): Pick<State,
-  'submitInspection' | 'setLotStatus' | 'resolveFlaggedLot' | 'approveStaSale' | 'markStaUnsold' | 'returnRefusedLotToPipeline'
+  'submitInspection' | 'resolveFlaggedLot' | 'approveStaSale' | 'markStaUnsold' | 'returnRefusedLotToPipeline'
   | 'decideLot' | 'decideSellerKyc' | 'confirmHandover' | 'setSellerLotDecision'
   | 'recordCommissionSettlement' | 'publishCatalogue' | 'assignCatalogue' | 'waiveInspection' | 'publishDraftCatalogue'
   | 'pauseCatalogue' | 'resumeCatalogue' | 'extendCatalogue' | 'cancelCatalogue' | 'voidBid'
@@ -43,10 +43,6 @@ export const createOpsSlice = (
     // hold the lot gate, so both are told a report has landed.
     helpers.notifyRole(['exec_manager', 'sub_admin'], plan.opsNotification)
     if (plan.sellerNotification) get().notify(plan.sellerNotification)
-  },
-
-  setLotStatus: (lotId, status) => {
-    set((st) => ({ lots: st.lots.map((l) => (l.id === lotId ? { ...l, status } : l)) }))
   },
 
   resolveFlaggedLot: (lotId) => {

@@ -7,7 +7,7 @@
 import type {
   AccountStatus, ActionReview, ActionVerdict, Announcement, AppNotification, AuditEvent, AutoBidSetting, BankAccount, BankStatementLine, Bid, BidType, BidVoidRequest, BuyerLotSelection,
   CancellationRequest, Catalogue, CeoApprovalKind, CeoApprovalRequest, CeoDelegation, CommissionSettlement, CompanyBankAccount, ContentDraft, DemandDraft, DeliveryOrder, DepositClaim, Dispute, DisputeOutcome,
-  EmdExemptionRequest, EmdForfeiture, FinanceConfig, HandoverNote, RefundSource, InspectionReport, InspectionSlot, Invoice, LiftingChecklistItem, Lot, LotStatus,
+  EmdExemptionRequest, EmdForfeiture, FinanceConfig, HandoverNote, RefundSource, InspectionReport, InspectionSlot, Invoice, LiftingChecklistItem, Lot,
   MasterCategory, MasterUom, MasterYard, NotificationKind, PageDef, PasswordReset, RefundRequest,
   ResultConfirmation, Role, RoleDef, StaReferral, StructuralChange, Testimonial, TermsSet, User, Wallet, WatchlistEntry, WithdrawalRequest, WithdrawalWindowConfig,
 } from '../types'
@@ -184,20 +184,18 @@ export interface State {
 
   /* --- ops / admin --- */
   submitInspection: (lotId: string, report: Omit<InspectionReport, 'id' | 'lotId' | 'date'>, outcome: 'verified' | 'flagged' | 'rejected') => void
-  setLotStatus: (lotId: string, status: LotStatus) => void
-  /** flagged -> inspected. Phase 28b: guarded replacement for the exec/Pipeline
-   *  "Resolve" button, which used to call setLotStatus with no role or
-   *  source-status check at all. */
+  /** flagged -> inspected. Phase 28b: exec/Pipeline's "Resolve" button used to
+   *  write this with no role or source-status check at all. */
   resolveFlaggedLot: (lotId: string) => { ok: boolean; error?: string }
-  /** sta -> sold. Phase 28b: guarded replacement for exec/Settlement's
-   *  approveSale, previously a bare setLotStatus call. */
+  /** sta -> sold. Phase 28b: exec/Settlement's approveSale used to write this
+   *  with no role or source-status check at all. */
   approveStaSale: (lotId: string) => { ok: boolean; error?: string }
-  /** sta -> unsold. Phase 28b: guarded replacement for exec/Settlement's
-   *  markUnsold, previously a bare setLotStatus call. */
+  /** sta -> unsold. Phase 28b: exec/Settlement's markUnsold used to write this
+   *  with no role or source-status check at all. */
   markStaUnsold: (lotId: string) => { ok: boolean; error?: string }
   /** sold|sta -> unsold, on a lot whose seller refused the cleared price.
-   *  Phase 28b: guarded replacement for exec/Settlement's returnToPipeline,
-   *  previously a bare setLotStatus call. */
+   *  Phase 28b: exec/Settlement's returnToPipeline used to write this with no
+   *  role or source-status check at all. */
   returnRefusedLotToPipeline: (lotId: string) => { ok: boolean; error?: string }
   /** The quality gate: approve, send back for re-inspection, or reject a lot.
    *  Every outcome is audited by name and the seller is told — this is the one
