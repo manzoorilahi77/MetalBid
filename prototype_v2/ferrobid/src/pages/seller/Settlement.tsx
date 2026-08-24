@@ -192,15 +192,22 @@ export default function SellerSettlement() {
             tab={tab}
             sellerPhone={me?.phone}
             settlementAccount={settlementAccount}
-            onDecide={setSellerLotDecision}
+            onDecide={(lotId, d) => {
+              const result = setSellerLotDecision(lotId, d)
+              if (!result.ok) pushToast({ kind: 'danger', title: 'Could not record your decision', body: result.error })
+            }}
             onSettle={(amount, mode) => {
               // The reference is what Finance matches against the bank on their
               // side. An EMD-netted settlement never touches the bank, so the
               // store stamps its own internal reference instead.
-              recordCommissionSettlement(
+              const result = recordCommissionSettlement(
                 openGroup.cat.id, amount, mode,
                 mode === 'transfer' ? `${openGroup.cat.code}-${me?.sellerId ?? 'S'}-${Math.round(amount)}` : undefined,
               )
+              if (!result.ok) {
+                pushToast({ kind: 'danger', title: 'Could not record the settlement', body: result.error })
+                return
+              }
               pushToast({
                 kind: 'success',
                 title: mode === 'emd' ? 'Settled from EMD' : 'Payment successful',

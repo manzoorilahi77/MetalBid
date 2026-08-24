@@ -129,10 +129,14 @@ export default function CeoApprovals() {
       requestInfo(req.id, text)
       pushToast({ kind: 'info', title: 'Question sent', body: `${who(req.requestedBy)?.name ?? 'The requester'} has been asked. It stays in your queue until you decide.` })
     } else {
-      decide(req.id, mode === 'approve', text || undefined)
-      pushToast(mode === 'approve'
-        ? { kind: 'success', title: 'Signed', body: `${req.summary} — what it was holding now goes ahead.` }
-        : { kind: 'info', title: 'Refused', body: `${who(req.requestedBy)?.name ?? 'The requester'} has been told why.` })
+      const result = decide(req.id, mode === 'approve', text || undefined)
+      if (result && !result.ok) {
+        pushToast({ kind: 'danger', title: 'Could not refuse this', body: result.error })
+      } else {
+        pushToast(mode === 'approve'
+          ? { kind: 'success', title: 'Signed', body: `${req.summary} — what it was holding now goes ahead.` }
+          : { kind: 'info', title: 'Refused', body: `${who(req.requestedBy)?.name ?? 'The requester'} has been told why.` })
+      }
     }
     close()
   }

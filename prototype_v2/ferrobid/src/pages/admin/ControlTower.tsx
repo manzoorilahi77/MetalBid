@@ -481,8 +481,12 @@ function SignatureQueue() {
               <div className="flex items-center gap-2 shrink-0">
                 <Button size="sm" variant="secondary" onClick={() => { setRefusing(a.id); setNote('') }}>Refuse</Button>
                 <Button size="sm" variant="success" onClick={() => {
-                  decide(a.id, true)
-                  pushToast({ kind: 'success', title: 'Signed', body: `${a.summary} — what it was holding now goes ahead.` })
+                  const result = decide(a.id, true)
+                  if (result && !result.ok) {
+                    pushToast({ kind: 'danger', title: 'Could not approve this', body: result.error })
+                  } else {
+                    pushToast({ kind: 'success', title: 'Signed', body: `${a.summary} — what it was holding now goes ahead.` })
+                  }
                 }}>
                   {a.amount > 0 ? `Approve ${inr(a.amount)}` : 'Approve'}
                 </Button>
@@ -505,8 +509,12 @@ function SignatureQueue() {
             <Button variant="ghost" onClick={() => { setRefusing(null); setNote('') }}>Cancel</Button>
             <Button variant="danger" disabled={note.trim().length < 4} onClick={() => {
               if (!refusing) return
-              decide(refusing, false, note.trim())
-              pushToast({ kind: 'info', title: 'Refused', body: 'Finance has the reason and the record stays open on their desk.' })
+              const result = decide(refusing, false, note.trim())
+              if (result && !result.ok) {
+                pushToast({ kind: 'danger', title: 'Could not refuse this', body: result.error })
+              } else {
+                pushToast({ kind: 'info', title: 'Refused', body: 'Finance has the reason and the record stays open on their desk.' })
+              }
               setRefusing(null); setNote('')
             }}>
               Refuse
