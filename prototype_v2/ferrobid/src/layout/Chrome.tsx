@@ -108,6 +108,8 @@ function ProfileMenu() {
   const me = useStore((s) => s.currentUser)
   const role = useStore((s) => s.role)
   const logout = useStore((s) => s.logout)
+  const impersonatedBy = useStore((s) => s.impersonatedBy)
+  const endImpersonation = useStore((s) => s.endImpersonation)
   const [open, setOpen] = useState(false)
   const ref = useClickAway(() => setOpen(false))
   const nav = useNavigate()
@@ -146,8 +148,19 @@ function ProfileMenu() {
                 the one thing someone who just signed out is most likely to want
                 next. The manager router has no `/home/*` route: pushing it is
                 what hands the screen to the isolated Guest1 app, which then
-                matches `/auth` under its own `basename="/home"`. */}
-            <button onClick={() => { logout(); setOpen(false); nav('/home/auth') }}
+                matches `/auth` under its own `basename="/home"`.
+
+                While viewing as someone else, "Sign out" means ending that —
+                not signing the admin out of their own desk — so it hands them
+                back to the account they were working from (see
+                ImpersonationBanner's "Back to my account") and returns them to
+                the roster they launched "Log in as" from, rather than dumping
+                them at the public sign-in page. */}
+            <button onClick={() => {
+              setOpen(false)
+              if (impersonatedBy) { void endImpersonation(); nav('/admin/users') }
+              else { logout(); nav('/home/auth') }
+            }}
               className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm font-medium text-danger hover:bg-danger-soft">
               <LogOut size={15} /> Sign out
             </button>

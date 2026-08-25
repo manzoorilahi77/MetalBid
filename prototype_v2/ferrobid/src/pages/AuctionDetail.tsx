@@ -63,17 +63,26 @@ export default function AuctionDetail() {
   const browseLabel = role === 'buyer' ? 'Browse & Shortlist' : guest.isGuest ? 'Marketplace' : 'Browse'
 
   const cat = catalogues.find((c) => c.id === id && c.status !== 'draft')
+  const catLots = cat ? lots.filter((l) => l.catalogueId === cat.id) : []
+  const summary = selectionSummary({ selections, lots }, me?.id, cat?.id ?? '')
+
+  // useMemo must run on every render regardless of whether `cat` resolves —
+  // calling it after the not-found return below would change the hook count
+  // between renders (React throws "change in order of Hooks" and unmounts).
+  const filtered = useMemo(() => {
+    const list = catLots.filter((l) => !filters.onlySelected || summary.lotIds.includes(l.id))
+    return [...list].sort((a, b) => (a.lotNo < b.lotNo ? -1 : a.lotNo > b.lotNo ? 1 : 0))
+  }, [catLots, filters, summary.lotIds])
+
   if (!cat) {
     return <Page><EmptyState title="Catalogue not found" body="It may have been removed in this demo session." action={<Link to={browseHref}><Button variant="secondary">Back to {browseLabel.toLowerCase()}</Button></Link>} /></Page>
   }
 
-  const catLots = lots.filter((l) => l.catalogueId === cat.id)
   const totalEmd = catLots.reduce((sum, l) => sum + l.preBidEmd, 0)
   const seller = users.find((u) => u.id === cat.sellerId)
   const ui = catalogueUiStatus(cat, now, catLots)
   const terms = termsSets.find((t) => t.id === cat.termsSetId)
   const accepted = !!termsAccepted[cat.id]
-  const summary = selectionSummary({ selections, lots }, me?.id, cat.id)
   const isBuyer = role === 'buyer'
   // Watchlist-only, not the isCatalogueShortlisted union with starred lots — this
   // button must be able to turn itself back off on click without also clearing lots.
@@ -90,11 +99,6 @@ export default function AuctionDetail() {
   const notOpen = emdWindowNotOpen(cat, now)
   const catAnnouncements = announcements.filter((a) => a.catalogueId === cat.id)
   const mySlot = inspectionSlots.find((s) => s.catalogueId === cat.id && s.userId === me?.id)
-
-  const filtered = useMemo(() => {
-    const list = catLots.filter((l) => !filters.onlySelected || summary.lotIds.includes(l.id))
-    return [...list].sort((a, b) => (a.lotNo < b.lotNo ? -1 : a.lotNo > b.lotNo ? 1 : 0))
-  }, [catLots, filters, summary.lotIds])
 
   const canBid = ui === 'live' || ui === 'closing'
 
@@ -232,7 +236,7 @@ export default function AuctionDetail() {
             { key: 'lots', label: 'Lots (annexure)', count: catLots.length },
             { key: 'terms', label: 'Terms & Conditions' },
             { key: 'inspection', label: 'Inspection & Contacts' },
-            { key: 'documents', label: 'Documents', count: cat.documents.length },
+            { key: 'documents', label: 'Documents', count: (cat.documents ?? []).length },
           ]}
         />
 
@@ -443,7 +447,7 @@ export default function AuctionDetail() {
         {/* ---------------------------- documents tab ---------------------------- */}
         {tab === 'documents' && (
           <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-3 max-w-4xl">
-            {cat.documents.map((d) => (
+            {(cat.documents ?? []).map((d) => (
               <button key={d.id} className="card card-hover p-4 flex items-center gap-3 text-left"
                 onClick={() => pushToast({ kind: 'info', title: 'Downloading', body: `${d.name} (demo)` })}>
                 <span className="size-10 rounded-xl bg-steel-soft text-steel grid place-items-center shrink-0"><FileText size={18} /></span>

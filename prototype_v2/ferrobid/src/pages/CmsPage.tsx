@@ -15,12 +15,12 @@
    yet, rather than rendering as a blank strip. Somebody has to be able to look
    at the page and see the gap.
 --------------------------------------------------------------------------- */
-import { Link } from 'react-router-dom'
-import { FileText, ExternalLink } from 'lucide-react'
+import { FileText } from 'lucide-react'
 import { Page } from '../layout/Chrome'
 import { Button, EmptyState, PageHeader } from '../components/ui'
 import { useCmsPage, useCmsSections } from '../api/useCmsPage'
 import type { CmsSection } from '../api/useCmsPage'
+import { CmsBlockValue } from '../lib/cmsContent'
 
 /** The pages this component serves, and the header each one carries. Titles
  *  live here rather than in the CMS so a page always has a name, even before
@@ -114,80 +114,8 @@ function Section({ section }: { section: CmsSection }) {
     <section>
       <h2 className="font-display text-xl sm:text-2xl font-bold mb-3">{section.title}</h2>
       <div className="space-y-4">
-        {blocks.map(([key, value]) => <Block key={key} blockKey={key} value={value} />)}
+        {blocks.map(([key, value]) => <CmsBlockValue key={key} blockKey={key} value={value} />)}
       </div>
     </section>
   )
-}
-
-/**
- * One block.
- *
- * Rendering is decided by the shape of the value rather than by a `kind` the
- * public endpoint does not send. Anything unrecognised renders nothing — a page
- * that dumps raw JSON at a visitor because an editor saved an unusual shape is
- * worse than a page with a gap in it.
- */
-function Block({ blockKey, value }: { blockKey: string; value: unknown }) {
-  if (typeof value === 'string') {
-    /* A heading block is a heading; everything else is prose. Same sizing as
-       the clause lists in Legal.tsx, so the two read as one page style. */
-    if (blockKey === 'heading' || blockKey.endsWith('_heading')) {
-      return <h3 className="font-bold text-base">{value}</h3>
-    }
-    return <p className="text-[15px] text-ink-muted leading-relaxed whitespace-pre-line">{value}</p>
-  }
-
-  if (isLink(value)) {
-    return value.to.startsWith('http') ? (
-      <a href={value.to} target="_blank" rel="noopener noreferrer"
-         className="inline-flex items-center gap-1.5 text-sm font-semibold text-steel hover:underline">
-        {value.label} <ExternalLink size={14} />
-      </a>
-    ) : (
-      <Link to={value.to}>
-        <Button variant="secondary" size="md">{value.label}</Button>
-      </Link>
-    )
-  }
-
-  if (Array.isArray(value)) {
-    return (
-      <div className="space-y-3">
-        {value.map((item, i) => <ListItem key={i} item={item} />)}
-      </div>
-    )
-  }
-
-  return null
-}
-
-function ListItem({ item }: { item: unknown }) {
-  if (typeof item === 'string') {
-    return <p className="text-[15px] text-ink-muted leading-relaxed">{item}</p>
-  }
-  if (item && typeof item === 'object') {
-    const row = item as Record<string, unknown>
-    const title = pickString(row, ['title', 'question', 'label', 'name'])
-    const body = pickString(row, ['body', 'answer', 'sub', 'description'])
-    if (!title && !body) return null
-    return (
-      <div className="card p-4">
-        {title && <div className="font-bold text-[15px]">{title}</div>}
-        {body && <p className="text-sm text-ink-muted mt-1 leading-relaxed whitespace-pre-line">{body}</p>}
-      </div>
-    )
-  }
-  return null
-}
-
-/* -------------------------------- helpers -------------------------------- */
-
-const isLink = (v: unknown): v is { label: string; to: string } =>
-  !!v && typeof v === 'object' && typeof (v as Record<string, unknown>).to === 'string'
-  && typeof (v as Record<string, unknown>).label === 'string'
-
-function pickString(row: Record<string, unknown>, keys: string[]): string | null {
-  for (const k of keys) if (typeof row[k] === 'string' && row[k]) return row[k] as string
-  return null
 }

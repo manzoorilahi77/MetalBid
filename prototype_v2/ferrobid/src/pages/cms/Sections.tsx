@@ -84,6 +84,7 @@ export default function CmsSections() {
   return (
     <Page>
       <PageHeader
+        crumbs={[{ label: 'Content', to: '/cms' }]}
         title="Portal sections"
         sub="Every section on every page, and whether it is switched on. Sections that carry another role's record stay visible; sections that carry ours can be turned off without a release."
         actions={

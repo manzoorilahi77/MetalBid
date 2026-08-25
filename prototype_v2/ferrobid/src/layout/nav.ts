@@ -296,20 +296,26 @@ export const NAV_BY_ROLE: Record<Role, NavItem[]> = {
     { to: '/sub/activity', label: 'My activity', in: ['sub'], retained: true, category: 'Oversight & records' },
   ],
   // CEO / MD — four questions, in order: are we making money, is the business
-  // growing, is anything at risk, what needs me. The dashboard is the landing
-  // page and answers all four at a glance, then hands off to the screen behind
-  // each one; the signature queue also sits on the top bar because it is the one
-  // screen in the workspace with buttons and other people are waiting on it.
+  // growing, is anything at risk, what needs me. Nine screens is more than a
+  // flat strip reads well, so — same two-level menu as the five staff desks
+  // below — three categories carry that order left to right:
+  //
+  //   Performance       — the dashboard that answers all four at a glance,
+  //                        then the money and growth screens behind it
+  //   Risk & issues      — what could lose money, and what already did
+  //   Approvals & reports — the one screen in the workspace with buttons other
+  //                        people are waiting on, who covers it while away,
+  //                        and the record of it all
   ceo: [
-    { to: '/ceo', label: 'Dashboard', end: true, in: ['top', 'sub'] },
-    { to: '/ceo/pnl', label: 'Profit & loss', in: ['top', 'sub'] },
-    { to: '/ceo/growth', label: 'Business growth', subLabel: 'Growth', in: ['sub'] },
-    { to: '/ceo/auctions', label: 'Auction performance', in: ['sub'] },
-    { to: '/ceo/risk', label: 'Money at risk', in: ['top', 'sub'] },
-    { to: '/ceo/issues', label: 'What went wrong', subLabel: 'Things that went wrong', in: ['sub'] },
-    { to: '/ceo/approvals', label: 'Needs my signature', subLabel: 'What needs my signature', in: ['top', 'sub'] },
-    { to: '/ceo/delegate', label: 'Delegate my approvals', subLabel: 'Delegate approvals', in: ['sub'] },
-    { to: '/ceo/reports', label: 'Reports', in: ['sub'] },
+    { to: '/ceo', label: 'Dashboard', end: true, in: ['sub'], category: 'Performance' },
+    { to: '/ceo/pnl', label: 'Profit & loss', in: ['sub'], category: 'Performance' },
+    { to: '/ceo/growth', label: 'Business growth', subLabel: 'Growth', in: ['sub'], category: 'Performance' },
+    { to: '/ceo/auctions', label: 'Auction performance', in: ['sub'], category: 'Performance' },
+    { to: '/ceo/risk', label: 'Money at risk', in: ['sub'], category: 'Risk & issues' },
+    { to: '/ceo/issues', label: 'What went wrong', subLabel: 'Things that went wrong', in: ['sub'], category: 'Risk & issues' },
+    { to: '/ceo/approvals', label: 'Needs my signature', subLabel: 'What needs my signature', in: ['sub'], category: 'Approvals & reports' },
+    { to: '/ceo/delegate', label: 'Delegate my approvals', subLabel: 'Delegate approvals', in: ['sub'], category: 'Approvals & reports' },
+    { to: '/ceo/reports', label: 'Reports', in: ['sub'], category: 'Approvals & reports' },
   ],
   // Super Admin — our own break-glass role, never issued to the company (see
   // the roles decision in the Content Atlas: for the company, Sub Admin is the

@@ -703,11 +703,9 @@ ul {
      the theme flipped. */
   color: var(--text-muted);
 }
-/* The single-line treatment only fits where the column is wide enough for the
-   88-char sentence; below 1440px it wraps naturally instead of overflowing. */
-@media (min-width: 1440px) {
-  .hero-subtitle { white-space: nowrap; }
-}
+/* No forced single-line: subcopy length is CMS-controlled and not bounded to
+   the ~88-char default, so nowrap here would overflow .hero-content into
+   .hero-visual whenever real content runs longer than the placeholder. */
 .hero-desc {
   display: flex;
   flex-wrap: wrap;

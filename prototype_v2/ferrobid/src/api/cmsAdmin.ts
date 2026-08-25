@@ -70,6 +70,12 @@ export const listBlocks = (pageKey?: string): Promise<AdminBlock[]> =>
 export const listChanges = (limit = 60): Promise<ChangeEntry[]> =>
   apiGet<ChangeEntry[]>(`/api/cms/changes?limit=${limit}`)
 
+/** One block's own history — every edit, publish, unpublish and rollback
+ *  logged against it, newest first. The server already supports filtering
+ *  the shared change log by `targetId`; this is the same endpoint, scoped. */
+export const listBlockHistory = (blockId: string, limit = 20): Promise<ChangeEntry[]> =>
+  apiGet<ChangeEntry[]>(`/api/cms/changes?target=cms_block&targetId=${encodeURIComponent(blockId)}&limit=${limit}`)
+
 /** Turn a section on or off. Throws with the server's reason when it refuses —
  *  which for a locked section is the sentence the registry stores. */
 export async function setSectionEnabled(

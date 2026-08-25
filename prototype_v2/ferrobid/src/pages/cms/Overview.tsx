@@ -12,7 +12,7 @@
 --------------------------------------------------------------------------- */
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Check, EyeOff, FileText, History, MessageSquareQuote, X } from 'lucide-react'
+import { ArrowRight, Check, EyeOff, FileText, History, MessageSquareQuote, SlidersHorizontal, X } from 'lucide-react'
 import { Page } from '../../layout/Chrome'
 import { Button, Chip, EmptyState, PageHeader, Stat } from '../../components/ui'
 import { useStore } from '../../store/store'
@@ -74,6 +74,11 @@ export default function CmsOverview() {
       <PageHeader
         title="Content"
         sub="The words on the public site and the sections inside every portal. You write them, you publish them — only pricing and legal copy leaves for a signature."
+        actions={
+          <Link to="/cms/sections">
+            <Button variant="secondary" size="md"><SlidersHorizontal size={15} /> Portal sections</Button>
+          </Link>
+        }
       />
 
       {error && (
